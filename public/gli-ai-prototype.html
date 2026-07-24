@@ -478,6 +478,66 @@
       line-height: 1.62;
       margin: 14px 0;
     }
+    .verification-state {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 12px;
+      margin: 14px 0;
+      border: 1px solid #b8e4da;
+      border-radius: 8px;
+      background: #eefaf7;
+    }
+    .verification-state strong { font-size: 13px; }
+    .verification-state span { color: var(--muted); font-size: 12px; }
+    .verification-state.review { border-color: #f3d29e; background: #fff8eb; }
+    .verification-state.restricted { border-color: #efb8bf; background: #fff1f3; }
+    .trust-chain {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 14px 0;
+    }
+    .chain-node {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 7px;
+      text-align: center;
+      background: #f8fafc;
+    }
+    .chain-node b { display: block; color: var(--teal); font-size: 12px; }
+    .chain-node span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.3;
+    }
+    .chain-node.pending b { color: #a36a0a; }
+    .chain-node.locked b { color: #98a2b3; }
+    .proof-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .proof {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      overflow: hidden;
+    }
+    .proof span { display: block; color: var(--muted); font-size: 10px; }
+    .proof code {
+      display: block;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #344054;
+      font-size: 11px;
+    }
 
     .facts {
       display: grid;
@@ -751,6 +811,8 @@
       .crawler-note { align-items: flex-start; flex-direction: column; gap: 3px; }
       .asset-grid, .steps, .sources, .facts { grid-template-columns: 1fr; }
       .benefit-list { grid-template-columns: 1fr; }
+      .trust-chain { grid-template-columns: 1fr 1fr; }
+      .proof-row { grid-template-columns: 1fr; }
       .section-head { align-items: stretch; flex-direction: column; }
       .asset-foot { align-items: flex-start; flex-direction: column; }
       .section { padding: 28px 14px; }
@@ -856,6 +918,20 @@
               </div>
             </div>
             <div class="detail-summary" id="summaryBox"></div>
+            <div class="verification-state" id="verificationState">
+              <strong id="verificationLabel">AI 분석 초안</strong>
+              <span id="verificationHint">전문가 확인 전</span>
+            </div>
+            <div class="trust-chain" aria-label="자산 검증 기록">
+              <div class="chain-node" id="chainAi"><b>AI 분석</b><span>멀티소스 교차검증</span></div>
+              <div class="chain-node" id="chainHuman"><b>전문가 서명</b><span>자격 검증자 확인</span></div>
+              <div class="chain-node" id="chainIpfs"><b>IPFS 보관</b><span>보고서 원본 고정</span></div>
+              <div class="chain-node" id="chainLedger"><b>온체인 기록</b><span>위변조 방지</span></div>
+            </div>
+            <div class="proof-row" id="proofRow">
+              <div class="proof"><span>검증 보고서 CID</span><code id="proofCid">검증 진행 중</code></div>
+              <div class="proof"><span>분산원장 트랜잭션</span><code id="proofTx">기록 대기</code></div>
+            </div>
             <div class="facts">
               <div class="fact"><span>시세 적정성</span><strong id="priceFit">-</strong></div>
               <div class="fact"><span>법무 확인</span><strong id="legalFit">-</strong></div>
@@ -881,7 +957,7 @@
           <h3>투자 판단에 필요한 확인을 한 번에</h3>
           <p>추천에서 끝나지 않고 가격, 임대수익, 권리관계와 현지 확인까지 연결합니다.</p>
           <div class="benefit-list">
-            <div class="benefit"><strong>AI 정밀검증</strong>비교 시세와 숨은 비용을 포함한 자산별 리포트</div>
+            <div class="benefit"><strong>온체인 Trust Report</strong>전문가 서명과 위변조 방지 기록을 포함한 자산별 리포트</div>
             <div class="benefit"><strong>실시간 알림</strong>신규 매물, 가격 변경과 관심지역 기회 알림</div>
             <div class="benefit"><strong>현지 전문가</strong>법무·세무·임장 파트너 우선 연결</div>
             <div class="benefit"><strong>투자 포트폴리오</strong>관심자산 비교와 검토 진행상태 관리</div>
@@ -1356,6 +1432,40 @@
       return reasons.length ? `AI 매칭: ${reasons.join(" · ")}` : "AI 매칭: 캄보디아 지역 조건";
     }
 
+    function verificationFor(asset) {
+      if (asset.score >= 80) {
+        return {
+          key: "verified",
+          label: "Human Verified",
+          hint: "자격 검증자 서명 · 온체인 기록 완료",
+          card: "검증 완료",
+          cid: `bafy-gli-${asset.id.toLowerCase()}-verified`,
+          tx: `5GLI${asset.id.replace(/[^A-Z0-9]/g, "")}9X2`,
+          completed: 4
+        };
+      }
+      if (asset.score >= 70) {
+        return {
+          key: "review",
+          label: "Expert Review",
+          hint: "AI 초안 완료 · 자격 검증자 확인 중",
+          card: "전문가 검토",
+          cid: "서명 후 생성",
+          tx: "온체인 기록 대기",
+          completed: 1
+        };
+      }
+      return {
+        key: "restricted",
+        label: "AI Draft · 투자 제한",
+        hint: "추가 검증 전 투자 가능 목록에서 제외",
+        card: "검증 전 후보",
+        cid: "정밀검증 필요",
+        tx: "기록되지 않음",
+        completed: 1
+      };
+    }
+
     function renderAssets() {
       const rows = filteredAssets();
       if (rows.length && (!selected || !rows.some(asset => asset.id === selected.id))) selected = rows[0];
@@ -1366,6 +1476,7 @@
             <div class="asset-badges">
               <span class="badge">${asset.city}, ${asset.country}</span>
               <span class="badge ${badgeClass(asset)}">Trust ${asset.score}</span>
+              <span class="badge">${verificationFor(asset).card}</span>
             </div>
           </div>
           <div class="asset-body">
@@ -1407,6 +1518,14 @@
         ["priceFit", "legalFit", "rentalFit", "nextAction"].forEach(id => {
           document.getElementById(id).textContent = "-";
         });
+        document.getElementById("verificationState").className = "verification-state review";
+        document.getElementById("verificationLabel").textContent = "검증할 자산을 선택하세요";
+        document.getElementById("verificationHint").textContent = "검증 기록 없음";
+        ["chainAi", "chainHuman", "chainIpfs", "chainLedger"].forEach(id => {
+          document.getElementById(id).className = "chain-node locked";
+        });
+        document.getElementById("proofCid").textContent = "-";
+        document.getElementById("proofTx").textContent = "-";
         document.getElementById("reportText").textContent = "검색 결과가 없습니다.";
         return;
       }
@@ -1416,6 +1535,16 @@
       document.getElementById("detailTitle").textContent = selected.title;
       document.getElementById("detailMeta").textContent = `${selected.city}, ${selected.country} · ${money(selected)} · ${selected.source}`;
       document.getElementById("summaryBox").textContent = selected.summary;
+      const verification = verificationFor(selected);
+      const state = document.getElementById("verificationState");
+      state.className = `verification-state ${verification.key === "verified" ? "" : verification.key}`;
+      document.getElementById("verificationLabel").textContent = verification.label;
+      document.getElementById("verificationHint").textContent = verification.hint;
+      ["chainAi", "chainHuman", "chainIpfs", "chainLedger"].forEach((id, index) => {
+        document.getElementById(id).className = `chain-node ${index < verification.completed ? "" : "locked"}`;
+      });
+      document.getElementById("proofCid").textContent = verification.cid;
+      document.getElementById("proofTx").textContent = verification.tx;
       document.getElementById("priceFit").textContent = selected.priceFit;
       document.getElementById("legalFit").textContent = selected.legalFit;
       document.getElementById("rentalFit").textContent = selected.rentalFit;
@@ -1432,6 +1561,9 @@
 가격: ${money(asset)}
 면적: ${asset.area} sqm
 Trust Score: ${asset.score}/100
+검증 상태: ${verificationFor(asset).label}
+보고서 CID: ${verificationFor(asset).cid}
+온체인 기록: ${verificationFor(asset).tx}
 
 AI 요약:
 ${asset.summary}
@@ -1647,9 +1779,9 @@ ${asset.summary}
       if (!selected) return showToast("먼저 자산을 선택해 주세요.");
       openDemoModal(
         "AI 정밀검증 리포트",
-        `${selected.title}의 가격 적정성, 예상 순수익과 권리관계 확인 결과를 제공합니다.`,
-        [["Prime 회원", "리포트 1건 포함"], ["일반 구매", "39,000원"], ["예상 완료", "24시간 이내"]],
-        "정밀검증이 시작되었습니다. 완료되면 알림으로 알려드릴게요."
+        `${selected.title}의 AI 분석을 자격 검증자가 확인하고 서명된 원본을 위변조 방지 기록으로 보관합니다.`,
+        [["AI 분석", "가격·문서·시장 데이터 교차검증"], ["인간 검증", "등록 자격 확인 완료"], ["원본 보관", "IPFS CID 발급"], ["불변 기록", "분산원장 트랜잭션"], ["일반 구매", "39,000원"]],
+        "정밀검증이 시작되었습니다. 서명과 온체인 기록이 완료되면 알려드릴게요."
       );
     });
 
@@ -1658,7 +1790,7 @@ ${asset.summary}
       openDemoModal(
         "전문가 상담 예약",
         `${selected.city} 담당 컨설턴트와 선택한 자산을 함께 검토합니다.`,
-        [["상담 방식", "화상 상담 30분"], ["가능 시간", "7월 29일 14:00"], ["상담 비용", "Prime 회원 무료"]],
+        [["검증자 상태", "자격 레지스트리 확인"], ["상담 방식", "화상 상담 30분"], ["가능 시간", "7월 29일 14:00"], ["상담 비용", "Prime 회원 무료"]],
         "전문가 상담이 예약되었습니다."
       );
     });
