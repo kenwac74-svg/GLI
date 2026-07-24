@@ -867,6 +867,67 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
+    /* Shared GLI dark interface system */
+    :root {
+      color-scheme: dark;
+      --ink: #f7f9fc;
+      --muted: #91a2ba;
+      --line: #25344d;
+      --paper: #111d31;
+      --soft: #07111f;
+      --deep: #07111f;
+      --teal: #16bca9;
+      --shadow: 0 18px 42px rgba(0, 0, 0, .28);
+    }
+    .site-header {
+      background: rgba(6, 14, 26, .96);
+      border-color: #18263c;
+    }
+    .nav { min-height: 72px; padding-top: 12px; padding-bottom: 12px; }
+    .brand-mark { background: transparent; padding-left: 0; }
+    .brand span, .nav-links { color: var(--muted); }
+    .wallet { background: #132039; border-color: var(--line); }
+    .search-panel {
+      background: rgba(16, 28, 49, .97);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .btn, .prompt-chip, .chat-compose textarea, .field select {
+      background: #132039;
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .btn.primary { background: var(--teal); color: #03110f; }
+    .chat-thread { background: #0b1628; border-color: var(--line); }
+    .chat-message.ai { background: #16243a; color: #dce5ef; }
+    .chat-message.user { background: #0c675f; color: #fff; }
+    .section, main { background: var(--soft); }
+    .asset-card, .detail, .premium-panel, .account-panel, .step, .source-card,
+    .fact, .chain-node, .proof, .benefit, .account-stat, .modal, .cash-panel {
+      background: var(--paper);
+      border-color: var(--line);
+      color: var(--ink);
+    }
+    .asset-card:hover, .asset-card.selected { border-color: var(--teal); }
+    .asset-title, .price, .detail h3, .benefit strong { color: var(--ink); }
+    .detail-summary { color: #cbd6e3; }
+    .score-ring:after { background: var(--paper); }
+    .verification-state { background: #0d292c; border-color: #1d8077; }
+    .verification-state.review, .subscription-asset.unavailable { background: #2a2111; border-color: #806526; }
+    .verification-state.restricted { background: #30171d; border-color: #7d3746; }
+    .member-band { background: #091423; border-color: var(--line); }
+    .plan-switch { background: #0b1628; }
+    .plan-switch button.active, .tier-tab { background: #132039; color: var(--ink); }
+    .tier-tab.active { background: var(--teal); color: #03110f; }
+    .tier-detail, .subscription-asset { background: #0d292c; border-color: #1d8077; }
+    .staking-sim { background: #171329; border-color: #56357c; }
+    .cash-panel { background: #0b1628; }
+    .activity { border-color: var(--line); }
+    .modal-head, .option-row { border-color: var(--line); }
+    .modal-close { background: #1a2940; color: #fff; }
+    .modal-summary { background: #0d292c; color: #d8ece8; }
+    .toast { background: #f7f9fc; color: #07111f; }
+
     @media (max-width: 1040px) {
       .asset-layout { grid-template-columns: 1fr; }
       .detail { position: static; }
