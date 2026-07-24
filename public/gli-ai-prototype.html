@@ -603,6 +603,94 @@
       margin-bottom: 8px;
     }
     .premium-panel h3, .account-panel h3 { margin: 0; font-size: 21px; }
+    .plan-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 4px;
+      margin: 16px 0;
+      background: #edf1f5;
+      border-radius: 8px;
+    }
+    .plan-switch button {
+      border: 0;
+      border-radius: 6px;
+      padding: 11px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .plan-switch button.active { background: #fff; color: var(--ink); box-shadow: 0 2px 8px rgba(16,24,40,.08); }
+    .tier-tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 14px 0;
+    }
+    .tier-tab {
+      min-width: 0;
+      border: 0;
+      border-right: 1px solid var(--line);
+      padding: 10px 4px;
+      background: #fff;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .tier-tab:last-child { border-right: 0; }
+    .tier-tab.active { background: var(--deep); color: #fff; }
+    .tier-tab span { display: block; margin-top: 2px; font-size: 9px; opacity: .75; }
+    .tier-detail {
+      border: 1px solid #b8e4da;
+      border-radius: 8px;
+      background: #f4fcfa;
+      padding: 14px;
+    }
+    .tier-detail strong { display: block; }
+    .tier-detail p { margin-top: 5px; font-size: 13px; }
+    .staking-sim {
+      margin-top: 14px;
+      border: 1px solid #d7c2ef;
+      border-radius: 8px;
+      padding: 14px;
+      background: #fcfaff;
+    }
+    .staking-head, .staking-value, .payout-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .staking-head strong { font-size: 13px; }
+    .staking-head span { color: var(--rose); font-size: 10px; font-weight: 800; }
+    .staking-value { margin: 14px 0 6px; }
+    .staking-value span { color: var(--muted); font-size: 11px; }
+    .staking-value strong { font-size: 20px; }
+    .staking-sim input[type="range"] { width: 100%; accent-color: var(--teal); }
+    .payout-grid { margin-top: 12px; }
+    .payout {
+      flex: 1;
+      padding: 10px;
+      background: var(--deep);
+      border-radius: 8px;
+      color: #fff;
+      text-align: center;
+    }
+    .payout span { display: block; color: #9fb0c4; font-size: 9px; }
+    .payout strong { display: block; margin-top: 4px; color: #39d9c0; font-size: 15px; }
+    .cash-panel {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #fbfcfd;
+    }
+    .cash-panel.open { display: block; }
+    .staking-panel.hidden { display: none; }
     .benefit-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -813,6 +901,7 @@
       .benefit-list { grid-template-columns: 1fr; }
       .trust-chain { grid-template-columns: 1fr 1fr; }
       .proof-row { grid-template-columns: 1fr; }
+      .tier-tabs { overflow-x: auto; grid-template-columns: repeat(5, minmax(74px, 1fr)); }
       .section-head { align-items: stretch; flex-direction: column; }
       .asset-foot { align-items: flex-start; flex-direction: column; }
       .section { padding: 28px 14px; }
@@ -953,19 +1042,54 @@
     <section class="member-band" id="membership">
       <div class="section member-grid">
         <div class="premium-panel">
-          <span class="premium-kicker">GLI PRIME MEMBERSHIP</span>
-          <h3>투자 판단에 필요한 확인을 한 번에</h3>
-          <p>추천에서 끝나지 않고 가격, 임대수익, 권리관계와 현지 확인까지 연결합니다.</p>
-          <div class="benefit-list">
-            <div class="benefit"><strong>온체인 Trust Report</strong>전문가 서명과 위변조 방지 기록을 포함한 자산별 리포트</div>
-            <div class="benefit"><strong>실시간 알림</strong>신규 매물, 가격 변경과 관심지역 기회 알림</div>
-            <div class="benefit"><strong>현지 전문가</strong>법무·세무·임장 파트너 우선 연결</div>
-            <div class="benefit"><strong>투자 포트폴리오</strong>관심자산 비교와 검토 진행상태 관리</div>
+          <span class="premium-kicker">GLI MEMBERSHIP</span>
+          <h3>구독 방식과 정보 등급을 선택하세요</h3>
+          <p>현금으로 이용권을 구독하거나 GLIB를 스테이킹해 등급, 보상과 Web3 권한을 함께 받을 수 있습니다.</p>
+          <div class="plan-switch">
+            <button class="active" id="stakingMode">GLIB 스테이킹</button>
+            <button id="cashMode">현금 구독</button>
           </div>
-          <div class="price-line"><strong>월 29,000원</strong><span>언제든 해지 가능</span></div>
-          <div class="cta-row">
-            <button class="btn primary" id="startPrime">Prime 시작하기</button>
-            <button class="btn" id="sampleReport">샘플 리포트 보기</button>
+
+          <div class="tier-tabs" id="tierTabs">
+            <button class="tier-tab" data-tier="free">FREE<span>LV.1</span></button>
+            <button class="tier-tab" data-tier="basic">BASIC<span>LV.2</span></button>
+            <button class="tier-tab" data-tier="standard">STANDARD<span>LV.3</span></button>
+            <button class="tier-tab active" data-tier="premium">PREMIUM<span>LV.4</span></button>
+            <button class="tier-tab" data-tier="business">BUSINESS<span>LV.5</span></button>
+          </div>
+
+          <div class="tier-detail">
+            <strong id="tierName">Premium · 최상위 개인 투자자</strong>
+            <p id="tierBenefit">전체 Trust Report, 우선 임장 예약, 전문가 직통 상담과 DAO 거버넌스 권한</p>
+          </div>
+
+          <div class="staking-panel" id="stakingPanel">
+            <div class="staking-sim">
+              <div class="staking-head"><strong>GLIB STAKING SIMULATOR</strong><span>VARIABLE APR</span></div>
+              <div class="staking-value"><span>스테이킹 수량</span><strong id="stakeAmount">81,000 GLIB</strong></div>
+              <input type="range" id="stakeRange" min="0" max="100000" step="1000" value="81000" aria-label="GLIB 스테이킹 수량">
+              <div class="staking-value"><span>0 GLIB</span><span>100,000 GLIB</span></div>
+              <div class="payout-grid">
+                <div class="payout"><span>MONTHLY GLID REWARD</span><strong id="monthlyPayout">675 GLID</strong></div>
+                <div class="payout"><span>YEARLY GLID REWARD</span><strong id="yearlyPayout">8,100 GLID</strong></div>
+              </div>
+            </div>
+            <div class="cta-row">
+              <button class="btn primary" id="confirmStaking">Confirm Staking</button>
+              <button class="btn" id="connectWallet">지갑 연결</button>
+            </div>
+          </div>
+
+          <div class="cash-panel" id="cashPanel">
+            <div class="price-line"><strong id="cashPrice">월 99,000원</strong><span id="cashTier">Premium 정보 접근권</span></div>
+            <div class="benefit-list">
+              <div class="benefit"><strong>카드·계좌 결제</strong>지갑 없이 동일 등급의 정보와 상담 이용</div>
+              <div class="benefit"><strong>Web2 이용권</strong>스테이킹 보상과 DAO 권한은 포함되지 않음</div>
+            </div>
+            <div class="cta-row">
+              <button class="btn primary" id="startPrime">현금 구독 시작</button>
+              <button class="btn" id="sampleReport">샘플 리포트</button>
+            </div>
           </div>
         </div>
 
@@ -1803,12 +1927,104 @@ ${asset.summary}
       showToast(saved ? "관심자산에서 삭제했습니다." : "관심자산에 저장했습니다.");
     });
 
-    function openPrime() {
+    const tierConfig = {
+      free: {
+        label: "Free · 공개 정보",
+        benefit: "자산 개요, 일반 관광 통계, 위치와 공개 미디어·뉴스",
+        min: 0, apr: 0, cash: "무료"
+      },
+      basic: {
+        label: "Basic · AI 리스크 정보",
+        benefit: "실시간 AI Risk Radar, 시장심리, 변동성·규제·유동성 분석과 댓글 권한",
+        min: 10000, apr: 5, cash: "월 29,000원"
+      },
+      standard: {
+        label: "Standard · 프라이빗 데이터룸",
+        benefit: "재무제표, 실사 의견서, 운영 리스크와 현금흐름 자료 열람",
+        min: 30000, apr: 7, cash: "월 59,000원"
+      },
+      premium: {
+        label: "Premium · 우선 실행 권한",
+        benefit: "전체 Trust Report, 우선 임장 예약, 전문가 직통 상담과 DAO 거버넌스 권한",
+        min: 70000, apr: 10, cash: "월 99,000원"
+      },
+      business: {
+        label: "Business · 기관·법인 전용",
+        benefit: "GLI Equity Desk, C-Level 연결, 대형 RWA 협상과 전용 투자 구조 설계",
+        min: 100000, apr: 12, cash: "별도 협의"
+      }
+    };
+    let activeTier = "premium";
+
+    function tierFromAmount(amount) {
+      if (amount >= 100000) return "business";
+      if (amount >= 70000) return "premium";
+      if (amount >= 30000) return "standard";
+      if (amount >= 10000) return "basic";
+      return "free";
+    }
+
+    function updateMembership(tier, amount) {
+      activeTier = tier;
+      const config = tierConfig[tier];
+      document.querySelectorAll(".tier-tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.tier === tier);
+      });
+      document.getElementById("tierName").textContent = config.label;
+      document.getElementById("tierBenefit").textContent = config.benefit;
+      document.getElementById("cashPrice").textContent = config.cash;
+      document.getElementById("cashTier").textContent = `${config.label} 정보 접근권`;
+      if (typeof amount === "number") {
+        document.getElementById("stakeRange").value = amount;
+        document.getElementById("stakeAmount").textContent = `${amount.toLocaleString()} GLIB`;
+        const yearly = Math.round(amount * config.apr / 100);
+        document.getElementById("monthlyPayout").textContent = `${Math.round(yearly / 12).toLocaleString()} GLID`;
+        document.getElementById("yearlyPayout").textContent = `${yearly.toLocaleString()} GLID`;
+      }
+    }
+
+    document.querySelectorAll(".tier-tab").forEach(tab => {
+      tab.addEventListener("click", () => updateMembership(tab.dataset.tier, tierConfig[tab.dataset.tier].min));
+    });
+    document.getElementById("stakeRange").addEventListener("input", event => {
+      const amount = Number(event.target.value);
+      updateMembership(tierFromAmount(amount), amount);
+    });
+    document.getElementById("stakingMode").addEventListener("click", () => {
+      document.getElementById("stakingMode").classList.add("active");
+      document.getElementById("cashMode").classList.remove("active");
+      document.getElementById("stakingPanel").classList.remove("hidden");
+      document.getElementById("cashPanel").classList.remove("open");
+    });
+    document.getElementById("cashMode").addEventListener("click", () => {
+      document.getElementById("cashMode").classList.add("active");
+      document.getElementById("stakingMode").classList.remove("active");
+      document.getElementById("stakingPanel").classList.add("hidden");
+      document.getElementById("cashPanel").classList.add("open");
+    });
+    document.getElementById("connectWallet").addEventListener("click", event => {
+      event.currentTarget.textContent = "7xGL...42F 연결됨";
+      showToast("GLIB 지갑이 연결되었습니다.");
+    });
+    document.getElementById("confirmStaking").addEventListener("click", () => {
+      const amount = Number(document.getElementById("stakeRange").value);
+      const config = tierConfig[activeTier];
+      const yearly = Math.round(amount * config.apr / 100);
       openDemoModal(
-        "GLI Prime 시작하기",
-        "AI 정밀검증과 현지 전문가 네트워크를 포함한 투자 탐색 멤버십입니다.",
-        [["월 이용료", "29,000원"], ["정밀 리포트", "월 1건 포함"], ["전문가 상담", "월 1회 포함"], ["결제 예정일", "오늘"]],
-        "GLI Prime 멤버십이 시작되었습니다."
+        `${config.label} 스테이킹 구독`,
+        "GLIB를 예치해 멤버십 등급을 활성화하고, 스테이킹 보상은 GLID로 지급받습니다.",
+        [["예치 자산", `${amount.toLocaleString()} GLIB`], ["멤버십 등급", config.label], ["예상 APR", `${config.apr}%`], ["연간 예상 보상", `${yearly.toLocaleString()} GLID`], ["권한 유지", "GLIB 예치 기간 동안"]],
+        `${config.label} 구독과 GLIB 스테이킹이 활성화되었습니다.`
+      );
+    });
+
+    function openPrime() {
+      const config = tierConfig[activeTier];
+      openDemoModal(
+        `${config.label} 현금 구독`,
+        "지갑 없이 동일 등급의 정보 접근권을 이용합니다. GLID 보상과 DAO 권한은 포함되지 않습니다.",
+        [["이용 등급", config.label], ["월 이용료", config.cash], ["결제 수단", "카드 · 계좌이체"], ["스테이킹 보상", "미포함"], ["DAO 권한", "미포함"]],
+        `${config.label} 현금 구독이 시작되었습니다.`
       );
     }
 
