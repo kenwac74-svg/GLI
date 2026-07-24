@@ -405,12 +405,14 @@
       border-radius: 999px;
       font-size: 12px;
       font-weight: 700;
-      background: rgba(255,255,255,.94);
-      color: var(--ink);
+      background: rgba(7, 17, 31, .9);
+      border: 1px solid rgba(255, 255, 255, .22);
+      color: #f7f9fc;
+      backdrop-filter: blur(6px);
     }
-    .badge.good { color: var(--green); }
-    .badge.warn { color: #b7791f; }
-    .badge.risk { color: var(--rose); }
+    .badge.good { color: #61e2c7; border-color: rgba(97, 226, 199, .55); }
+    .badge.warn { color: #ffd36f; border-color: rgba(255, 211, 111, .55); }
+    .badge.risk { color: #ff9aaa; border-color: rgba(255, 154, 170, .55); }
 
     .asset-body { padding: 14px; }
     .asset-title { font-weight: 800; line-height: 1.35; min-height: 44px; }
@@ -1015,7 +1017,7 @@
       </div>
       <div class="nav-links">
         <a href="#assets">자산목록</a>
-        <a href="gli-membership.html">구독</a>
+        <a href="gli-membership.html">멤버십</a>
         <a href="gli-my.html">관심자산</a>
         <a href="gli-my.html#reports">내 리포트</a>
       </div>
@@ -1132,85 +1134,6 @@
       </div>
     </section>
 
-    <section class="member-band" id="membership">
-      <div class="section member-grid">
-        <div class="premium-panel">
-          <span class="premium-kicker">GLI MEMBERSHIP</span>
-          <h3>전역 탐색 또는 자산별 실행을 구독하세요</h3>
-          <p>현금 구독은 플랫폼 전체 매물에 적용되고, GLIB 스테이킹은 GLI가 직접 조사한 선택 자산 하나에 적용됩니다.</p>
-          <div class="plan-switch">
-            <button class="active" id="stakingMode">선택 자산 GLIB 스테이킹</button>
-            <button id="cashMode">플랫폼 전체 현금 구독</button>
-          </div>
-
-          <div class="subscription-asset" id="subscriptionAsset">
-            <div><strong id="subscriptionAssetName">선택 자산</strong><span id="subscriptionAssetMeta">GLI 직접 조사 상품</span></div>
-            <span class="direct-mark" id="directMark">GLI DIRECT</span>
-          </div>
-
-          <div class="tier-tabs" id="tierTabs">
-            <button class="tier-tab" data-tier="free">FREE<span>LV.1</span></button>
-            <button class="tier-tab" data-tier="basic">BASIC<span>LV.2</span></button>
-            <button class="tier-tab" data-tier="standard">STANDARD<span>LV.3</span></button>
-            <button class="tier-tab active" data-tier="premium">PREMIUM<span>LV.4</span></button>
-            <button class="tier-tab" data-tier="business">BUSINESS<span>LV.5</span></button>
-          </div>
-
-          <div class="tier-detail">
-            <strong id="tierName">Premium · 최상위 개인 투자자</strong>
-            <p id="tierBenefit">전체 Trust Report, 우선 임장 예약, 전문가 직통 상담과 DAO 거버넌스 권한</p>
-          </div>
-
-          <div class="staking-panel" id="stakingPanel">
-            <div class="staking-sim">
-              <div class="staking-head"><strong>GLIB STAKING SIMULATOR</strong><span>VARIABLE APR</span></div>
-              <div class="staking-value"><span>스테이킹 수량</span><strong id="stakeAmount">81,000 GLIB</strong></div>
-              <input type="range" id="stakeRange" min="0" max="100000" step="1000" value="81000" aria-label="GLIB 스테이킹 수량">
-              <div class="staking-value"><span>0 GLIB</span><span>100,000 GLIB</span></div>
-              <div class="payout-grid">
-                <div class="payout"><span>MONTHLY GLID REWARD</span><strong id="monthlyPayout">675 GLID</strong></div>
-                <div class="payout"><span>YEARLY GLID REWARD</span><strong id="yearlyPayout">8,100 GLID</strong></div>
-              </div>
-            </div>
-            <div class="cta-row">
-              <button class="btn primary" id="confirmStaking">Confirm Staking</button>
-              <button class="btn" id="connectWallet">지갑 연결</button>
-            </div>
-          </div>
-
-          <div class="cash-panel" id="cashPanel">
-            <div class="price-line"><strong id="cashPrice">월 99,000원</strong><span id="cashTier">플랫폼 전체 Premium 접근권</span></div>
-            <div class="benefit-list">
-              <div class="benefit"><strong>전역 정보 접근</strong>국가와 자산 수에 관계없이 크롤링·AI 추천 결과에 적용</div>
-              <div class="benefit"><strong>Web2 이용권</strong>카드·계좌 결제, GLID 보상과 자산별 계약 용역은 미포함</div>
-            </div>
-            <div class="cta-row">
-              <button class="btn primary" id="startPrime">현금 구독 시작</button>
-              <button class="btn" id="sampleReport">샘플 리포트</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="account-panel" id="myGli">
-          <span class="premium-kicker">MY GLI</span>
-          <h3>나의 투자 탐색</h3>
-          <div class="account-stats">
-            <div class="account-stat"><strong id="savedCount">3</strong><span>관심자산</span></div>
-            <div class="account-stat"><strong>2</strong><span>보유 리포트</span></div>
-            <div class="account-stat"><strong>1</strong><span>예정 상담</span></div>
-          </div>
-          <div class="activity-list">
-            <div class="activity"><strong>프놈펜 1BR 투자 알림</strong><span>새 매물 4건</span></div>
-            <div class="activity"><strong>BKK1 Trust Report</strong><span>검증 완료</span></div>
-            <div class="activity"><strong>현지 영상 임장</strong><span>7월 29일 14:00</span></div>
-          </div>
-          <div class="cta-row">
-            <button class="btn" id="openPortfolio">포트폴리오 열기</button>
-            <button class="btn" id="manageAlerts">알림 관리</button>
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <div class="toast" id="toast">복사되었습니다.</div>
@@ -1693,31 +1616,6 @@
       return Boolean(asset && gliDirectAssetIds.has(asset.id));
     }
 
-    function syncSubscriptionAsset(asset) {
-      const box = document.getElementById("subscriptionAsset");
-      const confirmButton = document.getElementById("confirmStaking");
-      if (!asset) {
-        box.className = "subscription-asset unavailable";
-        document.getElementById("subscriptionAssetName").textContent = "자산을 먼저 선택하세요";
-        document.getElementById("subscriptionAssetMeta").textContent = "상품별 GLIB 스테이킹 대상 없음";
-        document.getElementById("directMark").textContent = "선택 필요";
-        confirmButton.disabled = true;
-        return;
-      }
-      document.getElementById("subscriptionAssetName").textContent = asset.title;
-      if (isGliDirect(asset)) {
-        box.className = "subscription-asset";
-        document.getElementById("subscriptionAssetMeta").textContent = `${asset.city} · 직접 조사 및 전문가 검토 상품`;
-        document.getElementById("directMark").textContent = "GLI DIRECT";
-        confirmButton.disabled = false;
-      } else {
-        box.className = "subscription-asset unavailable";
-        document.getElementById("subscriptionAssetMeta").textContent = "크롤링 탐색 후보 · 상품별 스테이킹 미지원";
-        document.getElementById("directMark").textContent = "AI DISCOVERY";
-        confirmButton.disabled = true;
-      }
-    }
-
     function renderAssets() {
       const rows = filteredAssets();
       if (rows.length && (!selected || !rows.some(asset => asset.id === selected.id))) selected = rows[0];
@@ -1760,7 +1658,6 @@
 
     function renderDetail() {
       if (!selected) {
-        syncSubscriptionAsset(null);
         document.getElementById("detailPhoto").style.backgroundImage = "";
         document.getElementById("scoreRing").style.setProperty("--score", 0);
         document.getElementById("scoreText").textContent = "0";
@@ -1782,7 +1679,6 @@
         return;
       }
       document.getElementById("detailPhoto").style.backgroundImage = `url('${selected.image}')`;
-      syncSubscriptionAsset(selected);
       document.getElementById("scoreRing").style.setProperty("--score", selected.score);
       document.getElementById("scoreText").textContent = selected.score;
       document.getElementById("detailTitle").textContent = selected.title;
@@ -2013,14 +1909,16 @@ ${asset.summary}
     const modalSummary = document.getElementById("modalSummary");
     const modalOptions = document.getElementById("modalOptions");
     let demoCompletion = "요청이 접수되었습니다.";
+    let demoAction = null;
 
-    function openDemoModal(title, summary, options, completion) {
+    function openDemoModal(title, summary, options, completion, action = null) {
       modalTitle.textContent = title;
       modalSummary.textContent = summary;
       modalOptions.innerHTML = options.map(option =>
         `<div class="option-row"><strong>${option[0]}</strong><span>${option[1]}</span></div>`
       ).join("");
       demoCompletion = completion;
+      demoAction = action;
       demoModal.classList.add("open");
     }
 
@@ -2052,138 +1950,33 @@ ${asset.summary}
       const saved = event.currentTarget.dataset.saved === "true";
       event.currentTarget.dataset.saved = String(!saved);
       event.currentTarget.textContent = saved ? "관심자산 저장" : "저장됨";
-      document.getElementById("savedCount").textContent = saved ? "3" : "4";
       showToast(saved ? "관심자산에서 삭제했습니다." : "관심자산에 저장했습니다.");
     });
-
-    const tierConfig = {
-      free: {
-        label: "Free · 공개 정보",
-        benefit: "자산 개요, 일반 관광 통계, 위치와 공개 미디어·뉴스",
-        min: 0, apr: 0, cash: "무료"
-      },
-      basic: {
-        label: "Basic · AI 리스크 정보",
-        benefit: "실시간 AI Risk Radar, 시장심리, 변동성·규제·유동성 분석과 댓글 권한",
-        min: 10000, apr: 5, cash: "월 29,000원"
-      },
-      standard: {
-        label: "Standard · 프라이빗 데이터룸",
-        benefit: "재무제표, 실사 의견서, 운영 리스크와 현금흐름 자료 열람",
-        min: 30000, apr: 7, cash: "월 59,000원"
-      },
-      premium: {
-        label: "Premium · 우선 실행 권한",
-        benefit: "전체 Trust Report, 우선 임장 예약, 전문가 직통 상담과 DAO 거버넌스 권한",
-        min: 70000, apr: 10, cash: "월 99,000원"
-      },
-      business: {
-        label: "Business · 기관·법인 전용",
-        benefit: "GLI Equity Desk, C-Level 연결, 대형 RWA 협상과 전용 투자 구조 설계",
-        min: 100000, apr: 12, cash: "별도 협의"
-      }
-    };
-    let activeTier = "premium";
-
-    function tierFromAmount(amount) {
-      if (amount >= 100000) return "business";
-      if (amount >= 70000) return "premium";
-      if (amount >= 30000) return "standard";
-      if (amount >= 10000) return "basic";
-      return "free";
-    }
-
-    function updateMembership(tier, amount) {
-      activeTier = tier;
-      const config = tierConfig[tier];
-      document.querySelectorAll(".tier-tab").forEach(tab => {
-        tab.classList.toggle("active", tab.dataset.tier === tier);
-      });
-      document.getElementById("tierName").textContent = config.label;
-      document.getElementById("tierBenefit").textContent = config.benefit;
-      document.getElementById("cashPrice").textContent = config.cash;
-      document.getElementById("cashTier").textContent = `${config.label} 정보 접근권`;
-      if (typeof amount === "number") {
-        document.getElementById("stakeRange").value = amount;
-        document.getElementById("stakeAmount").textContent = `${amount.toLocaleString()} GLIB`;
-        const yearly = Math.round(amount * config.apr / 100);
-        document.getElementById("monthlyPayout").textContent = `${Math.round(yearly / 12).toLocaleString()} GLID`;
-        document.getElementById("yearlyPayout").textContent = `${yearly.toLocaleString()} GLID`;
-      }
-    }
-
-    document.querySelectorAll(".tier-tab").forEach(tab => {
-      tab.addEventListener("click", () => updateMembership(tab.dataset.tier, tierConfig[tab.dataset.tier].min));
-    });
-    document.getElementById("stakeRange").addEventListener("input", event => {
-      const amount = Number(event.target.value);
-      updateMembership(tierFromAmount(amount), amount);
-    });
-    document.getElementById("stakingMode").addEventListener("click", () => {
-      document.getElementById("stakingMode").classList.add("active");
-      document.getElementById("cashMode").classList.remove("active");
-      document.getElementById("stakingPanel").classList.remove("hidden");
-      document.getElementById("cashPanel").classList.remove("open");
-    });
-    document.getElementById("cashMode").addEventListener("click", () => {
-      document.getElementById("cashMode").classList.add("active");
-      document.getElementById("stakingMode").classList.remove("active");
-      document.getElementById("stakingPanel").classList.add("hidden");
-      document.getElementById("cashPanel").classList.add("open");
-    });
-    document.getElementById("connectWallet").addEventListener("click", event => {
-      event.currentTarget.textContent = "7xGL...42F 연결됨";
-      showToast("GLIB 지갑이 연결되었습니다.");
-    });
-    document.getElementById("confirmStaking").addEventListener("click", () => {
-      const amount = Number(document.getElementById("stakeRange").value);
-      const config = tierConfig[activeTier];
-      const yearly = Math.round(amount * config.apr / 100);
-      openDemoModal(
-        `${config.label} 스테이킹 구독`,
-        "GLIB를 예치해 멤버십 등급을 활성화하고, 스테이킹 보상은 GLID로 지급받습니다.",
-        [["예치 자산", `${amount.toLocaleString()} GLIB`], ["멤버십 등급", config.label], ["예상 APR", `${config.apr}%`], ["연간 예상 보상", `${yearly.toLocaleString()} GLID`], ["권한 유지", "GLIB 예치 기간 동안"]],
-        `${config.label} 구독과 GLIB 스테이킹이 활성화되었습니다.`
-      );
-    });
-
-    function openPrime() {
-      const config = tierConfig[activeTier];
-      openDemoModal(
-        `${config.label} 현금 구독`,
-        "지갑 없이 동일 등급의 정보 접근권을 이용합니다. GLID 보상과 DAO 권한은 포함되지 않습니다.",
-        [["이용 등급", config.label], ["월 이용료", config.cash], ["결제 수단", "카드 · 계좌이체"], ["스테이킹 보상", "미포함"], ["DAO 권한", "미포함"]],
-        `${config.label} 현금 구독이 시작되었습니다.`
-      );
-    }
-
-    document.getElementById("startPrime").addEventListener("click", openPrime);
     document.getElementById("openMembership").addEventListener("click", () => {
-      document.getElementById("membership").scrollIntoView({ behavior: "smooth", block: "start" });
-    });
-    document.getElementById("sampleReport").addEventListener("click", () => {
-      openDemoModal(
-        "Trust Report 미리보기",
-        "가격 비교, 임대 시나리오, 권리관계와 현지 확인 항목을 한 문서에서 확인합니다.",
-        [["가격 적정성", "인근 12개 비교"], ["예상 순수익", "운영비 반영"], ["법무 확인", "6개 항목"], ["현지 검증", "사진·영상 포함"]],
-        "샘플 리포트가 내 리포트에 추가되었습니다."
-      );
+      window.location.href = "gli-membership.html";
     });
     document.getElementById("loginDemo").addEventListener("click", () => {
       openDemoModal(
         "GLI 로그인",
-        "로그인하면 상담 기록, 관심자산과 구매한 리포트를 모든 기기에서 이어볼 수 있습니다.",
-        [["간편 로그인", "Google · Kakao · Naver"], ["회원 혜택", "관심지역 맞춤 알림"]],
-        "GLI 데모 계정으로 로그인되었습니다."
+        "로그인 후 플랫폼 전체 현금 멤버십 가입과 상담 기록, 관심자산, 구매한 리포트를 관리할 수 있습니다.",
+        [["간편 로그인", "Google · Kakao · Naver"], ["로그인 후", "전역 현금 멤버십과 MY GLI 이용"]],
+        "GLI 데모 계정으로 로그인되었습니다.",
+        () => {
+          sessionStorage.setItem("gliDemoLoggedIn", "true");
+          window.location.href = "gli-membership.html";
+        }
       );
     });
-    document.getElementById("openPortfolio").addEventListener("click", () => showToast("내 포트폴리오를 불러왔습니다."));
-    document.getElementById("manageAlerts").addEventListener("click", () => showToast("관심지역 알림이 켜져 있습니다."));
     document.getElementById("closeModal").addEventListener("click", closeDemoModal);
     document.getElementById("cancelDemo").addEventListener("click", closeDemoModal);
     document.getElementById("confirmDemo").addEventListener("click", () => {
       closeDemoModal();
       showToast(demoCompletion);
+      if (demoAction) {
+        const action = demoAction;
+        demoAction = null;
+        setTimeout(action, 250);
+      }
     });
     demoModal.addEventListener("click", event => {
       if (event.target === demoModal) closeDemoModal();

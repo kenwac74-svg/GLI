@@ -12,7 +12,7 @@
   </style>
 </head>
 <body>
-<header><nav class="nav"><a href="gli-ai-prototype.html"><img class="logo" src="https://stg.glibiz.com/img/logo/GLI_wh.svg" alt="GLI"></a><div class="links"><a href="gli-ai-prototype.html#assets">투자 가능 자산목록</a><a href="#">포인트몰</a><a href="#">안내센터</a><a href="gli-membership.html">기능센터</a></div><button class="wallet">Connect Wallet</button><button class="login">로그인</button></nav></header>
+<header><nav class="nav"><a href="gli-ai-prototype.html"><img class="logo" src="https://stg.glibiz.com/img/logo/GLI_wh.svg" alt="GLI"></a><div class="links"><a href="gli-ai-prototype.html#assets">투자 가능 자산목록</a><a href="#">포인트몰</a><a href="#">안내센터</a><a href="gli-membership.html">멤버십</a></div><button class="wallet">Connect Wallet</button><button class="login">로그인</button></nav></header>
 <main><div class="crumb"><a href="gli-ai-prototype.html">자산 탐색</a> / GLI Direct Research</div>
   <div class="layout">
     <section><div class="panel"><div class="photo"></div><div class="body"><h1 class="title" id="assetTitle">Urban Village high-floor 1BR condo</h1><div class="location">Phnom Penh, Cambodia</div></div></div><div class="panel body" style="margin-top:16px"><strong>ASSET OVERVIEW</strong><p class="overview">GLI가 직접 조사 대상으로 선정한 자산입니다. 공개 정보와 AI 분석을 시작으로 현지 전문가의 권리관계 확인, 임대 시나리오와 계약 추진 용역까지 등급별로 연결합니다.</p></div></section>
@@ -20,10 +20,24 @@
       <div class="tiers"><div class="tier">FREE<br>LV.1</div><div class="tier">BASIC<br>LV.2</div><div class="tier">STANDARD<br>LV.3</div><div class="tier active">PREMIUM<br>LV.4</div><div class="tier">BUSINESS<br>LV.5</div></div>
       <div class="content"><div class="proof"><strong>Human Verified Trust Report</strong><span>자격 검증자 서명 완료 · IPFS 원본 보관 · 온체인 기록</span></div><div class="chain"><div class="node"><b>AI 분석</b>완료</div><div class="node"><b>전문가 서명</b>완료</div><div class="node"><b>IPFS CID</b>발급</div><div class="node"><b>온체인</b>기록</div></div>
         <div class="access"><strong>Premium에서 열리는 정보</strong><span>전체 데이터룸, 임장 신청, 법무·세무 상담, 계약 조건 검토 및 현지 실행 지원</span></div>
-        <div class="actions" style="margin-top:18px"><a class="cta" id="subscribe" href="gli-membership.html">이 자산 GLIB 스테이킹</a><a class="cta secondary" href="gli-my.html">관심자산 저장</a></div>
+        <div class="actions" style="margin-top:18px"><a class="cta" id="subscribe" href="gli-staking.html">이 자산 GLIB 스테이킹</a><a class="cta secondary" href="gli-my.html">관심자산 저장</a></div>
       </div>
     </section>
   </div>
 </main>
-<script>const p=new URLSearchParams(location.search),id=p.get("id")||"GLI-KH-105";const names={"GLI-KH-004":"High-floor 2BR apartment with Mekong River view","GLI-KH-005":"15th-floor 1BR condo in Boeng Trabek","GLI-KH-105":"Urban Village high-floor 1BR condo","MY-009":"KLCC high-rise condo with long-term tenant profile"};assetTitle.textContent=names[id]||"GLI Direct Research Asset";subscribe.href="gli-membership.html?id="+encodeURIComponent(id)+"&asset="+encodeURIComponent(assetTitle.textContent);</script>
+<script>
+const p=new URLSearchParams(location.search),id=p.get("id")||"GLI-KH-105";
+const names={"GLI-KH-004":"High-floor 2BR apartment with Mekong River view","GLI-KH-005":"15th-floor 1BR condo in Boeng Trabek","GLI-KH-105":"Urban Village high-floor 1BR condo","MY-009":"KLCC high-rise condo with long-term tenant profile"};
+const directIds=new Set(Object.keys(names));
+assetTitle.textContent=names[id]||"AI Discovery Asset";
+if(directIds.has(id)){
+  subscribe.href="gli-staking.html?id="+encodeURIComponent(id)+"&asset="+encodeURIComponent(assetTitle.textContent);
+}else{
+  subscribe.removeAttribute("href");
+  subscribe.textContent="GLI 직접조사 자산만 스테이킹 가능";
+  subscribe.style.background="#29364a";
+  subscribe.style.color="#91a1b9";
+  subscribe.style.cursor="not-allowed";
+}
+</script>
 </body></html>
