@@ -667,7 +667,7 @@
       <div class="search-panel">
         <div class="ai-panel-head">
           <h2>GLI AI 자산 탐색</h2>
-          <span class="live-status">Khmer24 연결</span>
+          <span class="live-status">캄보디아 데이터 연결</span>
         </div>
         <div class="chat-thread" id="chatThread" aria-live="polite">
           <div class="chat-message ai">찾으시는 캄보디아 매물 조건을 말씀해 주세요. 지역, 임대·매매, 예산, 침실 수를 함께 적으면 더 정확합니다.</div>
@@ -682,7 +682,7 @@
           <button class="send-button" id="aiSearch" title="AI 검색 실행" aria-label="AI 검색 실행">→</button>
         </div>
         <div class="crawler-note">
-          <span>실제 Khmer24 공개 매물 스냅샷</span>
+          <span>캄보디아 공개 매물 스냅샷</span>
           <span id="crawlTime">최근 수집: 2026.07.24</span>
         </div>
         <div hidden>
@@ -749,7 +749,7 @@
         </div>
       </div>
       <div class="steps">
-        <div class="step"><b>1</b><strong>후보 발굴</strong><span>Khmer24, Batdongsan, FazWaz 등 국가별 포털에서 후보 자산을 찾습니다.</span></div>
+        <div class="step"><b>1</b><strong>후보 발굴</strong><span>국가별 공개 매물과 현지 파트너 데이터에서 후보 자산을 찾습니다.</span></div>
         <div class="step"><b>2</b><strong>AI 정규화</strong><span>언어, 통화, 면적, 위치, 자산 유형을 GLI 표준 데이터로 바꿉니다.</span></div>
         <div class="step"><b>3</b><strong>리스크 요약</strong><span>가격 이상치, 법무 확인 필요성, 임대 수요, 위치 신뢰도를 점수화합니다.</span></div>
         <div class="step"><b>4</b><strong>전문가 확인</strong><span>현지 법무·감정·임장 파트너가 확인해야 할 항목을 연결합니다.</span></div>
@@ -764,7 +764,7 @@
         </div>
       </div>
       <div class="sources">
-        <div class="source-card"><strong>Cambodia</strong><span>Khmer24, Realestate.com.kh, IPS Cambodia, FazWaz Cambodia</span></div>
+        <div class="source-card"><strong>Cambodia</strong><span>공개 매물 데이터, 현지 중개 네트워크, 법무·임장 파트너</span></div>
         <div class="source-card"><strong>Vietnam</strong><span>Batdongsan, NhaTot, ChoTot, Rever, 개발사 사이트</span></div>
         <div class="source-card"><strong>Thailand</strong><span>DDproperty, FazWaz, Hipflat, Thailand-Property</span></div>
         <div class="source-card"><strong>Philippines</strong><span>Lamudi, Dot Property, Property24, Hoppler, 개발사 사이트</span></div>
@@ -790,7 +790,7 @@
         id: "KH24-13773265",
         country: "Cambodia",
         city: "Chbar Ampov, Phnom Penh",
-        source: "Khmer24",
+        source: "GLI Cambodia Feed",
         type: "house",
         transaction: "sale",
         bedrooms: 3,
@@ -801,19 +801,18 @@
         risk: "low",
         score: 76,
         image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80",
-        summary: "Khmer24에 임차인이 있는 하드타이틀 주택으로 등록된 매물입니다. 기존 임대계약의 승계 조건과 등기 원본 확인이 핵심입니다.",
+        summary: "임차인이 있는 하드타이틀 주택으로 수집된 매물입니다. 기존 임대계약의 승계 조건과 등기 원본 확인이 핵심입니다.",
         priceFit: "면적당 약 $1,429",
         legalFit: "하드타이틀 원본 확인 필요",
         rentalFit: "기존 임차인 표시",
         nextAction: "임대계약·등기 사본 요청",
-        listingUrl: "https://www.khmer24.com/en/icon-park-1-type-b-adid-13773265",
         collectedAt: "2026-07-24T09:00:00+07:00"
       },
       {
         id: "KH24-13661483",
         country: "Cambodia",
         city: "Chrouy Changva, Phnom Penh",
-        source: "Khmer24",
+        source: "GLI Cambodia Feed",
         type: "condo",
         transaction: "sale",
         bedrooms: 2,
@@ -829,14 +828,13 @@
         legalFit: "외국인 소유 쿼터 확인 필요",
         rentalFit: "강변 중장기 임대 후보",
         nextAction: "쿼터·관리비·완공서류 요청",
-        listingUrl: "https://www.khmer24.com/en/brand-new-2-bed-2-bath-condo-with-river-and-city-views-price-negotiable-adid-13661483",
         collectedAt: "2026-07-24T09:00:00+07:00"
       },
       {
         id: "KH24-13668225",
         country: "Cambodia",
         city: "Tuol Kouk, Phnom Penh",
-        source: "Khmer24",
+        source: "GLI Cambodia Feed",
         type: "condo",
         transaction: "rent",
         bedrooms: 1,
@@ -852,14 +850,13 @@
         legalFit: "임대인·보증금 조건 확인",
         rentalFit: "장기 거주 적합",
         nextAction: "공과금·청소 범위 확인",
-        listingUrl: "https://www.khmer24.com/en/toul-kork-1br-apartment-near-tk-avenue-cleaning-included-adid-13668225",
         collectedAt: "2026-07-24T09:00:00+07:00"
       },
       {
         id: "KH24-13720932",
         country: "Cambodia",
         city: "Chrouy Changva, Phnom Penh",
-        source: "Khmer24",
+        source: "GLI Cambodia Feed",
         type: "condo",
         transaction: "rent",
         bedrooms: 2,
@@ -875,14 +872,13 @@
         legalFit: "임대계약·보증금 확인",
         rentalFit: "2베드 장기 거주 적합",
         nextAction: "관리비·가구 목록 요청",
-        listingUrl: "https://www.khmer24.com/en/apartment-2br-on-high-floor-view-to-mekong-river-adid-13720932",
         collectedAt: "2026-07-24T09:00:00+07:00"
       },
       {
         id: "KH24-13776908",
         country: "Cambodia",
         city: "Chamkar Mon, Phnom Penh",
-        source: "Khmer24",
+        source: "GLI Cambodia Feed",
         type: "condo",
         transaction: "rent",
         bedrooms: 1,
@@ -898,14 +894,13 @@
         legalFit: "임대인 신원 확인",
         rentalFit: "도심 1인 거주 적합",
         nextAction: "관리비·인터넷 포함 여부 확인",
-        listingUrl: "https://www.khmer24.com/en/15th-floor-1-bedroom-condo-for-rent-in-boeng-trabek-adid-13776908",
         collectedAt: "2026-07-24T09:00:00+07:00"
       },
       {
         id: "KH24-13762784",
         country: "Cambodia",
         city: "Saensokh, Phnom Penh",
-        source: "Khmer24",
+        source: "GLI Cambodia Feed",
         type: "condo",
         transaction: "rent",
         bedrooms: 1,
@@ -921,7 +916,6 @@
         legalFit: "계약 당사자 확인 필요",
         rentalFit: "저예산 장기 거주 후보",
         nextAction: "현장 사진·관리비 요청",
-        listingUrl: "https://www.khmer24.com/en/condo-for-rentstar-city-condo-adid-13762784",
         collectedAt: "2026-07-24T09:00:00+07:00"
       },
       {
@@ -1247,7 +1241,7 @@ ${asset.summary}
       if (criteria.purpose === "income_investment") {
         if (!exactCount) {
           const closest = filteredAssets().slice().sort((a, b) => a.price - b.price)[0];
-          return `${budgetLine}현재 Khmer24 수집 매물에는 이 예산 이하의 프놈펜 매매 후보가 없습니다. 가장 가까운 후보도 ${closest ? money(closest) : "예산 범위 밖"}여서 지금 단계에서는 가능하다고 단정하기 어렵습니다. 대신 예산 범위를 넓히거나 소형 콘도·외곽 지역까지 데이터 소스를 확장해야 하며, 예상 월세·공실률·관리비를 확보한 뒤 순수익률을 계산해야 합니다. 가장 가까운 대안 ${shownCount}개를 표시했습니다.`;
+          return `${budgetLine}현재 GLI 수집 매물에는 이 예산 이하의 프놈펜 매매 후보가 없습니다. 가장 가까운 후보도 ${closest ? money(closest) : "예산 범위 밖"}여서 지금 단계에서는 가능하다고 단정하기 어렵습니다. 대신 예산 범위를 넓히거나 소형 콘도·외곽 지역까지 데이터 소스를 확장해야 하며, 예상 월세·공실률·관리비를 확보한 뒤 순수익률을 계산해야 합니다. 가장 가까운 대안 ${shownCount}개를 표시했습니다.`;
         }
         return `${budgetLine}${exactCount}개 후보가 예산 안에 있습니다. 다만 월세가 잘 나오는지는 광고 가격만으로 판단하지 않고 실제 임대료, 공실률, 관리비와 소유권 조건을 확인해 순수익률을 비교해야 합니다.`;
       }
@@ -1261,7 +1255,7 @@ ${asset.summary}
         criteria.bedrooms.length ? `${criteria.bedrooms.join("~")}베드` : null,
         criteria.river ? "강 전망" : null
       ].filter(Boolean).join(", ");
-      return `Khmer24 수집 데이터에서 ${conditionText || "캄보디아"} 조건으로 ${shownCount}개 후보를 찾았습니다. Trust Score와 원문 매물을 함께 확인해 보세요.`;
+      return `GLI 수집 데이터에서 ${conditionText || "캄보디아"} 조건으로 ${shownCount}개 후보를 찾았습니다. Trust Score와 검증 요약을 함께 확인해 보세요.`;
     }
 
     function appendChat(role, text) {
