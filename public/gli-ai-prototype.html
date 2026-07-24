@@ -932,7 +932,8 @@
       .asset-layout { grid-template-columns: 1fr; }
       .detail { position: static; }
       .steps, .sources { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .member-grid { grid-template-columns: 1fr; }
+      .member-grid { grid-template-columns: minmax(0, 1fr); }
+      .member-grid > * { min-width: 0; }
     }
 
     @media (max-width: 720px) {
@@ -987,7 +988,13 @@
       .benefit-list { grid-template-columns: 1fr; }
       .trust-chain { grid-template-columns: 1fr 1fr; }
       .proof-row { grid-template-columns: 1fr; }
-      .tier-tabs { overflow-x: auto; grid-template-columns: repeat(5, minmax(74px, 1fr)); }
+      .premium-panel, .account-panel { min-width: 0; }
+      .tier-tabs {
+        width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        grid-template-columns: repeat(5, minmax(74px, 1fr));
+      }
       .section-head { align-items: stretch; flex-direction: column; }
       .asset-foot { align-items: flex-start; flex-direction: column; }
       .section { padding: 28px 14px; }
