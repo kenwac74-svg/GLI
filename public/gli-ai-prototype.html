@@ -652,6 +652,30 @@
     }
     .tier-detail strong { display: block; }
     .tier-detail p { margin-top: 5px; font-size: 13px; }
+    .subscription-asset {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 14px 0;
+      padding: 12px;
+      border: 1px solid #b8e4da;
+      border-radius: 8px;
+      background: #eefaf7;
+    }
+    .subscription-asset strong { display: block; font-size: 13px; }
+    .subscription-asset span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; }
+    .direct-mark {
+      flex: 0 0 auto;
+      padding: 5px 7px;
+      border-radius: 6px;
+      background: var(--teal);
+      color: #fff !important;
+      font-size: 9px !important;
+      font-weight: 800;
+    }
+    .subscription-asset.unavailable { border-color: #f3d29e; background: #fff8eb; }
+    .subscription-asset.unavailable .direct-mark { background: #a36a0a; }
     .staking-sim {
       margin-top: 14px;
       border: 1px solid #d7c2ef;
@@ -922,9 +946,9 @@
       </div>
       <div class="nav-links">
         <a href="#assets">자산목록</a>
-        <a href="#membership">GLI Prime</a>
-        <a href="#myGli">관심자산</a>
-        <a href="#report">내 리포트</a>
+        <a href="gli-membership.html">구독</a>
+        <a href="gli-my.html">관심자산</a>
+        <a href="gli-my.html#reports">내 리포트</a>
       </div>
       <button class="wallet" id="loginDemo">로그인</button>
     </nav>
@@ -1043,11 +1067,16 @@
       <div class="section member-grid">
         <div class="premium-panel">
           <span class="premium-kicker">GLI MEMBERSHIP</span>
-          <h3>구독 방식과 정보 등급을 선택하세요</h3>
-          <p>현금으로 이용권을 구독하거나 GLIB를 스테이킹해 등급, 보상과 Web3 권한을 함께 받을 수 있습니다.</p>
+          <h3>전역 탐색 또는 자산별 실행을 구독하세요</h3>
+          <p>현금 구독은 플랫폼 전체 매물에 적용되고, GLIB 스테이킹은 GLI가 직접 조사한 선택 자산 하나에 적용됩니다.</p>
           <div class="plan-switch">
-            <button class="active" id="stakingMode">GLIB 스테이킹</button>
-            <button id="cashMode">현금 구독</button>
+            <button class="active" id="stakingMode">선택 자산 GLIB 스테이킹</button>
+            <button id="cashMode">플랫폼 전체 현금 구독</button>
+          </div>
+
+          <div class="subscription-asset" id="subscriptionAsset">
+            <div><strong id="subscriptionAssetName">선택 자산</strong><span id="subscriptionAssetMeta">GLI 직접 조사 상품</span></div>
+            <span class="direct-mark" id="directMark">GLI DIRECT</span>
           </div>
 
           <div class="tier-tabs" id="tierTabs">
@@ -1081,10 +1110,10 @@
           </div>
 
           <div class="cash-panel" id="cashPanel">
-            <div class="price-line"><strong id="cashPrice">월 99,000원</strong><span id="cashTier">Premium 정보 접근권</span></div>
+            <div class="price-line"><strong id="cashPrice">월 99,000원</strong><span id="cashTier">플랫폼 전체 Premium 접근권</span></div>
             <div class="benefit-list">
-              <div class="benefit"><strong>카드·계좌 결제</strong>지갑 없이 동일 등급의 정보와 상담 이용</div>
-              <div class="benefit"><strong>Web2 이용권</strong>스테이킹 보상과 DAO 권한은 포함되지 않음</div>
+              <div class="benefit"><strong>전역 정보 접근</strong>국가와 자산 수에 관계없이 크롤링·AI 추천 결과에 적용</div>
+              <div class="benefit"><strong>Web2 이용권</strong>카드·계좌 결제, GLID 보상과 자산별 계약 용역은 미포함</div>
             </div>
             <div class="cta-row">
               <button class="btn primary" id="startPrime">현금 구독 시작</button>
@@ -1496,7 +1525,8 @@
       }
     ];
 
-    let selected = assets[0];
+    const gliDirectAssetIds = new Set(["GLI-KH-004", "GLI-KH-005", "GLI-KH-105", "MY-009"]);
+    let selected = assets.find(asset => gliDirectAssetIds.has(asset.id)) || assets[0];
     let chatCriteria = null;
     const countryFilter = document.getElementById("country");
     const typeFilter = document.getElementById("type");
@@ -1590,6 +1620,35 @@
       };
     }
 
+    function isGliDirect(asset) {
+      return Boolean(asset && gliDirectAssetIds.has(asset.id));
+    }
+
+    function syncSubscriptionAsset(asset) {
+      const box = document.getElementById("subscriptionAsset");
+      const confirmButton = document.getElementById("confirmStaking");
+      if (!asset) {
+        box.className = "subscription-asset unavailable";
+        document.getElementById("subscriptionAssetName").textContent = "자산을 먼저 선택하세요";
+        document.getElementById("subscriptionAssetMeta").textContent = "상품별 GLIB 스테이킹 대상 없음";
+        document.getElementById("directMark").textContent = "선택 필요";
+        confirmButton.disabled = true;
+        return;
+      }
+      document.getElementById("subscriptionAssetName").textContent = asset.title;
+      if (isGliDirect(asset)) {
+        box.className = "subscription-asset";
+        document.getElementById("subscriptionAssetMeta").textContent = `${asset.city} · 직접 조사 및 전문가 검토 상품`;
+        document.getElementById("directMark").textContent = "GLI DIRECT";
+        confirmButton.disabled = false;
+      } else {
+        box.className = "subscription-asset unavailable";
+        document.getElementById("subscriptionAssetMeta").textContent = "크롤링 탐색 후보 · 상품별 스테이킹 미지원";
+        document.getElementById("directMark").textContent = "AI DISCOVERY";
+        confirmButton.disabled = true;
+      }
+    }
+
     function renderAssets() {
       const rows = filteredAssets();
       if (rows.length && (!selected || !rows.some(asset => asset.id === selected.id))) selected = rows[0];
@@ -1601,6 +1660,7 @@
               <span class="badge">${asset.city}, ${asset.country}</span>
               <span class="badge ${badgeClass(asset)}">Trust ${asset.score}</span>
               <span class="badge">${verificationFor(asset).card}</span>
+              ${isGliDirect(asset) ? `<span class="badge good">GLI DIRECT</span>` : ""}
             </div>
           </div>
           <div class="asset-body">
@@ -1612,9 +1672,7 @@
                 <div class="price">${money(asset)}</div>
                 <div class="source">${asset.source}${asset.collectedAt ? " · 수집 스냅샷" : ""}</div>
               </div>
-              ${asset.listingUrl
-                ? `<a class="btn source-link" href="${asset.listingUrl}" target="_blank" rel="noreferrer">원문 보기</a>`
-                : `<button class="btn">요약 보기</button>`}
+              <a class="btn source-link" href="gli-asset.html?id=${encodeURIComponent(asset.id)}">자산 상세</a>
             </div>
           </div>
         </article>
@@ -1633,6 +1691,7 @@
 
     function renderDetail() {
       if (!selected) {
+        syncSubscriptionAsset(null);
         document.getElementById("detailPhoto").style.backgroundImage = "";
         document.getElementById("scoreRing").style.setProperty("--score", 0);
         document.getElementById("scoreText").textContent = "0";
@@ -1654,6 +1713,7 @@
         return;
       }
       document.getElementById("detailPhoto").style.backgroundImage = `url('${selected.image}')`;
+      syncSubscriptionAsset(selected);
       document.getElementById("scoreRing").style.setProperty("--score", selected.score);
       document.getElementById("scoreText").textContent = selected.score;
       document.getElementById("detailTitle").textContent = selected.title;
