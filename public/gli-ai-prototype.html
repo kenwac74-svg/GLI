@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GLI | AI Verified Assets</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #15191f;
+      --muted: #667085;
+      --line: #d9e0e8;
+      --paper: #ffffff;
+      --soft: #f5f7f9;
+      --deep: #0f2437;
+      --teal: #0f9d8f;
+      --gold: #c8942f;
+      --rose: #c2413b;
+      --green: #178557;
+      --shadow: 0 18px 42px rgba(17, 38, 63, .14);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, Pretendard, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--soft);
+      letter-spacing: 0;
+    }
+
+    button, select { font: inherit; }
+    button { cursor: pointer; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, .94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: max-content;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 850;
+      background: linear-gradient(140deg, var(--deep), var(--teal) 58%, var(--gold));
+    }
+
+    .brand strong { display: block; font-size: 18px; }
+    .brand span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #344054;
+      font-size: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .nav-links a { color: inherit; text-decoration: none; }
+
+    .wallet {
+      border: 1px solid var(--deep);
+      background: var(--deep);
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      min-height: 40px;
+      white-space: nowrap;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 660px;
+      color: #fff;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, rgba(11, 30, 47, .96), rgba(11, 30, 47, .72) 58%, rgba(11, 30, 47, .34)),
+        url("https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1800&q=80") center/cover;
+    }
+
+    .hero-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 50px 22px 42px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-copy-block { max-width: 760px; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 720px;
+      font-size: 54px;
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      margin: 18px 0 0;
+      max-width: 620px;
+      color: rgba(255,255,255,.84);
+      font-size: 17px;
+      line-height: 1.68;
+    }
+
+    .search-panel {
+      width: min(940px, 100%);
+      margin-top: 30px;
+      background: rgba(255, 255, 255, .95);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,.55);
+      backdrop-filter: blur(14px);
+    }
+
+    .search-panel h2 { margin: 0 0 13px; font-size: 18px; }
+    .search-grid { display: grid; gap: 10px; }
+    .field { display: grid; gap: 6px; }
+    .field label { color: var(--muted); font-size: 12px; }
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 9px 11px;
+      background: #fff;
+    }
+
+    .cta-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .btn {
+      min-height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn.primary { background: var(--teal); border-color: var(--teal); color: #fff; }
+    .btn.gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+
+    .ai-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .ai-panel-head h2 { margin: 0; }
+
+    .live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .live-status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(23, 133, 87, .12);
+    }
+
+    .chat-thread {
+      display: grid;
+      gap: 9px;
+      max-height: 210px;
+      overflow-y: auto;
+      padding-right: 3px;
+      scrollbar-gutter: stable;
+    }
+
+    .chat-message {
+      max-width: 92%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .chat-message.ai {
+      justify-self: start;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: #344054;
+    }
+
+    .chat-message.user {
+      justify-self: end;
+      background: var(--deep);
+      color: #fff;
+    }
+
+    .prompt-chips {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      padding: 11px 0 8px;
+    }
+
+    .prompt-chip {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #475467;
+      min-height: 36px;
+      padding: 8px 11px;
+      font-size: 12px;
+    }
+
+    .chat-compose {
+      display: grid;
+      grid-template-columns: 1fr 52px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .chat-compose textarea {
+      min-height: 58px;
+      max-height: 140px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 11px;
+      font: inherit;
+      line-height: 1.45;
+    }
+
+    .send-button {
+      width: 52px;
+      min-height: 52px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 19px;
+    }
+
+    .crawler-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .match-reason {
+      margin: 10px 0 0;
+      padding: 9px 10px;
+      border-left: 3px solid var(--teal);
+      background: #ecfdf9;
+      color: #17685f;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .source-link {
+      color: var(--teal);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .section {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 34px 22px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section h2 { margin: 0; font-size: 28px; }
+    .section p { margin: 6px 0 0; color: var(--muted); line-height: 1.6; }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 999px;
+      padding: 9px 12px;
+      color: #344054;
+    }
+    .tab.active { border-color: var(--teal); color: var(--teal); background: #ecfdf9; }
+
+    .asset-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 390px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .asset-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(17, 38, 63, .08);
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .asset-card:hover, .asset-card.selected {
+      transform: translateY(-2px);
+      border-color: var(--teal);
+      box-shadow: var(--shadow);
+    }
+
+    .asset-image {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .asset-badges {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,.94);
+      color: var(--ink);
+    }
+    .badge.good { color: var(--green); }
+    .badge.warn { color: #b7791f; }
+    .badge.risk { color: var(--rose); }
+
+    .asset-body { padding: 14px; }
+    .asset-title { font-weight: 800; line-height: 1.35; min-height: 44px; }
+    .asset-meta { color: var(--muted); font-size: 13px; margin-top: 7px; }
+
+    .asset-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .price { font-size: 18px; font-weight: 850; }
+    .source { color: var(--muted); font-size: 12px; }
+
+    .detail {
+      position: sticky;
+      top: 82px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .detail-photo {
+      aspect-ratio: 16 / 9;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .detail-body { padding: 18px; }
+    .score-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .score-ring {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--teal) calc(var(--score) * 1%), #e9eef4 0);
+      position: relative;
+    }
+    .score-ring:after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .score-ring strong { z-index: 1; font-size: 24px; }
+
+    .detail h3 { margin: 0; font-size: 19px; line-height: 1.35; }
+    .detail-summary {
+      border-left: 3px solid var(--teal);
+      padding-left: 12px;
+      color: #344054;
+      line-height: 1.62;
+      margin: 14px 0;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0;
+    }
+    .fact {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fbfcfd;
+    }
+    .fact span { display: block; color: var(--muted); font-size: 12px; }
+    .fact strong { display: block; margin-top: 4px; font-size: 13px; line-height: 1.35; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .step {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .step b {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #e9fbf7;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+    .step strong { display: block; }
+    .step span { display: block; color: var(--muted); font-size: 13px; line-height: 1.5; margin-top: 6px; }
+
+    .report {
+      background: var(--deep);
+      color: #e8eef7;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+    .report-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 15px;
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .report pre {
+      margin: 0;
+      white-space: pre-wrap;
+      padding: 15px;
+      line-height: 1.58;
+      font-size: 13px;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .source-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+    }
+    .source-card strong { display: block; }
+    .source-card span { display: block; color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.45; }
+
+    .toast {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: #111827;
+      color: #fff;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: .18s ease;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1040px) {
+      .asset-layout { grid-template-columns: 1fr; }
+      .detail { position: static; }
+      .steps, .sources { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        min-height: 62px;
+        padding: 10px 14px;
+        gap: 10px;
+      }
+      .brand { gap: 8px; min-width: 0; }
+      .brand-mark { width: 38px; height: 38px; flex: 0 0 38px; }
+      .brand strong { font-size: 14px; line-height: 1.2; }
+      .brand span { display: none; }
+      .nav-links { display: none; }
+      .wallet { min-height: 38px; padding: 8px 10px; font-size: 12px; }
+      .hero {
+        min-height: 0;
+        background-position: 62% center;
+      }
+      .hero-inner { padding: 24px 14px 28px; }
+      .eyebrow { margin-bottom: 12px; font-size: 11px; }
+      h1 { font-size: 34px; line-height: 1.12; }
+      .hero-copy { margin-top: 12px; font-size: 14px; line-height: 1.55; }
+      .hero-copy-block .cta-row { display: none; }
+      .search-panel {
+        margin-top: 20px;
+        padding: 14px;
+        background: rgba(255, 255, 255, .98);
+      }
+      .ai-panel-head { margin-bottom: 10px; }
+      .ai-panel-head h2 { font-size: 17px; }
+      .chat-thread { max-height: 190px; }
+      .chat-message { max-width: 96%; font-size: 12px; padding: 9px 10px; }
+      .prompt-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        margin-right: -14px;
+        padding-right: 14px;
+        scrollbar-width: none;
+      }
+      .prompt-chips::-webkit-scrollbar { display: none; }
+      .prompt-chip { min-height: 38px; }
+      .chat-compose { grid-template-columns: 1fr 48px; }
+      .chat-compose textarea {
+        min-width: 0;
+        min-height: 82px;
+        font-size: 14px;
+      }
+      .send-button { width: 48px; min-height: 48px; }
+      .crawler-note { align-items: flex-start; flex-direction: column; gap: 3px; }
+      .asset-grid, .steps, .sources, .facts { grid-template-columns: 1fr; }
+      .section-head { align-items: stretch; flex-direction: column; }
+      .asset-foot { align-items: flex-start; flex-direction: column; }
+      .section { padding: 28px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-mark">GLI</div>
+        <div>
+          <strong>Global Lifestyle Investment</strong>
+          <span>Game · Leisure · Investment</span>
+        </div>
+      </div>
+      <div class="nav-links">
+        <a href="#assets">자산목록</a>
+        <a href="#process">AI 검증</a>
+        <a href="#sources">데이터 소스</a>
+        <a href="#report">리포트</a>
+      </div>
+      <button class="wallet">지갑 연결</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-copy-block">
+        <div class="eyebrow">AI Verified RWA Gateway</div>
+        <h1>검증된 동남아 라이프스타일 자산을 발견하세요.</h1>
+        <p class="hero-copy">
+          GLI AI가 각국 부동산 포털의 후보 매물을 수집하고, 가격·위치·법무·임대수요 리스크를 한국어로 쉽게 정리합니다.
+          사용자는 복잡한 데이터가 아니라 투자 검토에 필요한 신뢰 요약을 먼저 봅니다.
+        </p>
+        <div class="cta-row">
+          <button class="btn primary" id="jumpAssets">AI 추천 자산 보기</button>
+          <button class="btn">검증 방식 보기</button>
+        </div>
+      </div>
+
+      <div class="search-panel">
+        <div class="ai-panel-head">
+          <h2>GLI AI 자산 탐색</h2>
+          <span class="live-status">Khmer24 연결</span>
+        </div>
+        <div class="chat-thread" id="chatThread" aria-live="polite">
+          <div class="chat-message ai">찾으시는 캄보디아 매물 조건을 말씀해 주세요. 지역, 임대·매매, 예산, 침실 수를 함께 적으면 더 정확합니다.</div>
+        </div>
+        <div class="prompt-chips">
+          <button class="prompt-chip" data-prompt="캄보디아 프놈펜에 5000만원 정도로 월세 잘 나오는 투자를 할 수 있을까?">5천만원 임대 투자</button>
+          <button class="prompt-chip" data-prompt="겨울마다 3개월 정도 편하게 쉴 별장 겸, 내가 없을 때는 에어비앤비를 굴릴 만한 곳이 있니?">별장 + 에어비앤비</button>
+          <button class="prompt-chip" data-prompt="프놈펜에서 월 500달러 이하 1~2베드 임대 콘도 찾아줘">월 $500 이하 임대</button>
+        </div>
+        <div class="chat-compose">
+          <textarea id="aiQuery" aria-label="AI 자산 검색 조건" placeholder="예: 프놈펜에서 월 500달러 이하 2베드 임대 콘도 찾아줘"></textarea>
+          <button class="send-button" id="aiSearch" title="AI 검색 실행" aria-label="AI 검색 실행">→</button>
+        </div>
+        <div class="crawler-note">
+          <span>실제 Khmer24 공개 매물 스냅샷</span>
+          <span id="crawlTime">최근 수집: 2026.07.24</span>
+        </div>
+        <div hidden>
+          <select id="country"><option value="all">동남아 전체</option><option>Cambodia</option><option>Vietnam</option><option>Thailand</option><option>Philippines</option><option>Indonesia</option><option>Malaysia</option></select>
+          <select id="type"><option value="all">전체 유형</option><option value="condo">콘도</option><option value="villa">빌라/리조트</option><option value="house">주택</option><option value="land">토지</option><option value="commercial">상업용</option></select>
+          <select id="risk"><option value="all">전체</option><option value="low">낮음</option><option value="medium">중간</option><option value="high">높음</option></select>
+          <button id="applySearch">검색 적용</button>
+          <button id="copyReport">AI 리포트 복사</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="section" id="assets">
+      <div class="section-head">
+        <div>
+          <h2>AI 추천 자산</h2>
+          <p>각 매물은 여러 출처의 데이터를 표준화한 뒤, GLI Trust Score로 먼저 분류됩니다.</p>
+        </div>
+        <div class="tabs" id="tabs">
+          <button class="tab active" data-country="all">전체</button>
+          <button class="tab" data-country="Cambodia">캄보디아</button>
+          <button class="tab" data-country="Vietnam">베트남</button>
+          <button class="tab" data-country="Thailand">태국</button>
+          <button class="tab" data-country="Philippines">필리핀</button>
+        </div>
+      </div>
+
+      <div class="asset-layout">
+        <div class="asset-grid" id="assetGrid"></div>
+
+        <aside class="detail" id="report">
+          <div class="detail-photo" id="detailPhoto"></div>
+          <div class="detail-body">
+            <div class="score-row">
+              <div class="score-ring" id="scoreRing" style="--score: 0"><strong id="scoreText">0</strong></div>
+              <div>
+                <h3 id="detailTitle">자산을 선택하세요</h3>
+                <p id="detailMeta">AI 검증 요약이 여기에 표시됩니다.</p>
+              </div>
+            </div>
+            <div class="detail-summary" id="summaryBox"></div>
+            <div class="facts">
+              <div class="fact"><span>시세 적정성</span><strong id="priceFit">-</strong></div>
+              <div class="fact"><span>법무 확인</span><strong id="legalFit">-</strong></div>
+              <div class="fact"><span>임대 수요</span><strong id="rentalFit">-</strong></div>
+              <div class="fact"><span>다음 단계</span><strong id="nextAction">-</strong></div>
+            </div>
+            <div class="cta-row">
+              <button class="btn primary">상담 요청</button>
+              <button class="btn" id="copyJson">검증 데이터 복사</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="section-head">
+        <div>
+          <h2>사용자가 보는 AI 검증 흐름</h2>
+          <p>복잡한 내부 실사 과정은 숨기고, 사용자는 신뢰도와 다음 행동만 이해하면 됩니다.</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step"><b>1</b><strong>후보 발굴</strong><span>Khmer24, Batdongsan, FazWaz 등 국가별 포털에서 후보 자산을 찾습니다.</span></div>
+        <div class="step"><b>2</b><strong>AI 정규화</strong><span>언어, 통화, 면적, 위치, 자산 유형을 GLI 표준 데이터로 바꿉니다.</span></div>
+        <div class="step"><b>3</b><strong>리스크 요약</strong><span>가격 이상치, 법무 확인 필요성, 임대 수요, 위치 신뢰도를 점수화합니다.</span></div>
+        <div class="step"><b>4</b><strong>전문가 확인</strong><span>현지 법무·감정·임장 파트너가 확인해야 할 항목을 연결합니다.</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="sources">
+      <div class="section-head">
+        <div>
+          <h2>동남아 데이터 소스</h2>
+          <p>GLI는 자체 매물 사이트가 아니라, 국가별 공개 포털과 현지 검증 네트워크 위에 신뢰 레이어를 만듭니다.</p>
+        </div>
+      </div>
+      <div class="sources">
+        <div class="source-card"><strong>Cambodia</strong><span>Khmer24, Realestate.com.kh, IPS Cambodia, FazWaz Cambodia</span></div>
+        <div class="source-card"><strong>Vietnam</strong><span>Batdongsan, NhaTot, ChoTot, Rever, 개발사 사이트</span></div>
+        <div class="source-card"><strong>Thailand</strong><span>DDproperty, FazWaz, Hipflat, Thailand-Property</span></div>
+        <div class="source-card"><strong>Philippines</strong><span>Lamudi, Dot Property, Property24, Hoppler, 개발사 사이트</span></div>
+        <div class="source-card"><strong>Indonesia</strong><span>Rumah123, 99.co Indonesia, Lamudi, Rumah.com</span></div>
+        <div class="source-card"><strong>Malaysia</strong><span>PropertyGuru, iProperty, EdgeProp, Mudah Property</span></div>
+      </div>
+
+      <div class="report">
+        <div class="report-head">
+          <strong>AI Trust Snapshot</strong>
+          <button class="btn" id="copyReportBottom">리포트 복사</button>
+        </div>
+        <pre id="reportText"></pre>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">복사되었습니다.</div>
+
+  <script>
+    const assets = [
+      {
+        id: "KH24-13773265",
+        country: "Cambodia",
+        city: "Chbar Ampov, Phnom Penh",
+        source: "Khmer24",
+        type: "house",
+        transaction: "sale",
+        bedrooms: 3,
+        title: "ICON Park 1 Type B hard-title house with tenant",
+        price: 130000,
+        currency: "USD",
+        area: 91,
+        risk: "low",
+        score: 76,
+        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80",
+        summary: "Khmer24에 임차인이 있는 하드타이틀 주택으로 등록된 매물입니다. 기존 임대계약의 승계 조건과 등기 원본 확인이 핵심입니다.",
+        priceFit: "면적당 약 $1,429",
+        legalFit: "하드타이틀 원본 확인 필요",
+        rentalFit: "기존 임차인 표시",
+        nextAction: "임대계약·등기 사본 요청",
+        listingUrl: "https://www.khmer24.com/en/icon-park-1-type-b-adid-13773265",
+        collectedAt: "2026-07-24T09:00:00+07:00"
+      },
+      {
+        id: "KH24-13661483",
+        country: "Cambodia",
+        city: "Chrouy Changva, Phnom Penh",
+        source: "Khmer24",
+        type: "condo",
+        transaction: "sale",
+        bedrooms: 2,
+        title: "Brand-new 2BR condo with river and city views",
+        price: 299999,
+        currency: "USD",
+        area: 126,
+        risk: "medium",
+        score: 68,
+        image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1000&q=80",
+        summary: "메콩강과 도심 전망을 강조한 신축 2베드 콘도입니다. 매매가는 협의 가능하지만 외국인 소유 쿼터와 관리비를 추가 확인해야 합니다.",
+        priceFit: "면적당 약 $2,381",
+        legalFit: "외국인 소유 쿼터 확인 필요",
+        rentalFit: "강변 중장기 임대 후보",
+        nextAction: "쿼터·관리비·완공서류 요청",
+        listingUrl: "https://www.khmer24.com/en/brand-new-2-bed-2-bath-condo-with-river-and-city-views-price-negotiable-adid-13661483",
+        collectedAt: "2026-07-24T09:00:00+07:00"
+      },
+      {
+        id: "KH24-13668225",
+        country: "Cambodia",
+        city: "Tuol Kouk, Phnom Penh",
+        source: "Khmer24",
+        type: "condo",
+        transaction: "rent",
+        bedrooms: 1,
+        title: "Toul Kork 1BR apartment near TK Avenue",
+        price: 400,
+        currency: "USD",
+        area: null,
+        risk: "low",
+        score: 79,
+        image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=80",
+        summary: "TK Avenue 인근의 청소 서비스 포함 1베드 임대 매물입니다. 월 예산 $500 이하의 도심 장기 거주 조건과 잘 맞습니다.",
+        priceFit: "월 $400",
+        legalFit: "임대인·보증금 조건 확인",
+        rentalFit: "장기 거주 적합",
+        nextAction: "공과금·청소 범위 확인",
+        listingUrl: "https://www.khmer24.com/en/toul-kork-1br-apartment-near-tk-avenue-cleaning-included-adid-13668225",
+        collectedAt: "2026-07-24T09:00:00+07:00"
+      },
+      {
+        id: "KH24-13720932",
+        country: "Cambodia",
+        city: "Chrouy Changva, Phnom Penh",
+        source: "Khmer24",
+        type: "condo",
+        transaction: "rent",
+        bedrooms: 2,
+        title: "High-floor 2BR apartment with Mekong River view",
+        price: 500,
+        currency: "USD",
+        area: null,
+        risk: "low",
+        score: 81,
+        image: "https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=1000&q=80",
+        summary: "고층 메콩강 전망 2베드 임대 매물로, 월 $500 예산과 강 전망 조건에 정확히 맞습니다. 관리비와 가구 포함 범위는 확인이 필요합니다.",
+        priceFit: "월 $500",
+        legalFit: "임대계약·보증금 확인",
+        rentalFit: "2베드 장기 거주 적합",
+        nextAction: "관리비·가구 목록 요청",
+        listingUrl: "https://www.khmer24.com/en/apartment-2br-on-high-floor-view-to-mekong-river-adid-13720932",
+        collectedAt: "2026-07-24T09:00:00+07:00"
+      },
+      {
+        id: "KH24-13776908",
+        country: "Cambodia",
+        city: "Chamkar Mon, Phnom Penh",
+        source: "Khmer24",
+        type: "condo",
+        transaction: "rent",
+        bedrooms: 1,
+        title: "15th-floor 1BR condo in Boeng Trabek",
+        price: 380,
+        currency: "USD",
+        area: 50,
+        risk: "low",
+        score: 83,
+        image: "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=1000&q=80",
+        summary: "Boeng Trabek의 15층 1베드 콘도로 월 $380, 50㎡ 조건입니다. 예산 효율이 좋고 중심 생활권 접근성이 장점입니다.",
+        priceFit: "월 $380 · 50㎡",
+        legalFit: "임대인 신원 확인",
+        rentalFit: "도심 1인 거주 적합",
+        nextAction: "관리비·인터넷 포함 여부 확인",
+        listingUrl: "https://www.khmer24.com/en/15th-floor-1-bedroom-condo-for-rent-in-boeng-trabek-adid-13776908",
+        collectedAt: "2026-07-24T09:00:00+07:00"
+      },
+      {
+        id: "KH24-13762784",
+        country: "Cambodia",
+        city: "Saensokh, Phnom Penh",
+        source: "Khmer24",
+        type: "condo",
+        transaction: "rent",
+        bedrooms: 1,
+        title: "STAR CITY 1BR condo for rent",
+        price: 220,
+        currency: "USD",
+        area: 48,
+        risk: "medium",
+        score: 71,
+        image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80",
+        summary: "Sen Sok의 48㎡ 1베드 콘도로 월 $220의 낮은 임대료가 특징입니다. 실제 호실 상태와 추가 관리비를 우선 확인해야 합니다.",
+        priceFit: "월 $220 · 48㎡",
+        legalFit: "계약 당사자 확인 필요",
+        rentalFit: "저예산 장기 거주 후보",
+        nextAction: "현장 사진·관리비 요청",
+        listingUrl: "https://www.khmer24.com/en/condo-for-rentstar-city-condo-adid-13762784",
+        collectedAt: "2026-07-24T09:00:00+07:00"
+      },
+      {
+        id: "VN-014",
+        country: "Vietnam",
+        city: "Da Nang",
+        source: "Batdongsan",
+        type: "villa",
+        title: "Beachside resort villa project with rental pool",
+        price: 390000,
+        currency: "USD",
+        area: 148,
+        risk: "high",
+        score: 51,
+        image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1000&q=80",
+        summary: "해변 리조트형 자산으로 투자 매력은 있으나 수익률 보장 문구, 개발사 완료 이력, 외국인 소유 구조를 먼저 검증해야 합니다.",
+        priceFit: "프리미엄 반영 과다 가능",
+        legalFit: "외국인 소유 구조 검토 필요",
+        rentalFit: "계절성에 따른 변동 큼",
+        nextAction: "개발사/계약서 실사"
+      },
+      {
+        id: "TH-022",
+        country: "Thailand",
+        city: "Phuket",
+        source: "FazWaz",
+        type: "condo",
+        title: "Phuket condominium with managed rental option",
+        price: 210000,
+        currency: "USD",
+        area: 68,
+        risk: "low",
+        score: 78,
+        image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1000&q=80",
+        summary: "가격 비교군이 충분하고 임대 운영 옵션이 명확합니다. 최종 검토는 외국인 콘도 쿼터와 관리 계약 조건 확인에 집중하면 됩니다.",
+        priceFit: "유사 매물 범위 내",
+        legalFit: "외국인 쿼터 확인 필요",
+        rentalFit: "단기 임대 수요 높음",
+        nextAction: "쿼터/관리계약 확인"
+      },
+      {
+        id: "PH-006",
+        country: "Philippines",
+        city: "Cebu",
+        source: "Lamudi Philippines",
+        type: "commercial",
+        title: "Cebu mixed-use commercial unit near IT park",
+        price: 275000,
+        currency: "USD",
+        area: 91,
+        risk: "medium",
+        score: 69,
+        image: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1000&q=80",
+        summary: "입지는 우수하지만 상업용 임대차 계약, 세금 체납 여부, 기존 임차인 조건을 확인해야 합니다.",
+        priceFit: "IT Park 프리미엄 반영",
+        legalFit: "세금/임차권 확인 필요",
+        rentalFit: "오피스 수요 양호",
+        nextAction: "임대차 계약서 요청"
+      },
+      {
+        id: "ID-011",
+        country: "Indonesia",
+        city: "Bali",
+        source: "Rumah123",
+        type: "land",
+        title: "Bali leasehold land near coastal tourism zone",
+        price: 165000,
+        currency: "USD",
+        area: 420,
+        risk: "high",
+        score: 46,
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1000&q=80",
+        summary: "관광지 인접 토지이나 리스홀드 조건, 해안 규제, 용도 변경 가능성이 핵심 리스크입니다. 현지 법무 확인 전에는 후보로만 보관해야 합니다.",
+        priceFit: "비교 데이터 부족",
+        legalFit: "리스홀드/용도지역 확인 필요",
+        rentalFit: "개발 후 수익형",
+        nextAction: "토지 용도/환경 규제 확인"
+      },
+      {
+        id: "MY-009",
+        country: "Malaysia",
+        city: "Kuala Lumpur",
+        source: "iProperty",
+        type: "condo",
+        title: "KLCC high-rise condo with long-term tenant profile",
+        price: 245000,
+        currency: "USD",
+        area: 74,
+        risk: "low",
+        score: 82,
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
+        summary: "중심지 유동성과 임대 수요가 강하고 비교 매물도 충분합니다. 외국인 최소 매입가 및 관리비 조건만 확인하면 우선 검토군에 둘 수 있습니다.",
+        priceFit: "비교군 범위 내",
+        legalFit: "외국인 최소 매입가 확인",
+        rentalFit: "장기 임차 수요 강함",
+        nextAction: "관리비/임대계약 확인"
+      }
+    ];
+
+    let selected = assets[0];
+    let chatCriteria = null;
+    const countryFilter = document.getElementById("country");
+    const typeFilter = document.getElementById("type");
+    const riskFilter = document.getElementById("risk");
+
+    function money(asset) {
+      return new Intl.NumberFormat("en-US", { style: "currency", currency: asset.currency, maximumFractionDigits: 0 }).format(asset.price);
+    }
+
+    function riskLabel(risk) {
+      return risk === "low" ? "검토 난이도 낮음" : risk === "medium" ? "추가 확인 필요" : "전문가 확인 우선";
+    }
+
+    function badgeClass(asset) {
+      if (asset.score >= 75) return "good";
+      if (asset.score < 55) return "risk";
+      return "warn";
+    }
+
+    function filteredAssets() {
+      return assets.filter(asset => {
+        const baseMatch = (countryFilter.value === "all" || asset.country === countryFilter.value)
+          && (typeFilter.value === "all" || asset.type === typeFilter.value)
+          && (riskFilter.value === "all" || asset.risk === riskFilter.value);
+        if (!baseMatch || !chatCriteria) return baseMatch;
+        const cityText = `${asset.city} ${asset.title}`.toLowerCase();
+        return (!chatCriteria.transaction || asset.transaction === chatCriteria.transaction)
+          && (!chatCriteria.type || asset.type === chatCriteria.type)
+          && (!chatCriteria.maxPrice || chatCriteria.showClosest || asset.price <= chatCriteria.maxPrice)
+          && (!chatCriteria.bedrooms?.length || chatCriteria.bedrooms.includes(asset.bedrooms))
+          && (!chatCriteria.river || /river|mekong|강|메콩/.test(cityText));
+      });
+    }
+
+    function assetMeasure(asset) {
+      const parts = [];
+      if (asset.area) parts.push(`${asset.area} sqm`);
+      if (asset.bedrooms) parts.push(`${asset.bedrooms}BR`);
+      if (asset.transaction) parts.push(asset.transaction === "rent" ? "임대" : "매매");
+      parts.push(riskLabel(asset.risk));
+      return parts.join(" · ");
+    }
+
+    function reasonFor(asset) {
+      if (!chatCriteria) return "";
+      const reasons = [];
+      if (chatCriteria.maxPrice && asset.price <= chatCriteria.maxPrice) {
+        reasons.push(`예산 $${chatCriteria.maxPrice.toLocaleString()} 이하`);
+      } else if (chatCriteria.maxPrice && chatCriteria.showClosest) {
+        reasons.push(`예산보다 $${(asset.price - chatCriteria.maxPrice).toLocaleString()} 높음`);
+      }
+      if (chatCriteria.bedrooms?.includes(asset.bedrooms)) reasons.push(`${asset.bedrooms}베드`);
+      if (chatCriteria.transaction === asset.transaction) reasons.push(asset.transaction === "rent" ? "임대 조건" : "매매 조건");
+      if (chatCriteria.river && /river|mekong/i.test(asset.title)) reasons.push("강 전망");
+      if (chatCriteria.purpose === "seasonal_stay") reasons.push("장기 체류·부재 시 운영 후보");
+      if (chatCriteria.purpose === "income_investment") reasons.push("임대수익 검토 후보");
+      return reasons.length ? `AI 매칭: ${reasons.join(" · ")}` : "AI 매칭: 캄보디아 지역 조건";
+    }
+
+    function renderAssets() {
+      const rows = filteredAssets();
+      if (rows.length && (!selected || !rows.some(asset => asset.id === selected.id))) selected = rows[0];
+      if (!rows.length) selected = null;
+      document.getElementById("assetGrid").innerHTML = rows.map(asset => `
+        <article class="asset-card ${asset.id === selected.id ? "selected" : ""}" data-id="${asset.id}">
+          <div class="asset-image" style="background-image:url('${asset.image}')">
+            <div class="asset-badges">
+              <span class="badge">${asset.city}, ${asset.country}</span>
+              <span class="badge ${badgeClass(asset)}">Trust ${asset.score}</span>
+            </div>
+          </div>
+          <div class="asset-body">
+            <div class="asset-title">${asset.title}</div>
+            <div class="asset-meta">${assetMeasure(asset)}</div>
+            ${reasonFor(asset) ? `<div class="match-reason">${reasonFor(asset)}</div>` : ""}
+            <div class="asset-foot">
+              <div>
+                <div class="price">${money(asset)}</div>
+                <div class="source">${asset.source}${asset.collectedAt ? " · 수집 스냅샷" : ""}</div>
+              </div>
+              ${asset.listingUrl
+                ? `<a class="btn source-link" href="${asset.listingUrl}" target="_blank" rel="noreferrer">원문 보기</a>`
+                : `<button class="btn">요약 보기</button>`}
+            </div>
+          </div>
+        </article>
+      `).join("") || `<div class="source-card"><strong>조건에 맞는 자산이 없습니다.</strong><span>필터를 넓혀 다시 확인해 주세요.</span></div>`;
+
+      document.querySelectorAll(".asset-card").forEach(card => {
+        card.addEventListener("click", () => {
+          selected = assets.find(asset => asset.id === card.dataset.id);
+          render();
+        });
+      });
+      document.querySelectorAll(".source-link").forEach(link => {
+        link.addEventListener("click", event => event.stopPropagation());
+      });
+    }
+
+    function renderDetail() {
+      if (!selected) {
+        document.getElementById("detailPhoto").style.backgroundImage = "";
+        document.getElementById("scoreRing").style.setProperty("--score", 0);
+        document.getElementById("scoreText").textContent = "0";
+        document.getElementById("detailTitle").textContent = "조건을 조금 넓혀보세요";
+        document.getElementById("detailMeta").textContent = "현재 조건에 맞는 수집 매물이 없습니다.";
+        document.getElementById("summaryBox").textContent = "예산을 높이거나 침실 수 또는 자산 유형 조건을 줄이면 더 많은 후보를 볼 수 있습니다.";
+        ["priceFit", "legalFit", "rentalFit", "nextAction"].forEach(id => {
+          document.getElementById(id).textContent = "-";
+        });
+        document.getElementById("reportText").textContent = "검색 결과가 없습니다.";
+        return;
+      }
+      document.getElementById("detailPhoto").style.backgroundImage = `url('${selected.image}')`;
+      document.getElementById("scoreRing").style.setProperty("--score", selected.score);
+      document.getElementById("scoreText").textContent = selected.score;
+      document.getElementById("detailTitle").textContent = selected.title;
+      document.getElementById("detailMeta").textContent = `${selected.city}, ${selected.country} · ${money(selected)} · ${selected.source}`;
+      document.getElementById("summaryBox").textContent = selected.summary;
+      document.getElementById("priceFit").textContent = selected.priceFit;
+      document.getElementById("legalFit").textContent = selected.legalFit;
+      document.getElementById("rentalFit").textContent = selected.rentalFit;
+      document.getElementById("nextAction").textContent = selected.nextAction;
+      document.getElementById("reportText").textContent = buildReport(selected);
+    }
+
+    function buildReport(asset) {
+      return `GLI AI Verified Asset Brief
+
+자산 ID: ${asset.id}
+위치: ${asset.city}, ${asset.country}
+출처: ${asset.source}
+가격: ${money(asset)}
+면적: ${asset.area} sqm
+Trust Score: ${asset.score}/100
+
+AI 요약:
+${asset.summary}
+
+투자 검토 포인트:
+- 시세 적정성: ${asset.priceFit}
+- 법무/소유권: ${asset.legalFit}
+- 임대 수요: ${asset.rentalFit}
+- 다음 단계: ${asset.nextAction}
+
+주의:
+본 내용은 투자 권유가 아니라 후보 자산 검토를 위한 AI 정보 요약입니다. 최종 판단 전 현지 법무, 등기, 세무, 임장 확인이 필요합니다.`;
+    }
+
+    function normalizedJson(asset) {
+      return {
+        country: asset.country,
+        city: asset.city,
+        source: asset.source,
+        source_asset_id: asset.id,
+        asset_type: asset.type,
+        title: asset.title,
+        price: asset.price,
+        currency: asset.currency,
+        area_sqm: asset.area,
+        risk_level: asset.risk,
+        trust_score: asset.score,
+        ai_summary_ko: asset.summary,
+        next_action: asset.nextAction,
+        collected_at: new Date().toISOString()
+      };
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById("toast");
+      toast.textContent = text;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1600);
+    }
+
+    function parseAiQuery(query) {
+      const text = query.toLowerCase();
+      const incomeInvestment = /투자|수익|월세 잘|임대수익|yield/.test(text);
+      const seasonalStay = /별장|세컨드\s*하우스|겨울마다|개월.*(?:쉬|놀|체류)|내가 없을 때/.test(text);
+      const shortStay = /에어비앤비|airbnb|단기임대|단기 임대/.test(text);
+      const criteria = {
+        transaction: /임대|월세|렌트|rent/.test(text) && !incomeInvestment ? "rent"
+          : /매매|구매|매입|sale/.test(text) || incomeInvestment || seasonalStay ? "sale" : null,
+        type: /콘도|아파트|condo|apartment/.test(text) ? "condo"
+          : /주택|하우스|house/.test(text) ? "house"
+          : /빌라|리조트|villa|resort/.test(text) ? "villa"
+          : /토지|땅|land/.test(text) ? "land" : null,
+        bedrooms: [],
+        maxPrice: null,
+        budgetKrw: null,
+        river: /강|메콩|리버|river|전망/.test(text),
+        purpose: seasonalStay ? "seasonal_stay" : incomeInvestment ? "income_investment" : "direct_search",
+        shortStay,
+        showClosest: false
+      };
+      const range = text.match(/(\d+)\s*(?:~|-|에서)\s*(\d+)\s*(?:베드|침실|br)/);
+      const single = text.match(/(\d+)\s*(?:베드|침실|br)/);
+      if (range) {
+        const start = Number(range[1]);
+        const end = Number(range[2]);
+        for (let room = start; room <= end; room += 1) criteria.bedrooms.push(room);
+      } else if (single) {
+        criteria.bedrooms = [Number(single[1])];
+      }
+      const budget = text.match(/\$?\s*([\d,.]+)\s*(만|천)?\s*(?:달러|불|usd|\$)/);
+      if (budget) {
+        const unit = budget[2] === "만" ? 10000 : budget[2] === "천" ? 1000 : 1;
+        criteria.maxPrice = Number(budget[1].replace(/,/g, "")) * unit;
+      }
+      const krwBudget = text.match(/([\d,.]+)\s*(억|천만|만)\s*원/);
+      if (krwBudget) {
+        const unit = krwBudget[2] === "억" ? 100000000 : krwBudget[2] === "천만" ? 10000000 : 10000;
+        criteria.budgetKrw = Number(krwBudget[1].replace(/,/g, "")) * unit;
+        criteria.maxPrice = Math.round(criteria.budgetKrw / 1380);
+      }
+      return criteria;
+    }
+
+    function consultationReply(criteria, exactCount, shownCount) {
+      const budgetLine = criteria.budgetKrw
+        ? `말씀하신 약 ${(criteria.budgetKrw / 10000).toLocaleString()}만원은 데모 환율 1달러=1,380원 기준 약 $${criteria.maxPrice.toLocaleString()}입니다. `
+        : "";
+      if (criteria.purpose === "income_investment") {
+        if (!exactCount) {
+          const closest = filteredAssets().slice().sort((a, b) => a.price - b.price)[0];
+          return `${budgetLine}현재 Khmer24 수집 매물에는 이 예산 이하의 프놈펜 매매 후보가 없습니다. 가장 가까운 후보도 ${closest ? money(closest) : "예산 범위 밖"}여서 지금 단계에서는 가능하다고 단정하기 어렵습니다. 대신 예산 범위를 넓히거나 소형 콘도·외곽 지역까지 데이터 소스를 확장해야 하며, 예상 월세·공실률·관리비를 확보한 뒤 순수익률을 계산해야 합니다. 가장 가까운 대안 ${shownCount}개를 표시했습니다.`;
+        }
+        return `${budgetLine}${exactCount}개 후보가 예산 안에 있습니다. 다만 월세가 잘 나오는지는 광고 가격만으로 판단하지 않고 실제 임대료, 공실률, 관리비와 소유권 조건을 확인해 순수익률을 비교해야 합니다.`;
+      }
+      if (criteria.purpose === "seasonal_stay") {
+        return `가능한 방향입니다. 현재 후보 중에는 강변 생활권의 Chrouy Changva 콘도가 3개월 체류와 부재 시 운영을 함께 검토하기 좋습니다. 다만 에어비앤비 가능 여부는 건물 관리규약, 현지 단기임대 규정, 운영대행 수수료와 예상 가동률을 먼저 확인해야 합니다. 매입 예산 상한과 함께 머무를 인원을 알려주시면 ${shownCount}개 후보를 더 정확히 순위화할 수 있습니다.`;
+      }
+      const conditionText = [
+        criteria.transaction === "rent" ? "임대" : criteria.transaction === "sale" ? "매매" : null,
+        criteria.type === "condo" ? "콘도·아파트" : criteria.type === "house" ? "주택" : null,
+        criteria.maxPrice ? `$${criteria.maxPrice.toLocaleString()} 이하` : null,
+        criteria.bedrooms.length ? `${criteria.bedrooms.join("~")}베드` : null,
+        criteria.river ? "강 전망" : null
+      ].filter(Boolean).join(", ");
+      return `Khmer24 수집 데이터에서 ${conditionText || "캄보디아"} 조건으로 ${shownCount}개 후보를 찾았습니다. Trust Score와 원문 매물을 함께 확인해 보세요.`;
+    }
+
+    function appendChat(role, text) {
+      const thread = document.getElementById("chatThread");
+      const message = document.createElement("div");
+      message.className = `chat-message ${role}`;
+      message.textContent = text;
+      thread.appendChild(message);
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    function executeAiSearch(preset) {
+      const input = document.getElementById("aiQuery");
+      const query = (preset || input.value).trim();
+      if (!query) {
+        input.focus();
+        return;
+      }
+      appendChat("user", query);
+      chatCriteria = parseAiQuery(query);
+      countryFilter.value = "Cambodia";
+      typeFilter.value = "all";
+      riskFilter.value = "all";
+      document.querySelectorAll(".tab").forEach(tab => {
+        tab.classList.toggle("active", tab.dataset.country === "Cambodia");
+      });
+      const exactCount = filteredAssets().length;
+      if (!exactCount && chatCriteria.purpose !== "direct_search") chatCriteria.showClosest = true;
+      render();
+      const shownCount = filteredAssets().length;
+      appendChat("ai", consultationReply(chatCriteria, exactCount, shownCount));
+      input.value = "";
+      document.getElementById("assets").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function render() {
+      renderAssets();
+      renderDetail();
+    }
+
+    document.getElementById("applySearch").addEventListener("click", render);
+    [countryFilter, typeFilter, riskFilter].forEach(input => input.addEventListener("change", render));
+
+    document.getElementById("aiSearch").addEventListener("click", () => executeAiSearch());
+    document.getElementById("aiQuery").addEventListener("keydown", event => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        executeAiSearch();
+      }
+    });
+    document.querySelectorAll(".prompt-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.getElementById("aiQuery").value = chip.dataset.prompt;
+        executeAiSearch(chip.dataset.prompt);
+      });
+    });
+
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        chatCriteria = null;
+        document.querySelectorAll(".tab").forEach(item => item.classList.remove("active"));
+        tab.classList.add("active");
+        countryFilter.value = tab.dataset.country;
+        render();
+        document.getElementById("assets").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    document.getElementById("jumpAssets").addEventListener("click", () => {
+      document.getElementById("assets").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    document.getElementById("copyJson").addEventListener("click", async () => {
+      if (!selected) return showToast("복사할 검색 결과가 없습니다.");
+      await navigator.clipboard.writeText(JSON.stringify(normalizedJson(selected), null, 2));
+      showToast("검증 데이터가 복사되었습니다.");
+    });
+
+    function copyReport() {
+      if (!selected) return showToast("복사할 검색 결과가 없습니다.");
+      navigator.clipboard.writeText(buildReport(selected));
+      showToast("AI 리포트가 복사되었습니다.");
+    }
+
+    document.getElementById("copyReport").addEventListener("click", copyReport);
+    document.getElementById("copyReportBottom").addEventListener("click", copyReport);
+
+    render();
+  </script>
+</body>
+</html>

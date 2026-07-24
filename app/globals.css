@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #f5f7f9;
+}
+
+.site-shell {
+  width: 100vw;
+  height: 100dvh;
+}
+
+.prototype-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #f5f7f9;
+}
