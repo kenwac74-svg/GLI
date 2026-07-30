@@ -4,6 +4,8 @@ import { ensureMemberContext } from "../../lib/member-data";
 import { getCurrentUser } from "../auth";
 import { SiteHeader } from "../components/site-header";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/my?return_to=/admin");

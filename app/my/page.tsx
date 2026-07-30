@@ -20,6 +20,8 @@ import { getAsset } from "../../lib/assets-data";
 import { loadMemberDashboard } from "../../lib/member-data";
 import { ConsultationForm, RemoveFavoriteButton } from "./my-actions";
 
+export const dynamic = "force-dynamic";
+
 const planNames: Record<string, string> = {
   explore: "Explore",
   investor: "Investor",

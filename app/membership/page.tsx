@@ -2,6 +2,8 @@ import { Check, LockKeyhole } from "lucide-react";
 import { SiteHeader } from "../components/site-header";
 import { MembershipAction } from "./membership-action";
 
+export const dynamic = "force-dynamic";
+
 const plans = [
   {
     id: "explore",
