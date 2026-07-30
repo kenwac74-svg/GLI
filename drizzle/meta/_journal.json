@@ -15,6 +15,13 @@
       "when": 1785416200000,
       "tag": "0001_seed_approved_fixture",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785474000000,
+      "tag": "0002_admin_ingestion_pipeline",
+      "breakpoints": true
     }
   ]
 }

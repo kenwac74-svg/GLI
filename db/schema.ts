@@ -86,6 +86,7 @@ export const listings = sqliteTable(
     bedrooms: integer("bedrooms"),
     bathrooms: integer("bathrooms"),
     imageUrl: text("image_url"),
+    fingerprint: text("fingerprint"),
     status: text("status").notNull().default("ACTIVE"),
     isGliDirect: integer("is_gli_direct", { mode: "boolean" }).notNull().default(false),
     firstSeenAt: integer("first_seen_at").notNull(),
@@ -102,6 +103,7 @@ export const listings = sqliteTable(
       table.status,
       table.priceMinor,
     ),
+    index("listings_fingerprint_idx").on(table.country, table.fingerprint),
   ],
 );
 

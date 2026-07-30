@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import {
+  DEMO_ADMIN_COOKIE_VALUE,
   DEMO_AUTH_COOKIE,
   DEMO_AUTH_COOKIE_VALUE,
+  isDemoAdminEnabled,
   isDemoAuthHostAllowed,
   isDemoAuthEnabled,
   safeReturnPath,
@@ -13,9 +15,11 @@ export async function POST(request: Request) {
     url.searchParams.get("return_to") ?? "/my",
   );
   const origin = request.headers.get("origin");
+  const wantsAdmin = url.searchParams.get("role") === "admin";
 
   if (
     !isDemoAuthEnabled() ||
+    (wantsAdmin && !isDemoAdminEnabled()) ||
     !isDemoAuthHostAllowed(url.hostname) ||
     origin !== url.origin
   ) {
@@ -27,12 +31,16 @@ export async function POST(request: Request) {
 
   const response = NextResponse.redirect(new URL(returnTo, request.url));
   response.headers.set("cache-control", "no-store");
-  response.cookies.set(DEMO_AUTH_COOKIE, DEMO_AUTH_COOKIE_VALUE, {
+  response.cookies.set(
+    DEMO_AUTH_COOKIE,
+    wantsAdmin ? DEMO_ADMIN_COOKIE_VALUE : DEMO_AUTH_COOKIE_VALUE,
+    {
     httpOnly: true,
     sameSite: "lax",
     secure: new URL(request.url).protocol === "https:",
     path: "/",
     maxAge: 60 * 60 * 12,
-  });
+    },
+  );
   return response;
 }

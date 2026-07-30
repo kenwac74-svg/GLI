@@ -11,6 +11,7 @@ export type NormalizationInput = {
   areaSqm: number;
   bedrooms: number;
   bathrooms: number;
+  imageUrl?: string | null;
   title: string;
   summary: string;
   sourceExternalKey: string;
@@ -30,6 +31,7 @@ export type NormalizedListing = {
   areaSqmX100: number;
   bedrooms: number;
   bathrooms: number;
+  imageUrl: string | null;
   title: string;
   summary: string;
   source: {
@@ -183,6 +185,30 @@ function normalizeSourceUrl(value: unknown): string {
   return url.toString();
 }
 
+function normalizeImageUrl(value: unknown): string | null {
+  if (value === null || value === undefined || value === "") return null;
+
+  const raw = normalizeText(value, "imageUrl", 10, 2_048);
+  let url: URL;
+  try {
+    url = new URL(raw);
+  } catch {
+    throw new TypeError("imageUrl must be an absolute URL");
+  }
+
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.hash
+  ) {
+    throw new Error(
+      "imageUrl must use HTTPS and contain no credentials or fragment",
+    );
+  }
+  return url.toString();
+}
+
 function normalizeObservedAt(value: unknown): string {
   if (typeof value !== "string" || !ISO_TIMESTAMP_PATTERN.test(value)) {
     throw new TypeError("observedAt must be an ISO 8601 timestamp with a timezone");
@@ -239,6 +265,7 @@ export function normalizeApprovedFixture(input: unknown): NormalizedListing {
   const areaSqmX100 = toScaledInteger(candidate.areaSqm, "areaSqm", 100, 1_000_000);
   const bedrooms = normalizeCount(candidate.bedrooms, "bedrooms");
   const bathrooms = normalizeCount(candidate.bathrooms, "bathrooms");
+  const imageUrl = normalizeImageUrl(candidate.imageUrl);
   const title = normalizePublicText(candidate.title, "title", 3, 200);
   const summary = normalizePublicText(candidate.summary, "summary", 10, 2_000);
   const externalKey = normalizeText(
@@ -268,6 +295,7 @@ export function normalizeApprovedFixture(input: unknown): NormalizedListing {
     countryCode,
     currency,
     district,
+    imageUrl,
     propertyType,
     source: { externalKey, url },
     summary,
@@ -288,6 +316,7 @@ export function normalizeApprovedFixture(input: unknown): NormalizedListing {
     areaSqmX100,
     bedrooms,
     bathrooms,
+    imageUrl,
     title,
     summary,
     source: { externalKey, url },

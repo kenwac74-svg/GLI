@@ -1,6 +1,6 @@
 import { LogOut, Menu, Search, UserRound } from "lucide-react";
 import Link from "next/link";
-import { getCurrentUser, signOutPath } from "../auth";
+import { DEMO_ADMIN_EMAIL, getCurrentUser, signOutPath } from "../auth";
 
 export async function SiteHeader() {
   const user = await getCurrentUser();
@@ -21,6 +21,9 @@ export async function SiteHeader() {
           </Link>
           <Link href="/membership">멤버십</Link>
           <Link href="/my">MY GLI</Link>
+          {user?.email === DEMO_ADMIN_EMAIL ? (
+            <Link href="/admin">운영</Link>
+          ) : null}
         </nav>
         {user ? (
           <Link
@@ -45,6 +48,9 @@ export async function SiteHeader() {
             <Link href="/">자산 탐색</Link>
             <Link href="/membership">멤버십</Link>
             <Link href="/my">MY GLI</Link>
+            {user?.email === DEMO_ADMIN_EMAIL ? (
+              <Link href="/admin">운영</Link>
+            ) : null}
           </nav>
         </details>
       </div>

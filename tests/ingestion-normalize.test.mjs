@@ -89,6 +89,7 @@ test("returns an allowlisted public payload without raw input or contact fields"
     "currency",
     "district",
     "fingerprint",
+    "imageUrl",
     "normalizedHash",
     "observedAt",
     "priceMinor",

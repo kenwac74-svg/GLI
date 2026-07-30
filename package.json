@@ -11,7 +11,7 @@
     "start": "vinext start",
     "test": "npm run build && node --test tests/*.test.mjs",
     "check": "npm run lint && npm run db:validate && npm test",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern work",
     "db:generate": "drizzle-kit generate",
     "db:validate": "node scripts/validate-migrations.mjs",
     "db:local": "wrangler d1 migrations apply site-creator-d1 --local --config wrangler.local.jsonc --persist-to .wrangler/state"

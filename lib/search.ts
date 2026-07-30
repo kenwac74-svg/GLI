@@ -3,6 +3,7 @@ import type { Asset } from "./assets";
 export type SearchCriteria = {
   country: "Cambodia";
   city: "Phnom Penh";
+  district: string | null;
   transaction: "sale" | "rent" | null;
   propertyType: Asset["propertyType"] | null;
   maxPriceUsd: number | null;
@@ -22,9 +23,33 @@ export type SearchResult = {
 };
 
 const DEMO_KRW_PER_USD = 1380;
+const DISTRICT_ALIASES: ReadonlyArray<{
+  district: string;
+  patterns: readonly string[];
+}> = [
+  { district: "BKK1", patterns: ["bkk1", "벙깽꽁 1", "벙깽꽁1"] },
+  { district: "BKK3", patterns: ["bkk3", "벙깽꽁 3", "벙깽꽁3"] },
+  {
+    district: "Tonle Bassac",
+    patterns: ["tonle bassac", "톤레바삭", "톤레 바삭"],
+  },
+  {
+    district: "Chrouy Changva",
+    patterns: ["chrouy changva", "chroy changvar", "쯔루이창바", "크로이창바"],
+  },
+  {
+    district: "Boeng Trabek",
+    patterns: ["boeng trabek", "벙뜨라벡", "보응트라벡"],
+  },
+  { district: "Meanchey", patterns: ["meanchey", "민쩨이", "민체이"] },
+];
 
 export function extractCriteria(query: string): SearchCriteria {
   const text = query.toLowerCase();
+  const district =
+    DISTRICT_ALIASES.find(({ patterns }) =>
+      patterns.some((pattern) => text.includes(pattern)),
+    )?.district ?? null;
   const income = /투자|수익|월세 잘|임대수익|yield/.test(text);
   const seasonal =
     /별장|세컨드\s*하우스|겨울마다|개월.*(?:쉬|놀|체류)|내가 없을 때/.test(text);
@@ -54,6 +79,7 @@ export function extractCriteria(query: string): SearchCriteria {
   return {
     country: "Cambodia",
     city: "Phnom Penh",
+    district,
     transaction: explicitRent && !income ? "rent" : explicitSale || income || seasonal ? "sale" : null,
     propertyType: type,
     maxPriceUsd,
@@ -69,6 +95,7 @@ export function searchAssets(query: string, allAssets: Asset[]): SearchResult {
   const criteria = extractCriteria(query);
   const exact = allAssets.filter((asset) => {
     if (criteria.transaction && asset.transaction !== criteria.transaction) return false;
+    if (criteria.district && asset.district !== criteria.district) return false;
     if (criteria.propertyType && asset.propertyType !== criteria.propertyType) return false;
     if (criteria.bedrooms !== null && asset.bedrooms !== criteria.bedrooms) return false;
     if (criteria.maxPriceUsd !== null && asset.price > criteria.maxPriceUsd) return false;
@@ -86,6 +113,7 @@ export function searchAssets(query: string, allAssets: Asset[]): SearchResult {
     : allAssets.filter(
         (asset) =>
           (!criteria.transaction || asset.transaction === criteria.transaction) &&
+          (!criteria.district || asset.district === criteria.district) &&
           (!criteria.propertyType || asset.propertyType === criteria.propertyType),
       );
 
@@ -114,6 +142,7 @@ export function searchAssets(query: string, allAssets: Asset[]): SearchResult {
 function rankAsset(asset: Asset, criteria: SearchCriteria): number {
   let rank = asset.trustScore;
   if (asset.isGliDirect) rank += 4;
+  if (criteria.district && asset.district === criteria.district) rank += 18;
   if (criteria.maxPriceUsd && asset.price <= criteria.maxPriceUsd) rank += 8;
   if (criteria.purpose === "seasonal" && /BKK1|river|Mekong|Riverside/i.test(asset.title)) rank += 10;
   if (criteria.purpose === "income" && asset.areaSqm <= 50) rank += 6;
@@ -124,6 +153,9 @@ function rankAsset(asset: Asset, criteria: SearchCriteria): number {
 function buildReasons(asset: Asset, criteria: SearchCriteria, nearest: boolean): string[] {
   const reasons: string[] = [];
   if (nearest) reasons.push("정확 일치가 없어 가까운 대안");
+  if (criteria.district && asset.district === criteria.district) {
+    reasons.push(`${criteria.district} 지역`);
+  }
   if (criteria.maxPriceUsd && asset.price <= criteria.maxPriceUsd) reasons.push("예산 범위");
   if (criteria.bedrooms !== null && asset.bedrooms === criteria.bedrooms) {
     reasons.push(`${asset.bedrooms}베드 조건`);

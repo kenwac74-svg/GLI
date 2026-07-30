@@ -9,6 +9,7 @@ interface Env {
   DATA_MODE?: "approved-fixture" | "d1";
   DEPLOYMENT_STAGE?: "demo" | "production";
   DEMO_AUTH_ENABLED?: "true" | "false";
+  DEMO_ADMIN_ENABLED?: "true" | "false";
   DEMO_AUTH_HOSTS?: string;
   IMAGES: {
     input(stream: ReadableStream): {
