@@ -26,12 +26,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ ! -f .github/codex-sync/ops-ready.txt ]; then
-            echo "Waiting for payload marker."
+          if [ ! -f .github/codex-sync/ops-ready.txt ] || [ ! -f .github/codex-sync/ops-all.b64 ]; then
+            echo "Waiting for complete payload."
             exit 0
           fi
-          cat .github/codex-sync/ops-*.b64 > /tmp/gli-ops.tar.gz.b64
-          base64 --decode /tmp/gli-ops.tar.gz.b64 > /tmp/gli-ops.tar.gz
+          base64 --decode .github/codex-sync/ops-all.b64 > /tmp/gli-ops.tar.gz
           tar -xzf /tmp/gli-ops.tar.gz -C .
           npm ci
           npm run check
