@@ -15,8 +15,8 @@ Updated: 2026-07-30
 | Milestone | Status | Exit gate |
 |---|---|---|
 | Sprint 0: baseline and architecture | COMPLETE | ADR, source policy, portable build, product smoke test |
-| Sprint 1: React routes and data foundation | IN PROGRESS | iframe removed, D1 schema, asset list/detail API |
-| Sprint 2: ingestion and data quality | BLOCKED | source permission plus fixture pipeline |
+| Sprint 1: React routes and data foundation | COMPLETE | iframe removed, D1 schema, asset list/detail API |
+| Sprint 2: ingestion and data quality | IN PROGRESS | source permission plus fixture pipeline |
 | Sprint 3: AI search and Trust | BACKLOG | grounded search and deterministic Trust v0.1 |
 | Sprint 4: identity, MY GLI, consultation, membership | BACKLOG | persistent user workflows |
 | Sprint 5: Direct, reports, alerts, operations | BACKLOG | pilot operating workflow |
@@ -31,6 +31,7 @@ Updated: 2026-07-30
 | GLI-003 | Codex | Data review | COMPLETE | D1 schema and migration |
 | GLI-004 | Data QA | Codex | BLOCKED | approved, anonymized source fixtures |
 | GLI-005 | Codex | Security review | BACKLOG | first approved connector |
+| GLI-006 | Codex | Data QA | IN PROGRESS | fixture normalizer, dedupe, and change history |
 
 ## Decisions
 
