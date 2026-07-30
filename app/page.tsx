@@ -1,12 +1,13 @@
 import { ExploreClient } from "./components/explore-client";
 import { SiteHeader } from "./components/site-header";
-import { assets } from "../lib/assets";
+import { listAssets } from "../lib/assets-data";
 
-export default function Home() {
+export default async function Home() {
+  const result = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
   return (
     <>
       <SiteHeader />
-      <ExploreClient initialAssets={assets} />
+      <ExploreClient initialAssets={result.assets} />
     </>
   );
 }

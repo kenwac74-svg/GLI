@@ -34,10 +34,19 @@ Updated: 2026-07-30
 | GLI-006 | Codex | Data QA | COMPLETE | fixture normalizer, dedupe, and privacy gate |
 | GLI-007 | Codex | Product review | COMPLETE | conversational search and Trust Score v0.1 |
 
-## Accepted decisions
+## Decisions
 
-- Reuse the existing Cloudflare Sites project for the Web2 MVP.
-- Use D1 and R2 for MVP persistence.
-- Preserve internal provenance while keeping end-user source labels neutral.
-- Do not production-crawl Realestate.com.kh without written authorization.
-- Keep Web3 screens outside production Web2 navigation.
+| ID | Decision | Status |
+|---|---|---|
+| DEC-001 | Use the existing Cloudflare Sites project for the Web2 MVP | ACCEPTED |
+| DEC-002 | Use D1 and R2 for MVP persistence | ACCEPTED |
+| DEC-003 | Keep the user-facing source label neutral while preserving internal provenance | ACCEPTED |
+| DEC-004 | Do not production-crawl Realestate.com.kh without written authorization | ACCEPTED |
+| DEC-005 | Keep all Web3 screens outside the production Web2 navigation | ACCEPTED |
+
+## Human gates
+
+- Approve the first production data source and written usage basis.
+- Approve Trust Score public wording and legal disclaimer.
+- Select payment provider and membership refund policy.
+- Name the Cambodia verifier and consultation operator.

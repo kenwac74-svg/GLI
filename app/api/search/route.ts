@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { assets } from "../../../lib/assets";
+import { listAssets } from "../../../lib/assets-data";
 import { searchAssets } from "../../../lib/search";
 
 export async function POST(request: Request) {
@@ -12,14 +12,25 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-  const query = typeof body === "object" && body !== null && "query" in body && typeof body.query === "string"
-    ? body.query.trim()
-    : "";
+
+  const query =
+    typeof body === "object" &&
+    body !== null &&
+    "query" in body &&
+    typeof body.query === "string"
+      ? body.query.trim()
+      : "";
+
   if (!query || query.length > 800) {
     return NextResponse.json(
       { error: { code: "INVALID_QUERY", message: "1자 이상 800자 이하로 입력해 주세요." } },
       { status: 400 },
     );
   }
-  return NextResponse.json(searchAssets(query, assets));
+
+  const source = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
+  return NextResponse.json({
+    ...searchAssets(query, source.assets),
+    dataMode: source.mode,
+  });
 }
