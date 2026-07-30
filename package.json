@@ -10,9 +10,10 @@
     "build": "vinext build",
     "start": "vinext start",
     "test": "npm run build && node --test tests/*.test.mjs",
-    "check": "npm run lint && npm test",
+    "check": "npm run lint && npm run db:validate && npm test",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "db:validate": "node scripts/validate-migrations.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

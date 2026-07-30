@@ -56,6 +56,7 @@ test("returns grounded Cambodia results from the search API", async () => {
   assert.equal(result.criteria.country, "Cambodia");
   assert.equal(result.criteria.transaction, "rent");
   assert.equal(result.criteria.bedrooms, 2);
+  assert.equal(result.dataMode, "approved-fixture");
   assert.ok(result.matches.length >= 1);
   assert.equal(result.matches[0].id, "GLI-KH-004");
 });

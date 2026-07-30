@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { assets } from "../../../lib/assets";
+import { listAssets } from "../../../lib/assets-data";
 import { searchAssets } from "../../../lib/search";
 
 export async function POST(request: Request) {
@@ -28,5 +28,9 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json(searchAssets(query, assets));
+  const source = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
+  return NextResponse.json({
+    ...searchAssets(query, source.assets),
+    dataMode: source.mode,
+  });
 }

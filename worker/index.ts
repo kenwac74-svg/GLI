@@ -6,6 +6,7 @@ interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
   FILES: R2Bucket;
+  DATA_MODE?: "approved-fixture" | "d1";
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

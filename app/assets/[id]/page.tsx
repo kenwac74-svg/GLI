@@ -12,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../components/site-header";
-import { findAsset } from "../../../lib/assets";
+import { getAsset } from "../../../lib/assets-data";
 
 export default async function AssetPage({
   params,
@@ -20,7 +20,7 @@ export default async function AssetPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const asset = findAsset(id);
+  const { asset } = await getAsset(id);
   if (!asset) notFound();
 
   return (
