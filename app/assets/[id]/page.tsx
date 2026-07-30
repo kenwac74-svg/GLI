@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   CircleAlert,
   FileCheck2,
-  Heart,
   MapPin,
   ShieldCheck,
 } from "lucide-react";
@@ -13,6 +12,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../components/site-header";
 import { getAsset } from "../../../lib/assets-data";
+import { AssetActions } from "./asset-actions";
+
+export const dynamic = "force-dynamic";
 
 export default async function AssetPage({
   params,
@@ -138,9 +140,7 @@ export default async function AssetPage({
             <Link className="primary-action" href={`/my?consult=${asset.id}`}>
               전문가 상담 신청
             </Link>
-            <button className="secondary-action" type="button">
-              <Heart size={18} /> 관심 자산에 추가
-            </button>
+            <AssetActions assetId={asset.id} />
             {asset.isGliDirect && (
               <div className="direct-box">
                 <strong>GLI Direct 실행 프로그램</strong>

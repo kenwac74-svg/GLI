@@ -13,7 +13,8 @@
     "check": "npm run lint && npm run db:validate && npm test",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
-    "db:validate": "node scripts/validate-migrations.mjs"
+    "db:validate": "node scripts/validate-migrations.mjs",
+    "db:local": "wrangler d1 migrations apply site-creator-d1 --local --config wrangler.local.jsonc --persist-to .wrangler/state"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
