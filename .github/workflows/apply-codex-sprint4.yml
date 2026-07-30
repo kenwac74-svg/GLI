@@ -1,0 +1,38 @@
+name: Apply Codex Sprint 4 Sync
+
+on:
+  push:
+    branches:
+      - codex/web2-mvp
+    paths:
+      - .github/codex-sync/sprint4-files.tar.gz
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/web2-mvp
+      - name: Apply exact source files
+        run: |
+          tar -xzf .github/codex-sync/sprint4-files.tar.gz
+          rm .github/codex-sync/sprint4-files.tar.gz
+          rmdir .github/codex-sync
+          rm .github/workflows/apply-codex-sprint4.yml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Commit validated source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: persist member workflows in D1"
+          git push origin HEAD:codex/web2-mvp
