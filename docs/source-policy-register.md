@@ -1,0 +1,27 @@
+# Cambodia Source Policy Register
+
+Updated: 2026-07-30
+
+This register controls production collection. Technical accessibility is not permission to collect or republish.
+
+| Source | Status | Current basis | MVP action |
+|---|---|---|---|
+| Khmer24 | PENDING_WRITTEN_APPROVAL | Public listing pages and posting/privacy policies are available, but an explicit aggregation licence was not found in the reviewed public policies. | Use anonymized fixtures and a disabled connector. Request written permission or partnership terms before recurring production collection. |
+| Realestate.com.kh | AUTHORIZATION_REQUIRED | Published terms prohibit using or indexing content to construct or populate a searchable property database unless specifically authorized. | Do not crawl. Pursue API, feed, licence, or partnership authorization. |
+| FazWaz Cambodia | PENDING_REVIEW | Public access alone is insufficient; applicable terms and feed options require review. | Do not enable production collection until review is complete. |
+
+## Required controls
+
+- `sources.approval_status` must be `APPROVED` before a production job can run.
+- Store the policy URL, reviewer, approval date, permitted fields, rate limit, image rule, attribution rule, and expiry.
+- Preserve source URL, external ID, collection time, and snapshot hash internally.
+- Remove or mask seller phone numbers and other personal data unless the approved business purpose requires them.
+- A source policy change automatically pauses the connector until re-approved.
+
+## Reviewed pages
+
+- Khmer24 privacy policy: https://www.khmer24.com/privacy-policy
+- Khmer24 posting rules: https://www.khmer24.com/posting-rule
+- Khmer24 contact: https://www.khmer24.com/contact-us
+- Realestate.com.kh terms: https://www.realestate.com.kh/legal/
+- Realestate.com.kh robots: https://www.realestate.com.kh/robots.txt
