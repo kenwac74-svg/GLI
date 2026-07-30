@@ -14,10 +14,10 @@ Updated: 2026-07-30
 
 | Milestone | Status | Exit gate |
 |---|---|---|
-| Sprint 0: baseline and architecture | IN PROGRESS | ADR, source policy, portable build, product smoke test |
-| Sprint 1: React routes and data foundation | READY | iframe removed, D1 schema, asset list/detail API |
-| Sprint 2: ingestion and data quality | BLOCKED | source permission plus fixture pipeline |
-| Sprint 3: AI search and Trust | BACKLOG | grounded search and deterministic Trust v0.1 |
+| Sprint 0: baseline and architecture | COMPLETE | ADR, source policy, portable build, product smoke test |
+| Sprint 1: React routes and data foundation | COMPLETE | iframe removed, D1 schema, asset list/detail API |
+| Sprint 2: ingestion and data quality | IN PROGRESS | source permission plus fixture pipeline |
+| Sprint 3: AI search and Trust | IN PROGRESS | grounded search and deterministic Trust v0.1 |
 | Sprint 4: identity, MY GLI, consultation, membership | BACKLOG | persistent user workflows |
 | Sprint 5: Direct, reports, alerts, operations | BACKLOG | pilot operating workflow |
 | Pilot release | BACKLOG | security, data audit, production deployment |
@@ -26,11 +26,13 @@ Updated: 2026-07-30
 
 | ID | Owner | Reviewer | Status | Deliverable |
 |---|---|---|---|---|
-| GLI-001 | Codex | Architecture review | IN PROGRESS | repository baseline, ADR, CI, tests |
+| GLI-001 | Codex | Architecture review | COMPLETE | repository baseline, ADR, CI, tests |
 | GLI-002 | Research | Human/Legal | IN PROGRESS | source permission register |
-| GLI-003 | Codex | Data review | READY | D1 schema and migration |
-| GLI-004 | Data QA | Codex | BLOCKED | approved, anonymized source fixtures |
-| GLI-005 | Codex | Security review | BACKLOG | first approved connector |
+| GLI-003 | Codex | Data review | COMPLETE | D1 schema and migration |
+| GLI-004 | Data QA | Codex | IN PROGRESS | approved, anonymized source fixtures |
+| GLI-005 | Codex | Security review | BLOCKED | first approved connector |
+| GLI-006 | Codex | Data QA | COMPLETE | fixture normalizer, dedupe, and privacy gate |
+| GLI-007 | Codex | Product review | COMPLETE | conversational search and Trust Score v0.1 |
 
 ## Accepted decisions
 
