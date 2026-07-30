@@ -7,6 +7,7 @@ import {
   type WorkflowUser,
 } from "../db/user-workflows.ts";
 import {
+  DEMO_ADMIN_EMAIL,
   demoSignInPath,
   getCurrentUser,
   isDemoAuthEnabled,
@@ -38,7 +39,22 @@ export async function ensureMemberContext(
     displayName: authUser.fullName ?? authUser.displayName,
   });
 
-  if (authUser.authProvider === "demo" && workflowUser.role === "MEMBER") {
+  if (
+    authUser.authProvider === "demo" &&
+    authUser.email === DEMO_ADMIN_EMAIL &&
+    workflowUser.role !== "ADMIN"
+  ) {
+    await database
+      .prepare(
+        "UPDATE users SET role = 'ADMIN', updated_at = ? WHERE id = ?",
+      )
+      .bind(Date.now(), workflowUser.id)
+      .run();
+    workflowUser.role = "ADMIN";
+  } else if (
+    authUser.authProvider === "demo" &&
+    workflowUser.role === "MEMBER"
+  ) {
     await database
       .prepare(
         "UPDATE users SET role = 'DEMO_MEMBER', updated_at = ? WHERE id = ? AND role = 'MEMBER'",
@@ -94,6 +110,26 @@ export async function requireApiMember(
     };
   }
   return { context };
+}
+
+export async function requireApiAdmin(
+  request: Request,
+  returnTo = "/admin",
+): Promise<
+  | { context: MemberContext; response?: never }
+  | { context?: never; response: NextResponse }
+> {
+  const member = await requireApiMember(request, returnTo);
+  if (member.response) return member;
+  if (member.context.workflowUser.role !== "ADMIN") {
+    return {
+      response: NextResponse.json(
+        { error: "관리자 권한이 필요합니다.", code: "ADMIN_REQUIRED" },
+        { status: 403, headers: { "cache-control": "no-store" } },
+      ),
+    };
+  }
+  return member;
 }
 
 export function validateMutationRequest(request: Request): NextResponse | null {

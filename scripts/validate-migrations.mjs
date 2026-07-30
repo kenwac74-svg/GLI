@@ -5,6 +5,7 @@ import { DatabaseSync } from "node:sqlite";
 const migrationFiles = [
   "drizzle/0000_elite_adam_destine.sql",
   "drizzle/0001_seed_approved_fixture.sql",
+  "drizzle/0002_admin_ingestion_pipeline.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -54,7 +55,23 @@ try {
     .get();
   assert.equal(directCount.count, 3);
 
-  console.log("D1 migrations validated: 8 listings, versions, and Trust scores.");
+  const fingerprintColumn = database
+    .prepare(
+      "SELECT count(*) AS count FROM pragma_table_info('listings') WHERE name = 'fingerprint'",
+    )
+    .get();
+  assert.equal(fingerprintColumn.count, 1);
+
+  const fingerprintIndex = database
+    .prepare(
+      "SELECT count(*) AS count FROM pragma_index_list('listings') WHERE name = 'listings_fingerprint_idx'",
+    )
+    .get();
+  assert.equal(fingerprintIndex.count, 1);
+
+  console.log(
+    "D1 migrations validated: 8 listings, versions, Trust scores, and ingestion fingerprint index.",
+  );
 } finally {
   database.close();
 }

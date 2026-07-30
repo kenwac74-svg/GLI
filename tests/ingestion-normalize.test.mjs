@@ -1,6 +1,157 @@
-import assert from "node:assert/strict";import test from "node:test";import {normalizeApprovedFixture} from "../ingestion/normalize.ts";
-const fixture=(o={})=>({country:"Cambodia",city:" Phnom   Penh ",district:"BKK1",transaction:"rent",propertyType:"condo",price:500.25,currency:"USD",areaSqm:74.5,bedrooms:2,bathrooms:2,title:"High-floor 2BR residence",summary:"Approved fixture with river view.",sourceExternalKey:"kh-004",sourceUrl:"https://fixture.example/listing/4",observedAt:"2026-07-30T09:00:00+07:00",...o});
-test("normalizes units and canonical fields",()=>{const value=normalizeApprovedFixture(fixture());assert.equal(value.countryCode,"KH");assert.equal(value.city,"Phnom Penh");assert.equal(value.priceMinor,50025);assert.equal(value.areaSqmX100,7450);assert.match(value.fingerprint,/^[a-f0-9]{64}$/)});
-test("is deterministic and detects core changes",()=>{const a=normalizeApprovedFixture(fixture()),b=normalizeApprovedFixture(fixture()),c=normalizeApprovedFixture(fixture({price:501.25}));assert.deepEqual(a,b);assert.notEqual(a.fingerprint,c.fingerprint);assert.notEqual(a.normalizedHash,c.normalizedHash)});
-test("does not expose arbitrary contact or raw fields",()=>{const value=normalizeApprovedFixture(fixture({ownerPhone:"+85512345678",rawHtml:"private"}));assert.equal("ownerPhone" in value,false);assert.equal("rawHtml" in value,false);assert.throws(()=>normalizeApprovedFixture(fixture({summary:"Call +855 12 345 678 for details"})),/contact information/)});
-test("strictly validates type and source URL",()=>{assert.throws(()=>normalizeApprovedFixture(fixture({propertyType:"land"})),/unsupported/);assert.throws(()=>normalizeApprovedFixture(fixture({sourceUrl:"http://fixture.example/4"})),/HTTPS/);assert.throws(()=>normalizeApprovedFixture(fixture({price:500.123})),/two decimal/)});
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { normalizeApprovedFixture } from "../ingestion/normalize.ts";
+
+function fixture(overrides = {}) {
+  return {
+    country: "Cambodia",
+    city: " Phnom   Penh ",
+    district: "BKK1",
+    transaction: "rent",
+    propertyType: "condo",
+    price: 500.25,
+    currency: "USD",
+    areaSqm: 74.5,
+    bedrooms: 2,
+    bathrooms: 2,
+    title: "High-floor 2BR residence",
+    summary: "Approved fixture with a river view and furnished interior.",
+    sourceExternalKey: "fixture-kh-004",
+    sourceUrl: "https://fixtures.example.test/listings/kh-004",
+    observedAt: "2026-07-30T09:00:00+07:00",
+    ...overrides,
+  };
+}
+
+test("normalizes approved fixture values to storage units and canonical fields", () => {
+  const listing = normalizeApprovedFixture(fixture());
+
+  assert.equal(listing.country, "Cambodia");
+  assert.equal(listing.countryCode, "KH");
+  assert.equal(listing.city, "Phnom Penh");
+  assert.equal(listing.priceMinor, 50_025);
+  assert.equal(listing.areaSqmX100, 7_450);
+  assert.equal(listing.observedAt, "2026-07-30T02:00:00.000Z");
+  assert.match(listing.fingerprint, /^[a-f0-9]{64}$/);
+  assert.match(listing.normalizedHash, /^[a-f0-9]{64}$/);
+});
+
+test("is deterministic and changes hashes when core fields change", () => {
+  const first = normalizeApprovedFixture(fixture());
+  const same = normalizeApprovedFixture(structuredClone(fixture()));
+  const changedPrice = normalizeApprovedFixture(fixture({ price: 501.25 }));
+  const changedBedrooms = normalizeApprovedFixture(fixture({ bedrooms: 1 }));
+  const changedTitle = normalizeApprovedFixture(
+    fixture({ title: "Renovated high-floor 2BR residence" }),
+  );
+
+  assert.deepEqual(first, same);
+  assert.notEqual(first.fingerprint, changedPrice.fingerprint);
+  assert.notEqual(first.normalizedHash, changedPrice.normalizedHash);
+  assert.notEqual(first.fingerprint, changedBedrooms.fingerprint);
+  assert.notEqual(first.normalizedHash, changedBedrooms.normalizedHash);
+  assert.equal(first.fingerprint, changedTitle.fingerprint);
+  assert.notEqual(first.normalizedHash, changedTitle.normalizedHash);
+});
+
+test("keeps duplicate identity stable across source and observation changes", () => {
+  const first = normalizeApprovedFixture(fixture());
+  const laterSource = normalizeApprovedFixture(
+    fixture({
+      sourceExternalKey: "fixture-kh-other",
+      sourceUrl: "https://other.example.test/property/42",
+      observedAt: "2026-07-31T09:00:00+07:00",
+    }),
+  );
+
+  assert.equal(first.fingerprint, laterSource.fingerprint);
+  assert.notEqual(first.normalizedHash, laterSource.normalizedHash);
+});
+
+test("returns an allowlisted public payload without raw input or contact fields", () => {
+  const listing = normalizeApprovedFixture(
+    fixture({
+      ownerName: "Private Owner",
+      contactPhone: "+855 12 345 678",
+      contactEmail: "owner@example.test",
+      rawHtml: "<p>source snapshot belongs outside normalization</p>",
+    }),
+  );
+
+  assert.deepEqual(Object.keys(listing).sort(), [
+    "areaSqmX100",
+    "bathrooms",
+    "bedrooms",
+    "city",
+    "country",
+    "countryCode",
+    "currency",
+    "district",
+    "fingerprint",
+    "imageUrl",
+    "normalizedHash",
+    "observedAt",
+    "priceMinor",
+    "propertyType",
+    "source",
+    "summary",
+    "title",
+    "transaction",
+  ]);
+  assert.equal("contactPhone" in listing, false);
+  assert.equal("rawHtml" in listing, false);
+});
+
+test("rejects contact information embedded in public text or source metadata", () => {
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ summary: "Call +855 12 345 678 for details." })),
+    /must not contain email addresses or phone numbers/,
+  );
+  assert.throws(
+    () =>
+      normalizeApprovedFixture(
+        fixture({ sourceUrl: "https://example.test/listing?email=owner@example.test" }),
+      ),
+    /must not contain contact information/,
+  );
+});
+
+test("strictly validates enums, units, counts, source URL, and observed time", () => {
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ country: "Atlantis" })),
+    /supported Southeast Asian country/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ transaction: "lease" })),
+    /transaction must be one of/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ propertyType: "land" })),
+    /propertyType must be one of/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ currency: "KHR" })),
+    /currency must be one of/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ price: 500.123 })),
+    /no more than two decimal places/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ areaSqm: 0 })),
+    /positive finite number/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ bedrooms: 1.5 })),
+    /integer between 0 and 100/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ sourceUrl: "http://example.test/listing" })),
+    /must use HTTPS/,
+  );
+  assert.throws(
+    () => normalizeApprovedFixture(fixture({ observedAt: "2026-07-30" })),
+    /ISO 8601 timestamp with a timezone/,
+  );
+});

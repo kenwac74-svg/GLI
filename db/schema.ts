@@ -1,49 +1,257 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  integer,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 
-export const sources = sqliteTable("sources", {
-  id: integer("id").primaryKey({ autoIncrement: true }), slug: text("slug").notNull(), nameInternal: text("name_internal").notNull(), country: text("country").notNull(), baseUrl: text("base_url").notNull(), policyUrl: text("policy_url"), approvalStatus: text("approval_status").notNull().default("PENDING"), permittedFieldsJson: text("permitted_fields_json").notNull().default("[]"), approvedAt: integer("approved_at"), approvalExpiresAt: integer("approval_expires_at"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
-}, (t) => [uniqueIndex("sources_slug_uidx").on(t.slug)]);
+export const sources = sqliteTable(
+  "sources",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    slug: text("slug").notNull(),
+    nameInternal: text("name_internal").notNull(),
+    country: text("country").notNull(),
+    baseUrl: text("base_url").notNull(),
+    policyUrl: text("policy_url"),
+    approvalStatus: text("approval_status").notNull().default("PENDING"),
+    permittedFieldsJson: text("permitted_fields_json").notNull().default("[]"),
+    approvedAt: integer("approved_at"),
+    approvalExpiresAt: integer("approval_expires_at"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [uniqueIndex("sources_slug_uidx").on(table.slug)],
+);
 
-export const ingestionRuns = sqliteTable("ingestion_runs", {
-  id: integer("id").primaryKey({ autoIncrement: true }), sourceId: integer("source_id").notNull().references(() => sources.id), status: text("status").notNull(), startedAt: integer("started_at").notNull(), endedAt: integer("ended_at"), discoveredCount: integer("discovered_count").notNull().default(0), acceptedCount: integer("accepted_count").notNull().default(0), rejectedCount: integer("rejected_count").notNull().default(0), errorSummary: text("error_summary"),
-}, (t) => [index("ingestion_runs_source_started_idx").on(t.sourceId, t.startedAt)]);
+export const ingestionRuns = sqliteTable(
+  "ingestion_runs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => sources.id),
+    status: text("status").notNull(),
+    startedAt: integer("started_at").notNull(),
+    endedAt: integer("ended_at"),
+    discoveredCount: integer("discovered_count").notNull().default(0),
+    acceptedCount: integer("accepted_count").notNull().default(0),
+    rejectedCount: integer("rejected_count").notNull().default(0),
+    errorSummary: text("error_summary"),
+  },
+  (table) => [index("ingestion_runs_source_started_idx").on(table.sourceId, table.startedAt)],
+);
 
-export const rawSnapshots = sqliteTable("raw_snapshots", {
-  id: integer("id").primaryKey({ autoIncrement: true }), sourceId: integer("source_id").notNull().references(() => sources.id), ingestionRunId: integer("ingestion_run_id").references(() => ingestionRuns.id), sourceUrl: text("source_url").notNull(), sourceUrlHash: text("source_url_hash").notNull(), contentHash: text("content_hash").notNull(), objectKey: text("object_key").notNull(), httpStatus: integer("http_status").notNull(), fetchedAt: integer("fetched_at").notNull(),
-}, (t) => [index("raw_snapshots_lookup_idx").on(t.sourceId, t.sourceUrlHash, t.fetchedAt), uniqueIndex("raw_snapshots_object_key_uidx").on(t.objectKey)]);
+export const rawSnapshots = sqliteTable(
+  "raw_snapshots",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => sources.id),
+    ingestionRunId: integer("ingestion_run_id").references(() => ingestionRuns.id),
+    sourceUrl: text("source_url").notNull(),
+    sourceUrlHash: text("source_url_hash").notNull(),
+    contentHash: text("content_hash").notNull(),
+    objectKey: text("object_key").notNull(),
+    httpStatus: integer("http_status").notNull(),
+    fetchedAt: integer("fetched_at").notNull(),
+  },
+  (table) => [
+    index("raw_snapshots_lookup_idx").on(
+      table.sourceId,
+      table.sourceUrlHash,
+      table.fetchedAt,
+    ),
+    uniqueIndex("raw_snapshots_object_key_uidx").on(table.objectKey),
+  ],
+);
 
-export const listings = sqliteTable("listings", {
-  id: integer("id").primaryKey({ autoIncrement: true }), publicId: text("public_id").notNull(), country: text("country").notNull(), city: text("city").notNull(), district: text("district"), transactionType: text("transaction_type").notNull(), propertyType: text("property_type").notNull(), title: text("title").notNull(), summary: text("summary").notNull(), priceMinor: integer("price_minor").notNull(), currency: text("currency").notNull(), areaSqmX100: integer("area_sqm_x100"), bedrooms: integer("bedrooms"), bathrooms: integer("bathrooms"), imageUrl: text("image_url"), status: text("status").notNull().default("ACTIVE"), isGliDirect: integer("is_gli_direct", { mode: "boolean" }).notNull().default(false), firstSeenAt: integer("first_seen_at").notNull(), lastSeenAt: integer("last_seen_at").notNull(), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
-}, (t) => [uniqueIndex("listings_public_id_uidx").on(t.publicId), index("listings_search_idx").on(t.country, t.city, t.transactionType, t.status, t.priceMinor)]);
+export const listings = sqliteTable(
+  "listings",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    publicId: text("public_id").notNull(),
+    country: text("country").notNull(),
+    city: text("city").notNull(),
+    district: text("district"),
+    transactionType: text("transaction_type").notNull(),
+    propertyType: text("property_type").notNull(),
+    title: text("title").notNull(),
+    summary: text("summary").notNull(),
+    priceMinor: integer("price_minor").notNull(),
+    currency: text("currency").notNull(),
+    areaSqmX100: integer("area_sqm_x100"),
+    bedrooms: integer("bedrooms"),
+    bathrooms: integer("bathrooms"),
+    imageUrl: text("image_url"),
+    fingerprint: text("fingerprint"),
+    status: text("status").notNull().default("ACTIVE"),
+    isGliDirect: integer("is_gli_direct", { mode: "boolean" }).notNull().default(false),
+    firstSeenAt: integer("first_seen_at").notNull(),
+    lastSeenAt: integer("last_seen_at").notNull(),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("listings_public_id_uidx").on(table.publicId),
+    index("listings_search_idx").on(
+      table.country,
+      table.city,
+      table.transactionType,
+      table.status,
+      table.priceMinor,
+    ),
+    index("listings_fingerprint_idx").on(table.country, table.fingerprint),
+  ],
+);
 
-export const listingSources = sqliteTable("listing_sources", {
-  id: integer("id").primaryKey({ autoIncrement: true }), listingId: integer("listing_id").notNull().references(() => listings.id), sourceId: integer("source_id").notNull().references(() => sources.id), externalKey: text("external_key").notNull(), sourceUrl: text("source_url").notNull(), firstSeenAt: integer("first_seen_at").notNull(), lastSeenAt: integer("last_seen_at").notNull(),
-}, (t) => [uniqueIndex("listing_sources_external_uidx").on(t.sourceId, t.externalKey), index("listing_sources_listing_idx").on(t.listingId)]);
+export const listingSources = sqliteTable(
+  "listing_sources",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    listingId: integer("listing_id")
+      .notNull()
+      .references(() => listings.id),
+    sourceId: integer("source_id")
+      .notNull()
+      .references(() => sources.id),
+    externalKey: text("external_key").notNull(),
+    sourceUrl: text("source_url").notNull(),
+    firstSeenAt: integer("first_seen_at").notNull(),
+    lastSeenAt: integer("last_seen_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("listing_sources_external_uidx").on(table.sourceId, table.externalKey),
+    index("listing_sources_listing_idx").on(table.listingId),
+  ],
+);
 
-export const listingVersions = sqliteTable("listing_versions", {
-  id: integer("id").primaryKey({ autoIncrement: true }), listingId: integer("listing_id").notNull().references(() => listings.id), rawSnapshotId: integer("raw_snapshot_id").references(() => rawSnapshots.id), normalizedHash: text("normalized_hash").notNull(), normalizedPayloadJson: text("normalized_payload_json").notNull(), changedFieldsJson: text("changed_fields_json").notNull().default("[]"), observedAt: integer("observed_at").notNull(),
-}, (t) => [uniqueIndex("listing_versions_hash_uidx").on(t.listingId, t.normalizedHash), index("listing_versions_observed_idx").on(t.listingId, t.observedAt)]);
+export const listingVersions = sqliteTable(
+  "listing_versions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    listingId: integer("listing_id")
+      .notNull()
+      .references(() => listings.id),
+    rawSnapshotId: integer("raw_snapshot_id").references(() => rawSnapshots.id),
+    normalizedHash: text("normalized_hash").notNull(),
+    normalizedPayloadJson: text("normalized_payload_json").notNull(),
+    changedFieldsJson: text("changed_fields_json").notNull().default("[]"),
+    observedAt: integer("observed_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("listing_versions_hash_uidx").on(table.listingId, table.normalizedHash),
+    index("listing_versions_observed_idx").on(table.listingId, table.observedAt),
+  ],
+);
 
-export const trustScoreRuns = sqliteTable("trust_score_runs", {
-  id: integer("id").primaryKey({ autoIncrement: true }), listingId: integer("listing_id").notNull().references(() => listings.id), score: integer("score").notNull(), status: text("status").notNull(), ruleVersion: text("rule_version").notNull(), inputManifestHash: text("input_manifest_hash").notNull(), dimensionsJson: text("dimensions_json").notNull(), explanation: text("explanation").notNull(), calculatedAt: integer("calculated_at").notNull(), approvedByUserId: text("approved_by_user_id"), approvedAt: integer("approved_at"),
-}, (t) => [uniqueIndex("trust_score_runs_manifest_uidx").on(t.listingId, t.ruleVersion, t.inputManifestHash), index("trust_score_runs_latest_idx").on(t.listingId, t.calculatedAt)]);
+export const trustScoreRuns = sqliteTable(
+  "trust_score_runs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    listingId: integer("listing_id")
+      .notNull()
+      .references(() => listings.id),
+    score: integer("score").notNull(),
+    status: text("status").notNull(),
+    ruleVersion: text("rule_version").notNull(),
+    inputManifestHash: text("input_manifest_hash").notNull(),
+    dimensionsJson: text("dimensions_json").notNull(),
+    explanation: text("explanation").notNull(),
+    calculatedAt: integer("calculated_at").notNull(),
+    approvedByUserId: text("approved_by_user_id"),
+    approvedAt: integer("approved_at"),
+  },
+  (table) => [
+    uniqueIndex("trust_score_runs_manifest_uidx").on(
+      table.listingId,
+      table.ruleVersion,
+      table.inputManifestHash,
+    ),
+    index("trust_score_runs_latest_idx").on(table.listingId, table.calculatedAt),
+  ],
+);
 
-export const users = sqliteTable("users", {
-  id: text("id").primaryKey(), email: text("email").notNull(), displayName: text("display_name"), role: text("role").notNull().default("MEMBER"), status: text("status").notNull().default("ACTIVE"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
-}, (t) => [uniqueIndex("users_email_uidx").on(t.email)]);
+export const users = sqliteTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull(),
+    displayName: text("display_name"),
+    role: text("role").notNull().default("MEMBER"),
+    status: text("status").notNull().default("ACTIVE"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [uniqueIndex("users_email_uidx").on(table.email)],
+);
 
-export const favorites = sqliteTable("favorites", {
-  userId: text("user_id").notNull().references(() => users.id), listingId: integer("listing_id").notNull().references(() => listings.id), createdAt: integer("created_at").notNull(),
-}, (t) => [uniqueIndex("favorites_user_listing_uidx").on(t.userId, t.listingId)]);
+export const favorites = sqliteTable(
+  "favorites",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    listingId: integer("listing_id")
+      .notNull()
+      .references(() => listings.id),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [uniqueIndex("favorites_user_listing_uidx").on(table.userId, table.listingId)],
+);
 
-export const consultations = sqliteTable("consultations", {
-  id: text("id").primaryKey(), userId: text("user_id").notNull().references(() => users.id), listingId: integer("listing_id").references(() => listings.id), requestText: text("request_text").notNull(), preferredAt: integer("preferred_at"), assigneeUserId: text("assignee_user_id"), status: text("status").notNull().default("RECEIVED"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
-}, (t) => [index("consultations_user_status_idx").on(t.userId, t.status)]);
+export const consultations = sqliteTable(
+  "consultations",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    listingId: integer("listing_id").references(() => listings.id),
+    requestText: text("request_text").notNull(),
+    preferredAt: integer("preferred_at"),
+    assigneeUserId: text("assignee_user_id"),
+    status: text("status").notNull().default("RECEIVED"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [index("consultations_user_status_idx").on(table.userId, table.status)],
+);
 
-export const memberships = sqliteTable("memberships", {
-  id: text("id").primaryKey(), userId: text("user_id").notNull().references(() => users.id), planId: text("plan_id").notNull(), provider: text("provider").notNull(), providerCustomerId: text("provider_customer_id"), providerSubscriptionId: text("provider_subscription_id"), status: text("status").notNull(), periodStart: integer("period_start").notNull(), periodEnd: integer("period_end").notNull(), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
-}, (t) => [index("memberships_user_status_idx").on(t.userId, t.status)]);
+export const memberships = sqliteTable(
+  "memberships",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    planId: text("plan_id").notNull(),
+    provider: text("provider").notNull(),
+    providerCustomerId: text("provider_customer_id"),
+    providerSubscriptionId: text("provider_subscription_id"),
+    status: text("status").notNull(),
+    periodStart: integer("period_start").notNull(),
+    periodEnd: integer("period_end").notNull(),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [index("memberships_user_status_idx").on(table.userId, table.status)],
+);
 
-export const auditLogs = sqliteTable("audit_logs", {
-  id: integer("id").primaryKey({ autoIncrement: true }), actorUserId: text("actor_user_id"), action: text("action").notNull(), resourceType: text("resource_type").notNull(), resourceId: text("resource_id").notNull(), beforeJson: text("before_json"), afterJson: text("after_json"), requestId: text("request_id"), createdAt: integer("created_at").notNull(),
-}, (t) => [index("audit_logs_resource_idx").on(t.resourceType, t.resourceId, t.createdAt)]);
+export const auditLogs = sqliteTable(
+  "audit_logs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    actorUserId: text("actor_user_id"),
+    action: text("action").notNull(),
+    resourceType: text("resource_type").notNull(),
+    resourceId: text("resource_id").notNull(),
+    beforeJson: text("before_json"),
+    afterJson: text("after_json"),
+    requestId: text("request_id"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [index("audit_logs_resource_idx").on(table.resourceType, table.resourceId, table.createdAt)],
+);

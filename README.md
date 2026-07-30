@@ -23,6 +23,7 @@ npm run build
 DATA_MODE=d1
 DEPLOYMENT_STAGE=demo
 DEMO_AUTH_ENABLED=true
+DEMO_ADMIN_ENABLED=true
 DEMO_AUTH_HOSTS=localhost,127.0.0.1
 ```
 
@@ -37,6 +38,9 @@ DEMO_AUTH_HOSTS=localhost,127.0.0.1
 - `db/schema.ts` defines listings, provenance, Trust Score, members, favorites,
   consultations, memberships, and audit logs
 - `db/user-workflows.ts` contains the member workflow repository
+- `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
+  review, publish, and audit workflow
+- `/admin` provides a separate demo operations account and collection workbench
 - `drizzle.config.ts` supports local migration generation when needed
 
 ## Workspace Auth Headers
@@ -112,6 +116,11 @@ The family demo account is enabled only when all demo environment variables
 match the current host. It is a shared, non-production identity and must never
 be enabled on a production deployment. It cannot represent payment, wallet, or
 administrator authorization.
+
+The operations demo account is separate from the family member account and is
+enabled only when `DEMO_ADMIN_ENABLED=true`. It can execute only the approved
+internal fixture feed. External portal connectors remain blocked until their
+source policy is explicitly approved.
 
 ## Learn More
 

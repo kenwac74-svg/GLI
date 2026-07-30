@@ -16,10 +16,10 @@ Updated: 2026-07-30
 |---|---|---|
 | Sprint 0: baseline and architecture | COMPLETE | ADR, source policy, portable build, product smoke test |
 | Sprint 1: React routes and data foundation | COMPLETE | iframe removed, D1 schema, asset list/detail API |
-| Sprint 2: ingestion and data quality | IN PROGRESS | source permission plus fixture pipeline |
-| Sprint 3: AI search and Trust | IN PROGRESS | grounded search and deterministic Trust v0.1 |
-| Sprint 4: identity, MY GLI, consultation, membership | BACKLOG | persistent user workflows |
-| Sprint 5: Direct, reports, alerts, operations | BACKLOG | pilot operating workflow |
+| Sprint 2: ingestion and data quality | IN PROGRESS | approved fixture pipeline complete; first external source permission pending |
+| Sprint 3: AI search and Trust | COMPLETE | grounded search, district intent and deterministic Trust v0.2 |
+| Sprint 4: identity, MY GLI, consultation, membership | COMPLETE | persistent user workflows |
+| Sprint 5: Direct, reports, alerts, operations | IN PROGRESS | collection, review and publish loop complete; reports and alerts pending |
 | Pilot release | BACKLOG | security, data audit, production deployment |
 
 ## Active tasks
@@ -33,6 +33,9 @@ Updated: 2026-07-30
 | GLI-005 | Codex | Security review | BLOCKED | first approved connector |
 | GLI-006 | Codex | Data QA | COMPLETE | fixture normalizer, dedupe, and privacy gate |
 | GLI-007 | Codex | Product review | COMPLETE | conversational search and Trust Score v0.1 |
+| GLI-008 | Codex | Operations review | COMPLETE | approved collection, dedupe, Trust calculation, review and publish workflow |
+| GLI-009 | Codex | Product review | COMPLETE | district-aware conversational search |
+| GLI-010 | Codex | Human/Legal | BLOCKED | first authorized external portal connector |
 
 ## Decisions
 
