@@ -1,7 +1,16 @@
 import { AlertTriangle, Database, FileCheck2, RefreshCw, Shield } from "lucide-react";
+import { redirect } from "next/navigation";
+import { ensureMemberContext } from "../../lib/member-data";
+import { getCurrentUser } from "../auth";
 import { SiteHeader } from "../components/site-header";
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/my?return_to=/admin");
+
+  const { workflowUser } = await ensureMemberContext(user);
+  if (workflowUser.role !== "ADMIN") redirect("/");
+
   return (
     <>
       <SiteHeader />

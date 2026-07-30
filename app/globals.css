@@ -1049,7 +1049,7 @@ button {
   color: var(--teal-dark);
 }
 
-.plan-card > button {
+.membership-action > button {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--deep);
@@ -1063,9 +1063,53 @@ button {
   font-weight: 900;
 }
 
-.featured > button {
+.featured .membership-action > button {
   border-color: var(--teal-dark);
   background: var(--teal-dark);
+}
+
+.membership-action {
+  display: grid;
+  gap: 9px;
+}
+
+.membership-action > a {
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.secondary-action:disabled,
+.membership-action > button:disabled {
+  cursor: default;
+  opacity: 0.78;
+}
+
+.secondary-action.is-saved {
+  border-color: var(--teal-dark);
+  color: var(--teal-dark);
+  background: #effbf8;
+}
+
+.action-message {
+  margin: 8px 0 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+.action-message.is-error {
+  color: #a33a32;
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .payment-note,
@@ -1109,6 +1153,107 @@ button {
   font-weight: 900;
 }
 
+.member-login {
+  max-width: 680px;
+  margin: 72px auto;
+  padding: 42px;
+  display: grid;
+  justify-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  text-align: center;
+}
+
+.member-login > svg {
+  color: var(--teal-dark);
+}
+
+.member-login h2 {
+  margin: 16px 0 7px;
+}
+
+.member-login > p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.member-login-actions {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.member-login-actions form {
+  margin: 0;
+}
+
+.demo-login,
+.profile-link {
+  min-height: 44px;
+  padding: 0 15px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.member-login small {
+  max-width: 520px;
+  margin-top: 18px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
+}
+
+.membership-status {
+  margin-bottom: 22px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-left: 4px solid var(--teal);
+  color: #fff;
+  background: var(--deep);
+}
+
+.membership-status > div:first-child {
+  display: grid;
+  gap: 4px;
+}
+
+.membership-status span,
+.membership-status small {
+  color: #78ddd0;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.membership-status strong {
+  font-size: 22px;
+}
+
+.membership-status p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+}
+
+.membership-status > div:last-child {
+  display: grid;
+  justify-items: end;
+  gap: 5px;
+}
+
 .my-summary,
 .ops-grid {
   margin-bottom: 22px;
@@ -1147,6 +1292,254 @@ button {
 .ops-grid span {
   color: var(--muted);
   font-size: 12px;
+}
+
+.my-workspace {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 36px;
+  align-items: start;
+}
+
+.saved-assets,
+.consultation-history {
+  min-width: 0;
+}
+
+.workflow-section-head {
+  min-height: 54px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.workflow-section-head span {
+  color: var(--teal-dark);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.workflow-section-head h2 {
+  margin: 4px 0 12px;
+  font-size: 20px;
+}
+
+.workflow-section-head > a {
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.saved-asset-list,
+.consultation-list {
+  display: grid;
+  gap: 10px;
+}
+
+.saved-asset {
+  position: relative;
+  min-height: 108px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--paper);
+}
+
+.saved-asset > a {
+  min-width: 0;
+  padding: 10px 54px 10px 10px;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+}
+
+.saved-asset-image {
+  position: relative;
+  width: 112px;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: #fff;
+  background: var(--deep);
+  font-weight: 900;
+}
+
+.saved-asset small {
+  color: var(--muted);
+}
+
+.saved-asset h3 {
+  margin: 5px 0 9px;
+  overflow: hidden;
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.saved-asset p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.saved-asset p span {
+  padding: 3px 6px;
+  border-radius: 4px;
+  color: var(--teal-dark);
+  background: #e8f7f4;
+  font-size: 10px;
+}
+
+.icon-action {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: #a33a32;
+  background: var(--paper);
+}
+
+.my-empty.compact {
+  padding: 36px 18px;
+}
+
+.my-empty.compact h3 {
+  margin: 10px 0 5px;
+}
+
+.consultation-list article {
+  padding: 15px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  border-left: 3px solid var(--teal);
+  background: var(--paper);
+}
+
+.consultation-list strong {
+  font-size: 13px;
+}
+
+.consultation-list p {
+  margin: 5px 0 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.consultation-list article > span {
+  color: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.empty-copy {
+  padding: 24px 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.consultation-form {
+  max-width: 780px;
+  margin-top: 40px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.consultation-form .workflow-section-head {
+  margin-bottom: 0;
+}
+
+.selected-asset {
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--teal-dark);
+  background: #effbf8;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.consultation-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.consultation-form label span {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.consultation-form textarea,
+.consultation-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--ink);
+  background: #fff;
+}
+
+.consultation-form textarea {
+  min-height: 120px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.consultation-form input {
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+.consultation-form > button {
+  width: max-content;
+  min-height: 44px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: var(--teal-dark);
+  font-weight: 900;
+}
+
+.form-status {
+  margin: 0;
+  font-size: 12px;
+}
+
+.form-status.is-success {
+  color: var(--teal-dark);
+}
+
+.form-status.is-error {
+  color: #a33a32;
 }
 
 .my-empty a {
@@ -1201,6 +1594,10 @@ button {
   .plan-card > p,
   .plan-card ul {
     min-height: 0;
+  }
+
+  .my-workspace {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1342,6 +1739,45 @@ button {
   .admin-head {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .member-login {
+    margin: 36px auto;
+    padding: 28px 18px;
+  }
+
+  .member-login-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .member-login-actions .login-cta,
+  .member-login-actions form,
+  .member-login-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .membership-status {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .membership-status > div:last-child {
+    justify-items: start;
+  }
+
+  .saved-asset > a {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+
+  .saved-asset-image {
+    width: 84px;
+  }
+
+  .saved-asset h3 {
+    font-size: 14px;
   }
 
   .my-summary > div,

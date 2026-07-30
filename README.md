@@ -1,8 +1,8 @@
-# vinext-starter
+# GLI Web2 MVP
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+GLI의 동남아 부동산 AI 탐색, Trust Score, 관심 자산, 상담 신청, 현금
+멤버십을 검증하는 Web2 MVP입니다. [vinext](https://github.com/cloudflare/vinext),
+Cloudflare D1, Drizzle 기반으로 실행됩니다.
 
 ## Prerequisites
 
@@ -12,19 +12,31 @@ Drizzle support.
 
 ```bash
 npm install
+npm run db:local
 npm run dev
 npm run build
 ```
 
-This starter does not use `wrangler.jsonc`.
+가족용 공개 데모 로그인을 로컬에서 시험할 때만 다음 환경값을 사용합니다.
+
+```text
+DATA_MODE=d1
+DEPLOYMENT_STAGE=demo
+DEMO_AUTH_ENABLED=true
+DEMO_AUTH_HOSTS=localhost,127.0.0.1
+```
+
+`wrangler.local.jsonc`는 로컬 D1 마이그레이션에만 사용합니다. Sites 배포
+설정은 `.openai/hosting.json`이 담당합니다.
 
 ## Included Shape
 
 - edit site code under `app/`
 - `.openai/hosting.json` declares optional Sites D1 and R2 bindings
 - `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
+- `db/schema.ts` defines listings, provenance, Trust Score, members, favorites,
+  consultations, memberships, and audit logs
+- `db/user-workflows.ts` contains the member workflow repository
 - `drizzle.config.ts` supports local migration generation when needed
 
 ## Workspace Auth Headers
@@ -91,6 +103,15 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 - `npm run build`: verify the vinext build output
 - `npm test`: build the starter and verify its rendered loading skeleton
 - `npm run db:generate`: generate Drizzle migrations after schema changes
+- `npm run db:local`: apply all D1 migrations to the local persisted database
+- `npm run check`: run lint, migration validation, build, and all tests
+
+## Demo Auth Boundary
+
+The family demo account is enabled only when all demo environment variables
+match the current host. It is a shared, non-production identity and must never
+be enabled on a production deployment. It cannot represent payment, wallet, or
+administrator authorization.
 
 ## Learn More
 
