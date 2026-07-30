@@ -1,6 +1,7 @@
 name: Apply Codex Operations Sync
 
 on:
+  workflow_dispatch:
   push:
     branches: [codex/web2-mvp]
     paths:
