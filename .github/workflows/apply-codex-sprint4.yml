@@ -5,7 +5,9 @@ on:
     branches:
       - codex/web2-mvp
     paths:
-      - .github/codex-sync/sprint4-files.tar.gz
+      - .github/codex-sync/archive-1.b64
+      - .github/codex-sync/archive-2.b64
+      - .github/codex-sync/archive-3.b64
 
 permissions:
   contents: write
@@ -19,7 +21,12 @@ jobs:
           ref: codex/web2-mvp
       - name: Apply exact source files
         run: |
-          tar -xzf .github/codex-sync/sprint4-files.tar.gz
+          cat .github/codex-sync/archive-1.b64 .github/codex-sync/archive-2.b64 .github/codex-sync/archive-3.b64 | base64 -d > /tmp/gli-sprint4.tar.gz
+          tar -tzf /tmp/gli-sprint4.tar.gz > /dev/null
+          tar -xzf /tmp/gli-sprint4.tar.gz
+          rm .github/codex-sync/archive-1.b64
+          rm .github/codex-sync/archive-2.b64
+          rm .github/codex-sync/archive-3.b64
           rm .github/codex-sync/sprint4-files.tar.gz
           rmdir .github/codex-sync
           rm .github/workflows/apply-codex-sprint4.yml
