@@ -48,6 +48,7 @@ Updated: 2026-07-31
 | GLI-020 | Codex | Security/Operations review | COMPLETE | administrator audit center, workflow filters and recursive sensitive-value redaction |
 | GLI-021 | Codex | Security/Operations review | COMPLETE | stable audit pagination, bounded CSV export, query indexes and pilot retention policy |
 | GLI-022 | Codex | Security/Operations review | COMPLETE | evidence-based pilot readiness center and administrator backup/restore evidence ledger |
+| GLI-023 | Codex | Security/Product review | COMPLETE | built-worker member and administrator E2E verification plus MVP completion matrix |
 
 ## Decisions
 
@@ -64,6 +65,7 @@ Updated: 2026-07-31
 | DEC-009 | Keep audit history administrator-only, read-only and redacted before rendering | ACCEPTED |
 | DEC-010 | Bound synchronous audit export to 30 days and 1,000 redacted, spreadsheet-safe rows | ACCEPTED |
 | DEC-011 | Block pilot release until automated operational gates and named human approvals have evidence | ACCEPTED |
+| DEC-012 | Verify member and administrator journeys against the generated worker artifact and all D1 migrations | ACCEPTED |
 
 ## Human gates
 
