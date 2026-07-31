@@ -2985,6 +2985,94 @@ button {
   background: #fff;
 }
 
+.source-import-panel {
+  margin-top: 22px;
+}
+
+.source-import-panel > p {
+  max-width: 760px;
+  margin: 0 0 17px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.partner-feed-import {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.partner-feed-import > label {
+  min-height: 64px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px dashed #93aaa7;
+  border-radius: 6px;
+  color: var(--teal-dark);
+  background: #f8fcfb;
+  cursor: pointer;
+}
+
+.partner-feed-import > label span,
+.partner-feed-import > label strong,
+.partner-feed-import > label small {
+  display: block;
+}
+
+.partner-feed-import > label strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.partner-feed-import > label small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.partner-feed-import > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.partner-feed-import > button {
+  min-height: 44px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  background: var(--teal-dark);
+  font-weight: 900;
+}
+
+.partner-feed-import > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.partner-feed-import > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--teal-dark);
+  font-size: 12px;
+}
+
+.partner-feed-import > p.is-error {
+  color: #a33a32;
+}
+
 .source-config-actions button:disabled {
   cursor: not-allowed;
   opacity: 0.5;
@@ -4001,6 +4089,19 @@ button {
 
   .source-config-form {
     grid-template-columns: 1fr;
+  }
+
+  .partner-feed-import {
+    grid-template-columns: 1fr;
+  }
+
+  .partner-feed-import > button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .partner-feed-import > p {
+    grid-column: auto;
   }
 
   .source-field-wide {

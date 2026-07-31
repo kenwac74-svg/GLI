@@ -5,6 +5,7 @@ import { getSourceManagementDetail } from "../../../../db/operations";
 import { ensureMemberContext } from "../../../../lib/member-data";
 import { getCurrentUser } from "../../../auth";
 import { SiteHeader } from "../../../components/site-header";
+import { PartnerFeedImportForm } from "./partner-feed-import-form";
 import { SourceConfigForm } from "./source-config-form";
 
 export const dynamic = "force-dynamic";
@@ -130,6 +131,29 @@ export default async function SourceConfigurationPage({
             <SourceConfigForm source={source} demoReadOnly={demoReadOnly} />
           </section>
         </div>
+
+        <section className="ops-workbench source-import-panel">
+          <div className="ops-section-head">
+            <div>
+              <p className="section-kicker">AUTHORIZED DATA IMPORT</p>
+              <h2>파트너 제공 자료 반입</h2>
+            </div>
+            <DatabaseZap size={22} />
+          </div>
+          <p>
+            승인된 소스가 제공한 JSON 파일을 원본 보관한 뒤 정규화, 중복
+            확인과 개인정보 차단을 거쳐 검토 대기 자산으로 반입합니다.
+          </p>
+          <PartnerFeedImportForm
+            sourceSlug={source.slug}
+            enabled={
+              source.approvalStatus === "APPROVED" &&
+              source.connectorKind === "LICENSED_JSON_V1" &&
+              Boolean(source.feedUrl)
+            }
+            demoReadOnly={demoReadOnly}
+          />
+        </section>
       </main>
     </>
   );

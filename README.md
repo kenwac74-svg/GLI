@@ -68,7 +68,10 @@ OPENAI_MODEL=gpt-5.6-sol
   provenance hashes
 - `/admin` provides a separate demo operations account and collection workbench
 - `/admin/sources/:slug` provides a separate source-approval and licensed-feed
-  onboarding workflow
+  onboarding workflow, including an authorized partner-file import workbench
+- `/api/admin/ingestion/import` sends an exact licensed JSON upload through the
+  existing source policy, R2 raw snapshot, normalization, privacy, dedupe, and
+  `REVIEW_PENDING` boundaries
 - `/admin/audit` provides administrator-only, cursor-paginated audit history
   with workflow filters, recursive secret redaction, and bounded CSV export
 - `/admin/readiness` provides evidence-based pilot release gates and
@@ -181,6 +184,11 @@ The shared demo administrator can review and simulate source-onboarding form
 validation, but the source mutation API rejects demo identities. A real active
 administrator must save or suspend an external source. The database stores only
 the environment-secret name, never the credential value.
+
+The shared demo administrator can also validate a partner-feed file in the
+browser, but cannot import it. A real active administrator and an approved,
+unexpired `LICENSED_JSON_V1` source are required before exact uploaded bytes are
+stored in R2 and candidate listings enter the private review queue.
 
 The audit center is read-only. It resolves event actors, groups events by
 workflow, and redacts secret, token, password, authorization, credential, API

@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   createLicensedJsonFeedConnector,
+  createUploadedLicensedJsonFeedConnector,
   LICENSED_JSON_CONNECTOR_KIND,
 } from "../ingestion/licensed-json-feed.ts";
 
@@ -129,4 +130,46 @@ test("rejects non-JSON responses and record-count overflow without storing raw d
       ),
   }).value;
   await assert.rejects(overflow.collect(), /approved record limit/);
+});
+
+test("collects an uploaded licensed feed through the same immutable boundary", async () => {
+  const writes = [];
+  const bytes = new TextEncoder().encode(JSON.stringify(envelope()));
+  const uploaded = createUploadedLicensedJsonFeedConnector({
+    sourceSlug: "licensed-partner",
+    feedUrl: "https://feeds.partner.example/v1/listings",
+    allowedHosts: ["feeds.partner.example"],
+    maxRecords: 100,
+    rawStore: {
+      async put(...args) {
+        writes.push(args);
+      },
+    },
+    bytes,
+    now: () => NOW,
+  });
+
+  const batch = await uploaded.collect();
+  assert.equal(uploaded.connectorKind, LICENSED_JSON_CONNECTOR_KIND);
+  assert.equal(batch.candidates[0].sourceExternalKey, "partner-101");
+  assert.equal(batch.snapshot.httpStatus, 200);
+  assert.equal(writes.length, 1);
+  assert.deepEqual(writes[0][1], bytes);
+  assert.equal(
+    writes[0][2].customMetadata.collectionMode,
+    "manual-upload",
+  );
+
+  assert.throws(
+    () =>
+      createUploadedLicensedJsonFeedConnector({
+        sourceSlug: "licensed-partner",
+        feedUrl: "https://feeds.partner.example/v1/listings",
+        allowedHosts: ["feeds.partner.example"],
+        maxRecords: 100,
+        rawStore: { async put() {} },
+        bytes: new Uint8Array(),
+      }),
+    /approved byte limit/,
+  );
 });

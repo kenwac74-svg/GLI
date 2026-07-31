@@ -47,6 +47,17 @@ export type LicensedJsonFeedConnectorOptions = {
   authorizationHeader?: string;
 };
 
+export type UploadedLicensedJsonFeedOptions = {
+  sourceSlug: string;
+  feedUrl: string;
+  allowedHosts: readonly string[];
+  maxRecords: number;
+  rawStore: RawObjectStore;
+  bytes: Uint8Array;
+  now?: () => Date;
+  maxBytes?: number;
+};
+
 export function createLicensedJsonFeedConnector(
   options: LicensedJsonFeedConnectorOptions,
 ): SourceConnector<CollectedListingBatch> {
@@ -145,6 +156,85 @@ export function createLicensedJsonFeedConnector(
           contentHash,
           objectKey,
           httpStatus: response.status,
+          fetchedAt,
+        },
+      };
+    },
+  };
+}
+
+export function createUploadedLicensedJsonFeedConnector(
+  options: UploadedLicensedJsonFeedOptions,
+): SourceConnector<CollectedListingBatch> {
+  const endpoint = validateApprovedUrl(
+    options.feedUrl,
+    options.allowedHosts,
+    "feedUrl",
+  );
+  const maxRecords = validatePositiveInteger(
+    options.maxRecords,
+    "maxRecords",
+    1_000,
+  );
+  const maxBytes = validatePositiveInteger(
+    options.maxBytes ?? DEFAULT_MAX_BYTES,
+    "maxBytes",
+    10_000_000,
+  );
+  if (!options.rawStore || typeof options.rawStore.put !== "function") {
+    throw new TypeError("rawStore must expose put()");
+  }
+  if (!(options.bytes instanceof Uint8Array)) {
+    throw new TypeError("bytes must be a Uint8Array");
+  }
+  if (options.bytes.byteLength < 2 || options.bytes.byteLength > maxBytes) {
+    throw new RangeError("Uploaded partner feed exceeds the approved byte limit");
+  }
+
+  const now = options.now ?? (() => new Date());
+  return {
+    sourceSlug: options.sourceSlug,
+    connectorKind: LICENSED_JSON_CONNECTOR_KIND,
+    endpoint: endpoint.toString(),
+    requestedFields: LICENSED_JSON_REQUESTED_FIELDS,
+    async collect() {
+      const fetchedAt = validNow(now()).getTime();
+      const contentHash = sha256(options.bytes);
+      const sourceUrlHash = sha256(
+        new TextEncoder().encode(endpoint.toString()),
+      );
+      const objectKey = [
+        "raw",
+        options.sourceSlug,
+        new Date(fetchedAt).toISOString().slice(0, 10),
+        `${contentHash}.json`,
+      ].join("/");
+      const envelope = parseEnvelope(
+        options.bytes,
+        options.sourceSlug,
+        maxRecords,
+      );
+
+      await options.rawStore.put(objectKey, options.bytes, {
+        httpMetadata: { contentType: "application/json" },
+        customMetadata: {
+          sourceSlug: options.sourceSlug,
+          contentHash,
+          fetchedAt: String(fetchedAt),
+          collectionMode: "manual-upload",
+        },
+      });
+
+      return {
+        candidates: envelope.listings.map((listing) =>
+          toNormalizationInput(listing, options.allowedHosts),
+        ),
+        snapshot: {
+          sourceUrl: endpoint.toString(),
+          sourceUrlHash,
+          contentHash,
+          objectKey,
+          httpStatus: 200,
           fetchedAt,
         },
       };
