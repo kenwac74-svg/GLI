@@ -43,7 +43,6 @@ export function MemberNotificationList({
       }
     }
     router.push(notification.href);
-    router.refresh();
   }
 
   return (
