@@ -11,6 +11,7 @@ const migrationFiles = [
   "drizzle/0005_payment_webhook_ledger.sql",
   "drizzle/0006_operations_health_and_retry.sql",
   "drizzle/0007_operations_notification_delivery.sql",
+  "drizzle/0008_audit_log_query_indexes.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -166,9 +167,24 @@ try {
     notificationIndex: 1,
   });
 
+  const auditQueries = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM pragma_index_list('audit_logs')
+          WHERE name = 'audit_logs_created_idx') AS createdIndex,
+         (SELECT count(*) FROM pragma_index_list('audit_logs')
+          WHERE name = 'audit_logs_action_created_idx') AS actionIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...auditQueries }, {
+    createdIndex: 1,
+    actionIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, and notification delivery.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, and audit queries.",
   );
 } finally {
   database.close();
 }
+
