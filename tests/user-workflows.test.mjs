@@ -49,6 +49,7 @@ class FakeD1 {
     this.favorites = [];
     this.consultations = [];
     this.memberships = [];
+    this.memberNotifications = [];
     this.auditLogs = [];
     this.statements = [];
   }
@@ -271,6 +272,28 @@ class FakeStatement {
           createdAt: row.createdAt,
           updatedAt: row.updatedAt,
         }));
+    }
+    if (
+      sql.includes("FROM member_notifications") &&
+      sql.includes("count(*) AS unreadCount")
+    ) {
+      return [
+        {
+          unreadCount: db.memberNotifications.filter(
+            (row) => row.userId === v[0] && row.readAt === null,
+          ).length,
+        },
+      ];
+    }
+    if (sql.includes("FROM member_notifications")) {
+      return db.memberNotifications
+        .filter((row) => row.userId === v[0])
+        .sort(
+          (left, right) =>
+            right.createdAt - left.createdAt ||
+            right.id.localeCompare(left.id),
+        )
+        .slice(0, v[1]);
     }
 
     throw new Error(`Unhandled read SQL: ${sql}`);
@@ -515,4 +538,6 @@ test("returns favorites, consultations, and the current active membership dashbo
   assert.equal(dashboard.consultations[0].status, "RECEIVED");
   assert.equal(dashboard.activeMembership.planId, "private");
   assert.equal(dashboard.activeMembership.provider, "DEMO_CASH");
+  assert.deepEqual(dashboard.notifications, []);
+  assert.equal(dashboard.unreadNotificationCount, 0);
 });
