@@ -37,6 +37,8 @@ Updated: 2026-07-31
 | GLI-009 | Codex | Product review | COMPLETE | district-aware conversational search |
 | GLI-010 | Codex | Human/Legal | BLOCKED | first authorized external portal connector |
 | GLI-011 | Codex | Security review | COMPLETE | grounded LLM orchestration, output validation, privacy hash and safe fallback |
+| GLI-012 | Codex | Security/Data review | COMPLETE | licensed JSON feed worker, allowlist policy, raw snapshot provenance and failure audit |
+| GLI-013 | Human/Legal | GLI Product Owner | IN PROGRESS | first partner feed authorization and credential handoff |
 
 ## Decisions
 

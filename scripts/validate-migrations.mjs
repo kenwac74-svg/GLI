@@ -7,6 +7,7 @@ const migrationFiles = [
   "drizzle/0001_seed_approved_fixture.sql",
   "drizzle/0002_admin_ingestion_pipeline.sql",
   "drizzle/0003_cash_checkout_sessions.sql",
+  "drizzle/0004_authorized_source_connectors.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -77,8 +78,39 @@ try {
     .get();
   assert.equal(checkoutTable.count, 1);
 
+  const sourceConnectorColumns = database
+    .prepare(
+      `SELECT count(*) AS count
+       FROM pragma_table_info('sources')
+       WHERE name IN (
+         'connector_kind',
+         'connector_config_json',
+         'allowed_hosts_json',
+         'max_records_per_run',
+         'approval_reference',
+         'approved_by_user_id',
+         'policy_reviewed_at'
+       )`,
+    )
+    .get();
+  assert.equal(sourceConnectorColumns.count, 7);
+
+  const sourceReadiness = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sources) AS sources,
+         (SELECT count(*) FROM sources WHERE approval_status = 'APPROVED') AS approved,
+         (SELECT count(*) FROM sources WHERE connector_kind = 'DISABLED') AS disabled`,
+    )
+    .get();
+  assert.deepEqual({ ...sourceReadiness }, {
+    sources: 4,
+    approved: 1,
+    disabled: 3,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, ingestion, and cash checkout sessions.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, and cash checkout sessions.",
   );
 } finally {
   database.close();

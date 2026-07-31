@@ -158,6 +158,62 @@ test("blocks a connector from borrowing another source policy", () => {
   );
 });
 
+test("enforces the approved connector kind and exact HTTPS host", () => {
+  assert.doesNotThrow(() =>
+    assertSourceCollectionAllowed(
+      connector({
+        connectorKind: "LICENSED_JSON_V1",
+        endpoint: "https://feeds.partner.example/listings.json",
+      }),
+      policy({
+        connectorKind: "LICENSED_JSON_V1",
+        allowedHosts: ["feeds.partner.example"],
+      }),
+      NOW,
+    ),
+  );
+
+  assert.throws(
+    () =>
+      assertSourceCollectionAllowed(
+        connector({
+          connectorKind: "HTML_CRAWLER",
+          endpoint: "https://feeds.partner.example/listings.json",
+        }),
+        policy({
+          connectorKind: "LICENSED_JSON_V1",
+          allowedHosts: ["feeds.partner.example"],
+        }),
+        NOW,
+      ),
+    (error) => {
+      assert.ok(error instanceof SourcePolicyError);
+      assert.equal(error.reason, "CONNECTOR_KIND_NOT_PERMITTED");
+      return true;
+    },
+  );
+
+  assert.throws(
+    () =>
+      assertSourceCollectionAllowed(
+        connector({
+          connectorKind: "LICENSED_JSON_V1",
+          endpoint: "https://unapproved.example/listings.json",
+        }),
+        policy({
+          connectorKind: "LICENSED_JSON_V1",
+          allowedHosts: ["feeds.partner.example"],
+        }),
+        NOW,
+      ),
+    (error) => {
+      assert.ok(error instanceof SourcePolicyError);
+      assert.equal(error.reason, "ENDPOINT_NOT_PERMITTED");
+      return true;
+    },
+  );
+});
+
 test("rejects malformed policy inputs before collection", async () => {
   await assert.rejects(
     runApprovedSourceConnector(
@@ -175,5 +231,14 @@ test("rejects malformed policy inputs before collection", async () => {
       NOW,
     ),
     /must not contain duplicate fields/,
+  );
+
+  await assert.rejects(
+    runApprovedSourceConnector(
+      connector(),
+      policy({ maxRecordsPerRun: 0 }),
+      NOW,
+    ),
+    /maxRecordsPerRun must be an integer/,
   );
 });

@@ -14,12 +14,17 @@ export type SourcePolicy = {
   approvalStatus: SourceApprovalStatus;
   permittedFields: readonly string[];
   approvalExpiresAt: string | null;
+  connectorKind?: string;
+  allowedHosts?: readonly string[];
+  maxRecordsPerRun?: number;
   robotsAllowed?: boolean;
 };
 
 export type SourceConnector<T> = {
   sourceSlug: string;
   requestedFields: readonly string[];
+  connectorKind?: string;
+  endpoint?: string;
   collect: () => Promise<T>;
 };
 
@@ -27,7 +32,9 @@ export type SourcePolicyDenialReason =
   | "SOURCE_MISMATCH"
   | "NOT_APPROVED"
   | "APPROVAL_EXPIRED"
-  | "FIELD_NOT_PERMITTED";
+  | "FIELD_NOT_PERMITTED"
+  | "CONNECTOR_KIND_NOT_PERMITTED"
+  | "ENDPOINT_NOT_PERMITTED";
 
 export class SourcePolicyError extends Error {
   readonly sourceSlug: string;
@@ -89,6 +96,54 @@ function parseExpiry(expiry: string | null): number | null {
   return timestamp;
 }
 
+function normalizeAllowedHosts(hosts: readonly string[] | undefined): Set<string> {
+  if (hosts === undefined) return new Set();
+  assertValidFields(hosts, "allowedHosts");
+
+  return new Set(
+    hosts.map((host) => {
+      const normalized = host.toLocaleLowerCase("en-US");
+      if (
+        normalized !== host ||
+        normalized.includes("/") ||
+        normalized.includes(":") ||
+        normalized.startsWith(".") ||
+        normalized.endsWith(".")
+      ) {
+        throw new TypeError(
+          "allowedHosts must contain lowercase hostnames without ports or paths",
+        );
+      }
+      return normalized;
+    }),
+  );
+}
+
+function parseEndpoint(endpoint: string | undefined): URL | null {
+  if (endpoint === undefined) return null;
+  if (typeof endpoint !== "string" || !endpoint || endpoint.trim() !== endpoint) {
+    throw new TypeError("endpoint must be a non-empty, trimmed string");
+  }
+
+  let url: URL;
+  try {
+    url = new URL(endpoint);
+  } catch {
+    throw new TypeError("endpoint must be an absolute URL");
+  }
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.hash
+  ) {
+    throw new TypeError(
+      "endpoint must use HTTPS and contain no credentials or fragment",
+    );
+  }
+  return url;
+}
+
 export function assertSourceCollectionAllowed(
   connector: Pick<SourceConnector<unknown>, "sourceSlug" | "requestedFields">,
   policy: SourcePolicy,
@@ -139,6 +194,38 @@ export function assertSourceCollectionAllowed(
       connector.sourceSlug,
       "FIELD_NOT_PERMITTED",
       deniedField,
+    );
+  }
+
+  if (
+    policy.connectorKind &&
+    connector.connectorKind !== policy.connectorKind
+  ) {
+    throw new SourcePolicyError(
+      connector.sourceSlug,
+      "CONNECTOR_KIND_NOT_PERMITTED",
+      connector.connectorKind ?? "missing connector kind",
+    );
+  }
+
+  if (
+    policy.maxRecordsPerRun !== undefined &&
+    (!Number.isInteger(policy.maxRecordsPerRun) ||
+      policy.maxRecordsPerRun < 1 ||
+      policy.maxRecordsPerRun > 1_000)
+  ) {
+    throw new TypeError(
+      "maxRecordsPerRun must be an integer between 1 and 1000",
+    );
+  }
+
+  const endpoint = parseEndpoint(connector.endpoint);
+  const allowedHosts = normalizeAllowedHosts(policy.allowedHosts);
+  if (endpoint && !allowedHosts.has(endpoint.hostname.toLocaleLowerCase("en-US"))) {
+    throw new SourcePolicyError(
+      connector.sourceSlug,
+      "ENDPOINT_NOT_PERMITTED",
+      endpoint.hostname,
     );
   }
 }

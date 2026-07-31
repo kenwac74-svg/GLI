@@ -18,6 +18,20 @@ This register controls production collection. Technical accessibility is not per
 - Remove or mask seller phone numbers and other personal data unless the approved business purpose requires them.
 - A source policy change automatically pauses the connector until re-approved.
 
+## Implemented connector boundary
+
+- `LICENSED_JSON_V1` accepts only the versioned GLI partner-feed envelope.
+- The source record controls connector kind, exact allowed hosts, permitted
+  fields, and maximum records per run.
+- Redirects, non-HTTPS endpoints, credentials in URLs, unsupported content
+  types, oversized responses, and mismatched source identifiers are rejected.
+- The raw response is written to the raw-object store before normalization; D1
+  stores its object key and SHA-256 provenance hashes.
+- Partner credentials are resolved from worker secrets. They are not stored in
+  source configuration or audit logs.
+- Khmer24, Realestate.com.kh, and FazWaz remain `DISABLED` until their individual
+  written authorization and connector configuration are approved.
+
 ## Reviewed pages
 
 - Khmer24 privacy policy: https://www.khmer24.com/privacy-policy
