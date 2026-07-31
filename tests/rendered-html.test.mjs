@@ -148,3 +148,32 @@ test("uses a direct asset-card label for opening detailed information", async ()
   assert.match(html, /상세 정보 확인/);
   assert.doesNotMatch(html, /검증 요약 보기/);
 });
+
+test("renders global country controls and the four investment asset categories", async () => {
+  const response = await render("/");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /전체 국가/);
+  assert.match(html, /캄보디아/);
+  assert.match(html, /베트남/);
+  assert.match(html, /필리핀/);
+  assert.match(html, /주거용/);
+  assert.match(html, /상업용/);
+  assert.match(html, /레저/);
+  assert.match(html, /프로젝트/);
+  assert.match(html, /GLI 직접 발굴 사업 기회/);
+});
+
+test("renders category-specific facts for a GLI curated project", async () => {
+  const response = await render("/assets/GLI-PJ-KH-401");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /GLI 추천/);
+  assert.match(html, /프로젝트/);
+  assert.match(html, /사업 참여/);
+  assert.match(html, /예상 일정/);
+  assert.doesNotMatch(html, />침실</);
+  assert.doesNotMatch(html, />욕실</);
+});

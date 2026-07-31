@@ -6,10 +6,15 @@ import {
   Building2,
   CheckCircle2,
   CircleAlert,
+  Globe2,
+  House,
+  Landmark,
   LoaderCircle,
   MapPin,
   MessageCircle,
+  Palmtree,
   RotateCcw,
+  Rocket,
   Search,
   SendHorizontal,
   ShieldCheck,
@@ -18,7 +23,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
-import type { Asset } from "../../lib/assets";
+import type { Asset, AssetCategory } from "../../lib/assets";
 import type { AdvisorSearchResult } from "../../lib/ai-search";
 import type { SearchCriteria } from "../../lib/search";
 
@@ -27,6 +32,22 @@ const prompts = [
   "겨울마다 3개월 쉬고 부재 중 임대할 곳을 찾아줘",
   "월 500달러 이하 2베드 강 전망 임대 콘도",
 ];
+
+const CATEGORY_OPTIONS = [
+  { id: "residential", label: "주거용", caption: "주택·콘도·빌라", icon: House },
+  { id: "commercial", label: "상업용", caption: "오피스·리테일·운영 자산", icon: Landmark },
+  { id: "leisure", label: "레저", caption: "리조트·관광·라이프스타일", icon: Palmtree },
+  { id: "project", label: "프로젝트", caption: "GLI 직접 발굴 사업 기회", icon: Rocket },
+] as const;
+
+const COUNTRY_OPTIONS = [
+  { id: "all", label: "전체 국가" },
+  { id: "Cambodia", label: "캄보디아" },
+  { id: "Vietnam", label: "베트남" },
+  { id: "Philippines", label: "필리핀" },
+] as const;
+
+type CountryFilter = (typeof COUNTRY_OPTIONS)[number]["id"];
 
 type ConversationTurn = {
   id: number;
@@ -52,7 +73,13 @@ const welcomeTurn: ConversationTurn = {
   text: "찾으시는 목적과 예산을 편하게 말씀해 주세요. 조건을 정리해 검토할 후보와 확인할 위험을 함께 보여드립니다.",
 };
 
-export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
+export function ExploreClient({
+  initialAssets,
+  curatedAssets,
+}: {
+  initialAssets: Asset[];
+  curatedAssets: Asset[];
+}) {
   const [query, setQuery] = useState("");
   const [assets, setAssets] = useState(initialAssets);
   const [turns, setTurns] = useState<ConversationTurn[]>([welcomeTurn]);
@@ -64,15 +91,29 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
   const [searchAccess, setSearchAccess] =
     useState<SearchMembershipAccess | null>(null);
   const [filter, setFilter] = useState<"all" | "sale" | "rent" | "direct">("all");
+  const [assetCategory, setAssetCategory] =
+    useState<AssetCategory>("residential");
+  const [countryFilter, setCountryFilter] = useState<CountryFilter>("all");
 
   const visibleAssets = useMemo(
-    () =>
-      assets.filter((asset) => {
-        if (filter === "all") return true;
+    () => {
+      const categoryAssets =
+        assetCategory === "residential"
+          ? assets
+          : curatedAssets.filter(
+              (asset) => asset.assetCategory === assetCategory,
+            );
+
+      return categoryAssets.filter((asset) => {
+        if (countryFilter !== "all" && asset.country !== countryFilter) {
+          return false;
+        }
+        if (assetCategory !== "residential" || filter === "all") return true;
         if (filter === "direct") return asset.isGliDirect;
         return asset.transaction === filter;
-      }),
-    [assets, filter],
+      });
+    },
+    [assetCategory, assets, countryFilter, curatedAssets, filter],
   );
 
   async function runSearch(value: string) {
@@ -148,6 +189,8 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
     setCitations([]);
     setSearchAccess(null);
     setFilter("all");
+    setAssetCategory("residential");
+    setCountryFilter("all");
   }
 
   const activeCriteria = criteria ? describeCriteria(criteria) : [];
@@ -211,7 +254,7 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
                 <MessageCircle size={22} />
               </div>
               <div>
-                <span>GLI AI PROPERTY ADVISOR</span>
+                <span>GLI AI INVESTMENT ADVISOR</span>
                 <h2>조건을 이어서 상담하세요</h2>
               </div>
             </div>
@@ -312,29 +355,78 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
           )}
         </section>
 
-        <section className="result-section" id="assets">
-          <div className="section-head">
+        <section className="asset-discovery" id="assets">
+          <div className="asset-discovery-head">
             <div>
-              <p className="section-kicker">CAMBODIA · PHNOM PENH</p>
-              <h2>추천 자산</h2>
-              <span>{visibleAssets.length}개 후보를 비교 중입니다.</span>
+              <p className="section-kicker">
+                <Globe2 size={15} /> GLOBAL ASSET DISCOVERY
+              </p>
+              <h2>투자 자산 탐색</h2>
             </div>
-            <div className="segmented" aria-label="자산 필터">
-              {[
-                ["all", "전체"],
-                ["sale", "매매"],
-                ["rent", "임대"],
-                ["direct", "GLI Direct"],
-              ].map(([value, label]) => (
+            <div className="country-tabs" aria-label="국가 선택">
+              {COUNTRY_OPTIONS.map((country) => (
                 <button
-                  key={value}
-                  className={filter === value ? "active" : ""}
-                  onClick={() => setFilter(value as typeof filter)}
+                  key={country.id}
+                  type="button"
+                  className={countryFilter === country.id ? "is-active" : ""}
+                  onClick={() => setCountryFilter(country.id)}
                 >
-                  {label}
+                  {country.label}
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="asset-category-tabs" aria-label="자산 카테고리">
+            {CATEGORY_OPTIONS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={assetCategory === item.id ? "is-active" : ""}
+                  aria-pressed={assetCategory === item.id}
+                  onClick={() => {
+                    setAssetCategory(item.id);
+                    setFilter("all");
+                  }}
+                >
+                  <Icon size={21} />
+                  <span>{item.label}</span>
+                  <small>{item.caption}</small>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="result-section">
+          <div className="section-head">
+            <div>
+              <p className="section-kicker">
+                {countryFilter === "all" ? "GLOBAL" : countryLabel(countryFilter)} · {categoryLabel(assetCategory)}
+              </p>
+              <h2>{categoryLabel(assetCategory)} 추천 자산</h2>
+              <span>{visibleAssets.length}개 후보를 비교 중입니다.</span>
+            </div>
+            {assetCategory === "residential" ? (
+              <div className="segmented" aria-label="자산 필터">
+                {[
+                  ["all", "전체"],
+                  ["sale", "매매"],
+                  ["rent", "임대"],
+                  ["direct", "GLI 추천"],
+                ].map(([value, label]) => (
+                  <button
+                    key={value}
+                    className={filter === value ? "active" : ""}
+                    onClick={() => setFilter(value as typeof filter)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           {visibleAssets.length ? (
@@ -351,8 +443,8 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
                       unoptimized
                     />
                     <div className="asset-badges">
-                      <span>{asset.transaction === "sale" ? "매매" : "임대"}</span>
-                      {asset.isGliDirect && <strong>GLI DIRECT</strong>}
+                      <span>{asset.categoryLabel ?? "주거용"}</span>
+                      {asset.isGliDirect && <strong>GLI 추천</strong>}
                     </div>
                   </div>
                   <div className="asset-card-body">
@@ -361,7 +453,7 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
                     </p>
                     <h3>{asset.title}</h3>
                     <p className="asset-spec">
-                      {asset.areaSqm}㎡ · {asset.bedrooms || "Studio"}BR · {asset.bathrooms}Bath
+                      {asset.cardMeta ?? `${asset.areaSqm}㎡ · ${asset.bedrooms || "Studio"}BR · ${asset.bathrooms}Bath`}
                     </p>
                     {"matchReasons" in asset && Array.isArray(asset.matchReasons) && (
                       <div className="reason-row">
@@ -372,8 +464,12 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
                     )}
                     <div className="asset-card-foot">
                       <div>
-                        <small>{asset.transaction === "rent" ? "월 임대료" : "매매가"}</small>
-                        <strong>${asset.price.toLocaleString("en-US")}</strong>
+                        <small>
+                          {asset.offerLabel ?? (asset.transaction === "rent" ? "월 임대료" : "매매가")}
+                        </small>
+                        <strong>
+                          {asset.priceLabel ?? `$${asset.price.toLocaleString("en-US")}`}
+                        </strong>
                       </div>
                       <div className={`trust-pill status-${asset.trustStatus.toLowerCase()}`}>
                         <ShieldCheck size={17} />
@@ -393,7 +489,11 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
             <div className="empty-state">
               <CircleAlert size={25} />
               <h3>현재 조건에 맞는 후보가 없습니다</h3>
-              <p>예산이나 침실 수를 조금 넓혀 다시 질문해 보세요.</p>
+              <p>
+                {assetCategory === "residential"
+                  ? "예산이나 침실 수를 조금 넓혀 다시 질문해 보세요."
+                  : "다른 국가를 선택하거나 다른 자산 범주를 살펴보세요."}
+              </p>
             </div>
           )}
         </section>
@@ -428,6 +528,25 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
       </main>
     </>
   );
+}
+
+function categoryLabel(category: AssetCategory): string {
+  const labels: Record<AssetCategory, string> = {
+    residential: "주거용",
+    commercial: "상업용",
+    leisure: "레저",
+    project: "프로젝트",
+  };
+  return labels[category];
+}
+
+function countryLabel(country: Exclude<CountryFilter, "all">): string {
+  const labels: Record<Exclude<CountryFilter, "all">, string> = {
+    Cambodia: "캄보디아",
+    Vietnam: "베트남",
+    Philippines: "필리핀",
+  };
+  return labels[country];
 }
 
 function describeCriteria(criteria: SearchCriteria): string[] {

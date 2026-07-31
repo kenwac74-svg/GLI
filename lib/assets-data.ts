@@ -1,5 +1,6 @@
 import { createAssetsRepository } from "../db/assets-repository.ts";
 import { assets, type Asset } from "./assets.ts";
+import { findCuratedOpportunity } from "./curated-opportunities.ts";
 import type { PublicAssetsFilters } from "../db/assets-repository.ts";
 
 export type AssetDataMode = "approved-fixture" | "d1";
@@ -46,6 +47,10 @@ export async function getAsset(publicId: string): Promise<{
   asset: Asset | null;
   mode: AssetDataMode;
 }> {
+  const curatedAsset = findCuratedOpportunity(publicId);
+  if (curatedAsset) {
+    return { asset: curatedAsset, mode: getAssetDataMode() };
+  }
   const result = await listAssets({ limit: 100 });
   return {
     asset: result.assets.find((candidate) => candidate.id === publicId) ?? null,

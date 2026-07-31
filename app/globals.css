@@ -620,6 +620,101 @@ button {
   padding-bottom: 72px;
 }
 
+.asset-discovery {
+  padding: 34px 0 30px;
+}
+
+.asset-discovery-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.asset-discovery-head h2 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.country-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.country-tabs button {
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.country-tabs button.is-active {
+  border-color: var(--teal-dark);
+  color: #fff;
+  background: var(--teal-dark);
+}
+
+.asset-category-tabs {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.asset-category-tabs button {
+  min-width: 0;
+  min-height: 88px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: 4px 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  color: var(--ink);
+  background: transparent;
+  text-align: left;
+}
+
+.asset-category-tabs button:last-child {
+  border-right: 0;
+}
+
+.asset-category-tabs button svg {
+  grid-row: 1 / 3;
+  color: var(--teal-dark);
+}
+
+.asset-category-tabs button span {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.asset-category-tabs button small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.asset-category-tabs button.is-active {
+  color: #fff;
+  background: var(--deep);
+  box-shadow: inset 0 -4px 0 var(--teal);
+}
+
+.asset-category-tabs button.is-active svg,
+.asset-category-tabs button.is-active small {
+  color: #62d8ca;
+}
+
 .section-head {
   margin-bottom: 22px;
   display: flex;
@@ -800,6 +895,7 @@ button {
 
 .asset-card-foot strong {
   font-size: 19px;
+  overflow-wrap: anywhere;
 }
 
 .trust-pill {
@@ -5110,6 +5206,18 @@ button {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .asset-category-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .asset-category-tabs button:nth-child(2) {
+    border-right: 0;
+  }
+
+  .asset-category-tabs button:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
   .trust-band,
   .detail-layout {
     grid-template-columns: 1fr;
@@ -5308,6 +5416,35 @@ button {
   .section-head {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .asset-discovery-head {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .asset-discovery-head h2 {
+    font-size: 27px;
+  }
+
+  .country-tabs {
+    margin: 0 -14px;
+    padding: 0 14px 4px;
+    overflow-x: auto;
+  }
+
+  .country-tabs button {
+    flex: 0 0 auto;
+  }
+
+  .asset-category-tabs button {
+    min-height: 82px;
+    padding: 13px;
+  }
+
+  .asset-category-tabs button span {
+    font-size: 15px;
   }
 
   .segmented {

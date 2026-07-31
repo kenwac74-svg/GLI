@@ -4,6 +4,17 @@ export type TrustStatus =
   | "VERIFIED"
   | "NEEDS_ATTENTION";
 
+export type AssetCategory =
+  | "residential"
+  | "commercial"
+  | "leisure"
+  | "project";
+
+export type AssetFact = {
+  label: string;
+  value: string;
+};
+
 export type Asset = {
   id: string;
   country: string;
@@ -12,6 +23,12 @@ export type Asset = {
   district: string;
   transaction: "sale" | "rent";
   propertyType: "condo" | "house" | "villa";
+  assetCategory?: AssetCategory;
+  categoryLabel?: string;
+  offerLabel?: string;
+  priceLabel?: string;
+  cardMeta?: string;
+  detailFacts?: AssetFact[];
   bedrooms: number;
   bathrooms: number;
   title: string;

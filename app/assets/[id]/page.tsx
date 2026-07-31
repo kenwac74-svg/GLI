@@ -27,6 +27,25 @@ export default async function AssetPage({
   const hasExternalSource = Boolean(
     !asset.isGliDirect && asset.sourceName && asset.sourceUrl,
   );
+  const categoryLabel = asset.categoryLabel ?? "주거용";
+  const detailFacts = asset.detailFacts ?? [
+    {
+      label: "면적",
+      value: asset.areaSqm ? `${asset.areaSqm}㎡` : "조사 예정",
+    },
+    {
+      label: "침실",
+      value: asset.bedrooms ? String(asset.bedrooms) : "Studio",
+    },
+    {
+      label: "욕실",
+      value: asset.bathrooms ? String(asset.bathrooms) : "조사 예정",
+    },
+    {
+      label: "마지막 자료 갱신",
+      value: new Date(asset.updatedAt).toLocaleDateString("ko-KR"),
+    },
+  ];
 
   return (
     <>
@@ -45,12 +64,12 @@ export default async function AssetPage({
               <div className="asset-origin-badges">
                 <span>
                   {asset.isGliDirect
-                    ? "GLI DIRECT"
+                    ? "GLI 추천"
                     : hasExternalSource
                       ? "MARKET DATA"
                       : "REFERENCE DATA"}
                 </span>
-                {asset.isGliDirect ? <span>GLI 검증 후보</span> : null}
+                <span>{categoryLabel}</span>
                 {hasExternalSource ? <span>{asset.sourceName}</span> : null}
               </div>
             </div>
@@ -60,27 +79,22 @@ export default async function AssetPage({
               </p>
               <h1>{asset.title}</h1>
               <div className="detail-price">
-                <strong>${asset.price.toLocaleString("en-US")}</strong>
-                <span>{asset.transaction === "rent" ? "월 임대료" : "매매가"}</span>
+                <strong>
+                  {asset.priceLabel ?? `$${asset.price.toLocaleString("en-US")}`}
+                </strong>
+                <span>
+                  {asset.offerLabel ??
+                    (asset.transaction === "rent" ? "월 임대료" : "매매가")}
+                </span>
               </div>
             </div>
             <div className="detail-facts">
-              <div>
-                <span>면적</span>
-                <strong>{asset.areaSqm}㎡</strong>
-              </div>
-              <div>
-                <span>침실</span>
-                <strong>{asset.bedrooms || "Studio"}</strong>
-              </div>
-              <div>
-                <span>욕실</span>
-                <strong>{asset.bathrooms}</strong>
-              </div>
-              <div>
-                <span>마지막 자료 갱신</span>
-                <strong>{new Date(asset.updatedAt).toLocaleDateString("ko-KR")}</strong>
-              </div>
+              {detailFacts.map((fact) => (
+                <div key={fact.label}>
+                  <span>{fact.label}</span>
+                  <strong>{fact.value}</strong>
+                </div>
+              ))}
             </div>
             {hasExternalSource && asset.sourceName && asset.sourceUrl ? (
               <section className="asset-source" aria-label="외부 매물 출처">
