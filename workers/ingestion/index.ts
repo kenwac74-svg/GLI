@@ -38,6 +38,7 @@ export type LicensedFeedJobDependencies = {
   secrets?: Record<string, string | undefined>;
   fetchImpl?: typeof fetch;
   now?: () => Date;
+  demoAutoApproval?: boolean;
 };
 
 export async function executeLicensedFeedJob(
@@ -105,6 +106,7 @@ export async function executeLicensedFeedJob(
     connector,
     job.actorUserId,
     executedAt,
+    { demoAutoApproval: dependencies.demoAutoApproval === true },
   );
 }
 

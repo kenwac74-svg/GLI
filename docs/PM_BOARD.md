@@ -65,6 +65,7 @@ Updated: 2026-07-31
 | GLI-037 | Codex | Security/Data review | COMPLETE | bounded public WordPress property API connector, robots enforcement, exact-field parsing and raw provenance |
 | GLI-038 | GLI Product Owner | Human/Legal | BLOCKED | CAM Realty and Cambodia Property Asia written reuse and AI-reference scope approval |
 | GLI-039 | Codex | Product/Security review | COMPLETE | allowlisted public source names, safe original-listing links, official GLI logo and aligned asset-access styling |
+| GLI-040 | Codex | Product/Data review | COMPLETE | explicit demo-only source auto-approval and immediate publication with production review controls preserved |
 
 ## Decisions
 
@@ -94,6 +95,7 @@ Updated: 2026-07-31
 | DEC-022 | Treat GLI Cash as provider-neutral prepaid platform value; use it for asset passes and future GLI products while keeping later token rails optional and separate | ACCEPTED |
 | DEC-023 | Keep the five-level asset detail as a demonstrative UI until category content, pricing, duration, service scope and production entitlement matrices are separately approved | ACCEPTED |
 | DEC-024 | Register every researched Cambodia portal, use only source-approved delivery methods, and never treat technical API access as permission to republish | ACCEPTED |
+| DEC-025 | In the hosted demo only, configured source records may auto-publish behind an explicit environment flag; production must keep source authorization and human listing review | ACCEPTED |
 
 ## Human gates
 

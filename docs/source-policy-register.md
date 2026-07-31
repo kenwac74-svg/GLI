@@ -4,6 +4,18 @@ Updated: 2026-07-31
 
 This register controls production collection. Technical accessibility is not permission to collect or republish.
 
+## Hosted demo exception
+
+- The hosted product simulation may set `DEMO_SOURCE_AUTO_APPROVAL=true` only
+  while `DEPLOYMENT_STAGE=demo`. In that mode, configured sources and collected
+  records are treated as approved and records are published immediately.
+- This exception never fabricates attribution and never bypasses HTTPS, host,
+  field, size, robots, privacy, or source-side access controls. A public source
+  link still requires an exact collected HTTPS original-listing URL.
+- Production and pilot deployments must not set this flag. They must restore
+  source authorization, private review, the complete publication checklist,
+  and the immutable human decision ledger described below.
+
 | Source | Status | Current basis | MVP action |
 |---|---|---|---|
 | Khmer24 | AUTHORIZATION_REQUIRED | `robots.txt` currently advertises `search=yes` and `use=reference`, while reserving AI training and returning a Cloudflare 403 challenge to the server collector. No public API or partner feed was found. | The bounded reference-search connector is installed but cannot run until GLI records the permitted AI-use scope and Khmer24 allowlists the collector or provides an authorized feed. |
