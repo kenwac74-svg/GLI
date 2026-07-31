@@ -4,11 +4,20 @@ import {
   type IngestionResult,
 } from "../../db/operations.ts";
 import type { D1DatabaseLike } from "../../db/user-workflows.ts";
+import {
+  claimNextIngestionRetry,
+  completeRetryJob,
+  enqueueIngestionRetry,
+  failRetryJob,
+  latestFailedIngestionRunId,
+  type RetryJob,
+} from "../../db/operations-health.ts";
 import type { RawObjectStore } from "../../ingestion/contracts.ts";
 import {
   createLicensedJsonFeedConnector,
   LICENSED_JSON_CONNECTOR_KIND,
 } from "../../ingestion/licensed-json-feed.ts";
+import { SourcePolicyError } from "../../ingestion/source-policy.ts";
 
 export type LicensedFeedJob = {
   sourceSlug: string;
@@ -71,6 +80,62 @@ export async function executeLicensedFeedJob(
     job.actorUserId,
     executedAt,
   );
+}
+
+export async function executeLicensedFeedJobWithRetry(
+  job: LicensedFeedJob,
+  dependencies: LicensedFeedJobDependencies,
+): Promise<IngestionResult> {
+  try {
+    return await executeLicensedFeedJob(job, dependencies);
+  } catch (error) {
+    if (!(error instanceof SourcePolicyError)) {
+      const failedRunId = await latestFailedIngestionRunId(
+        dependencies.database,
+        job.sourceSlug,
+      );
+      if (failedRunId !== null) {
+        await enqueueIngestionRetry(
+          dependencies.database,
+          {
+            sourceSlug: job.sourceSlug,
+            actorUserId: job.actorUserId,
+            failedRunId,
+            error:
+              error instanceof Error ? error.message : "Unknown connector error",
+          },
+          dependencies.now?.().getTime() ?? Date.now(),
+        );
+      }
+    }
+    throw error;
+  }
+}
+
+export async function executeNextLicensedFeedRetry(
+  dependencies: LicensedFeedJobDependencies,
+  now = dependencies.now?.().getTime() ?? Date.now(),
+): Promise<RetryJob | null> {
+  const retry = await claimNextIngestionRetry(dependencies.database, now);
+  if (!retry) return null;
+
+  try {
+    await executeLicensedFeedJob(
+      {
+        sourceSlug: retry.payload.sourceSlug,
+        actorUserId: retry.payload.actorUserId,
+      },
+      { ...dependencies, now: () => new Date(now) },
+    );
+    return completeRetryJob(dependencies.database, retry.id, now);
+  } catch (error) {
+    return failRetryJob(
+      dependencies.database,
+      retry.id,
+      error instanceof Error ? error.message : "Unknown connector error",
+      now,
+    );
+  }
 }
 
 function assertJob(job: LicensedFeedJob): void {
