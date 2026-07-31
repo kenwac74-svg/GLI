@@ -15,6 +15,7 @@ const migrationFiles = [
   "drizzle/0009_backup_restore_evidence.sql",
   "drizzle/0010_consultation_threads.sql",
   "drizzle/0011_member_notifications.sql",
+  "drizzle/0012_ai_evaluation_evidence.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -232,8 +233,22 @@ try {
     unreadIndex: 1,
   });
 
+  const aiEvaluationEvidence = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'ai_evaluation_runs') AS tableCount,
+         (SELECT count(*) FROM pragma_index_list('ai_evaluation_runs')
+          WHERE name = 'ai_evaluation_runs_status_completed_idx') AS statusIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...aiEvaluationEvidence }, {
+    tableCount: 1,
+    statusIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, consultation threads, and member alerts.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, consultation threads, member alerts, and AI evaluation evidence.",
   );
 } finally {
   database.close();
