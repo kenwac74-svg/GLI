@@ -141,8 +141,9 @@ export default async function SourceConfigurationPage({
             <DatabaseZap size={22} />
           </div>
           <p>
-            승인된 소스가 제공한 JSON 파일을 원본 보관한 뒤 정규화, 중복
-            확인과 개인정보 차단을 거쳐 검토 대기 자산으로 반입합니다.
+            승인된 소스가 제공한 JSON 또는 CSV 파일을 원본 보관한 뒤
+            정규화, 중복 확인과 개인정보 차단을 거쳐 검토 대기 자산으로
+            반입합니다.
           </p>
           <PartnerFeedImportForm
             sourceSlug={source.slug}
@@ -168,3 +169,4 @@ function formatDate(timestamp: number | null): string {
     timeZone: "UTC",
   }).format(new Date(timestamp));
 }
+
