@@ -22,8 +22,9 @@ Updated: 2026-07-31
 | Grounded LLM advisor | TECHNICALLY READY | `lib/ai-search.ts`, OpenAI adapter validation, grounded citation tests, unsafe-output fallback | Hosted OpenAI key, model approval, production evaluation |
 | Trust Score | VERIFIED | deterministic versioned rules, evidence dimensions, non-guarantee language, Trust tests | Public wording and legal disclaimer approval before pilot |
 | Trust review and publication | VERIFIED | ingestion review queue, administrator review API, publication audit trail and tests | Named GLI analyst/verifier for live operation |
+| Full Trust Report access | VERIFIED | separate private report API/page, Investor/Private server entitlement, Explore paywall, evidence-only content and print/PDF UX | Legal wording approval and live analyst-approved reports |
 | Account and MY GLI | VERIFIED | authenticated user creation, favorites, consultations, membership dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
-| Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, demo no-charge activation | None for the product model |
+| Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, Investor/Private report entitlement, demo no-charge activation | None for the product model |
 | Real cash payment | TECHNICALLY READY | provider-neutral checkout adapter, signed webhook ledger, idempotency, refund access termination and tests | Provider selection, merchant account, credentials, refund policy, certification |
 | Consultation workflow | VERIFIED | member intake, asset-linked/general requests, assignment and status transitions, admin operations and tests | Named Cambodia consultation operator and SLA |
 | Administrator control center | VERIFIED | sources, ingestion/review, consultation operations, alerts, audit center, CSV export and readiness center | Production administrators and least-privilege assignment |
@@ -49,7 +50,7 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 9. The administrator readiness page renders from the migrated database.
 
 The full `npm run check` gate currently covers lint, migration validation,
-production build, and 89 automated tests.
+production build, and 91 automated tests.
 
 ## Pilot blockers
 
