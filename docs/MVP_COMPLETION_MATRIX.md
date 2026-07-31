@@ -14,12 +14,12 @@ Updated: 2026-07-31
 
 | Area | Current status | Authoritative evidence | Remaining condition |
 |---|---|---|---|
-| Normalized property model | VERIFIED | D1 migrations `0000`-`0011`, `db/schema.ts`, normalization and repository tests | Expand mappings when a licensed source contract is received |
+| Normalized property model | VERIFIED | D1 migrations `0000`-`0012`, `db/schema.ts`, normalization and repository tests | Expand mappings when a licensed source contract is received |
 | Provenance and immutable source snapshots | VERIFIED | `ingestion/feed-worker.ts`, licensed network and manual-import connectors, R2 snapshot contract, listing versions, audit records, ingestion tests | Production R2 binding and retention approval |
 | Source authorization boundary | VERIFIED | source policy registry, allowlisted HTTPS hosts and fields, expiry/suspension checks, admin source and partner-file import UI, built-worker tests | None for the boundary itself |
 | Live external Cambodia sources | EXTERNAL GATE | Readiness gate and PM tasks GLI-002, GLI-005, GLI-010, GLI-013 remain open | Written permission or partner feed for each production source, credentials, permitted fields |
 | Conversational property search | VERIFIED | `/api/search`, intent extraction, district-aware filtering, validated multi-turn criteria context, deterministic fallback and rendered-worker tests | None for rules mode |
-| Grounded LLM advisor | TECHNICALLY READY | `lib/ai-search.ts`, OpenAI adapter validation, grounded citation tests, unsafe-output fallback | Hosted OpenAI key, model approval, production evaluation |
+| Grounded LLM advisor | TECHNICALLY READY | `lib/ai-search.ts`, five-case evaluation suite, D1 quality-evidence ledger, 30-day readiness gate, grounded citation tests and unsafe-output fallback | Hosted OpenAI key, selected model evaluation and human quality approval |
 | Trust Score | VERIFIED | deterministic versioned rules, evidence dimensions, non-guarantee language, Trust tests | Public wording and legal disclaimer approval before pilot |
 | Trust review and publication | VERIFIED | ingestion review queue, administrator review API, publication audit trail and tests | Named GLI analyst/verifier for live operation |
 | Full Trust Report access | VERIFIED | separate private report API/page, Investor/Private server entitlement, Explore paywall, evidence-only content and print/PDF UX | Legal wording approval and live analyst-approved reports |
@@ -27,7 +27,7 @@ Updated: 2026-07-31
 | Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, Investor/Private report entitlement, demo no-charge activation | None for the product model |
 | Real cash payment | TECHNICALLY READY | provider-neutral checkout adapter, signed webhook ledger, idempotency, refund access termination and tests | Provider selection, merchant account, credentials, refund policy, certification |
 | Consultation workflow | VERIFIED | member intake, member-scoped case page, member/operator messages, status history, in-app reply/status alerts, assignment, admin operations and built-worker tests | Named Cambodia consultation operator and SLA |
-| Administrator control center | VERIFIED | sources, authorized partner-file import, ingestion/review, consultation operations, alerts, audit center, CSV export and readiness center | Production administrators and least-privilege assignment |
+| Administrator control center | VERIFIED | sources, authorized partner-file import, ingestion/review, AI quality rehearsal/evidence, consultation operations, alerts, audit center, CSV export and readiness center | Production administrators and least-privilege assignment |
 | Operations and recovery | TECHNICALLY READY | health scan, retries, dead-letter queue, allowlisted notification delivery, readiness and backup evidence | Production scheduler, alert destination, secrets, real backup/restore drill |
 | Responsive end-user interface | VERIFIED FOR DEMO | public explore, asset detail, MY GLI, membership pages and desktop/mobile browser QA | Formal accessibility audit and target-device acceptance |
 | Deployable architecture | VERIFIED | vinext/Cloudflare Worker build, D1/R2 bindings, Sites deployment, GitHub CI | Production environment bindings and domain decision |
@@ -53,9 +53,12 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 12. An authorized partner JSON file is stored as an exact R2 raw snapshot,
     normalized, deduplicated, and placed in `REVIEW_PENDING`; suspension blocks
     the next import before another raw object is written.
+13. An administrator can run the five-case rules evaluation through the built
+    Worker, persist its summary and case checks, and render the evidence in the
+    readiness center.
 
 The full `npm run check` gate currently covers lint, migration validation,
-production build, and 101 automated tests.
+production build, and 103 automated tests.
 
 ## Pilot blockers
 
