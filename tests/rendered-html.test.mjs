@@ -29,8 +29,8 @@ test("server-renders the GLI application shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GLI \| AI Verified Assets<\/title>/i);
-  assert.match(html, /캄보디아 부동산, 질문부터 시작하세요/);
-  assert.match(html, /GLI AI PROPERTY ADVISOR/);
+  assert.match(html, /국가와 자산의 경계를 넘어, 검증된 투자 기회를 탐색하세요/);
+  assert.match(html, /GLI AI INVESTMENT ADVISOR/);
   assert.doesNotMatch(html, /gli-ai-prototype\.html|<iframe/i);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/i);
 });
