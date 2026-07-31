@@ -63,6 +63,8 @@ OPENAI_MODEL=gpt-5.6-sol
   approved HTTPS hosts, response limits, immutable raw-object storage, and
   provenance hashes
 - `/admin` provides a separate demo operations account and collection workbench
+- `/admin/sources/:slug` provides a separate source-approval and licensed-feed
+  onboarding workflow
 - `/api/search` provides grounded conversational advice with a deterministic
   fallback and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
@@ -157,6 +159,11 @@ The operations demo account is separate from the family member account and is
 enabled only when `DEMO_ADMIN_ENABLED=true`. It can execute only the approved
 internal fixture feed. External portal connectors remain blocked until their
 source policy is explicitly approved.
+
+The shared demo administrator can review and simulate source-onboarding form
+validation, but the source mutation API rejects demo identities. A real active
+administrator must save or suspend an external source. The database stores only
+the environment-secret name, never the credential value.
 
 ## Authorized Partner Feed
 
