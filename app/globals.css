@@ -1856,6 +1856,74 @@ button {
   font-weight: 900;
 }
 
+.member-notifications {
+  margin-bottom: 28px;
+  padding: 20px 0 4px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.member-notification-list article {
+  min-height: 80px;
+  padding: 15px 12px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.member-notification-list article.is-unread {
+  background: #effbf8;
+}
+
+.member-notification-list article > svg {
+  color: var(--teal-dark);
+}
+
+.member-notification-list strong {
+  display: block;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.member-notification-list p {
+  margin: 4px 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.member-notification-list time {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.member-notification-list button {
+  min-height: 36px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--teal-dark);
+  background: var(--paper);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.member-notification-list button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.member-notification-list > p {
+  margin: 10px 12px;
+  color: #a33a32;
+  font-size: 12px;
+}
+
 .empty-copy {
   padding: 24px 0;
   color: var(--muted);
@@ -3856,6 +3924,15 @@ button {
 
   .consultation-list-actions > a {
     justify-self: end;
+  }
+
+  .member-notification-list article {
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+
+  .member-notification-list article > button {
+    grid-column: 2;
+    width: max-content;
   }
 
   .admin-head-actions {

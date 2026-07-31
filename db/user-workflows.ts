@@ -1,3 +1,8 @@
+import {
+  getMemberNotificationFeed,
+  type MemberNotification,
+} from "./member-notifications.ts";
+
 const USER_ID_PREFIX = "usr_";
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const DEMO_CASH_PLAN_IDS = new Set(["explore", "investor", "private"]);
@@ -84,6 +89,8 @@ export type UserDashboard = {
   favorites: DashboardFavorite[];
   consultations: DashboardConsultation[];
   activeMembership: DashboardMembership | null;
+  notifications: MemberNotification[];
+  unreadNotificationCount: number;
 };
 
 type UserRow = {
@@ -228,7 +235,12 @@ export async function getUserDashboard(
   const user = await requireActiveUser(database, id);
   const now = getNow(options);
 
-  const [favoriteResult, consultationResult, activeMembership] =
+  const [
+    favoriteResult,
+    consultationResult,
+    activeMembership,
+    notificationFeed,
+  ] =
     await Promise.all([
       database
         .prepare(`
@@ -298,6 +310,7 @@ export async function getUserDashboard(
         `)
         .bind(id, now)
         .first<DashboardMembership>(),
+      getMemberNotificationFeed(database, id),
     ]);
 
   return {
@@ -305,6 +318,8 @@ export async function getUserDashboard(
     favorites: favoriteResult.results ?? [],
     consultations: consultationResult.results ?? [],
     activeMembership,
+    notifications: notificationFeed.notifications,
+    unreadNotificationCount: notificationFeed.unreadCount,
   };
 }
 

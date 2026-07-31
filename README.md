@@ -57,6 +57,8 @@ OPENAI_MODEL=gpt-5.6-sol
   consultation status workflow
 - `db/consultation-thread.ts` owns member-scoped consultation threads,
   operator replies, and message audit boundaries
+- `db/member-notifications.ts` owns member-scoped in-app alerts and idempotent
+  read tracking
 - `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
   review, publish, and audit workflow
 - `workers/ingestion/index.ts` is the non-public execution boundary for licensed
@@ -77,6 +79,8 @@ OPENAI_MODEL=gpt-5.6-sol
   30-day membership activation without collecting card data
 - `/my/consultations/:id` and `/admin/consultations/:id` provide separate
   member and operator views of the same consultation history
+- `/my` shows unread consultation updates and links each alert back to its
+  authorized case page
 - `db/payment-webhooks.ts` owns verified, idempotent payment completion,
   expiry, refund, membership-access, and audit transitions
 - `db/operations-health.ts` owns operational alerts, health scans, retry
@@ -227,6 +231,11 @@ Member thread queries always include the authenticated member ID, and operator
 queries require an active administrator. Message bodies remain in the
 consultation event ledger, while the general audit log records only event type
 and body length. Completed and cancelled consultations are read-only to members.
+
+Operator replies and consultation status changes create member-scoped in-app
+alerts. The alert contains bounded display text and the consultation link, not
+the underlying message body. Reading an alert is ownership-checked, idempotent,
+and recorded in the audit log.
 
 ## Pilot Release Readiness
 

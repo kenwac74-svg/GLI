@@ -9,6 +9,10 @@ import {
   getAdminConsultationThread,
   getMemberConsultationThread,
 } from "../db/consultation-thread.ts";
+import {
+  getMemberNotificationFeed,
+  markMemberNotificationRead,
+} from "../db/member-notifications.ts";
 
 const NOW = Date.parse("2026-07-31T08:00:00.000Z");
 
@@ -247,6 +251,23 @@ test("member and operator messages form an ordered, member-visible thread", asyn
     audits[0].afterJson,
     /building management fee/,
   );
+
+  const notifications = sqlite
+    .prepare(`
+      SELECT user_id AS userId, kind, href, event_key AS eventKey, read_at AS readAt
+      FROM member_notifications
+    `)
+    .all()
+    .map((row) => ({ ...row }));
+  assert.deepEqual(notifications, [
+    {
+      userId: "usr_member_a",
+      kind: "CONSULTATION_REPLY",
+      href: "/my/consultations/con_member_a",
+      eventKey: operatorEvent.id,
+      readAt: null,
+    },
+  ]);
 });
 
 test("closed consultations reject member follow-up and require admin operators", async () => {
@@ -266,5 +287,76 @@ test("closed consultations reject member follow-up and require admin operators",
       actorUserId: "usr_member_a",
     }),
     /Actor must be an active ADMIN user/,
+  );
+});
+
+test("member alerts are owner-scoped and become read idempotently", async () => {
+  const { database, sqlite } = await createFixture();
+  await addOperatorConsultationMessage(
+    database,
+    {
+      consultationId: "con_member_a",
+      actorUserId: "usr_admin",
+      body: "The title review has started.",
+    },
+    {
+      now: () => NOW + 100,
+      randomUUID: () => "44444444-4444-4444-8444-444444444444",
+    },
+  );
+
+  const memberFeed = await getMemberNotificationFeed(
+    database,
+    "usr_member_a",
+  );
+  const otherFeed = await getMemberNotificationFeed(database, "usr_member_b");
+  assert.equal(memberFeed.unreadCount, 1);
+  assert.equal(memberFeed.notifications[0].kind, "CONSULTATION_REPLY");
+  assert.equal(otherFeed.unreadCount, 0);
+
+  await assert.rejects(
+    markMemberNotificationRead(database, {
+      notificationId: memberFeed.notifications[0].id,
+      userId: "usr_member_b",
+    }),
+    /Notification was not found/,
+  );
+
+  const readNotification = await markMemberNotificationRead(
+    database,
+    {
+      notificationId: memberFeed.notifications[0].id,
+      userId: "usr_member_a",
+    },
+    {
+      now: () => NOW + 200,
+      requestId: "req-notification-read",
+    },
+  );
+  assert.equal(readNotification.readAt, NOW + 200);
+
+  const repeated = await markMemberNotificationRead(
+    database,
+    {
+      notificationId: memberFeed.notifications[0].id,
+      userId: "usr_member_a",
+    },
+    { now: () => NOW + 300 },
+  );
+  assert.equal(repeated.readAt, NOW + 200);
+
+  const feedAfterRead = await getMemberNotificationFeed(
+    database,
+    "usr_member_a",
+  );
+  assert.equal(feedAfterRead.unreadCount, 0);
+  assert.equal(feedAfterRead.notifications[0].readAt, NOW + 200);
+  assert.equal(
+    sqlite
+      .prepare(
+        "SELECT count(*) AS count FROM audit_logs WHERE action = 'MEMBER_NOTIFICATION_READ'",
+      )
+      .get().count,
+    1,
   );
 });

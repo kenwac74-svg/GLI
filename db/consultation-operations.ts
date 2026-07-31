@@ -2,6 +2,7 @@ import type {
   D1DatabaseLike,
   D1StatementLike,
 } from "./user-workflows.ts";
+import { memberNotificationInsertStatement } from "./member-notifications.ts";
 
 export const CONSULTATION_STATUSES = [
   "RECEIVED",
@@ -165,6 +166,8 @@ export async function updateConsultation(
       .bind(status, nextAssigneeUserId, now, consultationId),
   ];
   if (current.status !== status) {
+    const uuid = getRandomUUID(options);
+    const eventId = `cevt_${uuid}`;
     statements.push(
       database
         .prepare(`
@@ -174,12 +177,24 @@ export async function updateConsultation(
           ) VALUES (?, ?, ?, 'STATUS_CHANGED', NULL, ?, ?)
         `)
         .bind(
-          `cevt_${getRandomUUID(options)}`,
+          eventId,
           consultationId,
           actor.id,
           status,
           now,
         ),
+      memberNotificationInsertStatement(database, {
+        id: `mnot_${uuid}`,
+        userId: current.memberUserId,
+        kind: "CONSULTATION_STATUS",
+        title: "상담 상태가 변경되었습니다",
+        body: `${current.listingTitle ?? "자산"} 상담이 ${statusLabel(status)} 상태로 변경되었습니다.`,
+        href: `/my/consultations/${encodeURIComponent(consultationId)}`,
+        resourceType: "CONSULTATION",
+        resourceId: consultationId,
+        eventKey: eventId,
+        createdAt: now,
+      }),
     );
   }
   statements.push(
@@ -309,6 +324,14 @@ function getRandomUUID(options: ConsultationOperationOptions): string {
     throw new TypeError("randomUUID must return a UUID");
   }
   return value.toLowerCase();
+}
+
+function statusLabel(status: ConsultationStatus): string {
+  if (status === "RECEIVED") return "접수";
+  if (status === "CONTACTED") return "담당자 연락 중";
+  if (status === "SCHEDULED") return "일정 확정";
+  if (status === "COMPLETED") return "완료";
+  return "취소";
 }
 
 async function executeWrites(

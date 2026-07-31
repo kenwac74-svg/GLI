@@ -3,6 +3,7 @@ import type {
   D1StatementLike,
 } from "./user-workflows.ts";
 import type { ConsultationStatus } from "./consultation-operations.ts";
+import { memberNotificationInsertStatement } from "./member-notifications.ts";
 
 export type ConsultationEventType =
   | "MEMBER_MESSAGE"
@@ -111,6 +112,8 @@ export async function addOperatorConsultationMessage(
       actorUserId: input.actorUserId,
       eventType: "OPERATOR_MESSAGE",
       body: input.body,
+      notifyUserId: thread.memberUserId,
+      listingTitle: thread.listingTitle,
     },
     options,
   );
@@ -181,15 +184,18 @@ async function addMessage(
     actorUserId: string;
     eventType: "MEMBER_MESSAGE" | "OPERATOR_MESSAGE";
     body: string;
+    notifyUserId?: string;
+    listingTitle?: string | null;
   },
   options: MessageOptions,
 ): Promise<ConsultationThreadEvent> {
   const body = normalizeMessage(input.body);
   const now = getNow(options);
-  const id = `cevt_${getRandomUUID(options)}`;
+  const uuid = getRandomUUID(options);
+  const id = `cevt_${uuid}`;
   const requestId = normalizeRequestId(options.requestId);
 
-  await executeWrites(database, [
+  const statements = [
     database
       .prepare(`
         INSERT INTO consultation_events (
@@ -230,7 +236,26 @@ async function addMessage(
         requestId,
         now,
       ),
-  ]);
+  ];
+  if (input.notifyUserId) {
+    const caseLabel = input.listingTitle?.trim() || "자산 상담";
+    statements.push(
+      memberNotificationInsertStatement(database, {
+        id: `mnot_${uuid}`,
+        userId: input.notifyUserId,
+        kind: "CONSULTATION_REPLY",
+        title: "상담팀의 새 답변",
+        body: `${caseLabel}에 새 답변이 등록되었습니다.`,
+        href: `/my/consultations/${encodeURIComponent(input.consultationId)}`,
+        resourceType: "CONSULTATION",
+        resourceId: input.consultationId,
+        eventKey: id,
+        createdAt: now,
+      }),
+    );
+  }
+
+  await executeWrites(database, statements);
 
   return {
     id,

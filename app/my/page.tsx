@@ -16,6 +16,7 @@ import {
   signInPath,
   signOutPath,
 } from "../auth";
+import { MemberNotificationList } from "../components/member-notification-list";
 import { SiteHeader } from "../components/site-header";
 import { getAsset } from "../../lib/assets-data";
 import { loadMemberDashboard } from "../../lib/member-data";
@@ -149,10 +150,25 @@ export default async function MyGliPage({
           </div>
           <div>
             <Bell size={21} />
-            <strong>0</strong>
+            <strong>{dashboard.unreadNotificationCount}</strong>
             <span>새 알림</span>
           </div>
         </div>
+
+        {dashboard.notifications.length > 0 ? (
+          <section className="member-notifications">
+            <div className="workflow-section-head">
+              <div>
+                <span>UPDATES</span>
+                <h2>새로운 상담 소식</h2>
+              </div>
+              <Bell size={21} />
+            </div>
+            <MemberNotificationList
+              notifications={dashboard.notifications}
+            />
+          </section>
+        ) : null}
 
         <div className="my-workspace">
           <section className="saved-assets">
