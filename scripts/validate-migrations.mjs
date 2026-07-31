@@ -17,6 +17,7 @@ const migrationFiles = [
   "drizzle/0011_member_notifications.sql",
   "drizzle/0012_ai_evaluation_evidence.sql",
   "drizzle/0013_membership_entitlements.sql",
+  "drizzle/0014_listing_review_decisions.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -268,9 +269,27 @@ try {
     usageIndex: 1,
   });
 
+  const listingReviewDecisions = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'listing_review_decisions') AS tableCount,
+         (SELECT count(*) FROM pragma_index_list('listing_review_decisions')
+          WHERE name = 'listing_review_decisions_listing_created_idx') AS listingIndex,
+         (SELECT count(*) FROM pragma_index_list('listing_review_decisions')
+          WHERE name = 'listing_review_decisions_reviewer_created_idx') AS reviewerIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...listingReviewDecisions }, {
+    tableCount: 1,
+    listingIndex: 1,
+    reviewerIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, consultation threads, member alerts, AI evaluation evidence, and membership entitlements.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, consultation threads, member alerts, AI evaluation evidence, membership entitlements, and listing review decisions.",
   );
 } finally {
   database.close();
 }
+
