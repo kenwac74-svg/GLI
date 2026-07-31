@@ -216,6 +216,13 @@ export function ListingReviewActions({
   const router = useRouter();
   const [pending, setPending] = useState<ReviewAction | null>(null);
   const [message, setMessage] = useState("");
+  const [note, setNote] = useState("");
+  const [checklist, setChecklist] = useState({
+    sourceRightsConfirmed: false,
+    factsCrossChecked: false,
+    publicCopyReviewed: false,
+    limitationsRecorded: false,
+  });
 
   type ReviewAction = "PUBLISH" | "HOLD";
 
@@ -226,7 +233,11 @@ export function ListingReviewActions({
       const response = await fetch("/api/admin/listings/review", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ publicId, action }),
+        body: JSON.stringify({
+          publicId,
+          action,
+          evidence: { ...checklist, note },
+        }),
       });
       const payload = (await response.json()) as {
         result?: { status: string };
@@ -236,6 +247,7 @@ export function ListingReviewActions({
         throw new Error(payload.error ?? "상태 변경에 실패했습니다.");
       }
       setMessage(action === "PUBLISH" ? "게시 완료" : "보류 완료");
+      setNote("");
       router.refresh();
     } catch (error) {
       setMessage(
@@ -246,36 +258,111 @@ export function ListingReviewActions({
     }
   }
 
+  const publishReady =
+    note.trim().length >= 20 && Object.values(checklist).every(Boolean);
+  const holdReady = note.trim().length >= 20;
+
   return (
-    <div className="review-actions">
-      <button
-        type="button"
-        title="사용자 검색에 게시"
-        onClick={() => submit("PUBLISH")}
-        disabled={pending !== null || status === "ACTIVE"}
-      >
-        {pending === "PUBLISH" ? (
-          <LoaderCircle className="spin" size={15} />
-        ) : status === "ACTIVE" ? (
-          <Check size={15} />
-        ) : (
-          <RefreshCw size={15} />
-        )}
-        {status === "ACTIVE" ? "게시됨" : "게시"}
-      </button>
-      <button
-        type="button"
-        title="사용자 검색에서 보류"
-        onClick={() => submit("HOLD")}
-        disabled={pending !== null || status === "HELD"}
-      >
-        {pending === "HOLD" ? (
-          <LoaderCircle className="spin" size={15} />
-        ) : (
-          <PauseCircle size={15} />
-        )}
-        보류
-      </button>
+    <div className="listing-review-form">
+      <fieldset>
+        <legend>검토 체크리스트</legend>
+        <label>
+          <input
+            type="checkbox"
+            checked={checklist.sourceRightsConfirmed}
+            onChange={(event) =>
+              setChecklist((current) => ({
+                ...current,
+                sourceRightsConfirmed: event.target.checked,
+              }))
+            }
+          />
+          출처 이용 권한과 허용 범위를 확인했습니다.
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={checklist.factsCrossChecked}
+            onChange={(event) =>
+              setChecklist((current) => ({
+                ...current,
+                factsCrossChecked: event.target.checked,
+              }))
+            }
+          />
+          가격·위치·면적·방 수를 원본과 대조했습니다.
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={checklist.publicCopyReviewed}
+            onChange={(event) =>
+              setChecklist((current) => ({
+                ...current,
+                publicCopyReviewed: event.target.checked,
+              }))
+            }
+          />
+          공개 문구에 연락처와 비공개 정보가 없음을 확인했습니다.
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={checklist.limitationsRecorded}
+            onChange={(event) =>
+              setChecklist((current) => ({
+                ...current,
+                limitationsRecorded: event.target.checked,
+              }))
+            }
+          />
+          확인하지 못한 한계와 다음 조치를 검토 의견에 기록했습니다.
+        </label>
+      </fieldset>
+      <label className="review-note-field">
+        <span>검토 의견</span>
+        <textarea
+          value={note}
+          minLength={20}
+          maxLength={1000}
+          rows={5}
+          placeholder="확인한 근거, 남은 한계와 게시 또는 보류 판단을 기록하세요."
+          onChange={(event) => setNote(event.target.value)}
+        />
+        <small>{note.trim().length}/1000</small>
+      </label>
+      <div className="review-decision-actions">
+        <button
+          type="button"
+          title="검토 근거와 함께 사용자 검색에 게시"
+          onClick={() => submit("PUBLISH")}
+          disabled={
+            pending !== null || status === "ACTIVE" || !publishReady
+          }
+        >
+          {pending === "PUBLISH" ? (
+            <LoaderCircle className="spin" size={15} />
+          ) : status === "ACTIVE" ? (
+            <Check size={15} />
+          ) : (
+            <RefreshCw size={15} />
+          )}
+          {status === "ACTIVE" ? "게시됨" : "검토 승인·게시"}
+        </button>
+        <button
+          type="button"
+          title="검토 의견과 함께 사용자 검색에서 보류"
+          onClick={() => submit("HOLD")}
+          disabled={pending !== null || status === "HELD" || !holdReady}
+        >
+          {pending === "HOLD" ? (
+            <LoaderCircle className="spin" size={15} />
+          ) : (
+            <PauseCircle size={15} />
+          )}
+          보류
+        </button>
+      </div>
       {message ? <small>{message}</small> : null}
     </div>
   );
@@ -376,3 +463,4 @@ export function ConsultationAdminActions({
     </div>
   );
 }
+
