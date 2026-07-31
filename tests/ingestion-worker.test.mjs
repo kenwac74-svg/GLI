@@ -22,6 +22,7 @@ async function createDatabase() {
     "drizzle/0004_authorized_source_connectors.sql",
     "drizzle/0005_payment_webhook_ledger.sql",
     "drizzle/0006_operations_health_and_retry.sql",
+    "drizzle/0007_operations_notification_delivery.sql",
   ]) {
     const sql = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     for (const statement of sql
