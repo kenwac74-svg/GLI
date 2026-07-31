@@ -11,6 +11,9 @@ interface Env {
   DEMO_AUTH_ENABLED?: "true" | "false";
   DEMO_ADMIN_ENABLED?: "true" | "false";
   DEMO_AUTH_HOSTS?: string;
+  LLM_PROVIDER?: "openai" | "disabled";
+  OPENAI_API_KEY?: string;
+  OPENAI_MODEL?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

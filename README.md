@@ -30,6 +30,19 @@ DEMO_AUTH_HOSTS=localhost,127.0.0.1
 `wrangler.local.jsonc`는 로컬 D1 마이그레이션에만 사용합니다. Sites 배포
 설정은 `.openai/hosting.json`이 담당합니다.
 
+실제 AI 상담 검색은 다음 서버 환경값으로 활성화합니다.
+
+```text
+LLM_PROVIDER=openai
+OPENAI_API_KEY=<server-secret>
+OPENAI_MODEL=gpt-5.6-sol
+```
+
+키는 저장소나 브라우저 코드에 넣지 않습니다. AI가 비활성 상태이거나 응답에
+실패하면 검색 API는 검증된 규칙 검색으로 자동 복귀합니다. AI는 서버가 고른
+후보의 순서와 설명만 다룰 수 있고 Trust Score, 가격, 위치 등 원본 사실값은
+수정할 수 없습니다.
+
 ## Included Shape
 
 - edit site code under `app/`
@@ -41,6 +54,8 @@ DEMO_AUTH_HOSTS=localhost,127.0.0.1
 - `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
   review, publish, and audit workflow
 - `/admin` provides a separate demo operations account and collection workbench
+- `/api/search` provides grounded conversational advice with a deterministic
+  fallback and server-owned Trust data
 - `drizzle.config.ts` supports local migration generation when needed
 
 ## Workspace Auth Headers

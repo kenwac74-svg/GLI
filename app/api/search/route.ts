@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { listAssets } from "../../../lib/assets-data";
-import { searchAssets } from "../../../lib/search";
+import {
+  createSafetyIdentifier,
+  runAdvisorSearch,
+} from "../../../lib/ai-search";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -29,8 +32,12 @@ export async function POST(request: Request) {
   }
 
   const source = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
+  const safetyIdentifier = createSafetyIdentifier(
+    request.headers.get("cf-connecting-ip") ??
+      request.headers.get("x-forwarded-for"),
+  );
   return NextResponse.json({
-    ...searchAssets(query, source.assets),
+    ...(await runAdvisorSearch(query, source.assets, { safetyIdentifier })),
     dataMode: source.mode,
   });
 }
