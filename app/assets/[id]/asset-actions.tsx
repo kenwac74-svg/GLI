@@ -7,9 +7,11 @@ export function AssetActions({ assetId }: { assetId: string }) {
   const [state, setState] = useState<
     "idle" | "saving" | "saved" | "error"
   >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function addFavorite() {
     setState("saving");
+    setErrorMessage("");
     try {
       const response = await fetch("/api/favorites", {
         method: "POST",
@@ -26,7 +28,10 @@ export function AssetActions({ assetId }: { assetId: string }) {
       }
       if (!response.ok) throw new Error(payload.error ?? "저장할 수 없습니다.");
       setState("saved");
-    } catch {
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "잠시 후 다시 시도해 주세요.",
+      );
       setState("error");
     }
   }
@@ -52,7 +57,13 @@ export function AssetActions({ assetId }: { assetId: string }) {
       </button>
       {state === "error" && (
         <p className="action-message is-error" role="status">
-          잠시 후 다시 시도해 주세요.
+          {errorMessage}
+          {errorMessage.includes("한도") && (
+            <>
+              {" "}
+              <a href="/membership">멤버십 보기</a>
+            </>
+          )}
         </p>
       )}
     </>
