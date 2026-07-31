@@ -605,6 +605,29 @@ test("built worker enforces admin boundaries and records release evidence", asyn
     assert.equal(backup.restoreResult, "SUCCEEDED");
     assert.equal(backup.recordCounts.listings, 8);
 
+    const aiEvaluationResponse = await dispatch(
+      worker,
+      database,
+      "/api/admin/readiness/ai-evaluation",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        requestId: "e2e.ai-evaluation",
+        body: { mode: "rules" },
+      },
+    );
+    assert.equal(aiEvaluationResponse.status, 200);
+    const aiEvaluationPayload = await aiEvaluationResponse.json();
+    assert.equal(aiEvaluationPayload.persisted, true);
+    assert.equal(aiEvaluationPayload.result.status, "SUCCEEDED");
+    assert.equal(aiEvaluationPayload.result.passedCount, 5);
+    assert.equal(
+      sqlite
+        .prepare("SELECT count(*) AS count FROM ai_evaluation_runs")
+        .get().count,
+      1,
+    );
+
     const auditExport = await dispatch(
       worker,
       database,
@@ -631,6 +654,7 @@ test("built worker enforces admin boundaries and records release evidence", asyn
     const readinessHtml = await readinessPage.text();
     assert.match(readinessHtml, /PILOT READINESS/);
     assert.match(readinessHtml, /AUTOMATED EVIDENCE/);
+    assert.match(readinessHtml, /AI QUALITY EVIDENCE/);
     assert.match(readinessHtml, /BACKUP &amp; RESTORE/);
 
     const evidenceAudit = sqlite
@@ -642,6 +666,15 @@ test("built worker enforces admin boundaries and records release evidence", asyn
       .get();
     assert.equal(evidenceAudit.action, "BACKUP_EVIDENCE_RECORDED");
     assert.equal(evidenceAudit.requestId, "e2e.backup");
+    const aiEvidenceAudit = sqlite
+      .prepare(
+        `SELECT action, request_id AS requestId
+         FROM audit_logs
+         WHERE action = 'AI_EVALUATION_RECORDED'`,
+      )
+      .get();
+    assert.equal(aiEvidenceAudit.action, "AI_EVALUATION_RECORDED");
+    assert.equal(aiEvidenceAudit.requestId, "e2e.ai-evaluation");
   } finally {
     sqlite.close();
   }
