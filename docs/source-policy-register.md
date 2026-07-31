@@ -29,6 +29,14 @@ This register controls production collection. Technical accessibility is not per
   stores its object key and SHA-256 provenance hashes.
 - Partner credentials are resolved from worker secrets. They are not stored in
   source configuration or audit logs.
+- Credential references must use the `SOURCE_SECRET_*` naming convention.
+- Source approval records are saved only by a real active administrator. The
+  shared demo administrator can preview validation but cannot mutate policy.
+- Approving a licensed feed records its written approval reference, review
+  timestamp, approving administrator, optional expiry, exact feed host,
+  permitted standard fields, and record limit.
+- Suspending a source immediately changes its policy to `SUSPENDED` while
+  preserving the connection record and audit history.
 - Khmer24, Realestate.com.kh, and FazWaz remain `DISABLED` until their individual
   written authorization and connector configuration are approved.
 
