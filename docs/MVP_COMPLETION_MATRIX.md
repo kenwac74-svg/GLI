@@ -50,7 +50,7 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 9. The administrator readiness page renders from the migrated database.
 
 The full `npm run check` gate currently covers lint, migration validation,
-production build, and 94 automated tests.
+production build, and 95 automated tests.
 
 ## Pilot blockers
 
