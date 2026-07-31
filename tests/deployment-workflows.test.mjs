@@ -180,6 +180,13 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.deepEqual(initialDashboard.favorites, []);
     assert.deepEqual(initialDashboard.consultations, []);
     assert.equal(initialDashboard.activeMembership, null);
+    assert.equal(initialDashboard.membershipAccess.planId, null);
+    assert.equal(initialDashboard.membershipAccess.favoriteLimit, 5);
+    assert.equal(initialDashboard.membershipAccess.aiMonthlyLimit, 0);
+    assert.equal(
+      initialDashboard.membershipAccess.consultationPriority,
+      "STANDARD",
+    );
 
     const freeSearchResponse = await dispatch(
       worker,
@@ -457,6 +464,14 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(finalDashboard.consultations.length, 1);
     assert.equal(finalDashboard.consultations[0].status, "RECEIVED");
     assert.equal(finalDashboard.activeMembership.planId, "investor");
+    assert.equal(finalDashboard.membershipAccess.planId, "investor");
+    assert.equal(finalDashboard.membershipAccess.favoriteLimit, null);
+    assert.equal(finalDashboard.membershipAccess.aiMonthlyLimit, null);
+    assert.equal(
+      finalDashboard.membershipAccess.consultationPriority,
+      "PRIORITY",
+    );
+    assert.equal(finalDashboard.membershipAccess.fullTrustReport, true);
     assert.equal(finalDashboard.notifications.length, 1);
     assert.equal(finalDashboard.unreadNotificationCount, 0);
 
@@ -465,6 +480,9 @@ test("built worker completes the member discovery and cash membership journey", 
     });
     assert.equal(myPageResponse.status, 200);
     const myPageHtml = await myPageResponse.text();
+    assert.match(myPageHtml, /MEMBERSHIP ACCESS/);
+    assert.match(myPageHtml, /무제한/);
+    assert.match(myPageHtml, /우선/);
     assert.match(myPageHtml, /GLI-KH-004/);
     assert.match(myPageHtml, /Investor/);
 
