@@ -42,7 +42,8 @@ Updated: 2026-07-31
 | GLI-014 | Codex | Security/Finance review | COMPLETE | provider-neutral checkout, signed event ledger, idempotent activation and refund access termination |
 | GLI-015 | GLI Product Owner | Finance/Legal | IN PROGRESS | payment provider selection, refund policy and production credential approval |
 | GLI-016 | Codex | Operations review | COMPLETE | health scan, alert lifecycle, retry backoff and dead-letter isolation |
-| GLI-017 | GLI Operations | Codex | BACKLOG | scheduled worker trigger and production alert notification channel |
+| GLI-017 | Codex | Operations review | COMPLETE | scheduled worker entrypoint, bounded retry processing and allowlisted alert delivery |
+| GLI-018 | GLI Operations | Security review | IN PROGRESS | production scheduler deployment, alert destination approval and secret provisioning |
 
 ## Decisions
 
@@ -54,6 +55,7 @@ Updated: 2026-07-31
 | DEC-004 | Do not production-crawl Realestate.com.kh without written authorization | ACCEPTED |
 | DEC-005 | Keep all Web3 screens outside the production Web2 navigation | ACCEPTED |
 | DEC-006 | Retry transient connector failures outside the public web process and never retry policy denials | ACCEPTED |
+| DEC-007 | Deliver only new or materially changed alerts to an exact allowlisted HTTPS destination | ACCEPTED |
 
 ## Human gates
 
@@ -61,3 +63,4 @@ Updated: 2026-07-31
 - Approve Trust Score public wording and legal disclaimer.
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.
+- Approve the production alert destination and provision the scheduled worker secrets.
