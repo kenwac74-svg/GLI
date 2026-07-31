@@ -184,6 +184,22 @@ days, and returns at most 1,000 events. CSV cells are quoted and spreadsheet
 formula prefixes are neutralized. Automatic retention deletion remains disabled
 until the production retention and legal-hold procedure is approved.
 
+## Full Trust Report Access
+
+The public asset page exposes a bounded Trust summary. The full report is a
+separate authenticated route and its evidence query runs only after the server
+confirms an unexpired Investor or Private cash membership. Explore members
+receive an upgrade response without the full report payload.
+
+The report shows the persisted rule version, Trust run, source count, latest
+observation, analyst approval state, limitations, and next verification actions.
+It can be printed or saved as a PDF from the browser. It does not claim legal
+validity, title safety, investment suitability, or guaranteed returns.
+
+No-charge checkout and activation endpoints are available only when the runtime
+is explicitly configured as a demo. A production environment returns
+`DEMO_BILLING_DISABLED` until a real payment provider adapter is enabled.
+
 ## Pilot Release Readiness
 
 The readiness center does not infer launch readiness from feature flags alone.
