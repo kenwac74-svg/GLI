@@ -77,7 +77,7 @@ export function createD1PublicListingQuery(
         l.image_url AS imageUrl,
         l.status,
         l.is_gli_direct AS isGliDirect,
-        s.public_name AS sourceName,
+        s.slug AS sourceSlug,
         ls.source_url AS sourceUrl,
         l.updated_at AS updatedAt,
         COALESCE(ts.score, 0) AS trustScore,

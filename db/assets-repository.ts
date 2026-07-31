@@ -26,6 +26,15 @@ const TRUST_STATUSES = new Set<TrustStatus>([
   "NEEDS_ATTENTION",
 ]);
 
+const PUBLIC_SOURCE_NAMES: Readonly<Record<string, string>> = {
+  "khmer24-cambodia": "Khmer24",
+  "realestate-kh": "Realestate.com.kh",
+  "fazwaz-kh": "FazWaz Cambodia",
+  "cam-realty-cambodia": "CAM Realty",
+  "cambodia-property-asia": "Cambodia Property Asia",
+  "ips-cambodia": "IPS Cambodia",
+};
+
 export type PublicAssetsFilters = {
   country?: string;
   city?: string;
@@ -192,9 +201,9 @@ export function mapListingRowToAsset(input: unknown): Asset {
     "updatedAt",
     publicId,
   );
-  const sourceName = optionalText(
-    read(row, "sourceName", "source_name"),
-    "sourceName",
+  const sourceSlug = optionalText(
+    read(row, "sourceSlug", "source_slug"),
+    "sourceSlug",
     publicId,
   );
   const sourceUrl = optionalHttpsUrl(
@@ -202,11 +211,12 @@ export function mapListingRowToAsset(input: unknown): Asset {
     "sourceUrl",
     publicId,
   );
-  if ((sourceName === null) !== (sourceUrl === null)) {
+  if ((sourceSlug === null) !== (sourceUrl === null)) {
     throw new Error(
-      `Listing ${publicId}: sourceName and sourceUrl must be provided together`,
+      `Listing ${publicId}: sourceSlug and sourceUrl must be provided together`,
     );
   }
+  const sourceName = sourceSlug ? PUBLIC_SOURCE_NAMES[sourceSlug] : undefined;
 
   return {
     id: publicId,

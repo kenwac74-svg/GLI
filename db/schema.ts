@@ -12,7 +12,6 @@ export const sources = sqliteTable(
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull(),
     nameInternal: text("name_internal").notNull(),
-    publicName: text("public_name"),
     country: text("country").notNull(),
     baseUrl: text("base_url").notNull(),
     policyUrl: text("policy_url"),

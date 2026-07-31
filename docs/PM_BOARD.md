@@ -64,7 +64,7 @@ Updated: 2026-07-31
 | GLI-036 | GLI Product Owner | Human/Legal | BLOCKED | Khmer24 AI-use scope approval and collector allowlisting or authorized partner-feed handoff |
 | GLI-037 | Codex | Security/Data review | COMPLETE | bounded public WordPress property API connector, robots enforcement, exact-field parsing and raw provenance |
 | GLI-038 | GLI Product Owner | Human/Legal | BLOCKED | CAM Realty and Cambodia Property Asia written reuse and AI-reference scope approval |
-| GLI-039 | Codex | Product/Security review | COMPLETE | approved public source names, safe original-listing links, official GLI logo and aligned asset-access styling |
+| GLI-039 | Codex | Product/Security review | COMPLETE | allowlisted public source names, safe original-listing links, official GLI logo and aligned asset-access styling |
 
 ## Decisions
 

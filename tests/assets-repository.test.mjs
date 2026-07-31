@@ -97,7 +97,7 @@ test("publishes an approved source name and safe original listing URL together",
   const asset = mapListingRowToAsset(
     listingRow({
       isGliDirect: 0,
-      sourceName: "CAM Realty",
+      sourceSlug: "cam-realty-cambodia",
       sourceUrl: "https://camrealtyservice.com/property/example-listing/",
     }),
   );
@@ -111,14 +111,17 @@ test("publishes an approved source name and safe original listing URL together",
     () =>
       mapListingRowToAsset(
         listingRow({
-          sourceName: "Unsafe source",
+          sourceSlug: "cam-realty-cambodia",
           sourceUrl: "javascript:alert(1)",
         }),
       ),
     /safe HTTPS URL/,
   );
   assert.throws(
-    () => mapListingRowToAsset(listingRow({ sourceName: "Missing link" })),
+    () =>
+      mapListingRowToAsset(
+        listingRow({ sourceSlug: "cam-realty-cambodia" }),
+      ),
     /must be provided together/,
   );
 });
