@@ -5,6 +5,7 @@ import test from "node:test";
 
 import {
   getOperationsDashboard,
+  getListingReviewDetail,
   reviewListing,
   runApprovedFixtureIngestion,
 } from "../db/operations.ts";
@@ -23,6 +24,7 @@ async function createDatabase() {
     "drizzle/0002_admin_ingestion_pipeline.sql",
     "drizzle/0003_cash_checkout_sessions.sql",
     "drizzle/0004_authorized_source_connectors.sql",
+    "drizzle/0014_listing_review_decisions.sql",
   ]) {
     const sql = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     for (const statement of sql
@@ -32,6 +34,19 @@ async function createDatabase() {
       sqlite.exec(statement);
     }
   }
+  sqlite
+    .prepare(
+      `INSERT OR IGNORE INTO users (
+         id, email, display_name, role, status, created_at, updated_at
+       ) VALUES (?, ?, ?, 'ADMIN', 'ACTIVE', ?, ?)`,
+    )
+    .run(
+      "usr_admin",
+      "admin@gli.example",
+      "GLI Reviewer",
+      NOW.getTime(),
+      NOW.getTime(),
+    );
 
   const database = {
     prepare(sql) {
@@ -99,6 +114,14 @@ test("ingests an approved batch, keeps new assets private, and publishes after r
       created.publicId,
       "PUBLISH",
       "usr_admin",
+      {
+        sourceRightsConfirmed: true,
+        factsCrossChecked: true,
+        publicCopyReviewed: true,
+        limitationsRecorded: true,
+        note:
+          "Authorized fixture source and normalized public facts were checked; lease evidence remains a follow-up item.",
+      },
       NOW.getTime() + 1_000,
     );
     assert.equal(review.status, "ACTIVE");
@@ -107,6 +130,16 @@ test("ingests an approved batch, keeps new assets private, and publishes after r
     dashboard = await getOperationsDashboard(database);
     assert.equal(dashboard.metrics.reviewPending, 0);
     assert.equal(dashboard.metrics.publishedTrustReports, 1);
+
+    const reviewDetail = await getListingReviewDetail(
+      database,
+      created.publicId,
+      "usr_admin",
+    );
+    assert.equal(reviewDetail.decisions.length, 1);
+    assert.equal(reviewDetail.decisions[0].action, "PUBLISH");
+    assert.equal(reviewDetail.decisions[0].checklist.factsCrossChecked, true);
+    assert.match(reviewDetail.decisions[0].note, /Authorized fixture source/);
 
     const auditActions = sqlite
       .prepare(
@@ -118,6 +151,71 @@ test("ingests an approved batch, keeps new assets private, and publishes after r
       "LISTING_INGESTED",
       "LISTING_PUBLISHED",
     ]);
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("requires complete evidence to publish and records a reason when held", async () => {
+  const { database, sqlite } = await createDatabase();
+  try {
+    const listing = sqlite
+      .prepare(
+        "SELECT public_id AS publicId FROM listings WHERE public_id = 'GLI-KH-103'",
+      )
+      .get();
+
+    await assert.rejects(
+      reviewListing(
+        database,
+        listing.publicId,
+        "PUBLISH",
+        "usr_admin",
+        {
+          sourceRightsConfirmed: true,
+          factsCrossChecked: false,
+          publicCopyReviewed: true,
+          limitationsRecorded: true,
+          note:
+            "Price evidence has not yet been cross-checked against the source material.",
+        },
+        NOW.getTime(),
+      ),
+      /Every review checklist item/,
+    );
+
+    const held = await reviewListing(
+      database,
+      listing.publicId,
+      "HOLD",
+      "usr_admin",
+      {
+        sourceRightsConfirmed: true,
+        factsCrossChecked: false,
+        publicCopyReviewed: true,
+        limitationsRecorded: true,
+        note:
+          "Hold until the advertised price and completion schedule are independently confirmed.",
+      },
+      NOW.getTime() + 1_000,
+    );
+    assert.equal(held.status, "HELD");
+    assert.equal(
+      sqlite
+        .prepare(
+          "SELECT count(*) AS count FROM listing_review_decisions WHERE action = 'HOLD'",
+        )
+        .get().count,
+      1,
+    );
+    assert.equal(
+      sqlite
+        .prepare(
+          "SELECT status FROM listings WHERE public_id = 'GLI-KH-103'",
+        )
+        .get().status,
+      "HELD",
+    );
   } finally {
     sqlite.close();
   }
@@ -189,3 +287,4 @@ test("blocks collection immediately when source approval is suspended", async ()
     sqlite.close();
   }
 });
+
