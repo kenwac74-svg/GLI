@@ -18,6 +18,7 @@ import {
 import { SiteHeader } from "../components/site-header";
 import { listConsultations } from "../../db/consultation-operations";
 import { getOperationsDashboard } from "../../db/operations";
+import { listRecentPaymentEvents } from "../../db/payment-webhooks";
 import { ensureMemberContext } from "../../lib/member-data";
 import {
   ConsultationAdminActions,
@@ -56,9 +57,10 @@ export default async function AdminPage() {
     );
   }
 
-  const [dashboard, consultations] = await Promise.all([
+  const [dashboard, consultations, paymentEvents] = await Promise.all([
     getOperationsDashboard(context.database),
     listConsultations(context.database),
+    listRecentPaymentEvents(context.database),
   ]);
   const latestRun = dashboard.runs[0];
 
@@ -284,6 +286,37 @@ export default async function AdminPage() {
               ))
             ) : (
               <p className="ops-empty">수집 실행 기록이 없습니다.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="ops-workbench">
+          <div className="ops-section-head">
+            <div>
+              <p className="section-kicker">PAYMENT EVENTS</p>
+              <h2>현금 멤버십 결제 이력</h2>
+            </div>
+          </div>
+          <div className="run-list">
+            {paymentEvents.length ? (
+              paymentEvents.map((event) => (
+                <article key={event.id}>
+                  <div>
+                    <strong>{event.provider} · {event.eventType}</strong>
+                    <span>{formatDate(event.receivedAt)}</span>
+                  </div>
+                  <span>{event.status}</span>
+                  <small>
+                    {event.checkoutId ?? "결제 세션 미연결"}
+                    {event.errorSummary ? ` · ${event.errorSummary}` : ""}
+                  </small>
+                </article>
+              ))
+            ) : (
+              <p className="ops-empty">
+                실제 결제사는 아직 연결되지 않았습니다. 서명된 이벤트만 이 원장에
+                기록됩니다.
+              </p>
             )}
           </div>
         </section>
