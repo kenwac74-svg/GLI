@@ -65,4 +65,45 @@ test("returns grounded Cambodia results from the search API", async () => {
     result.citations.map((citation) => citation.assetId),
     result.matches.map((asset) => asset.id),
   );
+
+  const followUpResponse = await worker.fetch(
+    new Request("http://localhost/api/search", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        query: "예산은 650달러로 넓혀줘",
+        context: result.criteria,
+      }),
+    }),
+    {
+      ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
+    },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(followUpResponse.status, 200);
+  const followUp = await followUpResponse.json();
+  assert.equal(followUp.criteria.transaction, "rent");
+  assert.equal(followUp.criteria.bedrooms, 2);
+  assert.equal(followUp.criteria.wantsRiver, true);
+  assert.equal(followUp.criteria.maxPriceUsd, 650);
+
+  const invalidContextResponse = await worker.fetch(
+    new Request("http://localhost/api/search", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        query: "계속 찾아줘",
+        context: { ...result.criteria, country: "Thailand" },
+      }),
+    }),
+    {
+      ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
+    },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(invalidContextResponse.status, 400);
+  assert.equal(
+    (await invalidContextResponse.json()).error.code,
+    "INVALID_SEARCH_CONTEXT",
+  );
 });
