@@ -29,7 +29,6 @@ import { ensureMemberContext } from "../../lib/member-data";
 import {
   ConsultationAdminActions,
   IngestionAction,
-  ListingReviewActions,
   OperationalAlertActions,
   OperationsHealthAction,
 } from "./admin-actions";
@@ -357,10 +356,12 @@ export default async function AdminPage() {
                       </span>
                     </td>
                     <td>
-                      <ListingReviewActions
-                        publicId={listing.publicId}
-                        status={listing.status}
-                      />
+                      <Link
+                        className="review-detail-link"
+                        href={`/admin/listings/${listing.publicId}`}
+                      >
+                        실사 검토 <ArrowRight size={14} />
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -485,3 +486,4 @@ function operationalAlertStatusLabel(status: string): string {
   if (status === "RESOLVED") return "해결";
   return status;
 }
+
