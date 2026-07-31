@@ -71,6 +71,7 @@ class FakeD1 {
         updatedAt: NOW - 1_500,
       },
     ];
+    this.consultationEvents = [];
     this.auditLogs = [];
     this.statements = [];
 
@@ -129,6 +130,16 @@ class FakeStatement {
       row.status = values[0];
       row.assigneeUserId = values[1];
       row.updatedAt = values[2];
+    } else if (sql.startsWith("INSERT INTO consultation_events")) {
+      db.consultationEvents.push({
+        id: values[0],
+        consultationId: values[1],
+        actorUserId: values[2],
+        eventType: "STATUS_CHANGED",
+        body: null,
+        status: values[3],
+        createdAt: values[4],
+      });
     } else if (sql.startsWith("INSERT INTO audit_logs")) {
       db.auditLogs.push({
         actorUserId: values[0],
@@ -238,7 +249,10 @@ test("updates status and assignee without D1 batch and records authority data", 
       actorUserId: "usr_admin",
       requestId: "req-consultation-1",
     },
-    { now: () => NOW },
+    {
+      now: () => NOW,
+      randomUUID: () => "33333333-3333-4333-8333-333333333333",
+    },
   );
 
   assert.equal(updated.status, "CONTACTED");
@@ -247,6 +261,17 @@ test("updates status and assignee without D1 batch and records authority data", 
   assert.equal(updated.updatedAt, NOW);
 
   assert.equal(database.auditLogs.length, 1);
+  assert.deepEqual(database.consultationEvents, [
+    {
+      id: "cevt_33333333-3333-4333-8333-333333333333",
+      consultationId: "con_newer",
+      actorUserId: "usr_admin",
+      eventType: "STATUS_CHANGED",
+      body: null,
+      status: "CONTACTED",
+      createdAt: NOW,
+    },
+  ]);
   assert.deepEqual(database.auditLogs[0], {
     actorUserId: "usr_admin",
     action: "CONSULTATION_UPDATED",
@@ -291,6 +316,7 @@ test("rejects illegal transitions without changing or auditing the consultation"
   assert.equal(database.consultations[0].status, "RECEIVED");
   assert.equal(database.consultations[0].assigneeUserId, null);
   assert.equal(database.auditLogs.length, 0);
+  assert.equal(database.consultationEvents.length, 0);
 });
 
 test("allows a same-state request idempotently and enforces admin permissions", async () => {
@@ -305,6 +331,7 @@ test("allows a same-state request idempotently and enforces admin permissions", 
 
   assert.equal(unchanged.updatedAt, originalUpdatedAt);
   assert.equal(database.auditLogs.length, 0);
+  assert.equal(database.consultationEvents.length, 0);
 
   await assert.rejects(
     updateConsultation(database, {
