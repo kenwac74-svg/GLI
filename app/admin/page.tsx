@@ -16,9 +16,14 @@ import {
   signOutPath,
 } from "../auth";
 import { SiteHeader } from "../components/site-header";
+import { listConsultations } from "../../db/consultation-operations";
 import { getOperationsDashboard } from "../../db/operations";
 import { ensureMemberContext } from "../../lib/member-data";
-import { IngestionAction, ListingReviewActions } from "./admin-actions";
+import {
+  ConsultationAdminActions,
+  IngestionAction,
+  ListingReviewActions,
+} from "./admin-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +56,10 @@ export default async function AdminPage() {
     );
   }
 
-  const dashboard = await getOperationsDashboard(context.database);
+  const [dashboard, consultations] = await Promise.all([
+    getOperationsDashboard(context.database),
+    listConsultations(context.database),
+  ]);
   const latestRun = dashboard.runs[0];
 
   return (
@@ -127,6 +135,68 @@ export default async function AdminPage() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section className="ops-workbench">
+          <div className="ops-section-head">
+            <div>
+              <p className="section-kicker">CONSULTATIONS</p>
+              <h2>상담 운영</h2>
+            </div>
+            <MessagesSquare size={24} />
+          </div>
+          {consultations.length ? (
+            <div className="ops-consultations">
+              {consultations.map((consultation) => (
+                <article key={consultation.id}>
+                  <div className="ops-consultation-main">
+                    <div>
+                      <span
+                        className={`consultation-state state-${consultation.status.toLowerCase()}`}
+                      >
+                        {consultationStatusLabel(consultation.status)}
+                      </span>
+                      <strong>
+                        {consultation.listingTitle ?? "일반 투자 상담"}
+                      </strong>
+                    </div>
+                    <p>{consultation.requestText}</p>
+                    <dl>
+                      <div>
+                        <dt>신청자</dt>
+                        <dd>
+                          {consultation.memberDisplayName ??
+                            consultation.memberEmail}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>희망 일시</dt>
+                        <dd>
+                          {consultation.preferredAt
+                            ? formatDate(consultation.preferredAt)
+                            : "협의 필요"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>담당자</dt>
+                        <dd>
+                          {consultation.assigneeDisplayName ??
+                            consultation.assigneeEmail ??
+                            "미배정"}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <ConsultationAdminActions
+                    consultationId={consultation.id}
+                    status={consultation.status}
+                  />
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="ops-empty">접수된 상담이 없습니다.</p>
+          )}
         </section>
 
         <section className="ops-workbench">
@@ -239,5 +309,14 @@ function statusLabel(status: string): string {
   if (status === "ACTIVE") return "게시";
   if (status === "HELD") return "보류";
   if (status === "REVIEW_PENDING") return "검토 대기";
+  return status;
+}
+
+function consultationStatusLabel(status: string): string {
+  if (status === "RECEIVED") return "신규 접수";
+  if (status === "CONTACTED") return "연락 중";
+  if (status === "SCHEDULED") return "일정 확정";
+  if (status === "COMPLETED") return "완료";
+  if (status === "CANCELLED") return "취소";
   return status;
 }
