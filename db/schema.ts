@@ -396,3 +396,33 @@ export const auditLogs = sqliteTable(
   ],
 );
 
+export const backupVerifications = sqliteTable(
+  "backup_verifications",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    environment: text("environment").notNull(),
+    storageProvider: text("storage_provider").notNull(),
+    objectKey: text("object_key").notNull(),
+    manifestSha256: text("manifest_sha256").notNull(),
+    capturedAt: integer("captured_at").notNull(),
+    restoreTestedAt: integer("restore_tested_at"),
+    restoreResult: text("restore_result").notNull(),
+    recordCountsJson: text("record_counts_json").notNull(),
+    verifiedByUserId: text("verified_by_user_id")
+      .notNull()
+      .references(() => users.id),
+    notes: text("notes"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("backup_verifications_object_manifest_uidx").on(
+      table.objectKey,
+      table.manifestSha256,
+    ),
+    index("backup_verifications_environment_created_idx").on(
+      table.environment,
+      table.createdAt,
+    ),
+  ],
+);
+
