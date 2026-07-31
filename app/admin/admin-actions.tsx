@@ -1,9 +1,12 @@
 "use client";
 
 import {
+  Activity,
   CalendarCheck2,
   Check,
+  CheckCheck,
   CircleX,
+  Eye,
   LoaderCircle,
   PhoneCall,
   PauseCircle,
@@ -73,6 +76,132 @@ export function IngestionAction() {
       ) : (
         <small>승인된 내부 데모 자료 2건을 수집합니다.</small>
       )}
+    </div>
+  );
+}
+
+export function OperationsHealthAction() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function scan() {
+    setPending(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/operations/health", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{}",
+      });
+      const payload = (await response.json()) as {
+        result?: { activeAlerts: number; resolvedAlerts: number };
+        error?: string;
+      };
+      if (!response.ok || !payload.result) {
+        throw new Error(payload.error ?? "운영 상태 점검에 실패했습니다.");
+      }
+      setMessage(
+        `활성 경보 ${payload.result.activeAlerts}건 · 자동 해제 ${payload.result.resolvedAlerts}건`,
+      );
+      router.refresh();
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "운영 상태 점검에 실패했습니다.",
+      );
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="ops-action">
+      <button type="button" onClick={scan} disabled={pending}>
+        {pending ? (
+          <LoaderCircle className="spin" size={16} />
+        ) : (
+          <Activity size={16} />
+        )}
+        상태 점검
+      </button>
+      {message ? <small>{message}</small> : <small>운영 위험 신호를 다시 계산합니다.</small>}
+    </div>
+  );
+}
+
+export function OperationalAlertActions({
+  alertId,
+  status,
+}: {
+  alertId: number;
+  status: string;
+}) {
+  const router = useRouter();
+  const [pending, setPending] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+
+  async function update(nextStatus: "ACKNOWLEDGED" | "RESOLVED") {
+    setPending(nextStatus);
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/operations/alerts", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ alertId, status: nextStatus }),
+      });
+      const payload = (await response.json()) as {
+        result?: { status: string };
+        error?: string;
+      };
+      if (!response.ok || !payload.result) {
+        throw new Error(payload.error ?? "경보 상태를 변경할 수 없습니다.");
+      }
+      setMessage(nextStatus === "RESOLVED" ? "해결 처리" : "확인 처리");
+      router.refresh();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "경보 상태를 변경할 수 없습니다.",
+      );
+    } finally {
+      setPending(null);
+    }
+  }
+
+  if (status === "RESOLVED") {
+    return <span className="consultation-final">해결됨</span>;
+  }
+
+  return (
+    <div className="review-actions">
+      <button
+        type="button"
+        title="담당자가 경보를 확인함"
+        onClick={() => update("ACKNOWLEDGED")}
+        disabled={pending !== null || status === "ACKNOWLEDGED"}
+      >
+        {pending === "ACKNOWLEDGED" ? (
+          <LoaderCircle className="spin" size={15} />
+        ) : (
+          <Eye size={15} />
+        )}
+        {status === "ACKNOWLEDGED" ? "확인됨" : "확인"}
+      </button>
+      <button
+        type="button"
+        title="경보 해결 처리"
+        onClick={() => update("RESOLVED")}
+        disabled={pending !== null}
+      >
+        {pending === "RESOLVED" ? (
+          <LoaderCircle className="spin" size={15} />
+        ) : (
+          <CheckCheck size={15} />
+        )}
+        해결
+      </button>
+      {message ? <small>{message}</small> : null}
     </div>
   );
 }

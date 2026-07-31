@@ -9,6 +9,7 @@ const migrationFiles = [
   "drizzle/0003_cash_checkout_sessions.sql",
   "drizzle/0004_authorized_source_connectors.sql",
   "drizzle/0005_payment_webhook_ledger.sql",
+  "drizzle/0006_operations_health_and_retry.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -127,8 +128,28 @@ try {
     sessionIndex: 1,
   });
 
+  const operationsHealth = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'operational_alerts') AS alertTable,
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'retry_jobs') AS retryTable,
+         (SELECT count(*) FROM pragma_index_list('operational_alerts')
+          WHERE name = 'operational_alerts_dedupe_uidx') AS alertDedupeIndex,
+         (SELECT count(*) FROM pragma_index_list('retry_jobs')
+          WHERE name = 'retry_jobs_status_available_idx') AS retryStatusIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...operationsHealth }, {
+    alertTable: 1,
+    retryTable: 1,
+    alertDedupeIndex: 1,
+    retryStatusIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, cash checkout sessions, and payment webhook ledger.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, and operations health.",
   );
 } finally {
   database.close();

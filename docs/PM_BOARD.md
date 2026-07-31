@@ -19,7 +19,7 @@ Updated: 2026-07-31
 | Sprint 2: ingestion and data quality | IN PROGRESS | approved fixture pipeline complete; first external source permission pending |
 | Sprint 3: AI search and Trust | COMPLETE | grounded LLM advice, safe fallback, district intent and deterministic Trust v0.2 |
 | Sprint 4: identity, MY GLI, consultation, membership | COMPLETE | persistent user workflows |
-| Sprint 5: Direct, reports, alerts, operations | IN PROGRESS | collection, review and publish loop complete; reports and alerts pending |
+| Sprint 5: Direct, reports, alerts, operations | IN PROGRESS | collection, review, publish, alerts and retry loop complete; premium report packaging pending |
 | Pilot release | BACKLOG | security, data audit, production deployment |
 
 ## Active tasks
@@ -41,6 +41,8 @@ Updated: 2026-07-31
 | GLI-013 | Human/Legal | GLI Product Owner | IN PROGRESS | first partner feed authorization and credential handoff |
 | GLI-014 | Codex | Security/Finance review | COMPLETE | provider-neutral checkout, signed event ledger, idempotent activation and refund access termination |
 | GLI-015 | GLI Product Owner | Finance/Legal | IN PROGRESS | payment provider selection, refund policy and production credential approval |
+| GLI-016 | Codex | Operations review | COMPLETE | health scan, alert lifecycle, retry backoff and dead-letter isolation |
+| GLI-017 | GLI Operations | Codex | BACKLOG | scheduled worker trigger and production alert notification channel |
 
 ## Decisions
 
@@ -51,6 +53,7 @@ Updated: 2026-07-31
 | DEC-003 | Keep the user-facing source label neutral while preserving internal provenance | ACCEPTED |
 | DEC-004 | Do not production-crawl Realestate.com.kh without written authorization | ACCEPTED |
 | DEC-005 | Keep all Web3 screens outside the production Web2 navigation | ACCEPTED |
+| DEC-006 | Retry transient connector failures outside the public web process and never retry policy denials | ACCEPTED |
 
 ## Human gates
 

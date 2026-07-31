@@ -306,6 +306,64 @@ export const paymentWebhookEvents = sqliteTable(
   ],
 );
 
+export const operationalAlerts = sqliteTable(
+  "operational_alerts",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    dedupeKey: text("dedupe_key").notNull(),
+    origin: text("origin").notNull(),
+    category: text("category").notNull(),
+    severity: text("severity").notNull(),
+    status: text("status").notNull(),
+    title: text("title").notNull(),
+    detail: text("detail").notNull(),
+    resourceType: text("resource_type"),
+    resourceId: text("resource_id"),
+    occurrenceCount: integer("occurrence_count").notNull().default(1),
+    firstSeenAt: integer("first_seen_at").notNull(),
+    lastSeenAt: integer("last_seen_at").notNull(),
+    acknowledgedByUserId: text("acknowledged_by_user_id"),
+    acknowledgedAt: integer("acknowledged_at"),
+    resolvedAt: integer("resolved_at"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("operational_alerts_dedupe_uidx").on(table.dedupeKey),
+    index("operational_alerts_status_severity_idx").on(
+      table.status,
+      table.severity,
+      table.lastSeenAt,
+    ),
+  ],
+);
+
+export const retryJobs = sqliteTable(
+  "retry_jobs",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    dedupeKey: text("dedupe_key").notNull(),
+    jobType: text("job_type").notNull(),
+    payloadJson: text("payload_json").notNull(),
+    status: text("status").notNull(),
+    attemptCount: integer("attempt_count").notNull().default(0),
+    maxAttempts: integer("max_attempts").notNull().default(3),
+    availableAt: integer("available_at").notNull(),
+    claimedAt: integer("claimed_at"),
+    completedAt: integer("completed_at"),
+    lastError: text("last_error"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("retry_jobs_dedupe_uidx").on(table.dedupeKey),
+    index("retry_jobs_status_available_idx").on(
+      table.status,
+      table.availableAt,
+    ),
+  ],
+);
+
 export const auditLogs = sqliteTable(
   "audit_logs",
   {

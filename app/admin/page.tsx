@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  BellRing,
   ClipboardCheck,
   Database,
   FileCheck2,
@@ -18,12 +19,15 @@ import {
 import { SiteHeader } from "../components/site-header";
 import { listConsultations } from "../../db/consultation-operations";
 import { getOperationsDashboard } from "../../db/operations";
+import { getOperationsHealthDashboard } from "../../db/operations-health";
 import { listRecentPaymentEvents } from "../../db/payment-webhooks";
 import { ensureMemberContext } from "../../lib/member-data";
 import {
   ConsultationAdminActions,
   IngestionAction,
   ListingReviewActions,
+  OperationalAlertActions,
+  OperationsHealthAction,
 } from "./admin-actions";
 
 export const dynamic = "force-dynamic";
@@ -57,10 +61,11 @@ export default async function AdminPage() {
     );
   }
 
-  const [dashboard, consultations, paymentEvents] = await Promise.all([
+  const [dashboard, consultations, paymentEvents, health] = await Promise.all([
     getOperationsDashboard(context.database),
     listConsultations(context.database),
     listRecentPaymentEvents(context.database),
+    getOperationsHealthDashboard(context.database),
   ]);
   const latestRun = dashboard.runs[0];
 
@@ -112,7 +117,75 @@ export default async function AdminPage() {
             <strong>{dashboard.metrics.openConsultations}</strong>
             <small>접수 또는 일정 확정 상태</small>
           </section>
+          <section>
+            <BellRing size={22} />
+            <span>운영 경보</span>
+            <strong>{health.metrics.openCritical + health.metrics.openWarnings}</strong>
+            <small>
+              긴급 {health.metrics.openCritical} · 주의 {health.metrics.openWarnings}
+            </small>
+          </section>
         </div>
+
+        <section className="ops-workbench">
+          <div className="ops-section-head">
+            <div>
+              <p className="section-kicker">OPERATIONS HEALTH</p>
+              <h2>운영 상태와 재시도</h2>
+            </div>
+            <OperationsHealthAction />
+          </div>
+          <div className="health-summary">
+            <span>
+              재시도 대기 <strong>{health.metrics.pendingRetries}</strong>
+            </span>
+            <span>
+              최종 실패 <strong>{health.metrics.deadLetters}</strong>
+            </span>
+          </div>
+          {health.alerts.length ? (
+            <div className="ops-alert-list">
+              {health.alerts.map((alert) => (
+                <article
+                  key={alert.id}
+                  className={`severity-${alert.severity.toLowerCase()}`}
+                >
+                  <div className="ops-alert-copy">
+                    <div>
+                      <span>{operationalAlertStatusLabel(alert.status)}</span>
+                      <small>{alert.category}</small>
+                    </div>
+                    <strong>{alert.title}</strong>
+                    <p>{alert.detail}</p>
+                  </div>
+                  <OperationalAlertActions
+                    alertId={alert.id}
+                    status={alert.status}
+                  />
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="ops-empty">
+              현재 열린 운영 경보가 없습니다. 상태 점검을 실행하면 승인 만료,
+              수집·결제 실패, 상담 지연과 데이터 최신성을 확인합니다.
+            </p>
+          )}
+          {health.retryJobs.length ? (
+            <div className="run-list retry-job-list">
+              {health.retryJobs.map((job) => (
+                <article key={job.id}>
+                  <div>
+                    <strong>#{job.id} · {job.jobType}</strong>
+                    <span>시도 {job.attemptCount}/{job.maxAttempts}</span>
+                  </div>
+                  <span>{job.status}</span>
+                  <small>{job.lastError ?? "대기 중"}</small>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </section>
 
         <section className="ops-workbench">
           <div className="ops-section-head">
@@ -363,5 +436,12 @@ function connectorStatusLabel(status: string): string {
   if (status === "READY") return "실행 준비";
   if (status === "APPROVAL_REQUIRED") return "이용 승인 필요";
   if (status === "CONFIGURATION_REQUIRED") return "연결 설정 필요";
+  return status;
+}
+
+function operationalAlertStatusLabel(status: string): string {
+  if (status === "OPEN") return "조치 필요";
+  if (status === "ACKNOWLEDGED") return "담당 확인";
+  if (status === "RESOLVED") return "해결";
   return status;
 }
