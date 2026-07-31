@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import type { Asset } from "../../lib/assets";
-import type { SearchResult } from "../../lib/search";
+import type { AdvisorSearchResult } from "../../lib/ai-search";
 
 const prompts = [
   "프놈펜에 5,000만원으로 월세가 잘 나오는 투자가 가능할까?",
@@ -31,6 +31,9 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
     "찾으시는 목적과 예산을 편하게 말씀해 주세요. 조건을 정리해 검토할 후보와 확인할 위험을 함께 보여드립니다.",
   );
   const [clarification, setClarification] = useState<string | null>(null);
+  const [citations, setCitations] = useState<
+    AdvisorSearchResult["citations"]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<"all" | "sale" | "rent" | "direct">("all");
 
@@ -55,14 +58,16 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
         body: JSON.stringify({ query: clean }),
       });
       if (!response.ok) throw new Error("search_failed");
-      const result = (await response.json()) as SearchResult;
+      const result = (await response.json()) as AdvisorSearchResult;
       setAssets(result.matches);
       setAnswer(result.answer);
       setClarification(result.clarification);
+      setCitations(result.citations);
       setFilter("all");
     } catch {
       setAnswer("검색을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
       setClarification(null);
+      setCitations([]);
     } finally {
       setLoading(false);
     }
@@ -128,6 +133,18 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
             <span>GLI AI 답변</span>
             <p>{answer}</p>
             {clarification && <button onClick={() => setQuery(clarification)}>{clarification}</button>}
+            {citations.length > 0 && (
+              <div className="advisor-citations" aria-label="답변 근거 매물">
+                <strong>
+                  <BadgeCheck size={14} /> 근거 매물
+                </strong>
+                {citations.map((citation) => (
+                  <Link key={citation.assetId} href={`/assets/${citation.assetId}`}>
+                    {citation.label}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

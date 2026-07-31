@@ -1,6 +1,6 @@
 # GLI Web2 MVP Delivery Board
 
-Updated: 2026-07-30
+Updated: 2026-07-31
 
 ## Delivery policy
 
@@ -17,7 +17,7 @@ Updated: 2026-07-30
 | Sprint 0: baseline and architecture | COMPLETE | ADR, source policy, portable build, product smoke test |
 | Sprint 1: React routes and data foundation | COMPLETE | iframe removed, D1 schema, asset list/detail API |
 | Sprint 2: ingestion and data quality | IN PROGRESS | approved fixture pipeline complete; first external source permission pending |
-| Sprint 3: AI search and Trust | COMPLETE | grounded search, district intent and deterministic Trust v0.2 |
+| Sprint 3: AI search and Trust | COMPLETE | grounded LLM advice, safe fallback, district intent and deterministic Trust v0.2 |
 | Sprint 4: identity, MY GLI, consultation, membership | COMPLETE | persistent user workflows |
 | Sprint 5: Direct, reports, alerts, operations | IN PROGRESS | collection, review and publish loop complete; reports and alerts pending |
 | Pilot release | BACKLOG | security, data audit, production deployment |
@@ -36,6 +36,7 @@ Updated: 2026-07-30
 | GLI-008 | Codex | Operations review | COMPLETE | approved collection, dedupe, Trust calculation, review and publish workflow |
 | GLI-009 | Codex | Product review | COMPLETE | district-aware conversational search |
 | GLI-010 | Codex | Human/Legal | BLOCKED | first authorized external portal connector |
+| GLI-011 | Codex | Security review | COMPLETE | grounded LLM orchestration, output validation, privacy hash and safe fallback |
 
 ## Decisions
 

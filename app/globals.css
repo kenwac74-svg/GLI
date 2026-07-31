@@ -383,6 +383,41 @@ button {
   font-weight: 800;
 }
 
+.advisor-citations {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.advisor-citations strong,
+.advisor-citations a {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.advisor-citations strong {
+  color: var(--ink);
+}
+
+.advisor-citations a {
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  color: var(--teal-dark);
+  background: var(--paper);
+  font-weight: 800;
+}
+
+.advisor-citations a:hover {
+  border-color: var(--teal);
+}
+
 .result-section {
   padding-bottom: 72px;
 }

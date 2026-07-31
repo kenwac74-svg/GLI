@@ -57,6 +57,12 @@ test("returns grounded Cambodia results from the search API", async () => {
   assert.equal(result.criteria.transaction, "rent");
   assert.equal(result.criteria.bedrooms, 2);
   assert.equal(result.dataMode, "approved-fixture");
+  assert.equal(result.advisor.mode, "rules");
+  assert.equal(result.advisor.model, null);
   assert.ok(result.matches.length >= 1);
   assert.equal(result.matches[0].id, "GLI-KH-004");
+  assert.deepEqual(
+    result.citations.map((citation) => citation.assetId),
+    result.matches.map((asset) => asset.id),
+  );
 });
