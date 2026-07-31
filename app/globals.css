@@ -332,6 +332,7 @@ button {
 .explore-main,
 .detail-page,
 .membership-page,
+.checkout-page,
 .my-page,
 .admin-page {
   width: min(1220px, calc(100% - 40px));
@@ -985,6 +986,7 @@ button {
 }
 
 .membership-page,
+.checkout-page,
 .my-page,
 .admin-page {
   padding: 58px 0 80px;
@@ -1164,6 +1166,198 @@ button {
 .ops-alert p {
   margin: 4px 0 0;
   font-size: 12px;
+}
+
+.checkout-head {
+  max-width: 720px;
+  margin-bottom: 28px;
+}
+
+.checkout-head h1 {
+  margin: 5px 0 8px;
+}
+
+.checkout-head > p:last-child {
+  margin: 0;
+  color: var(--muted);
+}
+
+.checkout-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.checkout-summary,
+.checkout-payment {
+  padding: 34px;
+}
+
+.checkout-summary {
+  border-right: 1px solid var(--line);
+}
+
+.checkout-summary > span,
+.checkout-payment > div:first-child > span {
+  color: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.checkout-summary h2 {
+  margin: 8px 0;
+  font-size: 30px;
+}
+
+.checkout-summary > p {
+  color: var(--muted);
+}
+
+.checkout-summary ul {
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  list-style: none;
+}
+
+.checkout-summary li {
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+.checkout-payment {
+  background: #f8fafc;
+}
+
+.checkout-payment > div:first-child {
+  padding-bottom: 22px;
+  display: grid;
+  gap: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.checkout-payment > div:first-child strong {
+  font-size: 30px;
+}
+
+.checkout-payment dl {
+  margin: 18px 0 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.checkout-payment dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.checkout-payment dt {
+  color: var(--muted);
+}
+
+.checkout-payment dd {
+  margin: 0;
+  text-align: right;
+}
+
+.checkout-action {
+  display: grid;
+  gap: 9px;
+}
+
+.checkout-action > button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  background: var(--teal-dark);
+  font-weight: 900;
+}
+
+.checkout-action > small {
+  color: var(--muted);
+  text-align: center;
+}
+
+.checkout-complete,
+.checkout-expired {
+  padding: 15px;
+  display: grid;
+  gap: 8px;
+  border: 1px solid #b5ded8;
+  border-radius: 6px;
+  color: var(--teal-dark);
+  background: #effbf8;
+}
+
+.checkout-complete {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.checkout-complete p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.checkout-complete a,
+.checkout-expired a {
+  grid-column: 1 / -1;
+  color: var(--teal-dark);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.checkout-complete.compact {
+  grid-template-columns: 1fr;
+}
+
+.checkout-expired {
+  border-color: #ead59e;
+  color: #6f531b;
+  background: #fff9eb;
+}
+
+.checkout-empty {
+  max-width: 640px;
+  margin: 56px auto;
+  padding: 42px;
+  display: grid;
+  justify-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  text-align: center;
+}
+
+.checkout-empty h1 {
+  margin-bottom: 6px;
+}
+
+.checkout-empty p {
+  color: var(--muted);
+}
+
+.checkout-empty a {
+  margin-top: 8px;
+  color: var(--teal-dark);
+  font-weight: 900;
 }
 
 .my-head,
@@ -1847,6 +2041,137 @@ button {
   background: var(--paper);
 }
 
+.ops-consultations {
+  display: grid;
+  gap: 10px;
+}
+
+.ops-consultations > article {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcfd;
+}
+
+.ops-consultation-main {
+  min-width: 0;
+}
+
+.ops-consultation-main > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.ops-consultation-main strong {
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.consultation-state {
+  padding: 4px 7px;
+  border-radius: 4px;
+  color: #725619;
+  background: #fff4d4;
+  font-size: 9px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.consultation-state.state-contacted,
+.consultation-state.state-scheduled {
+  color: #0b5470;
+  background: #e5f4fb;
+}
+
+.consultation-state.state-completed {
+  color: #0b6257;
+  background: #ddf8f2;
+}
+
+.consultation-state.state-cancelled {
+  color: #8a352f;
+  background: #fbe8e6;
+}
+
+.ops-consultation-main > p {
+  margin: 9px 0 12px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ops-consultation-main dl {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.ops-consultation-main dl > div {
+  display: flex;
+  gap: 6px;
+  font-size: 10px;
+}
+
+.ops-consultation-main dt {
+  color: var(--muted);
+}
+
+.ops-consultation-main dd {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.consultation-admin-actions {
+  min-width: 150px;
+  display: grid;
+  grid-template-columns: 1fr 38px;
+  gap: 6px;
+}
+
+.consultation-admin-actions button {
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid var(--teal-dark);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #fff;
+  background: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.consultation-admin-actions button.is-cancel {
+  width: 38px;
+  padding: 0;
+  border-color: var(--line);
+  color: #a33a32;
+  background: var(--paper);
+}
+
+.consultation-admin-actions small {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 10px;
+  text-align: right;
+}
+
+.consultation-final {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+}
+
 .run-list {
   border-top: 1px solid var(--line);
 }
@@ -1902,6 +2227,15 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .checkout-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-summary {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
   .plan-card > p,
   .plan-card ul {
     min-height: 0;
@@ -1927,6 +2261,14 @@ button {
   .source-list article:last-child {
     border-bottom: 0;
   }
+
+  .ops-consultations > article {
+    grid-template-columns: 1fr;
+  }
+
+  .consultation-admin-actions {
+    width: 100%;
+  }
 }
 
 @media (max-width: 680px) {
@@ -1935,6 +2277,7 @@ button {
   .explore-main,
   .detail-page,
   .membership-page,
+  .checkout-page,
   .my-page,
   .admin-page {
     width: min(100% - 28px, 1220px);
@@ -2074,6 +2417,25 @@ button {
     padding: 28px 18px;
   }
 
+  .checkout-summary,
+  .checkout-payment {
+    padding: 22px 18px;
+  }
+
+  .checkout-summary ul {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-payment dl > div {
+    align-items: start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .checkout-payment dd {
+    text-align: left;
+  }
+
   .admin-access {
     margin: 36px auto;
     padding: 30px 18px;
@@ -2107,6 +2469,12 @@ button {
   .run-list article {
     grid-template-columns: 1fr;
     gap: 5px;
+  }
+
+  .ops-consultation-main > div:first-child,
+  .ops-consultation-main dl {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .member-login-actions {
