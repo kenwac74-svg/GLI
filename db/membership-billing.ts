@@ -15,12 +15,34 @@ export type CashCheckoutSession = {
   amountMinor: number;
   currency: string;
   provider: string;
+  providerSessionId: string | null;
   status: string;
   membershipId: string | null;
   expiresAt: number;
   completedAt: number | null;
   createdAt: number;
   updatedAt: number;
+};
+
+export type CashCheckoutProviderAdapter = {
+  provider: string;
+  createSession: (input: {
+    referenceId: string;
+    userId: string;
+    planId: string;
+    amountMinor: number;
+    currency: string;
+    expiresAt: number;
+  }) => Promise<{
+    providerSessionId: string;
+    checkoutUrl: string;
+    expiresAt: number;
+  }>;
+};
+
+export type ProviderCashCheckout = {
+  checkout: CashCheckoutSession;
+  checkoutUrl: string;
 };
 
 export async function createCashCheckout(
@@ -45,6 +67,7 @@ export async function createCashCheckout(
     amountMinor: plan.price,
     currency: plan.currency,
     provider: "DEMO_CASH",
+    providerSessionId: null,
     status: "PENDING",
     membershipId: null,
     expiresAt: now + CHECKOUT_TTL_MS,
@@ -97,6 +120,158 @@ export async function createCashCheckout(
   return session;
 }
 
+export async function createProviderCashCheckout(
+  database: D1DatabaseLike,
+  input: {
+    userId: string;
+    planId: string;
+    requestId?: string | null;
+  },
+  adapter: CashCheckoutProviderAdapter,
+  options: WorkflowOptions = {},
+): Promise<ProviderCashCheckout> {
+  assertDatabase(database);
+  if (!adapter || typeof adapter.createSession !== "function") {
+    throw new TypeError("A cash checkout provider adapter is required");
+  }
+
+  const userId = validateId(input.userId, "userId");
+  const provider = validateProvider(adapter.provider);
+  const plan = getMembershipPlan(input.planId);
+  await requireActiveUser(database, userId);
+  const now = getNow(options);
+  const id = `chk_${getRandomUUID(options)}`;
+  const initialExpiresAt = now + CHECKOUT_TTL_MS;
+
+  await executeWrites(database, [
+    database
+      .prepare(
+        `UPDATE cash_checkout_sessions
+         SET status = 'CANCELLED', updated_at = ?
+         WHERE user_id = ? AND status IN ('CREATING', 'PENDING')`,
+      )
+      .bind(now, userId),
+    database
+      .prepare(
+        `INSERT INTO cash_checkout_sessions (
+           id, user_id, plan_id, amount_minor, currency, provider,
+           provider_session_id, status, membership_id, expires_at,
+           completed_at, created_at, updated_at
+         ) VALUES (?, ?, ?, ?, ?, ?, NULL, 'CREATING', NULL, ?, NULL, ?, ?)`,
+      )
+      .bind(
+        id,
+        userId,
+        plan.id,
+        plan.price,
+        plan.currency,
+        provider,
+        initialExpiresAt,
+        now,
+        now,
+      ),
+    auditStatement(database, {
+      actorUserId: userId,
+      action: "CASH_CHECKOUT_INITIALIZED",
+      resourceId: id,
+      after: {
+        planId: plan.id,
+        amountMinor: plan.price,
+        currency: plan.currency,
+        provider,
+        status: "CREATING",
+      },
+      requestId: input.requestId ?? options.requestId,
+      createdAt: now,
+    }),
+  ]);
+
+  let providerSession: Awaited<
+    ReturnType<CashCheckoutProviderAdapter["createSession"]>
+  >;
+  try {
+    providerSession = await adapter.createSession({
+      referenceId: id,
+      userId,
+      planId: plan.id,
+      amountMinor: plan.price,
+      currency: plan.currency,
+      expiresAt: initialExpiresAt,
+    });
+    validateProviderSession(providerSession, now);
+  } catch (error) {
+    const failedAt = getNow(options);
+    await executeWrites(database, [
+      database
+        .prepare(
+          `UPDATE cash_checkout_sessions
+           SET status = 'FAILED', updated_at = ?
+           WHERE id = ? AND user_id = ? AND status = 'CREATING'`,
+        )
+        .bind(failedAt, id, userId),
+      auditStatement(database, {
+        actorUserId: userId,
+        action: "CASH_CHECKOUT_PROVIDER_FAILED",
+        resourceId: id,
+        after: { provider, status: "FAILED" },
+        requestId: input.requestId ?? options.requestId,
+        createdAt: failedAt,
+      }),
+    ]);
+    throw error;
+  }
+
+  const readyAt = getNow(options);
+  await executeWrites(database, [
+    database
+      .prepare(
+        `UPDATE cash_checkout_sessions
+         SET provider_session_id = ?, status = 'PENDING',
+             expires_at = ?, updated_at = ?
+         WHERE id = ? AND user_id = ? AND status = 'CREATING'`,
+      )
+      .bind(
+        providerSession.providerSessionId,
+        providerSession.expiresAt,
+        readyAt,
+        id,
+        userId,
+      ),
+    auditStatement(database, {
+      actorUserId: userId,
+      action: "CASH_CHECKOUT_PROVIDER_SESSION_CREATED",
+      resourceId: id,
+      after: {
+        provider,
+        providerSessionId: providerSession.providerSessionId,
+        status: "PENDING",
+        expiresAt: providerSession.expiresAt,
+      },
+      requestId: input.requestId ?? options.requestId,
+      createdAt: readyAt,
+    }),
+  ]);
+
+  return {
+    checkout: {
+      id,
+      userId,
+      planId: plan.id,
+      amountMinor: plan.price,
+      currency: plan.currency,
+      provider,
+      providerSessionId: providerSession.providerSessionId,
+      status: "PENDING",
+      membershipId: null,
+      expiresAt: providerSession.expiresAt,
+      completedAt: null,
+      createdAt: now,
+      updatedAt: readyAt,
+    },
+    checkoutUrl: providerSession.checkoutUrl,
+  };
+}
+
 export async function getCashCheckout(
   database: D1DatabaseLike,
   checkoutId: string,
@@ -112,6 +287,7 @@ export async function getCashCheckout(
          amount_minor AS amountMinor,
          currency,
          provider,
+         provider_session_id AS providerSessionId,
          status,
          membership_id AS membershipId,
          expires_at AS expiresAt,
@@ -306,6 +482,60 @@ function validateId(value: string, fieldName: string): string {
     throw new TypeError(`${fieldName} is invalid`);
   }
   return normalized;
+}
+
+function validateProvider(value: string): string {
+  if (
+    typeof value !== "string" ||
+    !/^[A-Z][A-Z0-9_]{1,31}$/.test(value) ||
+    value === "DEMO_CASH"
+  ) {
+    throw new TypeError("provider is invalid");
+  }
+  return value;
+}
+
+function validateProviderSession(
+  value: {
+    providerSessionId: string;
+    checkoutUrl: string;
+    expiresAt: number;
+  },
+  now: number,
+): void {
+  if (
+    typeof value?.providerSessionId !== "string" ||
+    value.providerSessionId.length < 1 ||
+    value.providerSessionId.length > 256 ||
+    /[\u0000-\u001f\u007f]/.test(value.providerSessionId)
+  ) {
+    throw new TypeError("providerSessionId is invalid");
+  }
+  let checkoutUrl: URL;
+  try {
+    checkoutUrl = new URL(value.checkoutUrl);
+  } catch {
+    throw new TypeError("checkoutUrl must be an absolute URL");
+  }
+  if (
+    checkoutUrl.protocol !== "https:" ||
+    checkoutUrl.username ||
+    checkoutUrl.password ||
+    checkoutUrl.hash
+  ) {
+    throw new TypeError(
+      "checkoutUrl must use HTTPS and contain no credentials or fragment",
+    );
+  }
+  if (
+    !Number.isSafeInteger(value.expiresAt) ||
+    value.expiresAt <= now ||
+    value.expiresAt > now + 24 * 60 * 60 * 1000
+  ) {
+    throw new RangeError(
+      "provider checkout expiry must be within the next 24 hours",
+    );
+  }
 }
 
 function getNow(options: Pick<WorkflowOptions, "now">): number {

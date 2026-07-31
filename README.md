@@ -67,6 +67,8 @@ OPENAI_MODEL=gpt-5.6-sol
   fallback and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
   30-day membership activation without collecting card data
+- `db/payment-webhooks.ts` owns verified, idempotent payment completion,
+  expiry, refund, membership-access, and audit transitions
 - `drizzle.config.ts` supports local migration generation when needed
 
 ## Workspace Auth Headers
@@ -165,8 +167,18 @@ D1 or the repository.
 The hosted demo uses the `DEMO_CASH` checkout adapter. It stores the same
 checkout and audit boundaries needed by a production payment adapter, but
 always returns `charged: false`. Do not enable a charging adapter until a
-provider contract, webhook signature verification, cancellation, and refund
-policy are implemented.
+provider contract, production verifier, credentials, and refund policy are
+approved.
+
+The production payment boundary is provider-neutral. A selected provider must
+implement session creation and signature verification, then return one of the
+normalized payment events. Raw webhook bodies are verified before persistence;
+only a SHA-256 payload hash and operational event state are stored. Provider
+event IDs and provider session IDs are unique, so repeated delivery cannot
+activate duplicate memberships. Amount or currency mismatches fail closed.
+Refund events end the corresponding cash membership and preserve the audit
+trail. No public webhook route is enabled until the provider-specific verifier
+and secret are configured.
 
 ## Learn More
 
