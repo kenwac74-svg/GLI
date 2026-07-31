@@ -139,3 +139,12 @@ test("distinguishes reference fixtures from attributed market data and renders t
   assert.match(html, /detail-action-bar/);
   assert.match(html, /detail-favorite-action/);
 });
+
+test("uses a direct asset-card label for opening detailed information", async () => {
+  const response = await render("/");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /상세 정보 확인/);
+  assert.doesNotMatch(html, /검증 요약 보기/);
+});

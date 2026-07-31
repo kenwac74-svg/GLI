@@ -32,6 +32,7 @@ body {
   min-height: 100vh;
   color: var(--ink);
   background: var(--soft);
+  font-size: 14px;
   font-family:
     Inter, Pretendard, "Noto Sans KR", "Segoe UI", Arial, sans-serif;
   letter-spacing: 0;
@@ -6288,4 +6289,76 @@ button {
     break-inside: avoid;
     box-shadow: none;
   }
+}
+
+/* Public reading surfaces use a 14px floor. The 12px exceptions below are
+   limited to compact badges, tier markers, and disclosure copy. */
+.brand-copy strong,
+.account-button,
+.prompt-row button,
+.search-access-status strong,
+.search-access-status span,
+.search-access-status a,
+.advisor-heading span,
+.conversation-turn > span,
+.conversation-turn .clarification strong,
+.active-criteria strong,
+.active-criteria span,
+.followup-composer label,
+.advisor-citations strong,
+.advisor-citations a,
+.segmented button,
+.asset-location,
+.asset-spec,
+.reason-row span,
+.asset-card-foot small,
+.trust-pill,
+.asset-link,
+.trust-steps span,
+.detail-title > p,
+.detail-price span,
+.detail-facts span,
+.asset-source span,
+.asset-source strong,
+.asset-source a,
+.detail-service-actions > div:first-child span,
+.access-demo-metrics span,
+.access-tier-heading > div > span,
+.tier-business > p,
+.public-stat-grid span,
+.public-stat-grid strong,
+.tier-compact-row span,
+.tier-compact-row strong,
+.tier-insight strong,
+.risk-bars span,
+.risk-bars strong,
+.tier-insight p,
+.document-preview-list span,
+.service-preview-list strong,
+.service-preview-list span,
+.tier-demo-caption,
+.deal-desk-actions button,
+.access-lock-copy p,
+.access-purchase-bar span,
+.access-purchase-bar strong,
+.access-purchase-bar button,
+.access-demo-dialog p,
+.access-demo-dialog dt,
+.access-demo-dialog dd,
+.access-dialog-actions button {
+  font-size: 14px;
+}
+
+.brand-copy small,
+.eyebrow,
+.section-kicker,
+.asset-badges span,
+.asset-badges strong,
+.asset-origin-badges span,
+.access-tier-tabs button span,
+.access-tier-tabs button small,
+.access-state,
+.access-policy-note,
+.access-demo-dialog > div > span {
+  font-size: 12px;
 }

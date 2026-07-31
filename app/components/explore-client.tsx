@@ -383,7 +383,7 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
                       </div>
                     </div>
                     <Link className="asset-link" href={`/assets/${asset.id}`}>
-                      검증 요약 보기 <ArrowRight size={17} />
+                      상세 정보 확인 <ArrowRight size={17} />
                     </Link>
                   </div>
                 </article>
