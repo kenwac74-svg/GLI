@@ -62,6 +62,8 @@ Updated: 2026-07-31
 | GLI-034 | Codex | Product review | COMPLETE | five-level asset-detail demonstrator, hierarchical access preview and blockchain-free GLI Cash simulation boundary |
 | GLI-035 | Codex | Security/Data review | COMPLETE | bounded Khmer24 reference-search connector, robots content-signal enforcement, HTML provenance and source-side refusal handling |
 | GLI-036 | GLI Product Owner | Human/Legal | BLOCKED | Khmer24 AI-use scope approval and collector allowlisting or authorized partner-feed handoff |
+| GLI-037 | Codex | Security/Data review | COMPLETE | bounded public WordPress property API connector, robots enforcement, exact-field parsing and raw provenance |
+| GLI-038 | GLI Product Owner | Human/Legal | BLOCKED | CAM Realty and Cambodia Property Asia written reuse and AI-reference scope approval |
 
 ## Decisions
 
@@ -90,11 +92,13 @@ Updated: 2026-07-31
 | DEC-021 | Require source-rights, fact, public-copy and limitation checks plus an analyst note before publication; store the full note only in the review ledger and keep audit metadata bounded | ACCEPTED |
 | DEC-022 | Treat GLI Cash as provider-neutral prepaid platform value; use it for asset passes and future GLI products while keeping later token rails optional and separate | ACCEPTED |
 | DEC-023 | Keep the five-level asset detail as a demonstrative UI until category content, pricing, duration, service scope and production entitlement matrices are separately approved | ACCEPTED |
+| DEC-024 | Register every researched Cambodia portal, use only source-approved delivery methods, and never treat technical API access as permission to republish | ACCEPTED |
 
 ## Human gates
 
 - Approve the first production data source and written usage basis.
 - Obtain Khmer24 collector allowlisting or an authorized feed/API credential.
+- Obtain CAM Realty and Cambodia Property Asia written reuse and AI-reference authorization.
 - Approve Trust Score public wording and legal disclaimer.
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.

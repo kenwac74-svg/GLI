@@ -21,6 +21,10 @@ import {
   createKhmer24ReferenceConnector,
   KHMER24_REFERENCE_CONNECTOR_KIND,
 } from "../../ingestion/khmer24-reference-feed.ts";
+import {
+  createWordPressPropertyConnector,
+  WORDPRESS_PROPERTY_CONNECTOR_KIND,
+} from "../../ingestion/wordpress-property-feed.ts";
 import { SourcePolicyError } from "../../ingestion/source-policy.ts";
 
 export type LicensedFeedJob = {
@@ -47,7 +51,8 @@ export async function executeLicensedFeedJob(
   );
   if (
     configuration.connectorKind !== LICENSED_JSON_CONNECTOR_KIND &&
-    configuration.connectorKind !== KHMER24_REFERENCE_CONNECTOR_KIND
+    configuration.connectorKind !== KHMER24_REFERENCE_CONNECTOR_KIND &&
+    configuration.connectorKind !== WORDPRESS_PROPERTY_CONNECTOR_KIND
   ) {
     throw new Error(
       `Source ${job.sourceSlug} is not configured for a supported connector`,
@@ -71,6 +76,18 @@ export async function executeLicensedFeedJob(
             "connectorConfig.categoryUrl",
           ),
         })
+      : configuration.connectorKind === WORDPRESS_PROPERTY_CONNECTOR_KIND
+        ? createWordPressPropertyConnector({
+            ...common,
+            apiUrl: requiredString(
+              configuration.connectorConfig.apiUrl,
+              "connectorConfig.apiUrl",
+            ),
+            requiredLinkPathPrefix: optionalString(
+              configuration.connectorConfig.requiredLinkPathPrefix,
+              "connectorConfig.requiredLinkPathPrefix",
+            ),
+          })
       : createLicensedJsonFeedConnector({
           ...common,
           feedUrl: requiredString(

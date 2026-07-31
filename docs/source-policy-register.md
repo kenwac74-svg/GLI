@@ -8,7 +8,10 @@ This register controls production collection. Technical accessibility is not per
 |---|---|---|---|
 | Khmer24 | AUTHORIZATION_REQUIRED | `robots.txt` currently advertises `search=yes` and `use=reference`, while reserving AI training and returning a Cloudflare 403 challenge to the server collector. No public API or partner feed was found. | The bounded reference-search connector is installed but cannot run until GLI records the permitted AI-use scope and Khmer24 allowlists the collector or provides an authorized feed. |
 | Realestate.com.kh | AUTHORIZATION_REQUIRED | Published terms prohibit using or indexing content to construct or populate a searchable property database unless specifically authorized. | Do not crawl. Pursue API, feed, licence, or partnership authorization. |
-| FazWaz Cambodia | PENDING_REVIEW | Public access alone is insufficient; applicable terms and feed options require review. | Do not enable production collection until review is complete. |
+| FazWaz Cambodia | AUTHORIZATION_REQUIRED | General pages are public, but the published robot policy blocks API and GraphQL paths and no public partner feed was found. | Keep disabled and request an authorized feed or API agreement. |
+| CAM Realty | AUTHORIZATION_REQUIRED | Its public WordPress property API and generic crawler policy are technically compatible with a bounded reference connector. Public access is not a reuse licence. | Connector is installed but remains blocked until written reuse and AI-reference scope is recorded. |
+| Cambodia Property Asia | AUTHORIZATION_REQUIRED | Its public WordPress property API permits technical access on the configured path; the connector limits records to English listing links. Public access is not a reuse licence. | Connector is installed but remains blocked until written reuse and AI-reference scope is recorded. |
+| IPS Cambodia | AUTHORIZATION_REQUIRED | Published terms prohibit automated collection and creation of a searchable property database without authorization. | Do not crawl. Pursue an API, feed, licence, or partnership authorization. |
 
 ## Required controls
 
@@ -45,6 +48,16 @@ This register controls production collection. Technical accessibility is not per
 - The Khmer24 parser keeps only reference-search fields and excludes seller
   profiles, phone numbers, chats, and account-area data. Incomplete or currently
   unsupported land/commercial cards are rejected instead of guessed.
+- `WORDPRESS_PROPERTY_REFERENCE_V1` reads each source's `robots.txt` before its
+  public property API, accepts JSON only, and stores the exact raw response with
+  a SHA-256 provenance hash before normalization.
+- The WordPress reference parser accepts exact price, area, room, location,
+  image, title, type, transaction, source link, and external ID fields only.
+  Ranges, missing values, unsupported categories, and ambiguous locations are
+  rejected rather than inferred.
+- CAM Realty and Cambodia Property Asia are configured for this connector but
+  remain `AUTHORIZATION_REQUIRED`. IPS, Realestate.com.kh, and FazWaz remain
+  disabled until an authorized delivery channel is approved.
 
 ## Reviewed pages
 
@@ -53,3 +66,10 @@ This register controls production collection. Technical accessibility is not per
 - Khmer24 contact: https://www.khmer24.com/contact-us
 - Realestate.com.kh terms: https://www.realestate.com.kh/legal/
 - Realestate.com.kh robots: https://www.realestate.com.kh/robots.txt
+- FazWaz Cambodia privacy: https://www.fazwaz-kh.com/about/privacy
+- FazWaz Cambodia robots: https://www.fazwaz-kh.com/robots.txt
+- CAM Realty property search: https://camrealtyservice.com/property-search/
+- CAM Realty robots: https://camrealtyservice.com/robots.txt
+- Cambodia Property Asia privacy: https://www.cambodiaproperty.asia/en/privacy-policy/
+- Cambodia Property Asia robots: https://www.cambodiaproperty.asia/robots.txt
+- IPS Cambodia terms: https://ips-cambodia.com/terms-of-service
