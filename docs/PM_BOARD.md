@@ -54,6 +54,7 @@ Updated: 2026-07-31
 | GLI-026 | Codex | Security/Operations review | COMPLETE | member-scoped consultation detail, member/operator messages, status history and mobile case view |
 | GLI-027 | Codex | Security/Product review | COMPLETE | member-scoped consultation alerts, unread count, idempotent read action and MY GLI alert center |
 | GLI-028 | Codex | Security/Data review | COMPLETE | authorized partner-file import through exact R2 raw provenance, source policy, privacy/dedupe and private review queue |
+| GLI-029 | Codex | Product/Security review | COMPLETE | five-case AI search evaluation, D1 evidence ledger, rules rehearsal and 30-day OpenAI readiness gate |
 
 ## Decisions
 
@@ -76,6 +77,7 @@ Updated: 2026-07-31
 | DEC-015 | Store consultation messages in a case event ledger, authorize every read by member ownership or active administrator role, and keep message bodies out of general audit metadata | ACCEPTED |
 | DEC-016 | Notify members in-app for operator replies and status changes, without copying consultation message bodies into alert or general audit metadata | ACCEPTED |
 | DEC-017 | Manual partner-file imports never bypass source approval, field, host, size or record limits; shared demo administrators may validate files only | ACCEPTED |
+| DEC-018 | Require a recent successful current-suite OpenAI evaluation in addition to runtime configuration; rules rehearsals never satisfy the production AI gate | ACCEPTED |
 
 ## Human gates
 

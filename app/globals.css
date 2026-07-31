@@ -3649,6 +3649,146 @@ button {
   color: #a33a32;
 }
 
+.ai-evaluation-section {
+  margin-top: 20px;
+}
+
+.ai-evaluation-intro {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.ai-evaluation-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.ai-evaluation-actions button {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid var(--deep);
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #fff;
+  background: var(--deep);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.ai-evaluation-actions button + button {
+  border-color: var(--teal-dark);
+  color: #063d39;
+  background: #d9f5ef;
+}
+
+.ai-evaluation-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.ai-evaluation-actions > span,
+.ai-evaluation-message {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.ai-evaluation-message {
+  margin: 12px 0 0;
+}
+
+.ai-evaluation-message.is-error {
+  color: #a33a32;
+}
+
+.ai-evaluation-result {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.ai-evaluation-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-right: 1px solid var(--line);
+}
+
+.ai-evaluation-summary > div {
+  min-width: 0;
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+  border-left: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.ai-evaluation-summary span {
+  color: var(--muted);
+  font-size: 9px;
+  overflow-wrap: anywhere;
+}
+
+.ai-evaluation-summary strong {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.ai-evaluation-cases {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ai-evaluation-cases article {
+  min-width: 0;
+  padding: 11px;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: #fff;
+}
+
+.ai-evaluation-cases article.status-pass > svg {
+  color: #14705e;
+}
+
+.ai-evaluation-cases article.status-fail > svg,
+.ai-evaluation-cases article.status-fail > em {
+  color: #a33a32;
+}
+
+.ai-evaluation-cases article > div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.ai-evaluation-cases strong {
+  font-size: 11px;
+}
+
+.ai-evaluation-cases span,
+.ai-evaluation-cases small {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.ai-evaluation-cases em {
+  color: #14705e;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .human-approval-list {
   border-top: 1px solid var(--line);
 }
@@ -3795,6 +3935,10 @@ button {
   }
 
   .readiness-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-evaluation-cases {
     grid-template-columns: 1fr;
   }
 }
@@ -4193,6 +4337,10 @@ button {
   }
 
   .backup-evidence-form fieldset {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-evaluation-summary {
     grid-template-columns: 1fr;
   }
 

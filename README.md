@@ -59,6 +59,8 @@ OPENAI_MODEL=gpt-5.6-sol
   operator replies, and message audit boundaries
 - `db/member-notifications.ts` owns member-scoped in-app alerts and idempotent
   read tracking
+- `db/ai-evaluation-runs.ts` stores administrator-run AI quality evidence
+  without persisting customer conversations or model credentials
 - `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
   review, publish, and audit workflow
 - `workers/ingestion/index.ts` is the non-public execution boundary for licensed
@@ -75,7 +77,9 @@ OPENAI_MODEL=gpt-5.6-sol
 - `/admin/audit` provides administrator-only, cursor-paginated audit history
   with workflow filters, recursive secret redaction, and bounded CSV export
 - `/admin/readiness` provides evidence-based pilot release gates and
-  administrator-recorded backup and restore verification
+  administrator-recorded AI quality plus backup and restore verification
+- `/api/admin/readiness/ai-evaluation` runs the five-case conversational search
+  suite in rules or configured OpenAI mode
 - `/api/search` provides grounded conversational advice with a deterministic
   fallback, validated multi-turn criteria context, and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
@@ -259,6 +263,13 @@ rendered. The payment and scheduler gates require
 `SCHEDULED_OPERATIONS_ENABLED=true` respectively after their real integrations
 have been approved. AI requires `LLM_PROVIDER=openai` and a server-side
 `OPENAI_API_KEY`.
+
+The AI gate also requires a successful OpenAI evaluation from the current
+`gli.ai-search.eval.v1` suite within the latest 30 days. A rules-mode rehearsal
+checks the same five representative investment conversations without model
+cost, but does not satisfy the production AI gate. Evaluation evidence stores
+case identifiers, checks, model name and summary counts, not customer prompts,
+answers, IP addresses or API keys.
 
 Backup evidence writes are unavailable to shared demo administrators. A real
 administrator records the approved storage object key, manifest SHA-256,
