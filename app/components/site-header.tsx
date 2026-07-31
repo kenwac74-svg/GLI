@@ -1,4 +1,5 @@
 import { LogOut, Menu, Search, UserRound } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { DEMO_ADMIN_EMAIL, getCurrentUser, signOutPath } from "../auth";
 
@@ -9,7 +10,14 @@ export async function SiteHeader() {
     <header className="site-header">
       <div className="nav-shell">
         <Link className="brand-link" href="/" aria-label="GLI 홈">
-          <span className="brand-mark">GLI</span>
+          <Image
+            className="brand-logo"
+            src="/brand/gli-logo.png"
+            alt="GLI"
+            width={65}
+            height={30}
+            priority
+          />
           <span className="brand-copy">
             <strong>Global Lifestyle Investment</strong>
             <small>AI Verified Assets</small>

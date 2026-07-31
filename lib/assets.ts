@@ -23,6 +23,8 @@ export type Asset = {
   trustScore: number;
   trustStatus: TrustStatus;
   isGliDirect: boolean;
+  sourceName?: string;
+  sourceUrl?: string;
   updatedAt: string;
   strengths: string[];
   checks: string[];

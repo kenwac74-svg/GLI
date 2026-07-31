@@ -23,7 +23,9 @@
 - Use D1 for structured product data and R2 for raw snapshots, evidence, and reports.
 - Keep crawling and normalization isolated from public request handlers.
 - Keep Trust Score calculation deterministic and server-side. AI may explain a stored result but may not create or modify it.
-- Keep source provenance internally even when the end-user UI does not emphasize the upstream portal.
+- Preserve source provenance internally and show the approved public source name
+  with a direct original-listing link for externally collected assets. Never
+  invent attribution for fixtures or GLI-curated assets.
 
 ## Working rules
 

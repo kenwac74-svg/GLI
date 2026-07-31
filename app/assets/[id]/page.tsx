@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   CircleAlert,
+  ExternalLink,
   MapPin,
 } from "lucide-react";
 import Image from "next/image";
@@ -73,6 +74,21 @@ export default async function AssetPage({
                 <strong>{new Date(asset.updatedAt).toLocaleDateString("ko-KR")}</strong>
               </div>
             </div>
+            {!asset.isGliDirect && asset.sourceName && asset.sourceUrl ? (
+              <section className="asset-source" aria-label="외부 매물 출처">
+                <div>
+                  <span>매물 출처</span>
+                  <strong>{asset.sourceName}</strong>
+                </div>
+                <a
+                  href={asset.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  원문 매물 보기 <ExternalLink size={16} />
+                </a>
+              </section>
+            ) : null}
             <section className="content-section">
               <h2>자산 요약</h2>
               <p>{asset.summary}</p>

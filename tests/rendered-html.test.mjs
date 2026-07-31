@@ -29,8 +29,12 @@ test("server-renders the GLI application shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GLI \| AI Verified Assets<\/title>/i);
-  assert.match(html, /국가와 자산의 경계를 넘어, 검증된 투자 기회를 탐색하세요/);
+  assert.match(html, /국가와 자산의 경계를 넘어,/);
+  assert.match(html, /검증된 투자 기회를 탐색하세요/);
+  assert.match(html, /후보와 자료 신뢰도,/);
+  assert.match(html, /다음 확인 단계를 한 번에 정리합니다/);
   assert.match(html, /GLI AI INVESTMENT ADVISOR/);
+  assert.match(html, /\/brand\/gli-logo\.png/);
   assert.doesNotMatch(html, /gli-ai-prototype\.html|<iframe/i);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/i);
 });
@@ -120,6 +124,7 @@ test("renders the five-level asset access demo without blockchain purchase langu
   assert.match(html, /BUSINESS/);
   assert.match(html, /GLI Cash/);
   assert.match(html, /상위 등급|모든 하위 등급/);
-  assert.match(html, /실제 결제.*발생하지 않습니다/);
+  assert.match(html, /표시 정보는 검토 단계/);
+  assert.doesNotMatch(html, />DEMO<|데모 화면|데모 이용|데모 예시/);
   assert.doesNotMatch(html, /Confirm Staking|Staking Amount|Connect Wallet|GLIB/i);
 });

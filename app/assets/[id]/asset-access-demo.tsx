@@ -73,7 +73,7 @@ export function AssetAccessDemo({
   }
 
   return (
-    <aside className="asset-access-demo" aria-label="자산 등급별 정보 데모">
+    <aside className="asset-access-demo" aria-label="자산 등급별 정보">
       <div className="access-demo-metrics">
         <div>
           <span>GLI TRUST SCORE</span>
@@ -85,7 +85,6 @@ export function AssetAccessDemo({
           <strong>64</strong>
           <small>%</small>
         </div>
-        <em>DEMO</em>
       </div>
 
       <div className="access-tier-tabs" role="tablist" aria-label="정보 등급">
@@ -158,19 +157,18 @@ export function AssetAccessDemo({
           </button>
         )}
       </div>
-      <p className="access-demo-disclaimer">
-        데모 화면입니다. 상위 등급은 모든 하위 등급을 포함하며 실제 결제나 GLI Cash
-        충전은 발생하지 않습니다.
+      <p className="access-policy-note">
+        상위 등급은 모든 하위 등급을 포함합니다. 표시 정보는 검토 단계이며 확정된
+        수익이나 법률 판단을 의미하지 않습니다.
       </p>
 
       {pending ? (
         <div className="access-demo-dialog" role="dialog" aria-modal="true">
           <div>
-            <span>ACCESS PREVIEW</span>
+            <span>ASSET ACCESS</span>
             <h3>{pending.name} 이용 확인</h3>
             <p>
-              이 등급과 모든 하위 등급을 즉시 개방하는 데모입니다. 실제 결제나 GLI
-              Cash 충전은 발생하지 않습니다.
+              이 등급과 모든 하위 등급의 이용 내용을 확인합니다.
             </p>
             <dl>
               <div>
@@ -187,7 +185,7 @@ export function AssetAccessDemo({
                 취소
               </button>
               <button type="button" onClick={confirmDemoAccess}>
-                데모 이용 확정
+                이용 확정
               </button>
             </div>
           </div>
@@ -250,7 +248,7 @@ function StandardPreview() {
       <h3><FileText size={18} /> 상세 분석 자료</h3>
       <div className="document-preview-list">
         {documents.map((document) => (
-          <div key={document}><FileText size={17} /><span>{document}</span><em>DEMO</em></div>
+          <div key={document}><FileText size={17} /><span>{document}</span></div>
         ))}
       </div>
     </section>
@@ -268,7 +266,7 @@ function PremiumPreview() {
           <div><strong>방문 지원 패키지</strong><span>일정과 비용은 자산별 별도 안내</span></div>
         </div>
       </section>
-      <p className="tier-demo-caption">표시된 서비스와 가격은 데모 예시이며 실제 제공 범위가 아닙니다.</p>
+      <p className="tier-demo-caption">서비스 범위와 이용 조건은 자산별로 안내합니다.</p>
     </div>
   );
 }
@@ -298,11 +296,11 @@ function tierTitle(id: AccessTierId) {
 }
 
 function purchaseDescription(id: AccessTierId, unlockedLevel: number) {
-  if (id === "basic") return "Basic 월 정기구독 · $1.99 데모";
+  if (id === "basic") return "Basic 월 정기구독 · $1.99";
   if (id === "standard") {
     return unlockedLevel >= 2
-      ? "Basic에서 Standard 차액 결제 · $1.00 데모"
-      : "Standard 월 정기구독 · $2.99 데모";
+      ? "Basic에서 Standard 차액 결제 · $1.00"
+      : "Standard 월 정기구독 · $2.99";
   }
-  return `${(CASH_COST[id] ?? 0).toLocaleString("en-US")} GLI Cash · 자산별 이용권 데모`;
+  return `${(CASH_COST[id] ?? 0).toLocaleString("en-US")} GLI Cash · 자산별 이용권`;
 }

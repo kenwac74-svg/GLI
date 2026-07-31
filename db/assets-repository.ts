@@ -192,6 +192,21 @@ export function mapListingRowToAsset(input: unknown): Asset {
     "updatedAt",
     publicId,
   );
+  const sourceName = optionalText(
+    read(row, "sourceName", "source_name"),
+    "sourceName",
+    publicId,
+  );
+  const sourceUrl = optionalHttpsUrl(
+    read(row, "sourceUrl", "source_url"),
+    "sourceUrl",
+    publicId,
+  );
+  if ((sourceName === null) !== (sourceUrl === null)) {
+    throw new Error(
+      `Listing ${publicId}: sourceName and sourceUrl must be provided together`,
+    );
+  }
 
   return {
     id: publicId,
@@ -227,6 +242,7 @@ export function mapListingRowToAsset(input: unknown): Asset {
       "isGliDirect",
       publicId,
     ),
+    ...(sourceName && sourceUrl ? { sourceName, sourceUrl } : {}),
     updatedAt: updatedAt.toISOString(),
     strengths: readStringArray(row, "strengths", "strengthsJson", "strengths_json", publicId),
     checks: readStringArray(row, "checks", "checksJson", "checks_json", publicId),
@@ -325,6 +341,28 @@ function optionalText(value: unknown, field: string, id?: string): string | null
     return null;
   }
   return requiredText(value, field, id);
+}
+
+function optionalHttpsUrl(value: unknown, field: string, id: string): string | null {
+  const text = optionalText(value, field, id);
+  if (text === null) return null;
+  let url: URL;
+  try {
+    url = new URL(text);
+  } catch {
+    throw new TypeError(`${listingPrefix(id)}${field} must be an absolute URL`);
+  }
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.hash
+  ) {
+    throw new TypeError(
+      `${listingPrefix(id)}${field} must be a safe HTTPS URL`,
+    );
+  }
+  return url.toString();
 }
 
 function requiredInteger(value: unknown, field: string, id?: string): number {

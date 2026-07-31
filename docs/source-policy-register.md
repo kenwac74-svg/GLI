@@ -18,6 +18,10 @@ This register controls production collection. Technical accessibility is not per
 - `sources.approval_status` must be `APPROVED` before a production job can run.
 - Store the policy URL, reviewer, approval date, permitted fields, rate limit, image rule, attribution rule, and expiry.
 - Preserve source URL, external ID, collection time, and snapshot hash internally.
+- Assign a reviewed `sources.public_name` before public attribution. The asset
+  detail may show that name and the exact HTTPS original-listing URL only when
+  both values exist; fixtures and GLI-curated assets do not receive invented
+  external links.
 - Remove or mask seller phone numbers and other personal data unless the approved business purpose requires them.
 - A source policy change automatically pauses the connector until re-approved.
 

@@ -93,6 +93,36 @@ test("accepts raw D1 snake_case fields and maps 0/1 booleans explicitly", () => 
   assert.deepEqual(asset.strengths, []);
 });
 
+test("publishes an approved source name and safe original listing URL together", () => {
+  const asset = mapListingRowToAsset(
+    listingRow({
+      isGliDirect: 0,
+      sourceName: "CAM Realty",
+      sourceUrl: "https://camrealtyservice.com/property/example-listing/",
+    }),
+  );
+
+  assert.equal(asset.sourceName, "CAM Realty");
+  assert.equal(
+    asset.sourceUrl,
+    "https://camrealtyservice.com/property/example-listing/",
+  );
+  assert.throws(
+    () =>
+      mapListingRowToAsset(
+        listingRow({
+          sourceName: "Unsafe source",
+          sourceUrl: "javascript:alert(1)",
+        }),
+      ),
+    /safe HTTPS URL/,
+  );
+  assert.throws(
+    () => mapListingRowToAsset(listingRow({ sourceName: "Missing link" })),
+    /must be provided together/,
+  );
+});
+
 test("builds an ACTIVE-only query with minor-unit bounds and documented ordering", () => {
   const query = buildPublicAssetsQuery({
     country: "Cambodia",

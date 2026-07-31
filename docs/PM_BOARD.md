@@ -64,6 +64,7 @@ Updated: 2026-07-31
 | GLI-036 | GLI Product Owner | Human/Legal | BLOCKED | Khmer24 AI-use scope approval and collector allowlisting or authorized partner-feed handoff |
 | GLI-037 | Codex | Security/Data review | COMPLETE | bounded public WordPress property API connector, robots enforcement, exact-field parsing and raw provenance |
 | GLI-038 | GLI Product Owner | Human/Legal | BLOCKED | CAM Realty and Cambodia Property Asia written reuse and AI-reference scope approval |
+| GLI-039 | Codex | Product/Security review | COMPLETE | approved public source names, safe original-listing links, official GLI logo and aligned asset-access styling |
 
 ## Decisions
 
@@ -71,7 +72,7 @@ Updated: 2026-07-31
 |---|---|---|
 | DEC-001 | Use the existing Cloudflare Sites project for the Web2 MVP | ACCEPTED |
 | DEC-002 | Use D1 and R2 for MVP persistence | ACCEPTED |
-| DEC-003 | Keep the user-facing source label neutral while preserving internal provenance | ACCEPTED |
+| DEC-003 | Show an approved public source name and direct original-listing link for actual external records; preserve complete provenance internally and never attribute fixtures | SUPERSEDED |
 | DEC-004 | Do not production-crawl Realestate.com.kh without written authorization | ACCEPTED |
 | DEC-005 | Keep all Web3 screens outside the production Web2 navigation | ACCEPTED |
 | DEC-006 | Retry transient connector failures outside the public web process and never retry policy denials | ACCEPTED |

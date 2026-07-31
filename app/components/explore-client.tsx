@@ -160,10 +160,15 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
           <p className="eyebrow">
             <Sparkles size={15} /> GLI AI INVESTMENT ADVISOR
           </p>
-          <h1>국가와 자산의 경계를 넘어, 검증된 투자 기회를 탐색하세요</h1>
+          <h1>
+            <span>국가와 자산의 경계를 넘어,</span>
+            <span>검증된 투자 기회를 탐색하세요</span>
+          </h1>
           <p className="hero-copy">
-            예산과 투자 목적, 원하는 라이프스타일을 이야기하면 GLI가 적합한 후보와
-            자료 신뢰도, 다음 확인 단계를 한 번에 정리합니다.
+            <span>
+              예산과 투자 목적, 원하는 라이프스타일을 이야기하면 GLI가 적합한 후보와 자료 신뢰도,
+            </span>
+            <span>다음 확인 단계를 한 번에 정리합니다.</span>
           </p>
           <form className="search-composer" onSubmit={submit}>
             <label htmlFor="asset-query">어떤 투자 기회를 찾고 계세요?</label>
