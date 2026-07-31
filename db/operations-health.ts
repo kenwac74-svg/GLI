@@ -61,6 +61,7 @@ export type OperationsHealthDashboard = {
     openWarnings: number;
     pendingRetries: number;
     deadLetters: number;
+    pendingNotifications: number;
   };
   alerts: OperationalAlert[];
   retryJobs: RetryJob[];
@@ -80,8 +81,15 @@ export async function getOperationsHealthDashboard(
   database: D1DatabaseLike,
 ): Promise<OperationsHealthDashboard> {
   assertDatabase(database);
-  const [openCritical, openWarnings, pendingRetries, deadLetters, alerts, retryJobs] =
-    await Promise.all([
+  const [
+    openCritical,
+    openWarnings,
+    pendingRetries,
+    deadLetters,
+    pendingNotifications,
+    alerts,
+    retryJobs,
+  ] = await Promise.all([
       count(
         database,
         `SELECT COUNT(*) AS value FROM operational_alerts
@@ -100,6 +108,12 @@ export async function getOperationsHealthDashboard(
       count(
         database,
         "SELECT COUNT(*) AS value FROM retry_jobs WHERE status = 'DEAD_LETTER'",
+      ),
+      count(
+        database,
+        `SELECT COUNT(*) AS value FROM operational_alerts
+         WHERE status != 'RESOLVED'
+           AND occurrence_count > notified_occurrence_count`,
       ),
       database
         .prepare(
@@ -158,7 +172,13 @@ export async function getOperationsHealthDashboard(
     ]);
 
   return {
-    metrics: { openCritical, openWarnings, pendingRetries, deadLetters },
+    metrics: {
+      openCritical,
+      openWarnings,
+      pendingRetries,
+      deadLetters,
+      pendingNotifications,
+    },
     alerts: alerts.results ?? [],
     retryJobs: retryJobs.results ?? [],
   };
@@ -204,6 +224,15 @@ export async function runOperationsHealthScan(
          JOIN sources s ON s.id = ir.source_id
          WHERE ir.status IN ('FAILED', 'PARTIAL')
            AND ir.started_at >= ?
+           AND NOT EXISTS (
+             SELECT 1
+             FROM retry_jobs rj
+             WHERE rj.job_type = 'LICENSED_FEED'
+               AND rj.status = 'SUCCEEDED'
+               AND CAST(
+                 json_extract(rj.payload_json, '$.failedRunId') AS INTEGER
+               ) = ir.id
+           )
          ORDER BY ir.started_at DESC
          LIMIT 50`,
       )
@@ -656,7 +685,11 @@ async function upsertAlert(
          occurrence_count = CASE
            WHEN operational_alerts.status = 'RESOLVED'
              THEN operational_alerts.occurrence_count
-           ELSE operational_alerts.occurrence_count + 1
+           WHEN operational_alerts.severity != excluded.severity
+             OR operational_alerts.title != excluded.title
+             OR operational_alerts.detail != excluded.detail
+             THEN operational_alerts.occurrence_count + 1
+           ELSE operational_alerts.occurrence_count
          END,
          last_seen_at = excluded.last_seen_at,
          acknowledged_by_user_id = operational_alerts.acknowledged_by_user_id,
