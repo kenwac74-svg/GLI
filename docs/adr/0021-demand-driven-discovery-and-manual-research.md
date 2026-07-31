@@ -15,6 +15,34 @@ on-demand discovery, synchronization, and the staff research queue remain later
 implementation work. Product decisions in this ADR must be preserved while the
 UI is refined and must not be represented as completed functionality.
 
+## Asset taxonomy
+
+GLI is a global investment-opportunity platform whose primary inventory is real
+estate; it is not a Cambodia-only property portal. The top-level end-user asset
+categories are:
+
+1. `Residential` (`주거용`): apartments, condominiums, villas, houses, and other
+   residential property.
+2. `Commercial` (`상업용`): offices, retail, hospitality, income-producing
+   buildings, land used for commercial purposes, and related property.
+3. `Leisure` (`레저`): resorts, golf, tourism, entertainment, hospitality, and
+   lifestyle-oriented investment assets.
+4. `Project` (`프로젝트`): GLI-originated non-property business opportunities
+   and selected development or operating projects.
+
+Country and top-level asset category are independent filters. Cambodia is the
+first functional test market; Vietnam, the Philippines, and further countries
+are later source expansions. `Project` inventory is curated by GLI rather than
+obtained through automated portal crawling. GLI may also publish directly
+researched or recommended property in any property category, visibly distinct
+from externally collected market posts.
+
+The four-category navigation, representative demo inventory, and category-aware
+detail forms are part of UI refinement but are not implemented in the current
+prototype as of this ADR date. Each category will need its own relevant field
+matrix while retaining the common asset, source, access-tier, interest, and
+consultation flows.
+
 ## Source scope and search order
 
 Automated discovery is limited to three source groups:

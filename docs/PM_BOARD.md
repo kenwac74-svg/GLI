@@ -72,6 +72,7 @@ Updated: 2026-08-01
 | GLI-042 | Codex | GLI Product Owner | IN PROGRESS | prototype-wide visual, responsive and interaction refinement before new operational features |
 | GLI-043 | Codex | Product/Data review | BACKLOG | demand-driven tiered live discovery, searched-listing persistence and source-current-state recheck |
 | GLI-044 | Codex | Product/Operations review | BACKLOG | source-specific nullable field states, `조사 예정` presentation and favorite-triggered staff research queue |
+| GLI-045 | Codex | GLI Product Owner | BACKLOG | four-category Residential/Commercial/Leisure/Project navigation, representative UI inventory and category-aware detail forms |
 
 ## Decisions
 
@@ -109,6 +110,7 @@ Updated: 2026-08-01
 | DEC-030 | Create a prioritized staff research item and missing-field checklist when a member saves an interested asset | ACCEPTED |
 | DEC-031 | Present source age with `신규`, `최신`, and `1년 경과` background badges while keeping source reliability internal | ACCEPTED |
 | DEC-032 | Exclude social and community channels from automated discovery; GLI staff may research them manually | ACCEPTED |
+| DEC-033 | Organize the global platform into Residential, Commercial, Leisure and Project; treat country as a separate filter and curate Project inventory through GLI | ACCEPTED |
 
 ## Human gates
 
