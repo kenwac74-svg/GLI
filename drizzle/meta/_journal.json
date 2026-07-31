@@ -22,6 +22,13 @@
       "when": 1785474000000,
       "tag": "0002_admin_ingestion_pipeline",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1785481200000,
+      "tag": "0003_cash_checkout_sessions",
+      "breakpoints": true
     }
   ]
 }

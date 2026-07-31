@@ -167,7 +167,9 @@ export function workflowErrorResponse(error: unknown): NextResponse {
     error instanceof Error ? error.message : "요청을 처리할 수 없습니다.";
   const isValidation =
     error instanceof TypeError ||
-    /not found|not active|between|must be one of/i.test(message);
+    /not found|not active|between|must be one of|cannot transition|has expired|not pending/i.test(
+      message,
+    );
   return NextResponse.json(
     {
       error: isValidation ? message : "요청을 처리할 수 없습니다.",

@@ -245,6 +245,7 @@ export default async function MyGliPage({
 
 function consultationStatus(status: string): string {
   if (status === "RECEIVED") return "접수";
+  if (status === "CONTACTED") return "담당자 연락 중";
   if (status === "SCHEDULED") return "일정 확정";
   if (status === "COMPLETED") return "완료";
   if (status === "CANCELLED") return "취소";
