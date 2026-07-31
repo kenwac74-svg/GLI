@@ -3,10 +3,12 @@ import { readFile } from "node:fs/promises";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 
+import { recordAiEvaluationRun } from "../db/ai-evaluation-runs.ts";
 import {
   getReleaseReadinessDashboard,
   recordBackupVerification,
 } from "../db/release-readiness.ts";
+import { AI_EVALUATION_SUITE_VERSION } from "../lib/ai-evaluation.ts";
 
 const NOW = Date.parse("2026-07-31T12:00:00.000Z");
 
@@ -23,6 +25,7 @@ async function createDatabase() {
     "drizzle/0007_operations_notification_delivery.sql",
     "drizzle/0008_audit_log_query_indexes.sql",
     "drizzle/0009_backup_restore_evidence.sql",
+    "drizzle/0012_ai_evaluation_evidence.sql",
   ]) {
     const sql = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     for (const statement of sql
@@ -90,9 +93,10 @@ test("release readiness exposes evidence-backed blockers without claiming launch
     assert.equal(dashboard.latestBackup, null);
     assert.equal(gate(dashboard, "external-source").status, "BLOCKED");
     assert.equal(gate(dashboard, "trust-publication").status, "BLOCKED");
+    assert.equal(gate(dashboard, "ai-runtime").status, "BLOCKED");
     assert.equal(gate(dashboard, "critical-alerts").status, "PASS");
     assert.equal(gate(dashboard, "admin-redundancy").status, "WARNING");
-    assert.equal(dashboard.humanApprovals.length, 4);
+    assert.equal(dashboard.humanApprovals.length, 5);
 
     await assert.rejects(
       getReleaseReadinessDashboard(database, "usr_member", { now: NOW }),
@@ -163,6 +167,54 @@ test("verified production evidence changes automated release gates to pass", asy
     assert.equal(evidence.recordCounts.listings, 8);
     assert.equal(evidence.recordCounts.listingVersions, 8);
 
+    const aiEvaluation = await recordAiEvaluationRun(
+      database,
+      {
+        suiteVersion: AI_EVALUATION_SUITE_VERSION,
+        requestedMode: "openai",
+        model: "gpt-eval",
+        status: "SUCCEEDED",
+        passedCount: 5,
+        totalCount: 5,
+        startedAt: NOW - 20_000,
+        completedAt: NOW - 15_000,
+        cases: Array.from({ length: 5 }, (_, index) => ({
+          id: `case-${index + 1}`,
+          label: `Evaluation case ${index + 1}`,
+          status: "PASS",
+          advisorMode: "openai",
+          matchCount: 1,
+          checks: [],
+        })),
+      },
+      "usr_admin",
+      { now: NOW - 10_000, requestId: "req_ai_eval_1" },
+    );
+    assert.equal(aiEvaluation.status, "SUCCEEDED");
+    await recordAiEvaluationRun(
+      database,
+      {
+        suiteVersion: AI_EVALUATION_SUITE_VERSION,
+        requestedMode: "rules",
+        model: null,
+        status: "SUCCEEDED",
+        passedCount: 5,
+        totalCount: 5,
+        startedAt: NOW - 9_000,
+        completedAt: NOW - 8_000,
+        cases: Array.from({ length: 5 }, (_, index) => ({
+          id: `rules-case-${index + 1}`,
+          label: `Rules case ${index + 1}`,
+          status: "PASS",
+          advisorMode: "rules",
+          matchCount: 1,
+          checks: [],
+        })),
+      },
+      "usr_admin",
+      { now: NOW - 7_000, requestId: "req_ai_eval_rules" },
+    );
+
     const duplicate = await recordBackupVerification(
       database,
       {
@@ -211,6 +263,8 @@ test("verified production evidence changes automated release gates to pass", asy
       blocked: 0,
     });
     assert.equal(gate(dashboard, "backup-restore").status, "PASS");
+    assert.equal(gate(dashboard, "ai-runtime").status, "PASS");
+    assert.equal(dashboard.latestAiEvaluation?.requestedMode, "rules");
   } finally {
     sqlite.close();
   }
@@ -274,4 +328,3 @@ function gate(dashboard, id) {
   assert.ok(result, `Missing gate ${id}`);
   return result;
 }
-
