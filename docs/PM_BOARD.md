@@ -46,6 +46,7 @@ Updated: 2026-07-31
 | GLI-018 | GLI Operations | Security review | IN PROGRESS | production scheduler deployment, alert destination approval and secret provisioning |
 | GLI-019 | Codex | Security/Data review | COMPLETE | administrator source onboarding, approval audit, demo read-only gate and emergency suspension |
 | GLI-020 | Codex | Security/Operations review | COMPLETE | administrator audit center, workflow filters and recursive sensitive-value redaction |
+| GLI-021 | Codex | Security/Operations review | COMPLETE | stable audit pagination, bounded CSV export, query indexes and pilot retention policy |
 
 ## Decisions
 
@@ -60,6 +61,7 @@ Updated: 2026-07-31
 | DEC-007 | Deliver only new or materially changed alerts to an exact allowlisted HTTPS destination | ACCEPTED |
 | DEC-008 | Store source credential names only and reject source approval mutations from shared demo administrators | ACCEPTED |
 | DEC-009 | Keep audit history administrator-only, read-only and redacted before rendering | ACCEPTED |
+| DEC-010 | Bound synchronous audit export to 30 days and 1,000 redacted, spreadsheet-safe rows | ACCEPTED |
 
 ## Human gates
 

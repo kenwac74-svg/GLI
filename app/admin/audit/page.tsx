@@ -3,6 +3,7 @@ import {
   ArrowLeft,
   Clock3,
   DatabaseZap,
+  Download,
   History,
   LockKeyhole,
 } from "lucide-react";
@@ -33,7 +34,7 @@ const CATEGORY_LABELS: Record<AuditCategory, string> = {
 export default async function AuditPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; cursor?: string }>;
 }) {
   const user = await getCurrentUser();
   const context = user ? await ensureMemberContext(user) : null;
@@ -56,17 +57,24 @@ export default async function AuditPage({
     );
   }
 
-  const requestedCategory = (await searchParams).category;
+  const query = await searchParams;
+  const requestedCategory = query.category;
   const category = AUDIT_CATEGORIES.includes(
     requestedCategory as AuditCategory,
   )
     ? (requestedCategory as AuditCategory)
     : "ALL";
+  const cursor =
+    query.cursor && /^\d{1,16}\.\d{1,16}$/.test(query.cursor)
+      ? query.cursor
+      : undefined;
   const dashboard = await getAuditDashboard(
     context.database,
     context.workflowUser.id,
-    { category },
+    { category, cursor, limit: 25 },
   );
+  const categoryQuery =
+    dashboard.category === "ALL" ? "" : `category=${dashboard.category}`;
 
   return (
     <>
@@ -130,7 +138,16 @@ export default async function AuditPage({
               <p className="section-kicker">EVENT TRAIL</p>
               <h2>{CATEGORY_LABELS[dashboard.category]} 기록</h2>
             </div>
-            <span>최신 {dashboard.events.length}건</span>
+            <div className="audit-log-tools">
+              <span>현재 {dashboard.events.length}건</span>
+              <a
+                href={`/api/admin/audit/export${categoryQuery ? `?${categoryQuery}` : ""}`}
+                download
+              >
+                <Download size={14} />
+                최근 30일 CSV
+              </a>
+            </div>
           </div>
           {dashboard.events.length ? (
             <div className="audit-event-list">
@@ -141,6 +158,31 @@ export default async function AuditPage({
           ) : (
             <p className="audit-empty">이 유형의 감사 기록이 없습니다.</p>
           )}
+          {dashboard.page.cursor || dashboard.page.nextCursor ? (
+            <nav className="audit-pagination" aria-label="감사 기록 페이지">
+              {dashboard.page.cursor ? (
+                <Link
+                  href={`/admin/audit${categoryQuery ? `?${categoryQuery}` : ""}`}
+                >
+                  최신 기록으로
+                </Link>
+              ) : (
+                <span />
+              )}
+              {dashboard.page.nextCursor ? (
+                <Link
+                  href={`/admin/audit?${[
+                    categoryQuery,
+                    `cursor=${dashboard.page.nextCursor}`,
+                  ]
+                    .filter(Boolean)
+                    .join("&")}`}
+                >
+                  이전 기록 보기
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
         </section>
       </main>
     </>

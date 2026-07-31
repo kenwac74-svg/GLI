@@ -65,8 +65,8 @@ OPENAI_MODEL=gpt-5.6-sol
 - `/admin` provides a separate demo operations account and collection workbench
 - `/admin/sources/:slug` provides a separate source-approval and licensed-feed
   onboarding workflow
-- `/admin/audit` provides administrator-only, categorized audit history with
-  recursive secret redaction
+- `/admin/audit` provides administrator-only, cursor-paginated audit history
+  with workflow filters, recursive secret redaction, and bounded CSV export
 - `/api/search` provides grounded conversational advice with a deterministic
   fallback and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
@@ -171,6 +171,11 @@ The audit center is read-only. It resolves event actors, groups events by
 workflow, and redacts secret, token, password, authorization, credential, API
 key, private-key, and cookie fields before rendering before/after snapshots.
 Invalid legacy JSON is isolated to the affected record.
+
+Audit CSV export applies the same redaction boundary, covers only the latest 30
+days, and returns at most 1,000 events. CSV cells are quoted and spreadsheet
+formula prefixes are neutralized. Automatic retention deletion remains disabled
+until the production retention and legal-hold procedure is approved.
 
 ## Authorized Partner Feed
 
