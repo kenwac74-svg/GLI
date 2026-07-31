@@ -128,3 +128,14 @@ test("renders the five-level asset access demo without blockchain purchase langu
   assert.doesNotMatch(html, />DEMO<|데모 화면|데모 이용|데모 예시/);
   assert.doesNotMatch(html, /Confirm Staking|Staking Amount|Connect Wallet|GLIB/i);
 });
+
+test("distinguishes reference fixtures from attributed market data and renders the shared action bar", async () => {
+  const response = await render("/assets/GLI-KH-104");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /REFERENCE DATA/);
+  assert.doesNotMatch(html, /MARKET DATA/);
+  assert.match(html, /detail-action-bar/);
+  assert.match(html, /detail-favorite-action/);
+});

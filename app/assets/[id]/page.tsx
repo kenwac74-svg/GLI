@@ -4,6 +4,7 @@ import {
   CircleAlert,
   ExternalLink,
   MapPin,
+  MessageCircle,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,14 +24,14 @@ export default async function AssetPage({
   const { id } = await params;
   const { asset } = await getAsset(id);
   if (!asset) notFound();
+  const hasExternalSource = Boolean(
+    !asset.isGliDirect && asset.sourceName && asset.sourceUrl,
+  );
 
   return (
     <>
       <SiteHeader />
       <main className="detail-page">
-        <Link className="back-link" href="/">
-          <ArrowLeft size={17} /> 탐색 결과로
-        </Link>
         <div className="detail-layout">
           <section className="detail-primary">
             <div className="detail-image">
@@ -42,8 +43,15 @@ export default async function AssetPage({
                 unoptimized
               />
               <div className="asset-origin-badges">
-                <span>{asset.isGliDirect ? "GLI DIRECT" : "MARKET DATA"}</span>
+                <span>
+                  {asset.isGliDirect
+                    ? "GLI DIRECT"
+                    : hasExternalSource
+                      ? "MARKET DATA"
+                      : "REFERENCE DATA"}
+                </span>
                 {asset.isGliDirect ? <span>GLI 검증 후보</span> : null}
+                {hasExternalSource ? <span>{asset.sourceName}</span> : null}
               </div>
             </div>
             <div className="detail-title">
@@ -74,7 +82,7 @@ export default async function AssetPage({
                 <strong>{new Date(asset.updatedAt).toLocaleDateString("ko-KR")}</strong>
               </div>
             </div>
-            {!asset.isGliDirect && asset.sourceName && asset.sourceUrl ? (
+            {hasExternalSource && asset.sourceName && asset.sourceUrl ? (
               <section className="asset-source" aria-label="외부 매물 출처">
                 <div>
                   <span>매물 출처</span>
@@ -115,21 +123,21 @@ export default async function AssetPage({
                 </ul>
               </div>
             </section>
-            <section className="content-section detail-service-actions">
-              <div>
-                <span>이 자산을 계속 검토하시겠습니까?</span>
-                <strong>관심 자산에 저장하거나 GLI 전문가에게 문의하세요.</strong>
-              </div>
-              <div>
-                <Link className="primary-action" href={`/my?consult=${asset.id}`}>
-                  전문가 상담 신청
-                </Link>
-                <AssetActions assetId={asset.id} />
-              </div>
-            </section>
           </section>
 
           <AssetAccessDemo assetTitle={asset.title} trustScore={asset.trustScore} />
+
+          <section className="detail-action-bar" aria-label="자산 상세 작업">
+            <Link className="primary-action" href={`/my?consult=${asset.id}`}>
+              <MessageCircle size={19} /> 전문가 상담 신청
+            </Link>
+            <div className="detail-favorite-action">
+              <AssetActions assetId={asset.id} />
+            </div>
+            <Link className="back-link" href="/">
+              <ArrowLeft size={19} /> 탐색 결과로 돌아가기
+            </Link>
+          </section>
         </div>
       </main>
     </>

@@ -918,7 +918,7 @@ button {
   gap: 8px;
   min-height: 44px;
   padding: 0 16px;
-  margin-bottom: 18px;
+  margin: 0;
   border: 1px solid var(--line);
   border-radius: 6px;
   color: var(--ink);
@@ -944,6 +944,35 @@ button {
   grid-template-columns: minmax(0, 0.92fr) minmax(470px, 1.08fr);
   gap: 24px;
   align-items: start;
+}
+
+.detail-action-bar {
+  grid-column: 1 / -1;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.detail-action-bar .primary-action,
+.detail-action-bar .secondary-action,
+.detail-action-bar .back-link {
+  min-height: 52px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.detail-favorite-action {
+  min-width: 0;
+}
+
+.detail-favorite-action .action-message {
+  margin: 8px 0 0;
 }
 
 .detail-primary,
@@ -1302,6 +1331,7 @@ button {
   color: var(--ink);
   background: var(--paper);
   box-shadow: var(--shadow);
+  font-size: 14px;
 }
 
 .access-demo-metrics {
@@ -1321,7 +1351,7 @@ button {
   padding: 11px 18px 13px;
   color: var(--muted);
   background: #f8fafb;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1.6;
 }
 
@@ -1336,7 +1366,7 @@ button {
 .access-demo-metrics span {
   grid-column: 1 / -1;
   color: #55708a;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -1400,13 +1430,13 @@ button {
 
 .access-tier-tabs button span {
   overflow: hidden;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
   text-overflow: ellipsis;
 }
 
 .access-tier-tabs button small {
-  font-size: 8px;
+  font-size: 9px;
 }
 
 .access-tier-tabs button svg {
@@ -1436,14 +1466,14 @@ button {
 }
 
 .access-tier-heading > div > span {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
 }
 
 .access-tier-heading h2 {
   margin: 5px 0 0;
   color: var(--ink);
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1.35;
 }
 
@@ -1454,7 +1484,7 @@ button {
   border-radius: 4px;
   color: #925d7e;
   background: #fbf2f7;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 900;
 }
 
@@ -1482,7 +1512,7 @@ button {
   align-items: center;
   gap: 8px;
   color: var(--teal-dark);
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .tier-blue {
@@ -1521,7 +1551,7 @@ button {
 .tier-business > p {
   margin: 0;
   color: var(--ink-soft);
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.65;
 }
 
@@ -1549,11 +1579,11 @@ button {
 .public-stat-grid span,
 .tier-compact-row span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .public-stat-grid strong {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .tier-compact-row,
@@ -1577,7 +1607,7 @@ button {
 
 .tier-compact-row strong,
 .tier-insight strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .risk-bars {
@@ -1595,7 +1625,7 @@ button {
 .risk-bars span,
 .risk-bars strong {
   color: #60758a;
-  font-size: 9px;
+  font-size: 11px;
 }
 
 .risk-bars i {
@@ -1619,7 +1649,7 @@ button {
 .tier-insight p {
   margin: 0;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -1642,7 +1672,7 @@ button {
 }
 
 .document-preview-list span {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -1655,18 +1685,18 @@ button {
 }
 
 .service-preview-list strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .service-preview-list span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
 }
 
 .tier-demo-caption {
   margin: 0;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1.55;
 }
 
@@ -1688,7 +1718,7 @@ button {
   gap: 6px;
   color: #684085;
   background: var(--paper);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -1705,7 +1735,7 @@ button {
 
 .access-lock-copy p {
   margin: 0;
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.55;
 }
 
@@ -1726,11 +1756,11 @@ button {
 
 .access-purchase-bar span {
   color: var(--muted);
-  font-size: 7px;
+  font-size: 9px;
 }
 
 .access-purchase-bar strong {
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .access-purchase-bar button {
@@ -1744,7 +1774,7 @@ button {
   gap: 6px;
   color: #041419;
   background: #25c7b8;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 900;
 }
 
@@ -5349,6 +5379,11 @@ button {
   .detail-service-actions,
   .my-summary,
   .ops-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-action-bar {
+    padding: 14px;
     grid-template-columns: 1fr;
   }
 
