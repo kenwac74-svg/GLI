@@ -62,7 +62,7 @@ OPENAI_MODEL=gpt-5.6-sol
 - `db/ai-evaluation-runs.ts` stores administrator-run AI quality evidence
   without persisting customer conversations or model credentials
 - `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
-  review, publish, and audit workflow
+  evidence-backed review, publish, and audit workflow
 - `workers/ingestion/index.ts` is the non-public execution boundary for licensed
   partner feeds
 - `ingestion/licensed-json-feed.ts` enforces the GLI partner-feed schema,
@@ -73,6 +73,8 @@ OPENAI_MODEL=gpt-5.6-sol
 - `/admin` provides a separate demo operations account and collection workbench
 - `/admin/sources/:slug` provides a separate source-approval and licensed-feed
   onboarding workflow, including an authorized partner-file import workbench
+- `/admin/listings/:publicId` provides source provenance, Trust inputs, immutable
+  review history, and a mandatory analyst checklist before publication
 - `/api/admin/ingestion/import` sends an exact licensed JSON or CSV upload through the
   existing source policy, R2 raw snapshot, normalization, privacy, dedupe, and
   `REVIEW_PENDING` boundaries
@@ -195,6 +197,12 @@ The shared demo administrator can also validate a JSON or CSV partner-feed file 
 browser, but cannot import it. A real active administrator and an approved,
 unexpired `LICENSED_JSON_V1` source are required before exact uploaded bytes are
 stored in R2 and candidate listings enter the private review queue.
+
+Publishing from the private review queue requires all four analyst checks:
+source rights, normalized fact consistency, public-copy privacy, and recorded
+limitations. The reviewer must add a bounded note. The decision is stored in
+`listing_review_decisions`; general audit metadata records the checklist and
+note length, not the note body.
 
 The audit center is read-only. It resolves event actors, groups events by
 workflow, and redacts secret, token, password, authorization, credential, API
