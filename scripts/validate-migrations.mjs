@@ -13,6 +13,7 @@ const migrationFiles = [
   "drizzle/0007_operations_notification_delivery.sql",
   "drizzle/0008_audit_log_query_indexes.sql",
   "drizzle/0009_backup_restore_evidence.sql",
+  "drizzle/0010_consultation_threads.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -199,10 +200,23 @@ try {
     environmentIndex: 1,
   });
 
+  const consultationThreads = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'consultation_events') AS tableCount,
+         (SELECT count(*) FROM pragma_index_list('consultation_events')
+          WHERE name = 'consultation_events_thread_idx') AS threadIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...consultationThreads }, {
+    tableCount: 1,
+    threadIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, and backup evidence.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, and consultation threads.",
   );
 } finally {
   database.close();
 }
-
