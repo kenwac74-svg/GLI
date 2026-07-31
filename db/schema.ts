@@ -227,6 +227,28 @@ export const consultations = sqliteTable(
   (table) => [index("consultations_user_status_idx").on(table.userId, table.status)],
 );
 
+export const consultationEvents = sqliteTable(
+  "consultation_events",
+  {
+    id: text("id").primaryKey(),
+    consultationId: text("consultation_id")
+      .notNull()
+      .references(() => consultations.id),
+    actorUserId: text("actor_user_id").references(() => users.id),
+    eventType: text("event_type").notNull(),
+    body: text("body"),
+    status: text("status"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    index("consultation_events_thread_idx").on(
+      table.consultationId,
+      table.createdAt,
+      table.id,
+    ),
+  ],
+);
+
 export const memberships = sqliteTable(
   "memberships",
   {
@@ -425,4 +447,3 @@ export const backupVerifications = sqliteTable(
     ),
   ],
 );
-
