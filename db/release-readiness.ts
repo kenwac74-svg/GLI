@@ -1,7 +1,13 @@
+import {
+  getLatestAiEvaluationRun,
+  type AiEvaluationRun,
+} from "./ai-evaluation-runs.ts";
+import { AI_EVALUATION_SUITE_VERSION } from "../lib/ai-evaluation.ts";
 import type { D1DatabaseLike } from "./user-workflows.ts";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const BACKUP_MAX_AGE_MS = 90 * DAY_MS;
+const AI_EVALUATION_MAX_AGE_MS = 30 * DAY_MS;
 const EVIDENCE_CAPTURE_MAX_AGE_MS = 365 * DAY_MS;
 
 export const BACKUP_ENVIRONMENTS = ["STAGING", "PRODUCTION"] as const;
@@ -55,6 +61,7 @@ export type ReleaseReadinessDashboard = {
     blocked: number;
   };
   gates: ReleaseGate[];
+  latestAiEvaluation: AiEvaluationRun | null;
   latestBackup: BackupVerification | null;
   humanApprovals: Array<{
     label: string;
@@ -102,6 +109,8 @@ export async function getReleaseReadinessDashboard(
     failedPayments,
     overdueConsultations,
     activeAdmins,
+    latestAiEvaluation,
+    latestOpenAiEvaluation,
     latestBackup,
   ] = await Promise.all([
     count(
@@ -154,6 +163,8 @@ export async function getReleaseReadinessDashboard(
       `SELECT COUNT(*) AS value FROM users
        WHERE role = 'ADMIN' AND status = 'ACTIVE'`,
     ),
+    getLatestAiEvaluationRun(database),
+    getLatestAiEvaluationRun(database, "openai"),
     getLatestBackupVerification(database),
   ]);
 
@@ -192,13 +203,13 @@ export async function getReleaseReadinessDashboard(
         ? null
         : "검증 담당자가 최소 1개 보고서를 승인해야 합니다.",
     ),
-    booleanGate(
+    aiEvaluationGate(
       "ai-runtime",
       "PRODUCT",
       "AI 상담 운영 설정",
       Boolean(runtime.aiConfigured),
-      "서버 전용 AI 키와 모델 설정",
-      "호스팅 비밀값으로 AI 키를 등록하고 안전 모드 검증을 실행하세요.",
+      latestOpenAiEvaluation,
+      now,
     ),
     booleanGate(
       "cash-payment",
@@ -281,6 +292,7 @@ export async function getReleaseReadinessDashboard(
           : "PASS",
     summary,
     gates,
+    latestAiEvaluation,
     latestBackup,
     humanApprovals: [
       {
@@ -291,6 +303,11 @@ export async function getReleaseReadinessDashboard(
       {
         label: "Trust Score 공개 문구",
         owner: "GLI Product Owner · Legal",
+        status: "NEEDS_APPROVAL",
+      },
+      {
+        label: "AI 상담 모델·품질 기준",
+        owner: "GLI Product Owner · AI Review",
         status: "NEEDS_APPROVAL",
       },
       {
@@ -517,6 +534,43 @@ function backupGate(
   );
 }
 
+function aiEvaluationGate(
+  id: string,
+  group: ReleaseGate["group"],
+  label: string,
+  configured: boolean,
+  evaluation: AiEvaluationRun | null,
+  now: number,
+): ReleaseGate {
+  if (!configured) {
+    return gate(
+      id,
+      group,
+      label,
+      "BLOCKED",
+      "서버 전용 AI 키와 모델 미설정",
+      "호스팅 비밀값으로 AI 키를 등록한 뒤 실제 모델 평가를 실행하세요.",
+    );
+  }
+  const current =
+    evaluation?.requestedMode === "openai" &&
+    evaluation.suiteVersion === AI_EVALUATION_SUITE_VERSION &&
+    evaluation.status === "SUCCEEDED" &&
+    evaluation.completedAt >= now - AI_EVALUATION_MAX_AGE_MS;
+  return gate(
+    id,
+    group,
+    label,
+    current ? "PASS" : "BLOCKED",
+    evaluation
+      ? `${evaluation.requestedMode.toUpperCase()} · ${evaluation.passedCount}/${evaluation.totalCount} · ${evaluation.status}`
+      : "등록된 실제 모델 평가 없음",
+    current
+      ? null
+      : "현재 평가 묶음으로 실제 OpenAI 모델을 실행하고 30일 이내 성공 증적을 남기세요.",
+  );
+}
+
 function gate(
   id: string,
   group: ReleaseGate["group"],
@@ -733,4 +787,3 @@ function assertDatabase(
     throw new TypeError("A D1 database binding is required");
   }
 }
-
