@@ -272,6 +272,37 @@ export const cashCheckoutSessions = sqliteTable(
       table.status,
       table.createdAt,
     ),
+    uniqueIndex("cash_checkout_provider_session_uidx").on(
+      table.provider,
+      table.providerSessionId,
+    ),
+  ],
+);
+
+export const paymentWebhookEvents = sqliteTable(
+  "payment_webhook_events",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    provider: text("provider").notNull(),
+    providerEventId: text("provider_event_id").notNull(),
+    eventType: text("event_type").notNull(),
+    payloadHash: text("payload_hash").notNull(),
+    status: text("status").notNull(),
+    checkoutId: text("checkout_id").references(() => cashCheckoutSessions.id),
+    errorSummary: text("error_summary"),
+    receivedAt: integer("received_at").notNull(),
+    processedAt: integer("processed_at"),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("payment_webhook_provider_event_uidx").on(
+      table.provider,
+      table.providerEventId,
+    ),
+    index("payment_webhook_status_received_idx").on(
+      table.status,
+      table.receivedAt,
+    ),
   ],
 );
 
