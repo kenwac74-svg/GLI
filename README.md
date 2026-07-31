@@ -65,6 +65,8 @@ OPENAI_MODEL=gpt-5.6-sol
 - `/admin` provides a separate demo operations account and collection workbench
 - `/admin/sources/:slug` provides a separate source-approval and licensed-feed
   onboarding workflow
+- `/admin/audit` provides administrator-only, categorized audit history with
+  recursive secret redaction
 - `/api/search` provides grounded conversational advice with a deterministic
   fallback and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
@@ -165,6 +167,11 @@ validation, but the source mutation API rejects demo identities. A real active
 administrator must save or suspend an external source. The database stores only
 the environment-secret name, never the credential value.
 
+The audit center is read-only. It resolves event actors, groups events by
+workflow, and redacts secret, token, password, authorization, credential, API
+key, private-key, and cookie fields before rendering before/after snapshots.
+Invalid legacy JSON is isolated to the affected record.
+
 ## Authorized Partner Feed
 
 The production-ready connector boundary accepts only the versioned
@@ -233,3 +240,4 @@ must be stored as worker secrets, not committed as configuration variables.
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+
