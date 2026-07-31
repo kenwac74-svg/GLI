@@ -8,6 +8,50 @@ export type MembershipPlan = {
   featured?: boolean;
 };
 
+export type ConsultationPriority = "STANDARD" | "PRIORITY" | "PRIVATE";
+
+export type MembershipEntitlements = {
+  planId: MembershipPlan["id"] | null;
+  favoriteLimit: number | null;
+  aiMonthlyLimit: number | null;
+  consultationPriority: ConsultationPriority;
+  fullTrustReport: boolean;
+};
+
+export const GUEST_ENTITLEMENTS: MembershipEntitlements = {
+  planId: null,
+  favoriteLimit: 5,
+  aiMonthlyLimit: 0,
+  consultationPriority: "STANDARD",
+  fullTrustReport: false,
+};
+
+const PLAN_ENTITLEMENTS: Readonly<
+  Record<MembershipPlan["id"], MembershipEntitlements>
+> = {
+  explore: {
+    planId: "explore",
+    favoriteLimit: 20,
+    aiMonthlyLimit: 60,
+    consultationPriority: "STANDARD",
+    fullTrustReport: false,
+  },
+  investor: {
+    planId: "investor",
+    favoriteLimit: null,
+    aiMonthlyLimit: null,
+    consultationPriority: "PRIORITY",
+    fullTrustReport: true,
+  },
+  private: {
+    planId: "private",
+    favoriteLimit: null,
+    aiMonthlyLimit: null,
+    consultationPriority: "PRIVATE",
+    fullTrustReport: true,
+  },
+};
+
 export const MEMBERSHIP_PLANS: readonly MembershipPlan[] = [
   {
     id: "explore",
@@ -15,7 +59,12 @@ export const MEMBERSHIP_PLANS: readonly MembershipPlan[] = [
     price: 29_000,
     currency: "KRW",
     description: "해외 부동산 탐색을 시작하는 개인",
-    features: ["AI 검색 확장", "관심 자산 20개", "기본 Trust 요약", "월간 알림"],
+    features: [
+      "심화 AI 검색 월 60회",
+      "관심 자산 20개",
+      "기본 Trust 요약",
+      "월간 알림",
+    ],
   },
   {
     id: "investor",
@@ -46,6 +95,20 @@ export function getMembershipPlan(value: string): MembershipPlan {
 }
 
 export function canAccessFullTrustReport(planId: string): boolean {
-  return planId === "investor" || planId === "private";
+  return getMembershipEntitlements(planId).fullTrustReport;
 }
 
+export function getMembershipEntitlements(
+  planId: string | null | undefined,
+): MembershipEntitlements {
+  if (!planId) return GUEST_ENTITLEMENTS;
+  const normalized = planId.trim().toLowerCase();
+  if (
+    normalized !== "explore" &&
+    normalized !== "investor" &&
+    normalized !== "private"
+  ) {
+    return GUEST_ENTITLEMENTS;
+  }
+  return PLAN_ENTITLEMENTS[normalized];
+}
