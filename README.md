@@ -57,6 +57,11 @@ OPENAI_MODEL=gpt-5.6-sol
   consultation status workflow
 - `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
   review, publish, and audit workflow
+- `workers/ingestion/index.ts` is the non-public execution boundary for licensed
+  partner feeds
+- `ingestion/licensed-json-feed.ts` enforces the GLI partner-feed schema,
+  approved HTTPS hosts, response limits, immutable raw-object storage, and
+  provenance hashes
 - `/admin` provides a separate demo operations account and collection workbench
 - `/api/search` provides grounded conversational advice with a deterministic
   fallback and server-owned Trust data
@@ -143,6 +148,20 @@ enabled only when `DEMO_ADMIN_ENABLED=true`. It can execute only the approved
 internal fixture feed. External portal connectors remain blocked until their
 source policy is explicitly approved.
 
+## Authorized Partner Feed
+
+The production-ready connector boundary accepts only the versioned
+`gli.partner-listings.v1` JSON envelope. A source must be `APPROVED`, use the
+configured connector kind, request only permitted fields, target an exact
+allowlisted HTTPS host, and remain within its record limit before any network
+collection can start.
+
+The ingestion worker stores the received body in the raw-object store and writes
+only its object key, hashes, HTTP status, source URL, and timestamps to D1.
+Normalized listings remain `REVIEW_PENDING` until an operator publishes them.
+Credentials are referenced by environment-secret name and are never written to
+D1 or the repository.
+
 The hosted demo uses the `DEMO_CASH` checkout adapter. It stores the same
 checkout and audit boundaries needed by a production payment adapter, but
 always returns `charged: false`. Do not enable a charging adapter until a
@@ -153,4 +172,3 @@ policy are implemented.
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
-
