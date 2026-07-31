@@ -244,6 +244,9 @@ export default async function MyGliPage({
                       <p>{item.requestText}</p>
                     </div>
                     <div className="consultation-list-actions">
+                      <span className={`member-priority priority-${item.priority.toLowerCase()}`}>
+                        {consultationPriority(item.priority)}
+                      </span>
                       <span>{consultationStatus(item.status)}</span>
                       <Link href={`/my/consultations/${item.id}`}>
                         상담 열기 <ArrowRight size={14} />
@@ -272,4 +275,10 @@ function consultationStatus(status: string): string {
   if (status === "COMPLETED") return "완료";
   if (status === "CANCELLED") return "취소";
   return status;
+}
+
+function consultationPriority(priority: string): string {
+  if (priority === "PRIVATE") return "전담";
+  if (priority === "PRIORITY") return "우선";
+  return "일반";
 }
