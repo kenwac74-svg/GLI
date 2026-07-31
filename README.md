@@ -147,10 +147,15 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 
 - `npm run dev`: start local development
 - `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
+- `npm test`: build the worker and verify domain plus deployed member/admin journeys
 - `npm run db:generate`: generate Drizzle migrations after schema changes
 - `npm run db:local`: apply all D1 migrations to the local persisted database
 - `npm run check`: run lint, migration validation, build, and all tests
+
+The implementation and release evidence for each Web2 requirement is tracked in
+[`docs/MVP_COMPLETION_MATRIX.md`](docs/MVP_COMPLETION_MATRIX.md). The matrix
+separates verified product behavior from source, payment, staffing, and
+production-operation gates that require external approval.
 
 ## Demo Auth Boundary
 
