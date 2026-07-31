@@ -475,3 +475,30 @@ export const backupVerifications = sqliteTable(
     ),
   ],
 );
+
+export const aiEvaluationRuns = sqliteTable(
+  "ai_evaluation_runs",
+  {
+    id: text("id").primaryKey(),
+    suiteVersion: text("suite_version").notNull(),
+    requestedMode: text("requested_mode").notNull(),
+    model: text("model"),
+    status: text("status").notNull(),
+    passedCount: integer("passed_count").notNull(),
+    totalCount: integer("total_count").notNull(),
+    casesJson: text("cases_json").notNull(),
+    startedAt: integer("started_at").notNull(),
+    completedAt: integer("completed_at").notNull(),
+    executedByUserId: text("executed_by_user_id")
+      .notNull()
+      .references(() => users.id),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    index("ai_evaluation_runs_status_completed_idx").on(
+      table.requestedMode,
+      table.status,
+      table.completedAt,
+    ),
+  ],
+);
