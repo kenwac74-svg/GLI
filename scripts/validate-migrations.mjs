@@ -12,6 +12,7 @@ const migrationFiles = [
   "drizzle/0006_operations_health_and_retry.sql",
   "drizzle/0007_operations_notification_delivery.sql",
   "drizzle/0008_audit_log_query_indexes.sql",
+  "drizzle/0009_backup_restore_evidence.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -181,8 +182,25 @@ try {
     actionIndex: 1,
   });
 
+  const backupEvidence = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'backup_verifications') AS tableCount,
+         (SELECT count(*) FROM pragma_index_list('backup_verifications')
+          WHERE name = 'backup_verifications_object_manifest_uidx') AS uniqueIndexCount,
+         (SELECT count(*) FROM pragma_index_list('backup_verifications')
+          WHERE name = 'backup_verifications_environment_created_idx') AS environmentIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...backupEvidence }, {
+    tableCount: 1,
+    uniqueIndexCount: 1,
+    environmentIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, and audit queries.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, and backup evidence.",
   );
 } finally {
   database.close();
