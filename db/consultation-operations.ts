@@ -40,6 +40,7 @@ export type UpdateConsultationInput = {
 
 export type ConsultationOperationOptions = {
   now?: () => number;
+  randomUUID?: () => string;
 };
 
 type UserPermissionRow = {
@@ -162,6 +163,26 @@ export async function updateConsultation(
         WHERE id = ?
       `)
       .bind(status, nextAssigneeUserId, now, consultationId),
+  ];
+  if (current.status !== status) {
+    statements.push(
+      database
+        .prepare(`
+          INSERT INTO consultation_events (
+            id, consultation_id, actor_user_id, event_type,
+            body, status, created_at
+          ) VALUES (?, ?, ?, 'STATUS_CHANGED', NULL, ?, ?)
+        `)
+        .bind(
+          `cevt_${getRandomUUID(options)}`,
+          consultationId,
+          actor.id,
+          status,
+          now,
+        ),
+    );
+  }
+  statements.push(
     database
       .prepare(`
         INSERT INTO audit_logs (
@@ -177,7 +198,7 @@ export async function updateConsultation(
         requestId,
         now,
       ),
-  ];
+  );
 
   await executeWrites(database, statements);
 
@@ -276,6 +297,18 @@ function getNow(options: ConsultationOperationOptions): number {
     throw new TypeError("now must return a positive integer timestamp");
   }
   return now;
+}
+
+function getRandomUUID(options: ConsultationOperationOptions): string {
+  const value = options.randomUUID?.() ?? crypto.randomUUID();
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      value,
+    )
+  ) {
+    throw new TypeError("randomUUID must return a UUID");
+  }
+  return value.toLowerCase();
 }
 
 async function executeWrites(

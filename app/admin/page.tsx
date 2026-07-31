@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   AlertTriangle,
   BellRing,
   ClipboardCheck,
@@ -290,10 +291,15 @@ export default async function AdminPage() {
                       </div>
                     </dl>
                   </div>
-                  <ConsultationAdminActions
-                    consultationId={consultation.id}
-                    status={consultation.status}
-                  />
+                  <div className="ops-consultation-actions-wrap">
+                    <Link href={`/admin/consultations/${consultation.id}`}>
+                      상담 열기 <ArrowRight size={14} />
+                    </Link>
+                    <ConsultationAdminActions
+                      consultationId={consultation.id}
+                      status={consultation.status}
+                    />
+                  </div>
                 </article>
               ))}
             </div>

@@ -1,4 +1,5 @@
 import {
+  ArrowRight,
   Bell,
   CalendarClock,
   FileText,
@@ -226,7 +227,12 @@ export default async function MyGliPage({
                       <strong>{item.listingTitle ?? "일반 투자 상담"}</strong>
                       <p>{item.requestText}</p>
                     </div>
-                    <span>{consultationStatus(item.status)}</span>
+                    <div className="consultation-list-actions">
+                      <span>{consultationStatus(item.status)}</span>
+                      <Link href={`/my/consultations/${item.id}`}>
+                        상담 열기 <ArrowRight size={14} />
+                      </Link>
+                    </div>
                   </article>
                 ))}
               </div>
