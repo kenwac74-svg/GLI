@@ -10,6 +10,7 @@ const migrationFiles = [
   "drizzle/0004_authorized_source_connectors.sql",
   "drizzle/0005_payment_webhook_ledger.sql",
   "drizzle/0006_operations_health_and_retry.sql",
+  "drizzle/0007_operations_notification_delivery.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -148,8 +149,25 @@ try {
     retryStatusIndex: 1,
   });
 
+  const notificationDelivery = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM pragma_table_info('operational_alerts')
+          WHERE name IN (
+            'notified_occurrence_count',
+            'last_notified_at'
+          )) AS notificationColumns,
+         (SELECT count(*) FROM pragma_index_list('operational_alerts')
+          WHERE name = 'operational_alerts_notification_idx') AS notificationIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...notificationDelivery }, {
+    notificationColumns: 2,
+    notificationIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, and operations health.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, and notification delivery.",
   );
 } finally {
   database.close();
