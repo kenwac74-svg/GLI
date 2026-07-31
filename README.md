@@ -67,6 +67,8 @@ OPENAI_MODEL=gpt-5.6-sol
   onboarding workflow
 - `/admin/audit` provides administrator-only, cursor-paginated audit history
   with workflow filters, recursive secret redaction, and bounded CSV export
+- `/admin/readiness` provides evidence-based pilot release gates and
+  administrator-recorded backup and restore verification
 - `/api/search` provides grounded conversational advice with a deterministic
   fallback and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
@@ -176,6 +178,26 @@ Audit CSV export applies the same redaction boundary, covers only the latest 30
 days, and returns at most 1,000 events. CSV cells are quoted and spreadsheet
 formula prefixes are neutralized. Automatic retention deletion remains disabled
 until the production retention and legal-hold procedure is approved.
+
+## Pilot Release Readiness
+
+The readiness center does not infer launch readiness from feature flags alone.
+It checks external-source approval and collection evidence, approved Trust
+Reports, AI and payment configuration, critical alerts, dead letters, payment
+failures, consultation SLA, scheduled operations, administrator redundancy, and
+recent production restoration evidence.
+
+Production runtime gates use boolean configuration only; secret values are never
+rendered. The payment and scheduler gates require
+`PRODUCTION_PAYMENT_ADAPTER_ENABLED=true` and
+`SCHEDULED_OPERATIONS_ENABLED=true` respectively after their real integrations
+have been approved. AI requires `LLM_PROVIDER=openai` and a server-side
+`OPENAI_API_KEY`.
+
+Backup evidence writes are unavailable to shared demo administrators. A real
+administrator records the approved storage object key, manifest SHA-256,
+capture time, and restore result. The system stores point-in-time record counts
+and writes an audit event; it never stores storage credentials.
 
 ## Authorized Partner Feed
 

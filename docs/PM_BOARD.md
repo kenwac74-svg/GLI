@@ -47,6 +47,7 @@ Updated: 2026-07-31
 | GLI-019 | Codex | Security/Data review | COMPLETE | administrator source onboarding, approval audit, demo read-only gate and emergency suspension |
 | GLI-020 | Codex | Security/Operations review | COMPLETE | administrator audit center, workflow filters and recursive sensitive-value redaction |
 | GLI-021 | Codex | Security/Operations review | COMPLETE | stable audit pagination, bounded CSV export, query indexes and pilot retention policy |
+| GLI-022 | Codex | Security/Operations review | COMPLETE | evidence-based pilot readiness center and administrator backup/restore evidence ledger |
 
 ## Decisions
 
@@ -62,6 +63,7 @@ Updated: 2026-07-31
 | DEC-008 | Store source credential names only and reject source approval mutations from shared demo administrators | ACCEPTED |
 | DEC-009 | Keep audit history administrator-only, read-only and redacted before rendering | ACCEPTED |
 | DEC-010 | Bound synchronous audit export to 30 days and 1,000 redacted, spreadsheet-safe rows | ACCEPTED |
+| DEC-011 | Block pilot release until automated operational gates and named human approvals have evidence | ACCEPTED |
 
 ## Human gates
 

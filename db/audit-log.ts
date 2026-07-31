@@ -223,7 +223,9 @@ export function categoryForAction(
   if (/^(CASH_|DEMO_CASH_|MEMBERSHIP_|PAYMENT_)/.test(action)) {
     return "MEMBERSHIP";
   }
-  if (/^(OPERATIONS_|OPERATIONAL_)/.test(action)) return "OPERATIONS";
+  if (/^(OPERATIONS_|OPERATIONAL_|BACKUP_)/.test(action)) {
+    return "OPERATIONS";
+  }
   return "OTHER";
 }
 
@@ -292,7 +294,7 @@ function categoryExpression(category: AuditCategory): string | null {
     case "MEMBERSHIP":
       return "(audit_logs.action LIKE 'CASH_%' OR audit_logs.action LIKE 'DEMO_CASH_%' OR audit_logs.action LIKE 'MEMBERSHIP_%' OR audit_logs.action LIKE 'PAYMENT_%')";
     case "OPERATIONS":
-      return "(audit_logs.action LIKE 'OPERATIONS_%' OR audit_logs.action LIKE 'OPERATIONAL_%')";
+      return "(audit_logs.action LIKE 'OPERATIONS_%' OR audit_logs.action LIKE 'OPERATIONAL_%' OR audit_logs.action LIKE 'BACKUP_%')";
     default:
       return null;
   }
