@@ -3,8 +3,13 @@ import {
   type NormalizationInput,
   type NormalizedListing,
 } from "../ingestion/normalize.ts";
+import type {
+  CollectedListingBatch,
+  RawSnapshotMetadata,
+} from "../ingestion/contracts.ts";
 import {
   assertSourceCollectionAllowed,
+  type SourceConnector,
   type SourcePolicy,
 } from "../ingestion/source-policy.ts";
 import { calculateTrustScore, type ReviewStatus } from "../lib/trust.ts";
@@ -18,6 +23,8 @@ export type OperationsSource = {
   nameInternal: string;
   country: string;
   approvalStatus: string;
+  connectorKind: string;
+  connectorStatus: "READY" | "APPROVAL_REQUIRED" | "CONFIGURATION_REQUIRED";
   approvalExpiresAt: number | null;
   updatedAt: number;
 };
@@ -70,6 +77,15 @@ export type IngestionResult = {
 
 export type ReviewAction = "PUBLISH" | "HOLD";
 
+export type SourceConnectorConfiguration = {
+  sourceSlug: string;
+  nameInternal: string;
+  country: string;
+  connectorKind: string;
+  connectorConfig: Record<string, unknown>;
+  policy: SourcePolicy;
+};
+
 type SourceRow = {
   id: number;
   slug: string;
@@ -77,9 +93,15 @@ type SourceRow = {
   country: string;
   approvalStatus: string;
   permittedFieldsJson: string;
+  connectorKind: string;
+  connectorConfigJson: string;
+  allowedHostsJson: string;
+  maxRecordsPerRun: number;
   approvalExpiresAt: number | null;
   updatedAt: number;
 };
+
+type SourceDashboardRow = Omit<OperationsSource, "connectorStatus">;
 
 type ListingIdentityRow = {
   id: number;
@@ -133,12 +155,13 @@ export async function getOperationsDashboard(
            name_internal AS nameInternal,
            country,
            approval_status AS approvalStatus,
+           connector_kind AS connectorKind,
            approval_expires_at AS approvalExpiresAt,
            updated_at AS updatedAt
          FROM sources
          ORDER BY country ASC, name_internal ASC`,
       )
-      .all<OperationsSource>(),
+      .all<SourceDashboardRow>(),
     database
       .prepare(
         `SELECT
@@ -198,7 +221,10 @@ export async function getOperationsDashboard(
       publishedTrustReports,
       openConsultations,
     },
-    sources: sourceRows.results ?? [],
+    sources: (sourceRows.results ?? []).map((source) => ({
+      ...source,
+      connectorStatus: connectorStatus(source),
+    })),
     runs: runRows.results ?? [],
     listings: listingRows.results ?? [],
   };
@@ -212,35 +238,48 @@ export async function runApprovedFixtureIngestion(
   actorUserId: string,
   now = new Date(),
 ): Promise<IngestionResult> {
-  assertDatabase(database);
-  if (!Array.isArray(candidates) || candidates.length === 0 || candidates.length > 100) {
-    throw new RangeError("candidates must contain between 1 and 100 listings");
-  }
-
-  const source = await database
-    .prepare(
-      `SELECT
-         id,
-         slug,
-         name_internal AS nameInternal,
-         country,
-         approval_status AS approvalStatus,
-         permitted_fields_json AS permittedFieldsJson,
-         approval_expires_at AS approvalExpiresAt,
-         updated_at AS updatedAt
-       FROM sources
-       WHERE slug = ?`,
-    )
-    .bind(sourceSlug)
-    .first<SourceRow>();
-  if (!source) throw new Error(`Source ${sourceSlug} not found`);
-
-  const policy = sourcePolicy(source);
-  assertSourceCollectionAllowed(
-    { sourceSlug, requestedFields },
-    policy,
+  return runApprovedConnectorIngestion(
+    database,
+    {
+      sourceSlug,
+      connectorKind: "FIXTURE",
+      requestedFields,
+      collect: async () => ({ candidates }),
+    },
+    actorUserId,
     now,
   );
+}
+
+export async function getSourceConnectorConfiguration(
+  database: D1DatabaseLike,
+  sourceSlug: string,
+): Promise<SourceConnectorConfiguration> {
+  assertDatabase(database);
+  const source = await loadSourceRow(database, sourceSlug);
+  return {
+    sourceSlug: source.slug,
+    nameInternal: source.nameInternal,
+    country: source.country,
+    connectorKind: source.connectorKind,
+    connectorConfig: parseObjectJson(
+      source.connectorConfigJson,
+      `Source ${source.slug} has invalid connector configuration`,
+    ),
+    policy: sourcePolicy(source),
+  };
+}
+
+export async function runApprovedConnectorIngestion(
+  database: D1DatabaseLike,
+  connector: SourceConnector<CollectedListingBatch>,
+  actorUserId: string,
+  now = new Date(),
+): Promise<IngestionResult> {
+  assertDatabase(database);
+  const source = await loadSourceRow(database, connector.sourceSlug);
+  const policy = sourcePolicy(source);
+  assertSourceCollectionAllowed(connector, policy, now);
 
   const startedAt = now.getTime();
   const run = await database
@@ -248,13 +287,50 @@ export async function runApprovedFixtureIngestion(
       `INSERT INTO ingestion_runs (
          source_id, status, started_at, discovered_count,
          accepted_count, rejected_count
-       ) VALUES (?, 'RUNNING', ?, ?, 0, 0)
+       ) VALUES (?, 'RUNNING', ?, 0, 0, 0)
        RETURNING id`,
     )
-    .bind(source.id, startedAt, candidates.length)
+    .bind(source.id, startedAt)
     .first<{ id: number }>();
   if (!run?.id) throw new Error("Failed to create ingestion run");
 
+  let batch: CollectedListingBatch;
+  let rawSnapshotId: number | null = null;
+  try {
+    batch = await connector.collect();
+    assertCandidateBatch(batch, policy.maxRecordsPerRun ?? 100);
+    await database
+      .prepare(
+        "UPDATE ingestion_runs SET discovered_count = ? WHERE id = ?",
+      )
+      .bind(batch.candidates.length, run.id)
+      .run();
+    rawSnapshotId = batch.snapshot
+      ? await insertRawSnapshot(database, source.id, run.id, batch.snapshot)
+      : null;
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown connector error";
+    await database
+      .prepare(
+        `UPDATE ingestion_runs
+         SET status = 'FAILED', ended_at = ?, error_summary = ?
+         WHERE id = ?`,
+      )
+      .bind(Date.now(), message.slice(0, 2_000), run.id)
+      .run();
+    await insertAudit(database, {
+      actorUserId,
+      action: "INGESTION_RUN_FAILED",
+      resourceType: "INGESTION_RUN",
+      resourceId: String(run.id),
+      after: { sourceSlug: source.slug, status: "FAILED", error: message },
+      createdAt: Date.now(),
+    });
+    throw error;
+  }
+
+  const candidates = batch.candidates;
   let acceptedCount = 0;
   const errors: string[] = [];
   const listingPublicIds: string[] = [];
@@ -274,6 +350,7 @@ export async function runApprovedFixtureIngestion(
         run.id,
         actorUserId,
         startedAt,
+        rawSnapshotId,
       );
       acceptedCount += 1;
       listingPublicIds.push(listing.publicId);
@@ -309,7 +386,7 @@ export async function runApprovedFixtureIngestion(
     resourceType: "INGESTION_RUN",
     resourceId: String(run.id),
     after: {
-      sourceSlug,
+      sourceSlug: source.slug,
       status,
       discoveredCount: candidates.length,
       acceptedCount,
@@ -407,6 +484,7 @@ async function upsertNormalizedListing(
   ingestionRunId: number,
   actorUserId: string,
   now: number,
+  rawSnapshotId: number | null,
 ): Promise<ListingIdentityRow> {
   let identity = await database
     .prepare(
@@ -532,10 +610,11 @@ async function upsertNormalizedListing(
       `INSERT OR IGNORE INTO listing_versions (
          listing_id, raw_snapshot_id, normalized_hash, normalized_payload_json,
          changed_fields_json, observed_at
-       ) VALUES (?, NULL, ?, ?, '[]', ?)`,
+       ) VALUES (?, ?, ?, ?, '[]', ?)`,
     )
     .bind(
       identity.id,
+      rawSnapshotId,
       listing.normalizedHash,
       JSON.stringify(payload),
       Date.parse(listing.observedAt),
@@ -634,18 +713,115 @@ async function insertAutomatedTrustRun(
     .run();
 }
 
-function sourcePolicy(source: SourceRow): SourcePolicy {
-  let permittedFields: unknown;
-  try {
-    permittedFields = JSON.parse(source.permittedFieldsJson);
-  } catch {
-    throw new Error(`Source ${source.slug} has invalid permitted fields`);
+async function loadSourceRow(
+  database: D1DatabaseLike,
+  sourceSlug: string,
+): Promise<SourceRow> {
+  if (
+    typeof sourceSlug !== "string" ||
+    !sourceSlug ||
+    sourceSlug.trim() !== sourceSlug
+  ) {
+    throw new TypeError("sourceSlug must be a non-empty, trimmed string");
+  }
+
+  const source = await database
+    .prepare(
+      `SELECT
+         id,
+         slug,
+         name_internal AS nameInternal,
+         country,
+         approval_status AS approvalStatus,
+         permitted_fields_json AS permittedFieldsJson,
+         connector_kind AS connectorKind,
+         connector_config_json AS connectorConfigJson,
+         allowed_hosts_json AS allowedHostsJson,
+         max_records_per_run AS maxRecordsPerRun,
+         approval_expires_at AS approvalExpiresAt,
+         updated_at AS updatedAt
+       FROM sources
+       WHERE slug = ?`,
+    )
+    .bind(sourceSlug)
+    .first<SourceRow>();
+  if (!source) throw new Error(`Source ${sourceSlug} not found`);
+  return source;
+}
+
+function assertCandidateBatch(
+  batch: CollectedListingBatch,
+  maxRecords: number,
+): void {
+  if (!batch || typeof batch !== "object" || Array.isArray(batch)) {
+    throw new TypeError("connector must return a listing batch");
   }
   if (
-    !Array.isArray(permittedFields) ||
-    permittedFields.some((field) => typeof field !== "string")
+    !Array.isArray(batch.candidates) ||
+    batch.candidates.length === 0 ||
+    batch.candidates.length > maxRecords
   ) {
-    throw new Error(`Source ${source.slug} has invalid permitted fields`);
+    throw new RangeError(
+      `candidates must contain between 1 and ${maxRecords} listings`,
+    );
+  }
+}
+
+async function insertRawSnapshot(
+  database: D1DatabaseLike,
+  sourceId: number,
+  ingestionRunId: number,
+  snapshot: RawSnapshotMetadata,
+): Promise<number> {
+  if (
+    !/^https:\/\/\S+$/i.test(snapshot.sourceUrl) ||
+    !/^[a-f0-9]{64}$/.test(snapshot.sourceUrlHash) ||
+    !/^[a-f0-9]{64}$/.test(snapshot.contentHash) ||
+    !snapshot.objectKey ||
+    !Number.isInteger(snapshot.httpStatus) ||
+    !Number.isFinite(snapshot.fetchedAt)
+  ) {
+    throw new TypeError("raw snapshot metadata is invalid");
+  }
+
+  const row = await database
+    .prepare(
+      `INSERT INTO raw_snapshots (
+         source_id, ingestion_run_id, source_url, source_url_hash,
+         content_hash, object_key, http_status, fetched_at
+       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+       RETURNING id`,
+    )
+    .bind(
+      sourceId,
+      ingestionRunId,
+      snapshot.sourceUrl,
+      snapshot.sourceUrlHash,
+      snapshot.contentHash,
+      snapshot.objectKey,
+      snapshot.httpStatus,
+      snapshot.fetchedAt,
+    )
+    .first<{ id: number }>();
+  if (!row?.id) throw new Error("Failed to record raw snapshot");
+  return row.id;
+}
+
+function sourcePolicy(source: SourceRow): SourcePolicy {
+  const permittedFields = parseStringArrayJson(
+    source.permittedFieldsJson,
+    `Source ${source.slug} has invalid permitted fields`,
+  );
+  const allowedHosts = parseStringArrayJson(
+    source.allowedHostsJson,
+    `Source ${source.slug} has invalid allowed hosts`,
+  );
+  if (
+    !Number.isInteger(source.maxRecordsPerRun) ||
+    source.maxRecordsPerRun < 1 ||
+    source.maxRecordsPerRun > 1_000
+  ) {
+    throw new Error(`Source ${source.slug} has invalid record limit`);
   }
 
   return {
@@ -656,7 +832,50 @@ function sourcePolicy(source: SourceRow): SourcePolicy {
       source.approvalExpiresAt === null
         ? null
         : new Date(source.approvalExpiresAt).toISOString(),
+    connectorKind: source.connectorKind,
+    allowedHosts,
+    maxRecordsPerRun: source.maxRecordsPerRun,
   };
+}
+
+function parseStringArrayJson(value: string, message: string): string[] {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error(message);
+  }
+  if (
+    !Array.isArray(parsed) ||
+    parsed.some((entry) => typeof entry !== "string")
+  ) {
+    throw new Error(message);
+  }
+  return parsed;
+}
+
+function parseObjectJson(
+  value: string,
+  message: string,
+): Record<string, unknown> {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error(message);
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error(message);
+  }
+  return parsed as Record<string, unknown>;
+}
+
+function connectorStatus(
+  source: SourceDashboardRow,
+): OperationsSource["connectorStatus"] {
+  if (source.approvalStatus !== "APPROVED") return "APPROVAL_REQUIRED";
+  if (source.connectorKind === "DISABLED") return "CONFIGURATION_REQUIRED";
+  return "READY";
 }
 
 function countryPrefix(countryCode: string): string {
