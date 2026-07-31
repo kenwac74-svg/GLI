@@ -55,6 +55,8 @@ OPENAI_MODEL=gpt-5.6-sol
   membership activation
 - `db/consultation-operations.ts` owns administrator assignment and the
   consultation status workflow
+- `db/consultation-thread.ts` owns member-scoped consultation threads,
+  operator replies, and message audit boundaries
 - `db/operations.ts` contains the approval-gated ingestion, Trust evaluation,
   review, publish, and audit workflow
 - `workers/ingestion/index.ts` is the non-public execution boundary for licensed
@@ -73,6 +75,8 @@ OPENAI_MODEL=gpt-5.6-sol
   fallback, validated multi-turn criteria context, and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
   30-day membership activation without collecting card data
+- `/my/consultations/:id` and `/admin/consultations/:id` provide separate
+  member and operator views of the same consultation history
 - `db/payment-webhooks.ts` owns verified, idempotent payment completion,
   expiry, refund, membership-access, and audit transitions
 - `db/operations-health.ts` owns operational alerts, health scans, retry
@@ -211,6 +215,18 @@ Follow-up messages can add or replace budget, district, transaction, property
 type, bedroom, seasonal-use, short-stay, and river-view preferences. The user can
 start a new search at any time. Raw conversation history is not persisted or
 replayed to the model by this flow.
+
+## Consultation Threads
+
+Each consultation has a dedicated member page instead of ending at a dashboard
+status label. The member can review the original request, follow-up messages,
+operator replies, assignment, and status history. The administrator uses a
+separate route to reply and advance the case.
+
+Member thread queries always include the authenticated member ID, and operator
+queries require an active administrator. Message bodies remain in the
+consultation event ledger, while the general audit log records only event type
+and body length. Completed and cancelled consultations are read-only to members.
 
 ## Pilot Release Readiness
 
