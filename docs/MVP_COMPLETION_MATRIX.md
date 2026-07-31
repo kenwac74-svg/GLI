@@ -18,7 +18,7 @@ Updated: 2026-07-31
 | Provenance and immutable source snapshots | VERIFIED | `ingestion/feed-worker.ts`, R2 snapshot contract, listing versions, audit records, ingestion tests | Production R2 binding and retention approval |
 | Source authorization boundary | VERIFIED | source policy registry, allowlisted HTTPS hosts and fields, expiry/suspension checks, admin source UI and tests | None for the boundary itself |
 | Live external Cambodia sources | EXTERNAL GATE | Readiness gate and PM tasks GLI-002, GLI-005, GLI-010, GLI-013 remain open | Written permission or partner feed for each production source, credentials, permitted fields |
-| Conversational property search | VERIFIED | `/api/search`, intent extraction, district-aware filtering, deterministic fallback and rendered-worker tests | None for rules mode |
+| Conversational property search | VERIFIED | `/api/search`, intent extraction, district-aware filtering, validated multi-turn criteria context, deterministic fallback and rendered-worker tests | None for rules mode |
 | Grounded LLM advisor | TECHNICALLY READY | `lib/ai-search.ts`, OpenAI adapter validation, grounded citation tests, unsafe-output fallback | Hosted OpenAI key, model approval, production evaluation |
 | Trust Score | VERIFIED | deterministic versioned rules, evidence dimensions, non-guarantee language, Trust tests | Public wording and legal disclaimer approval before pilot |
 | Trust review and publication | VERIFIED | ingestion review queue, administrator review API, publication audit trail and tests | Named GLI analyst/verifier for live operation |
@@ -50,7 +50,7 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 9. The administrator readiness page renders from the migrated database.
 
 The full `npm run check` gate currently covers lint, migration validation,
-production build, and 91 automated tests.
+production build, and 95 automated tests.
 
 ## Pilot blockers
 
@@ -71,4 +71,3 @@ The pilot remains blocked until all of the following are recorded:
 8. Security, privacy, and pilot launch approvals are signed by their named owners.
 
 The `/admin/readiness` page is the operational source of truth for these gates.
-
