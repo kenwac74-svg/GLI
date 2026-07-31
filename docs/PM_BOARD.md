@@ -57,6 +57,7 @@ Updated: 2026-07-31
 | GLI-029 | Codex | Product/Security review | COMPLETE | five-case AI search evaluation, D1 evidence ledger, rules rehearsal and 30-day OpenAI readiness gate |
 | GLI-030 | Codex | Product/Security review | COMPLETE | enforced cash-plan favorite limits, model-cost boundary, monthly Explore usage ledger and consultation priority queue |
 | GLI-031 | Codex | Product review | COMPLETE | MY GLI server-derived favorite, deep-AI, consultation and Trust Report entitlement usage summary |
+| GLI-032 | Codex | Security/Data review | COMPLETE | authorized UTF-8 CSV partner import with strict field contract, exact R2 provenance and shared privacy/dedupe/review boundaries |
 
 ## Decisions
 
@@ -81,6 +82,7 @@ Updated: 2026-07-31
 | DEC-017 | Manual partner-file imports never bypass source approval, field, host, size or record limits; shared demo administrators may validate files only | ACCEPTED |
 | DEC-018 | Require a recent successful current-suite OpenAI evaluation in addition to runtime configuration; rules rehearsals never satisfy the production AI gate | ACCEPTED |
 | DEC-019 | Enforce global cash-plan benefits server-side; keep anonymous search in rules mode, restore failed model usage, and retain GLIB staking as a later asset-specific boundary | ACCEPTED |
+| DEC-020 | Treat JSON and CSV as delivery formats inside one licensed partner-source boundary; neither format may bypass source approval, host, field, privacy, dedupe or private-review controls | ACCEPTED |
 
 ## Human gates
 
@@ -89,3 +91,4 @@ Updated: 2026-07-31
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.
 - Approve the production alert destination and provision the scheduled worker secrets.
+
