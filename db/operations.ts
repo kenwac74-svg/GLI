@@ -17,7 +17,10 @@ import {
   LICENSED_JSON_REQUESTED_FIELDS,
 } from "../ingestion/licensed-json-feed.ts";
 import { calculateTrustScore, type ReviewStatus } from "../lib/trust.ts";
-import type { D1DatabaseLike } from "./user-workflows.ts";
+import type {
+  D1DatabaseLike,
+  D1StatementLike,
+} from "./user-workflows.ts";
 
 const TRUST_RULE_VERSION = "trust-v0.2-operations";
 
@@ -80,6 +83,75 @@ export type IngestionResult = {
 };
 
 export type ReviewAction = "PUBLISH" | "HOLD";
+
+export type ListingReviewChecklist = {
+  sourceRightsConfirmed: boolean;
+  factsCrossChecked: boolean;
+  publicCopyReviewed: boolean;
+  limitationsRecorded: boolean;
+};
+
+export type ListingReviewEvidence = ListingReviewChecklist & {
+  note: string;
+};
+
+export type ListingReviewDetail = {
+  listing: {
+    id: number;
+    publicId: string;
+    title: string;
+    summary: string;
+    country: string;
+    city: string;
+    district: string | null;
+    transactionType: string;
+    propertyType: string;
+    priceMinor: number;
+    currency: string;
+    areaSqmX100: number | null;
+    bedrooms: number | null;
+    bathrooms: number | null;
+    status: string;
+    updatedAt: number;
+  };
+  trust: {
+    id: number;
+    score: number;
+    status: string;
+    ruleVersion: string;
+    dimensions: Record<string, unknown>;
+    explanation: string;
+    calculatedAt: number;
+    approvedByUserId: string | null;
+    approvedAt: number | null;
+  } | null;
+  sources: Array<{
+    slug: string;
+    nameInternal: string;
+    approvalStatus: string;
+    sourceUrl: string;
+    firstSeenAt: number;
+    lastSeenAt: number;
+  }>;
+  latestVersion: {
+    id: number;
+    normalizedPayload: Record<string, unknown>;
+    changedFields: unknown[];
+    observedAt: number;
+    rawObjectKey: string | null;
+    rawContentHash: string | null;
+    rawFetchedAt: number | null;
+  } | null;
+  decisions: Array<{
+    id: number;
+    action: ReviewAction;
+    reviewerUserId: string;
+    reviewerName: string;
+    checklist: ListingReviewChecklist;
+    note: string;
+    createdAt: number;
+  }>;
+};
 
 export type SourceConnectorConfiguration = {
   sourceSlug: string;
@@ -258,6 +330,183 @@ export async function getOperationsDashboard(
     })),
     runs: runRows.results ?? [],
     listings: listingRows.results ?? [],
+  };
+}
+
+export async function getListingReviewDetail(
+  database: D1DatabaseLike,
+  publicId: string,
+  actorUserId: string,
+): Promise<ListingReviewDetail | null> {
+  assertDatabase(database);
+  validateListingPublicId(publicId);
+  await requireAdmin(database, actorUserId);
+
+  const listing = await database
+    .prepare(
+      `SELECT
+         l.id,
+         l.public_id AS publicId,
+         l.title,
+         l.summary,
+         l.country,
+         l.city,
+         l.district,
+         l.transaction_type AS transactionType,
+         l.property_type AS propertyType,
+         l.price_minor AS priceMinor,
+         l.currency,
+         l.area_sqm_x100 AS areaSqmX100,
+         l.bedrooms,
+         l.bathrooms,
+         l.status,
+         l.updated_at AS updatedAt
+       FROM listings l
+       WHERE l.public_id = ?
+       LIMIT 1`,
+    )
+    .bind(publicId)
+    .first<ListingReviewDetail["listing"]>();
+  if (!listing) return null;
+
+  const [trust, sources, latestVersion, decisions] = await Promise.all([
+    database
+      .prepare(
+        `SELECT
+           id,
+           score,
+           status,
+           rule_version AS ruleVersion,
+           dimensions_json AS dimensionsJson,
+           explanation,
+           calculated_at AS calculatedAt,
+           approved_by_user_id AS approvedByUserId,
+           approved_at AS approvedAt
+         FROM trust_score_runs
+         WHERE listing_id = ?
+         ORDER BY calculated_at DESC, id DESC
+         LIMIT 1`,
+      )
+      .bind(listing.id)
+      .first<{
+        id: number;
+        score: number;
+        status: string;
+        ruleVersion: string;
+        dimensionsJson: string;
+        explanation: string;
+        calculatedAt: number;
+        approvedByUserId: string | null;
+        approvedAt: number | null;
+      }>(),
+    database
+      .prepare(
+        `SELECT
+           s.slug,
+           s.name_internal AS nameInternal,
+           s.approval_status AS approvalStatus,
+           ls.source_url AS sourceUrl,
+           ls.first_seen_at AS firstSeenAt,
+           ls.last_seen_at AS lastSeenAt
+         FROM listing_sources ls
+         JOIN sources s ON s.id = ls.source_id
+         WHERE ls.listing_id = ?
+         ORDER BY s.name_internal ASC`,
+      )
+      .bind(listing.id)
+      .all<ListingReviewDetail["sources"][number]>(),
+    database
+      .prepare(
+        `SELECT
+           lv.id,
+           lv.normalized_payload_json AS normalizedPayloadJson,
+           lv.changed_fields_json AS changedFieldsJson,
+           lv.observed_at AS observedAt,
+           rs.object_key AS rawObjectKey,
+           rs.content_hash AS rawContentHash,
+           rs.fetched_at AS rawFetchedAt
+         FROM listing_versions lv
+         LEFT JOIN raw_snapshots rs ON rs.id = lv.raw_snapshot_id
+         WHERE lv.listing_id = ?
+         ORDER BY lv.observed_at DESC, lv.id DESC
+         LIMIT 1`,
+      )
+      .bind(listing.id)
+      .first<{
+        id: number;
+        normalizedPayloadJson: string;
+        changedFieldsJson: string;
+        observedAt: number;
+        rawObjectKey: string | null;
+        rawContentHash: string | null;
+        rawFetchedAt: number | null;
+      }>(),
+    database
+      .prepare(
+        `SELECT
+           d.id,
+           d.action,
+           d.reviewer_user_id AS reviewerUserId,
+           COALESCE(u.display_name, u.email, d.reviewer_user_id) AS reviewerName,
+           d.checklist_json AS checklistJson,
+           d.note,
+           d.created_at AS createdAt
+         FROM listing_review_decisions d
+         LEFT JOIN users u ON u.id = d.reviewer_user_id
+         WHERE d.listing_id = ?
+         ORDER BY d.created_at DESC, d.id DESC
+         LIMIT 20`,
+      )
+      .bind(listing.id)
+      .all<{
+        id: number;
+        action: ReviewAction;
+        reviewerUserId: string;
+        reviewerName: string;
+        checklistJson: string;
+        note: string;
+        createdAt: number;
+      }>(),
+  ]);
+
+  return {
+    listing,
+    trust: trust
+      ? {
+          id: trust.id,
+          score: trust.score,
+          status: trust.status,
+          ruleVersion: trust.ruleVersion,
+          dimensions: parseJsonRecord(trust.dimensionsJson),
+          explanation: trust.explanation,
+          calculatedAt: trust.calculatedAt,
+          approvedByUserId: trust.approvedByUserId,
+          approvedAt: trust.approvedAt,
+        }
+      : null,
+    sources: sources.results ?? [],
+    latestVersion: latestVersion
+      ? {
+          id: latestVersion.id,
+          normalizedPayload: parseJsonRecord(
+            latestVersion.normalizedPayloadJson,
+          ),
+          changedFields: parseJsonArray(latestVersion.changedFieldsJson),
+          observedAt: latestVersion.observedAt,
+          rawObjectKey: latestVersion.rawObjectKey,
+          rawContentHash: latestVersion.rawContentHash,
+          rawFetchedAt: latestVersion.rawFetchedAt,
+        }
+      : null,
+    decisions: (decisions.results ?? []).map((decision) => ({
+      id: decision.id,
+      action: decision.action,
+      reviewerUserId: decision.reviewerUserId,
+      reviewerName: decision.reviewerName,
+      checklist: parseReviewChecklist(decision.checklistJson),
+      note: decision.note,
+      createdAt: decision.createdAt,
+    })),
   };
 }
 
@@ -587,15 +836,16 @@ export async function reviewListing(
   publicId: string,
   action: ReviewAction,
   actorUserId: string,
+  evidence: ListingReviewEvidence,
   now = Date.now(),
 ): Promise<{ publicId: string; status: string; trustStatus: string }> {
   assertDatabase(database);
-  if (!/^GLI-[A-Z]{2}-[A-Z0-9-]{3,32}$/.test(publicId)) {
-    throw new TypeError("publicId is invalid");
-  }
+  validateListingPublicId(publicId);
   if (action !== "PUBLISH" && action !== "HOLD") {
     throw new RangeError("action must be PUBLISH or HOLD");
   }
+  const reviewEvidence = validateListingReviewEvidence(evidence, action);
+  await requireAdmin(database, actorUserId);
 
   const listing = await database
     .prepare(
@@ -608,45 +858,77 @@ export async function reviewListing(
   if (!listing) throw new Error(`Listing ${publicId} not found`);
 
   const nextStatus = action === "PUBLISH" ? "ACTIVE" : "HELD";
-  let trustStatus = "PRELIMINARY";
-  if (action === "PUBLISH") {
-    const latestTrust = await database
-      .prepare(
-        `SELECT id, score
-         FROM trust_score_runs
-         WHERE listing_id = ?
-         ORDER BY calculated_at DESC, id DESC
-         LIMIT 1`,
-      )
-      .bind(listing.id)
-      .first<{ id: number; score: number }>();
-    if (!latestTrust) {
-      throw new Error(`Listing ${publicId} has no Trust evaluation`);
-    }
-    trustStatus = latestTrust.score >= 85 ? "VERIFIED" : "REVIEWING";
-    await database
-      .prepare(
-        `UPDATE trust_score_runs
-         SET status = ?, approved_by_user_id = ?, approved_at = ?
-         WHERE id = ?`,
-      )
-      .bind(trustStatus, actorUserId, now, latestTrust.id)
-      .run();
+  if (listing.status === nextStatus) {
+    throw new RangeError(`Listing ${publicId} is already ${nextStatus}`);
   }
-
-  await database
+  const latestTrust = await database
     .prepare(
-      "UPDATE listings SET status = ?, updated_at = ? WHERE id = ?",
+      `SELECT id, score, status
+       FROM trust_score_runs
+       WHERE listing_id = ?
+       ORDER BY calculated_at DESC, id DESC
+       LIMIT 1`,
     )
-    .bind(nextStatus, now, listing.id)
-    .run();
+    .bind(listing.id)
+    .first<{ id: number; score: number; status: string }>();
+  if (!latestTrust) {
+    throw new Error(`Listing ${publicId} has no Trust evaluation`);
+  }
+  const trustStatus =
+    action === "PUBLISH"
+      ? latestTrust.score >= 85
+        ? "VERIFIED"
+        : "REVIEWING"
+      : latestTrust.status;
+
+  const statements: D1StatementLike[] = [];
+  if (action === "PUBLISH") {
+    statements.push(
+      database
+        .prepare(
+          `UPDATE trust_score_runs
+           SET status = ?, approved_by_user_id = ?, approved_at = ?
+           WHERE id = ?`,
+        )
+        .bind(trustStatus, actorUserId, now, latestTrust.id),
+    );
+  }
+  statements.push(
+    database
+      .prepare(
+        "UPDATE listings SET status = ?, updated_at = ? WHERE id = ?",
+      )
+      .bind(nextStatus, now, listing.id),
+    database
+      .prepare(
+        `INSERT INTO listing_review_decisions (
+           listing_id, trust_score_run_id, action, reviewer_user_id,
+           checklist_json, note, created_at
+         ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .bind(
+        listing.id,
+        latestTrust.id,
+        action,
+        actorUserId,
+        JSON.stringify(reviewChecklist(reviewEvidence)),
+        reviewEvidence.note,
+        now,
+      ),
+  );
+  await executeOperationWrites(database, statements);
   await insertAudit(database, {
     actorUserId,
     action: action === "PUBLISH" ? "LISTING_PUBLISHED" : "LISTING_HELD",
     resourceType: "LISTING",
     resourceId: publicId,
     before: { status: listing.status },
-    after: { status: nextStatus, trustStatus },
+    after: {
+      status: nextStatus,
+      trustStatus,
+      reviewChecklist: reviewChecklist(reviewEvidence),
+      reviewNoteLength: reviewEvidence.note.length,
+    },
     createdAt: now,
   });
 
@@ -1148,6 +1430,109 @@ async function count(
   return Number(row?.value ?? 0);
 }
 
+function validateListingPublicId(value: unknown): asserts value is string {
+  if (
+    typeof value !== "string" ||
+    !/^GLI-[A-Z]{2}-[A-Z0-9-]{3,32}$/.test(value)
+  ) {
+    throw new TypeError("publicId is invalid");
+  }
+}
+
+function validateListingReviewEvidence(
+  value: unknown,
+  action: ReviewAction,
+): ListingReviewEvidence {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new TypeError("reviewEvidence must be an object");
+  }
+  const input = value as Record<string, unknown>;
+  const checklist = {
+    sourceRightsConfirmed: input.sourceRightsConfirmed === true,
+    factsCrossChecked: input.factsCrossChecked === true,
+    publicCopyReviewed: input.publicCopyReviewed === true,
+    limitationsRecorded: input.limitationsRecorded === true,
+  };
+  if (
+    action === "PUBLISH" &&
+    Object.values(checklist).some((checked) => !checked)
+  ) {
+    throw new RangeError(
+      "Every review checklist item must be confirmed before publication",
+    );
+  }
+  if (typeof input.note !== "string") {
+    throw new TypeError("review note must be a string");
+  }
+  const note = input.note.normalize("NFKC").trim().replace(/\s+/g, " ");
+  if (note.length < 20 || note.length > 1_000) {
+    throw new RangeError(
+      "review note must be between 20 and 1000 characters",
+    );
+  }
+  return { ...checklist, note };
+}
+
+function reviewChecklist(
+  evidence: ListingReviewEvidence,
+): ListingReviewChecklist {
+  return {
+    sourceRightsConfirmed: evidence.sourceRightsConfirmed,
+    factsCrossChecked: evidence.factsCrossChecked,
+    publicCopyReviewed: evidence.publicCopyReviewed,
+    limitationsRecorded: evidence.limitationsRecorded,
+  };
+}
+
+function parseReviewChecklist(value: string): ListingReviewChecklist {
+  const record = parseJsonRecord(value);
+  return {
+    sourceRightsConfirmed: record.sourceRightsConfirmed === true,
+    factsCrossChecked: record.factsCrossChecked === true,
+    publicCopyReviewed: record.publicCopyReviewed === true,
+    limitationsRecorded: record.limitationsRecorded === true,
+  };
+}
+
+function parseJsonRecord(value: string): Record<string, unknown> {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+function parseJsonArray(value: string): unknown[] {
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function executeOperationWrites(
+  database: D1DatabaseLike,
+  statements: D1StatementLike[],
+): Promise<void> {
+  if (typeof database.batch === "function") {
+    const results = await database.batch(statements);
+    if (results.some((result) => result.success === false)) {
+      throw new Error("D1 review batch write failed");
+    }
+    return;
+  }
+  for (const statement of statements) {
+    const result = await statement.run();
+    if (result.success === false) {
+      throw new Error("D1 review write failed");
+    }
+  }
+}
+
 async function insertAudit(
   database: D1DatabaseLike,
   event: {
@@ -1331,3 +1716,4 @@ function assertDatabase(
     throw new TypeError("database must expose prepare()");
   }
 }
+
