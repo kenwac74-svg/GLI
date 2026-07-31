@@ -123,7 +123,7 @@ export async function getOperationsDashboard(
       database,
       `SELECT COUNT(*) AS value
        FROM consultations
-       WHERE status IN ('RECEIVED', 'SCHEDULED')`,
+       WHERE status IN ('RECEIVED', 'CONTACTED', 'SCHEDULED')`,
     ),
     database
       .prepare(
