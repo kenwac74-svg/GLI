@@ -19,7 +19,7 @@ Updated: 2026-07-31
 | Sprint 2: ingestion and data quality | IN PROGRESS | approved fixture pipeline complete; first external source permission pending |
 | Sprint 3: AI search and Trust | COMPLETE | grounded LLM advice, safe fallback, district intent and deterministic Trust v0.2 |
 | Sprint 4: identity, MY GLI, consultation, membership | COMPLETE | persistent user workflows |
-| Sprint 5: Direct, reports, alerts, operations | IN PROGRESS | collection, review, publish, alerts and retry loop complete; premium report packaging pending |
+| Sprint 5: Direct, reports, alerts, operations | COMPLETE | collection, review, publish, alerts, retry loop and membership-gated report packaging complete |
 | Pilot release | BACKLOG | security, data audit, production deployment |
 
 ## Active tasks
@@ -50,6 +50,7 @@ Updated: 2026-07-31
 | GLI-022 | Codex | Security/Operations review | COMPLETE | evidence-based pilot readiness center and administrator backup/restore evidence ledger |
 | GLI-023 | Codex | Security/Product review | COMPLETE | built-worker member and administrator E2E verification plus MVP completion matrix |
 | GLI-024 | Codex | Security/Product review | COMPLETE | Investor/Private full Trust Report entitlement, PDF print view and production demo-billing lock |
+| GLI-025 | Codex | Security/Product review | COMPLETE | multi-turn advisor UI with validated structured criteria context, reset boundary and mobile follow-up composer |
 
 ## Decisions
 
@@ -68,6 +69,7 @@ Updated: 2026-07-31
 | DEC-011 | Block pilot release until automated operational gates and named human approvals have evidence | ACCEPTED |
 | DEC-012 | Verify member and administrator journeys against the generated worker artifact and all D1 migrations | ACCEPTED |
 | DEC-013 | Keep full Trust Report evidence server-gated to Investor/Private and fail closed on demo billing outside demo | ACCEPTED |
+| DEC-014 | Continue advisor sessions with validated search criteria only; do not persist or replay raw conversation history | ACCEPTED |
 
 ## Human gates
 
@@ -76,4 +78,3 @@ Updated: 2026-07-31
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.
 - Approve the production alert destination and provision the scheduled worker secrets.
-
