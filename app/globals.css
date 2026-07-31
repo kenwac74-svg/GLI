@@ -1952,6 +1952,15 @@ button {
   white-space: nowrap;
 }
 
+.source-settings-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
 .source-list article > div {
   min-width: 0;
   display: grid;
@@ -2289,6 +2298,184 @@ button {
   font-size: 14px;
 }
 
+.source-config-page {
+  padding-bottom: 72px;
+}
+
+.source-config-back {
+  margin-bottom: 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.source-demo-notice {
+  margin: 20px 0;
+  padding: 13px 15px;
+  border-left: 4px solid #c6922e;
+  color: #6e541e;
+  background: #fff8e6;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.source-config-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  align-items: start;
+  gap: 22px;
+}
+
+.source-config-layout .ops-workbench {
+  margin-top: 0;
+}
+
+.source-config-summary dl {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.source-config-summary dl > div {
+  padding: 11px 0;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.source-config-summary dt {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.source-config-summary dd {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.source-config-summary > a {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.source-config-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.source-config-form > label {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.source-config-form label > span {
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.source-config-form input:not([type="checkbox"]) {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+}
+
+.source-config-form input:focus {
+  border-color: var(--teal);
+  outline: 2px solid rgba(25, 189, 169, 0.16);
+  outline-offset: 1px;
+}
+
+.source-config-form label small {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.source-field-wide {
+  grid-column: 1 / -1;
+}
+
+.source-approval-check {
+  padding: 13px;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--paper-soft);
+}
+
+.source-approval-check input {
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: var(--teal-dark);
+}
+
+.source-approval-check span {
+  line-height: 1.55;
+}
+
+.source-config-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.source-config-actions button {
+  min-height: 42px;
+  padding: 0 15px;
+  border: 1px solid var(--deep);
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #fff;
+  background: var(--deep);
+  font-weight: 900;
+}
+
+.source-config-actions button.is-danger {
+  border-color: #a33a32;
+  color: #8e302a;
+  background: #fff;
+}
+
+.source-config-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.source-config-message {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #0b6257;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.source-config-message.is-error {
+  color: #a33a32;
+}
+
 @media (max-width: 960px) {
   .desktop-nav {
     display: none;
@@ -2356,6 +2543,10 @@ button {
 
   .consultation-admin-actions {
     width: 100%;
+  }
+
+  .source-config-layout {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2557,6 +2748,23 @@ button {
   .run-list article {
     grid-template-columns: 1fr;
     gap: 5px;
+  }
+
+  .source-config-form {
+    grid-template-columns: 1fr;
+  }
+
+  .source-field-wide {
+    grid-column: auto;
+  }
+
+  .source-config-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .source-config-actions button {
+    width: 100%;
   }
 
   .ops-alert-list article {

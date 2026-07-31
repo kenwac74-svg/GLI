@@ -7,6 +7,7 @@ import {
   LockKeyhole,
   MessagesSquare,
   RefreshCw,
+  Settings2,
   Shield,
 } from "lucide-react";
 import Link from "next/link";
@@ -214,6 +215,13 @@ export default async function AdminPage() {
                     {source.approvalStatus}
                   </span>
                   <small>{connectorStatusLabel(source.connectorStatus)}</small>
+                  <Link
+                    className="source-settings-link"
+                    href={`/admin/sources/${source.slug}`}
+                  >
+                    <Settings2 size={14} />
+                    설정
+                  </Link>
                 </aside>
               </article>
             ))}
