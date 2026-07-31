@@ -68,10 +68,12 @@ OPENAI_MODEL=gpt-5.6-sol
 - `ingestion/licensed-json-feed.ts` enforces the GLI partner-feed schema,
   approved HTTPS hosts, response limits, immutable raw-object storage, and
   provenance hashes
+- `ingestion/licensed-csv-feed.ts` accepts strict UTF-8 RFC 4180 partner files,
+  rejects unknown or missing fields, and preserves the exact CSV bytes
 - `/admin` provides a separate demo operations account and collection workbench
 - `/admin/sources/:slug` provides a separate source-approval and licensed-feed
   onboarding workflow, including an authorized partner-file import workbench
-- `/api/admin/ingestion/import` sends an exact licensed JSON upload through the
+- `/api/admin/ingestion/import` sends an exact licensed JSON or CSV upload through the
   existing source policy, R2 raw snapshot, normalization, privacy, dedupe, and
   `REVIEW_PENDING` boundaries
 - `/admin/audit` provides administrator-only, cursor-paginated audit history
@@ -189,7 +191,7 @@ validation, but the source mutation API rejects demo identities. A real active
 administrator must save or suspend an external source. The database stores only
 the environment-secret name, never the credential value.
 
-The shared demo administrator can also validate a partner-feed file in the
+The shared demo administrator can also validate a JSON or CSV partner-feed file in the
 browser, but cannot import it. A real active administrator and an approved,
 unexpired `LICENSED_JSON_V1` source are required before exact uploaded bytes are
 stored in R2 and candidate listings enter the private review queue.
@@ -344,3 +346,4 @@ must be stored as worker secrets, not committed as configuration variables.
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+
