@@ -14,7 +14,7 @@ Updated: 2026-07-31
 
 | Area | Current status | Authoritative evidence | Remaining condition |
 |---|---|---|---|
-| Normalized property model | VERIFIED | D1 migrations `0000`-`0013`, `db/schema.ts`, normalization and repository tests | Expand mappings when a licensed source contract is received |
+| Normalized property model | VERIFIED FOR CURRENT DEMO | D1 migrations `0000`-`0013`, `db/schema.ts`, normalization and repository tests | Add source-specific nullable field states and `조사 예정` handling from ADR 0021 before demand-driven discovery |
 | Provenance and immutable source snapshots | VERIFIED | `ingestion/feed-worker.ts`, licensed network and manual-import connectors, R2 snapshot contract, listing versions, audit records, ingestion tests | Production R2 binding and retention approval |
 | Source authorization boundary | VERIFIED | source policy registry, allowlisted HTTPS hosts and fields, expiry/suspension checks, admin source and partner-file import UI, built-worker tests | None for the boundary itself |
 | Live external Cambodia sources | EXTERNAL GATE | Readiness gate and PM tasks GLI-002, GLI-005, GLI-010, GLI-013 remain open | Written permission or partner feed for each production source, credentials, permitted fields |
@@ -52,7 +52,7 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 10. An administrator can record backup/restore evidence and export redacted audit CSV.
 11. The administrator readiness page renders from the migrated database.
 12. An authorized partner JSON or CSV file is stored as an exact R2 raw snapshot,
-    normalized, deduplicated, and placed in `REVIEW_PENDING`; suspension blocks
+    normalized, kept idempotent for the same source post, and placed in `REVIEW_PENDING`; suspension blocks
     the next import before another raw object is written.
 13. An administrator can run the five-case rules evaluation through the built
     Worker, persist its summary and case checks, and render the evidence in the
