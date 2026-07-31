@@ -2,6 +2,10 @@ import {
   getMemberNotificationFeed,
   type MemberNotification,
 } from "./member-notifications.ts";
+import {
+  assertFavoriteCapacity,
+  getMembershipAccess,
+} from "./membership-entitlements.ts";
 
 const USER_ID_PREFIX = "usr_";
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -69,6 +73,7 @@ export type DashboardConsultation = {
   requestText: string;
   preferredAt: number | null;
   status: string;
+  priority: "STANDARD" | "PRIORITY" | "PRIVATE";
   createdAt: number;
   updatedAt: number;
 };
@@ -283,6 +288,7 @@ export async function getUserDashboard(
             c.request_text AS requestText,
             c.preferred_at AS preferredAt,
             c.status,
+            c.priority,
             c.created_at AS createdAt,
             c.updated_at AS updatedAt
           FROM consultations c
@@ -355,6 +361,7 @@ export async function addFavorite(
   }
 
   const now = getNow(options);
+  await assertFavoriteCapacity(database, userId, now);
   await executeWrites(database, [
     database
       .prepare(`
@@ -461,6 +468,7 @@ export async function createConsultation(
   }
 
   const now = getNow(options);
+  const membershipAccess = await getMembershipAccess(database, userId, now);
   const id = `con_${getRandomUUID(options)}`;
   const consultation: DashboardConsultation = {
     id,
@@ -469,6 +477,7 @@ export async function createConsultation(
     requestText,
     preferredAt,
     status: "RECEIVED",
+    priority: membershipAccess.consultationPriority,
     createdAt: now,
     updatedAt: now,
   };
@@ -478,8 +487,8 @@ export async function createConsultation(
       .prepare(`
         INSERT INTO consultations (
           id, user_id, listing_id, request_text, preferred_at,
-          assignee_user_id, status, created_at, updated_at
-        ) VALUES (?, ?, ?, ?, ?, NULL, 'RECEIVED', ?, ?)
+          assignee_user_id, status, priority, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, NULL, 'RECEIVED', ?, ?, ?)
       `)
       .bind(
         id,
@@ -487,6 +496,7 @@ export async function createConsultation(
         listing?.id ?? null,
         requestText,
         preferredAt,
+        membershipAccess.consultationPriority,
         now,
         now,
       ),
@@ -501,6 +511,7 @@ export async function createConsultation(
         requestText,
         preferredAt,
         status: "RECEIVED",
+        priority: membershipAccess.consultationPriority,
       },
       requestId: input.requestId ?? options.requestId,
       createdAt: now,
