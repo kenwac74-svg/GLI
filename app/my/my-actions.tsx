@@ -53,6 +53,7 @@ export function ConsultationForm({
       : "",
   );
   const [preferredAt, setPreferredAt] = useState("");
+  const [priorityLabel, setPriorityLabel] = useState("");
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -63,6 +64,10 @@ export function ConsultationForm({
       body: JSON.stringify({ assetId, requestText: message, preferredAt }),
     });
     if (response.ok) {
+      const result = (await response.json()) as {
+        priority?: "STANDARD" | "PRIORITY" | "PRIVATE";
+      };
+      setPriorityLabel(consultationPriority(result.priority));
       setState("saved");
       setMessage("");
       setPreferredAt("");
@@ -110,7 +115,8 @@ export function ConsultationForm({
       </button>
       {state === "saved" && (
         <p className="form-status is-success" role="status">
-          요청이 접수되었습니다. MY GLI에서 진행 상태를 확인할 수 있습니다.
+          {priorityLabel}으로 접수되었습니다. MY GLI에서 진행 상태를 확인할 수
+          있습니다.
         </p>
       )}
       {state === "error" && (
@@ -120,4 +126,12 @@ export function ConsultationForm({
       )}
     </form>
   );
+}
+
+function consultationPriority(
+  priority: "STANDARD" | "PRIORITY" | "PRIVATE" | undefined,
+): string {
+  if (priority === "PRIVATE") return "전담 상담";
+  if (priority === "PRIORITY") return "우선 상담";
+  return "일반 상담";
 }
