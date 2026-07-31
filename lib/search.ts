@@ -23,6 +23,19 @@ export type SearchResult = {
 };
 
 const DEMO_KRW_PER_USD = 1380;
+const PROPERTY_TYPES = new Set<Asset["propertyType"]>([
+  "condo",
+  "house",
+  "villa",
+  "land",
+  "commercial",
+]);
+const PURPOSES = new Set<SearchCriteria["purpose"]>([
+  "income",
+  "seasonal",
+  "residence",
+  "general",
+]);
 const DISTRICT_ALIASES: ReadonlyArray<{
   district: string;
   patterns: readonly string[];
@@ -44,7 +57,71 @@ const DISTRICT_ALIASES: ReadonlyArray<{
   { district: "Meanchey", patterns: ["meanchey", "민쩨이", "민체이"] },
 ];
 
-export function extractCriteria(query: string): SearchCriteria {
+export function parseSearchContext(value: unknown): SearchCriteria | null {
+  if (!isRecord(value)) return null;
+  if (value.country !== "Cambodia" || value.city !== "Phnom Penh") return null;
+  if (
+    value.district !== null &&
+    (typeof value.district !== "string" ||
+      value.district.length === 0 ||
+      value.district.length > 80)
+  ) {
+    return null;
+  }
+  if (
+    value.transaction !== null &&
+    value.transaction !== "sale" &&
+    value.transaction !== "rent"
+  ) {
+    return null;
+  }
+  if (
+    value.propertyType !== null &&
+    (typeof value.propertyType !== "string" ||
+      !PROPERTY_TYPES.has(value.propertyType as Asset["propertyType"]))
+  ) {
+    return null;
+  }
+  if (!isNullableNumber(value.maxPriceUsd, 1, 100_000_000)) return null;
+  if (!isNullableNumber(value.budgetKrw, 1, 100_000_000_000)) return null;
+  if (
+    value.bedrooms !== null &&
+    (!Number.isInteger(value.bedrooms) || value.bedrooms < 0 || value.bedrooms > 20)
+  ) {
+    return null;
+  }
+  if (
+    typeof value.purpose !== "string" ||
+    !PURPOSES.has(value.purpose as SearchCriteria["purpose"])
+  ) {
+    return null;
+  }
+  if (
+    typeof value.wantsShortStay !== "boolean" ||
+    typeof value.wantsRiver !== "boolean"
+  ) {
+    return null;
+  }
+
+  return {
+    country: "Cambodia",
+    city: "Phnom Penh",
+    district: value.district,
+    transaction: value.transaction,
+    propertyType: value.propertyType as Asset["propertyType"] | null,
+    maxPriceUsd: value.maxPriceUsd,
+    budgetKrw: value.budgetKrw,
+    bedrooms: value.bedrooms,
+    purpose: value.purpose as SearchCriteria["purpose"],
+    wantsShortStay: value.wantsShortStay,
+    wantsRiver: value.wantsRiver,
+  };
+}
+
+export function extractCriteria(
+  query: string,
+  context: SearchCriteria | null = null,
+): SearchCriteria {
   const text = query.toLowerCase();
   const district =
     DISTRICT_ALIASES.find(({ patterns }) =>
@@ -76,7 +153,7 @@ export function extractCriteria(query: string): SearchCriteria {
     maxPriceUsd = Math.round(budgetKrw / DEMO_KRW_PER_USD);
   }
 
-  return {
+  const current: SearchCriteria = {
     country: "Cambodia",
     city: "Phnom Penh",
     district,
@@ -89,10 +166,39 @@ export function extractCriteria(query: string): SearchCriteria {
     wantsShortStay: /에어비앤비|airbnb|단기\s*임대/.test(text),
     wantsRiver: /강|메콩|리버|river|전망/.test(text),
   };
+
+  if (!context || /조건\s*초기화|처음부터|새\s*탐색/.test(text)) {
+    return current;
+  }
+
+  const removesRiver =
+    /(?:강|메콩|리버|river|전망).*(?:필요\s*없|상관\s*없|제외)/.test(text);
+  const removesShortStay =
+    /(?:에어비앤비|airbnb|단기\s*임대).*(?:필요\s*없|상관\s*없|제외)/.test(text);
+
+  return {
+    country: "Cambodia",
+    city: "Phnom Penh",
+    district: current.district ?? context.district,
+    transaction: current.transaction ?? context.transaction,
+    propertyType: current.propertyType ?? context.propertyType,
+    maxPriceUsd: current.maxPriceUsd ?? context.maxPriceUsd,
+    budgetKrw: current.budgetKrw ?? context.budgetKrw,
+    bedrooms: current.bedrooms ?? context.bedrooms,
+    purpose: current.purpose === "general" ? context.purpose : current.purpose,
+    wantsShortStay: removesShortStay
+      ? false
+      : current.wantsShortStay || context.wantsShortStay,
+    wantsRiver: removesRiver ? false : current.wantsRiver || context.wantsRiver,
+  };
 }
 
-export function searchAssets(query: string, allAssets: Asset[]): SearchResult {
-  const criteria = extractCriteria(query);
+export function searchAssets(
+  query: string,
+  allAssets: Asset[],
+  context: SearchCriteria | null = null,
+): SearchResult {
+  const criteria = extractCriteria(query, context);
   const exact = allAssets.filter((asset) => {
     if (criteria.transaction && asset.transaction !== criteria.transaction) return false;
     if (criteria.district && asset.district !== criteria.district) return false;
@@ -137,6 +243,24 @@ export function searchAssets(query: string, allAssets: Asset[]): SearchResult {
     matches,
     rate: { krwPerUsd: DEMO_KRW_PER_USD, asOf: "demo-reference" },
   };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isNullableNumber(
+  value: unknown,
+  minimum: number,
+  maximum: number,
+): value is number | null {
+  return (
+    value === null ||
+    (typeof value === "number" &&
+      Number.isFinite(value) &&
+      value >= minimum &&
+      value <= maximum)
+  );
 }
 
 function rankAsset(asset: Asset, criteria: SearchCriteria): number {
@@ -191,7 +315,9 @@ function buildAnswer(criteria: SearchCriteria, exactCount: number, shownCount: n
       : `${budget}현재 예산에 정확히 맞는 매매 후보가 없어 가까운 대안 ${shownCount}개를 보여드립니다. 예산을 넓히기 전에 실제 임대료와 총비용 자료부터 확보하는 편이 좋습니다.`;
   }
   if (criteria.purpose === "seasonal") {
-    return `3개월 체류와 부재 중 운영을 함께 고려한 후보 ${shownCount}개를 정리했습니다. 단기 임대 가능 여부는 건물 규정, 현지 규제와 운영대행 수수료를 별도로 확인해야 합니다.`;
+    return exactCount
+      ? `${budget}3개월 체류와 부재 중 운영을 함께 고려한 후보 ${shownCount}개를 정리했습니다. 단기 임대 가능 여부는 건물 규정, 현지 규제와 운영대행 수수료를 별도로 확인해야 합니다.`
+      : `${budget}요청 조건과 정확히 일치하는 매매 후보가 없어 가까운 대안 ${shownCount}개를 보여드립니다. 침실 수와 가격 차이를 확인한 뒤, 단기 임대 가능 여부와 운영대행 수수료를 별도로 검토해야 합니다.`;
   }
   return `${budget}프놈펜 조건에서 ${shownCount}개 후보를 찾았습니다. Trust Score는 자료 신뢰도를 뜻하며 투자 수익을 보장하지 않습니다.`;
 }
