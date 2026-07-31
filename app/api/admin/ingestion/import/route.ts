@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createUploadedLicensedCsvFeedConnector } from "../../../../../ingestion/licensed-csv-feed.ts";
 import {
   createUploadedLicensedJsonFeedConnector,
   LICENSED_JSON_CONNECTOR_KIND,
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
   if (auth.context.authUser.authProvider === "demo") {
     return NextResponse.json(
       {
-        error: "공개 데모 운영 계정에서는 외부 파트너 자료를 반입할 수 없습니다.",
+        error: "공개 데모 계정에서는 외부 파트너 자료를 반입할 수 없습니다.",
         code: "DEMO_IMPORT_DISABLED",
       },
       { status: 403, headers: { "cache-control": "no-store" } },
@@ -41,6 +42,7 @@ export async function POST(request: Request) {
     const body = JSON.parse(requestText) as {
       sourceSlug?: unknown;
       feedText?: unknown;
+      feedFormat?: unknown;
     };
     if (typeof body.sourceSlug !== "string") {
       throw new TypeError("sourceSlug must be a string");
@@ -48,6 +50,11 @@ export async function POST(request: Request) {
     if (typeof body.feedText !== "string") {
       throw new TypeError("feedText must be a string");
     }
+    const feedFormat = body.feedFormat ?? "json";
+    if (feedFormat !== "json" && feedFormat !== "csv") {
+      throw new TypeError("feedFormat must be json or csv");
+    }
+
     const bytes = new TextEncoder().encode(body.feedText);
     if (bytes.byteLength < 2 || bytes.byteLength > MAX_FEED_BYTES) {
       throw new RangeError("Uploaded partner feed exceeds the approved byte limit");
@@ -63,32 +70,36 @@ export async function POST(request: Request) {
       !source.feedUrl
     ) {
       throw new TypeError(
-        "Source is not configured for licensed JSON ingestion",
+        "Source is not configured for licensed partner ingestion",
       );
     }
 
-    const connector = createUploadedLicensedJsonFeedConnector({
+    const connectorOptions = {
       sourceSlug: source.slug,
       feedUrl: source.feedUrl,
       allowedHosts: source.allowedHosts,
       maxRecords: source.maxRecordsPerRun,
       rawStore: await getWorkflowRawStore(),
       bytes,
-    });
+    };
+    const connector =
+      feedFormat === "csv"
+        ? createUploadedLicensedCsvFeedConnector(connectorOptions)
+        : createUploadedLicensedJsonFeedConnector(connectorOptions);
     const result = await runApprovedConnectorIngestion(
       auth.context.database,
       connector,
       auth.context.workflowUser.id,
     );
     return NextResponse.json(
-      { result },
+      { result, format: feedFormat },
       { headers: { "cache-control": "no-store" } },
     );
   } catch (error) {
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         {
-          error: "반입 요청 JSON 형식을 확인해 주세요.",
+          error: "반입 요청 형식이 올바른 JSON인지 확인해 주세요.",
           code: "INVALID_JSON",
         },
         { status: 400, headers: { "cache-control": "no-store" } },
@@ -106,3 +117,4 @@ export async function POST(request: Request) {
     return workflowErrorResponse(error);
   }
 }
+
