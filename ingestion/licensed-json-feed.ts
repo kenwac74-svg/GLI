@@ -61,7 +61,7 @@ export type UploadedLicensedJsonFeedOptions = {
 export function createLicensedJsonFeedConnector(
   options: LicensedJsonFeedConnectorOptions,
 ): SourceConnector<CollectedListingBatch> {
-  const endpoint = validateApprovedUrl(
+  const endpoint = validateApprovedPartnerUrl(
     options.feedUrl,
     options.allowedHosts,
     "feedUrl",
@@ -148,7 +148,7 @@ export function createLicensedJsonFeedConnector(
 
       return {
         candidates: envelope.listings.map((listing) =>
-          toNormalizationInput(listing, options.allowedHosts),
+          toLicensedPartnerNormalizationInput(listing, options.allowedHosts),
         ),
         snapshot: {
           sourceUrl: endpoint.toString(),
@@ -166,7 +166,7 @@ export function createLicensedJsonFeedConnector(
 export function createUploadedLicensedJsonFeedConnector(
   options: UploadedLicensedJsonFeedOptions,
 ): SourceConnector<CollectedListingBatch> {
-  const endpoint = validateApprovedUrl(
+  const endpoint = validateApprovedPartnerUrl(
     options.feedUrl,
     options.allowedHosts,
     "feedUrl",
@@ -227,7 +227,7 @@ export function createUploadedLicensedJsonFeedConnector(
 
       return {
         candidates: envelope.listings.map((listing) =>
-          toNormalizationInput(listing, options.allowedHosts),
+          toLicensedPartnerNormalizationInput(listing, options.allowedHosts),
         ),
         snapshot: {
           sourceUrl: endpoint.toString(),
@@ -242,7 +242,7 @@ export function createUploadedLicensedJsonFeedConnector(
   };
 }
 
-function validateApprovedUrl(
+export function validateApprovedPartnerUrl(
   value: string,
   allowedHosts: readonly string[],
   field: string,
@@ -318,7 +318,7 @@ function parseEnvelope(
   return envelope as LicensedFeedEnvelope;
 }
 
-function toNormalizationInput(
+export function toLicensedPartnerNormalizationInput(
   value: unknown,
   allowedHosts: readonly string[],
 ): NormalizationInput {
@@ -327,7 +327,7 @@ function toNormalizationInput(
   }
   const listing = value as Record<string, unknown>;
 
-  const sourceUrl = validateApprovedUrl(
+  const sourceUrl = validateApprovedPartnerUrl(
     listing.sourceUrl as string,
     allowedHosts,
     "sourceUrl",
@@ -375,3 +375,4 @@ function validNow(value: Date): Date {
 function sha256(value: Uint8Array): string {
   return createHash("sha256").update(value).digest("hex");
 }
+
