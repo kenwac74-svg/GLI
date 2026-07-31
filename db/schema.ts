@@ -320,6 +320,10 @@ export const operationalAlerts = sqliteTable(
     resourceType: text("resource_type"),
     resourceId: text("resource_id"),
     occurrenceCount: integer("occurrence_count").notNull().default(1),
+    notifiedOccurrenceCount: integer("notified_occurrence_count")
+      .notNull()
+      .default(0),
+    lastNotifiedAt: integer("last_notified_at"),
     firstSeenAt: integer("first_seen_at").notNull(),
     lastSeenAt: integer("last_seen_at").notNull(),
     acknowledgedByUserId: text("acknowledged_by_user_id"),
