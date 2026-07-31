@@ -243,6 +243,66 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(consultation.listingPublicId, "GLI-KH-004");
     assert.equal(consultation.status, "RECEIVED");
 
+    const memberMessageResponse = await dispatch(
+      worker,
+      database,
+      `/api/consultations/${consultation.id}/messages`,
+      {
+        method: "POST",
+        email: MEMBER_EMAIL,
+        requestId: "e2e.consultation.member-message",
+        body: {
+          message: "Please also confirm the latest management fee.",
+        },
+      },
+    );
+    assert.equal(memberMessageResponse.status, 201);
+    assert.equal(
+      (await memberMessageResponse.json()).result.eventType,
+      "MEMBER_MESSAGE",
+    );
+
+    const adminDashboardResponse = await dispatch(
+      worker,
+      database,
+      "/api/me",
+      { email: ADMIN_EMAIL },
+    );
+    assert.equal(adminDashboardResponse.status, 200);
+    sqlite
+      .prepare("UPDATE users SET role = 'ADMIN' WHERE email = ?")
+      .run(ADMIN_EMAIL);
+
+    const operatorMessageResponse = await dispatch(
+      worker,
+      database,
+      `/api/admin/consultations/${consultation.id}/messages`,
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        requestId: "e2e.consultation.operator-message",
+        body: {
+          message: "We are checking the invoice with the local partner.",
+        },
+      },
+    );
+    assert.equal(operatorMessageResponse.status, 201);
+    assert.equal(
+      (await operatorMessageResponse.json()).result.eventType,
+      "OPERATOR_MESSAGE",
+    );
+
+    const consultationPageResponse = await dispatch(
+      worker,
+      database,
+      `/my/consultations/${consultation.id}`,
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(consultationPageResponse.status, 200);
+    const consultationPageHtml = await consultationPageResponse.text();
+    assert.match(consultationPageHtml, /latest management fee/);
+    assert.match(consultationPageHtml, /local partner/);
+
     const checkoutResponse = await dispatch(
       worker,
       database,
@@ -345,6 +405,8 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.deepEqual(auditActions, [
       "FAVORITE_ADDED",
       "CONSULTATION_CREATED",
+      "CONSULTATION_MESSAGE_ADDED",
+      "CONSULTATION_MESSAGE_ADDED",
       "CASH_CHECKOUT_CREATED",
       "DEMO_CASH_MEMBERSHIP_ACTIVATED",
       "CASH_CHECKOUT_COMPLETED",
@@ -550,4 +612,3 @@ test("built worker enforces admin boundaries and records release evidence", asyn
     sqlite.close();
   }
 });
-
