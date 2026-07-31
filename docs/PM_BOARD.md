@@ -51,6 +51,7 @@ Updated: 2026-07-31
 | GLI-023 | Codex | Security/Product review | COMPLETE | built-worker member and administrator E2E verification plus MVP completion matrix |
 | GLI-024 | Codex | Security/Product review | COMPLETE | Investor/Private full Trust Report entitlement, PDF print view and production demo-billing lock |
 | GLI-025 | Codex | Security/Product review | COMPLETE | multi-turn advisor UI with validated structured criteria context, reset boundary and mobile follow-up composer |
+| GLI-026 | Codex | Security/Operations review | COMPLETE | member-scoped consultation detail, member/operator messages, status history and mobile case view |
 
 ## Decisions
 
@@ -70,6 +71,7 @@ Updated: 2026-07-31
 | DEC-012 | Verify member and administrator journeys against the generated worker artifact and all D1 migrations | ACCEPTED |
 | DEC-013 | Keep full Trust Report evidence server-gated to Investor/Private and fail closed on demo billing outside demo | ACCEPTED |
 | DEC-014 | Continue advisor sessions with validated search criteria only; do not persist or replay raw conversation history | ACCEPTED |
+| DEC-015 | Store consultation messages in a case event ledger, authorize every read by member ownership or active administrator role, and keep message bodies out of general audit metadata | ACCEPTED |
 
 ## Human gates
 
