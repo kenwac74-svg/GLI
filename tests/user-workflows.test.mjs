@@ -681,6 +681,11 @@ test("returns favorites, consultations, and the current active membership dashbo
   assert.equal(dashboard.consultations[0].priority, "STANDARD");
   assert.equal(dashboard.activeMembership.planId, "private");
   assert.equal(dashboard.activeMembership.provider, "DEMO_CASH");
+  assert.equal(dashboard.membershipAccess.planId, "private");
+  assert.equal(dashboard.membershipAccess.favoriteLimit, null);
+  assert.equal(dashboard.membershipAccess.aiMonthlyLimit, null);
+  assert.equal(dashboard.membershipAccess.consultationPriority, "PRIVATE");
+  assert.equal(dashboard.membershipAccess.fullTrustReport, true);
   assert.deepEqual(dashboard.notifications, []);
   assert.equal(dashboard.unreadNotificationCount, 0);
 });

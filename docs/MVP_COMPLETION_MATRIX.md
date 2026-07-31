@@ -23,7 +23,7 @@ Updated: 2026-07-31
 | Trust Score | VERIFIED | deterministic versioned rules, evidence dimensions, non-guarantee language, Trust tests | Public wording and legal disclaimer approval before pilot |
 | Trust review and publication | VERIFIED | ingestion review queue, administrator review API, publication audit trail and tests | Named GLI analyst/verifier for live operation |
 | Full Trust Report access | VERIFIED | separate private report API/page, Investor/Private server entitlement, Explore paywall, evidence-only content and print/PDF UX | Legal wording approval and live analyst-approved reports |
-| Account and MY GLI | VERIFIED | authenticated user creation, plan-enforced favorites, prioritized consultations, member-scoped in-app alerts, membership dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
+| Account and MY GLI | VERIFIED | authenticated user creation, plan-enforced favorites, prioritized consultations, member-scoped in-app alerts, server-derived entitlement usage dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
 | Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, server-enforced favorite and deep-AI limits, consultation priority, Investor/Private report entitlement, demo no-charge activation | None for the product model |
 | Real cash payment | TECHNICALLY READY | provider-neutral checkout adapter, signed webhook ledger, idempotency, refund access termination and tests | Provider selection, merchant account, credentials, refund policy, certification |
 | Consultation workflow | VERIFIED | member intake, member-scoped case page, member/operator messages, status history, in-app reply/status alerts, assignment, admin operations and built-worker tests | Named Cambodia consultation operator and SLA |
@@ -58,6 +58,8 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
     readiness center.
 14. Authenticated free search remains rules-only, paid search exposes the correct
     plan entitlement, and a disabled model runtime does not consume usage.
+15. MY GLI returns and renders the server-derived favorite, deep-AI,
+    consultation-priority and Trust Report entitlement state.
 
 The full `npm run check` gate currently covers lint, migration validation,
 production build, and 105 automated tests.

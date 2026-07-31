@@ -5,6 +5,7 @@ import {
 import {
   assertFavoriteCapacity,
   getMembershipAccess,
+  type MembershipAccess,
 } from "./membership-entitlements.ts";
 
 const USER_ID_PREFIX = "usr_";
@@ -94,6 +95,7 @@ export type UserDashboard = {
   favorites: DashboardFavorite[];
   consultations: DashboardConsultation[];
   activeMembership: DashboardMembership | null;
+  membershipAccess: MembershipAccess;
   notifications: MemberNotification[];
   unreadNotificationCount: number;
 };
@@ -244,6 +246,7 @@ export async function getUserDashboard(
     favoriteResult,
     consultationResult,
     activeMembership,
+    membershipAccess,
     notificationFeed,
   ] =
     await Promise.all([
@@ -316,6 +319,7 @@ export async function getUserDashboard(
         `)
         .bind(id, now)
         .first<DashboardMembership>(),
+      getMembershipAccess(database, id, now),
       getMemberNotificationFeed(database, id),
     ]);
 
@@ -324,6 +328,7 @@ export async function getUserDashboard(
     favorites: favoriteResult.results ?? [],
     consultations: consultationResult.results ?? [],
     activeMembership,
+    membershipAccess,
     notifications: notificationFeed.notifications,
     unreadNotificationCount: notificationFeed.unreadCount,
   };

@@ -1686,6 +1686,94 @@ button {
   gap: 5px;
 }
 
+.membership-manage-link {
+  min-height: 38px;
+  padding: 0 13px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.membership-access-overview {
+  margin-bottom: 22px;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.membership-access-head {
+  padding: 0 2px 14px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.membership-access-head span {
+  color: var(--teal-dark);
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.membership-access-head h2 {
+  margin: 4px 0 0;
+  font-size: 20px;
+}
+
+.membership-access-head a {
+  color: var(--teal-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.membership-access-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.membership-access-grid > div {
+  min-width: 0;
+  padding: 17px 18px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 4px 8px;
+  border-top: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+}
+
+.membership-access-grid > div:last-child {
+  border-right: 0;
+}
+
+.membership-access-grid svg {
+  grid-row: 1 / span 3;
+  color: var(--teal-dark);
+}
+
+.membership-access-grid span,
+.membership-access-grid small {
+  overflow-wrap: anywhere;
+}
+
+.membership-access-grid span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.membership-access-grid strong {
+  font-size: 16px;
+}
+
+.membership-access-grid small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
 .my-summary,
 .ops-grid {
   margin-bottom: 22px;
@@ -2697,6 +2785,18 @@ button {
   .search-access-status {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .membership-access-head {
+    align-items: center;
+  }
+
+  .membership-access-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .membership-access-grid > div:nth-child(2) {
+    border-right: 0;
   }
 }
 

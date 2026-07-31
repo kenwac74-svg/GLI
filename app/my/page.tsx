@@ -5,6 +5,9 @@ import {
   FileText,
   Heart,
   LogIn,
+  MessageSquareMore,
+  SearchCheck,
+  ShieldCheck,
   UserRoundCheck,
 } from "lucide-react";
 import Image from "next/image";
@@ -107,30 +110,108 @@ export default async function MyGliPage({
           </Link>
         </div>
 
-        {dashboard.activeMembership && (
-          <section className="membership-status">
+        <section className="membership-status">
+          <div>
+            <span>
+              {dashboard.activeMembership
+                ? "ACTIVE CASH MEMBERSHIP"
+                : "GLI FREE ACCOUNT"}
+            </span>
+            <strong>
+              {dashboard.activeMembership
+                ? planNames[dashboard.activeMembership.planId] ??
+                  dashboard.activeMembership.planId
+                : "Free"}
+            </strong>
+            <p>
+              {dashboard.activeMembership?.provider === "DEMO_CASH"
+                ? "청구 없는 데모 멤버십"
+                : dashboard.activeMembership
+                  ? "플랫폼 전역 현금 멤버십"
+                  : "기본 탐색 권한"}
+            </p>
+          </div>
+          <div>
+            {dashboard.activeMembership ? (
+              <>
+                <small>이용 기한</small>
+                <b>
+                  {new Date(
+                    dashboard.activeMembership.periodEnd,
+                  ).toLocaleDateString("ko-KR")}
+                </b>
+              </>
+            ) : (
+              <Link className="membership-manage-link" href="/membership">
+                멤버십 보기
+              </Link>
+            )}
+          </div>
+        </section>
+
+        <section className="membership-access-overview">
+          <div className="membership-access-head">
             <div>
-              <span>ACTIVE CASH MEMBERSHIP</span>
+              <span>MEMBERSHIP ACCESS</span>
+              <h2>이용 현황</h2>
+            </div>
+            {dashboard.activeMembership && (
+              <Link href="/membership">플랜 관리</Link>
+            )}
+          </div>
+          <div className="membership-access-grid">
+            <div>
+              <Heart size={19} />
+              <span>관심 자산</span>
               <strong>
-                {planNames[dashboard.activeMembership.planId] ??
-                  dashboard.activeMembership.planId}
+                {dashboard.favorites.length} /{" "}
+                {formatLimit(dashboard.membershipAccess.favoriteLimit)}
               </strong>
-              <p>
-                {dashboard.activeMembership.provider === "DEMO_CASH"
-                  ? "청구 없는 데모 멤버십"
-                  : "플랫폼 전역 현금 멤버십"}
-              </p>
+              <small>
+                {remainingLabel(
+                  dashboard.membershipAccess.favoriteLimit,
+                  dashboard.favorites.length,
+                )}
+              </small>
             </div>
             <div>
-              <small>이용 기한</small>
-              <b>
-                {new Date(
-                  dashboard.activeMembership.periodEnd,
-                ).toLocaleDateString("ko-KR")}
-              </b>
+              <SearchCheck size={19} />
+              <span>심화 AI 검색</span>
+              <strong>{aiAccessLabel(dashboard.membershipAccess)}</strong>
+              <small>
+                {dashboard.membershipAccess.aiMonthlyLimit === 0
+                  ? "규칙 기반 탐색 이용"
+                  : dashboard.membershipAccess.aiMonthlyLimit === null
+                    ? "월 사용량 제한 없음"
+                    : `${dashboard.membershipAccess.periodKey} 기준`}
+              </small>
             </div>
-          </section>
-        )}
+            <div>
+              <MessageSquareMore size={19} />
+              <span>상담 접수</span>
+              <strong>
+                {consultationPriority(
+                  dashboard.membershipAccess.consultationPriority,
+                )}
+              </strong>
+              <small>신청 시 운영 큐에 적용</small>
+            </div>
+            <div>
+              <ShieldCheck size={19} />
+              <span>Trust Report</span>
+              <strong>
+                {dashboard.membershipAccess.fullTrustReport
+                  ? "전체 리포트"
+                  : "기본 요약"}
+              </strong>
+              <small>
+                {dashboard.membershipAccess.fullTrustReport
+                  ? "근거 항목 열람 가능"
+                  : "Investor부터 전체 열람"}
+              </small>
+            </div>
+          </div>
+        </section>
 
         <div className="my-summary">
           <div>
@@ -281,4 +362,22 @@ function consultationPriority(priority: string): string {
   if (priority === "PRIVATE") return "전담";
   if (priority === "PRIORITY") return "우선";
   return "일반";
+}
+
+function formatLimit(limit: number | null): string {
+  return limit === null ? "무제한" : limit.toLocaleString("ko-KR");
+}
+
+function remainingLabel(limit: number | null, used: number): string {
+  if (limit === null) return "저장 개수 제한 없음";
+  return `${Math.max(0, limit - used).toLocaleString("ko-KR")}개 추가 가능`;
+}
+
+function aiAccessLabel(access: {
+  aiMonthlyLimit: number | null;
+  aiRemaining: number | null;
+}): string {
+  if (access.aiMonthlyLimit === 0) return "기본 탐색";
+  if (access.aiMonthlyLimit === null) return "무제한";
+  return `${access.aiRemaining ?? 0}회 남음`;
 }

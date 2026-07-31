@@ -56,6 +56,7 @@ Updated: 2026-07-31
 | GLI-028 | Codex | Security/Data review | COMPLETE | authorized partner-file import through exact R2 raw provenance, source policy, privacy/dedupe and private review queue |
 | GLI-029 | Codex | Product/Security review | COMPLETE | five-case AI search evaluation, D1 evidence ledger, rules rehearsal and 30-day OpenAI readiness gate |
 | GLI-030 | Codex | Product/Security review | COMPLETE | enforced cash-plan favorite limits, model-cost boundary, monthly Explore usage ledger and consultation priority queue |
+| GLI-031 | Codex | Product review | COMPLETE | MY GLI server-derived favorite, deep-AI, consultation and Trust Report entitlement usage summary |
 
 ## Decisions
 
