@@ -1,6 +1,10 @@
 import { createHash } from "node:crypto";
 import type { Asset } from "./assets.ts";
-import { searchAssets, type SearchResult } from "./search.ts";
+import {
+  searchAssets,
+  type SearchCriteria,
+  type SearchResult,
+} from "./search.ts";
 
 export type AdvisorSearchResult = SearchResult & {
   advisor: {
@@ -18,6 +22,7 @@ type AdvisorOptions = {
   fetch?: typeof fetch;
   timeoutMs?: number;
   safetyIdentifier?: string;
+  context?: SearchCriteria | null;
 };
 
 type ModelResult = {
@@ -36,7 +41,7 @@ export async function runAdvisorSearch(
   allAssets: Asset[],
   options: AdvisorOptions = {},
 ): Promise<AdvisorSearchResult> {
-  const baseline = searchAssets(query, allAssets);
+  const baseline = searchAssets(query, allAssets, options.context);
   const fallback = buildFallback(baseline);
   const provider = options.provider ?? process.env.LLM_PROVIDER ?? "disabled";
   const apiKey = options.apiKey ?? process.env.OPENAI_API_KEY;
