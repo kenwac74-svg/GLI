@@ -1795,7 +1795,7 @@ button {
 }
 
 .ops-grid {
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
 }
 
 .admin-access {
@@ -2213,6 +2213,82 @@ button {
   margin: 18px 0 0;
 }
 
+.health-summary {
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.health-summary span {
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+  background: var(--paper-soft);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ops-alert-list {
+  display: grid;
+  gap: 10px;
+}
+
+.ops-alert-list article {
+  min-width: 0;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-left: 4px solid #c6922e;
+  border-radius: 6px;
+  background: var(--paper-soft);
+}
+
+.ops-alert-list article.severity-critical {
+  border-left-color: #a33a32;
+  background: #fff9f8;
+}
+
+.ops-alert-copy {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.ops-alert-copy > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ops-alert-copy span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ops-alert-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.retry-job-list {
+  margin-top: 20px;
+}
+
+.retry-job-list h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
 @media (max-width: 960px) {
   .desktop-nav {
     display: none;
@@ -2481,6 +2557,14 @@ button {
   .run-list article {
     grid-template-columns: 1fr;
     gap: 5px;
+  }
+
+  .ops-alert-list article {
+    grid-template-columns: 1fr;
+  }
+
+  .ops-alert-list .review-actions {
+    justify-content: flex-start;
   }
 
   .ops-consultation-main > div:first-child,
