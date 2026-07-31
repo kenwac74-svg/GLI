@@ -9,7 +9,7 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
-    "test": "npm run build && node --test tests/*.test.mjs",
+    "test": "npm run build && node --import ./tests/support/register-cloudflare-loader.mjs --test tests/*.test.mjs",
     "check": "npm run lint && npm run db:validate && npm test",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern work",
     "db:generate": "drizzle-kit generate",
@@ -43,3 +43,4 @@
   },
   "type": "module"
 }
+
