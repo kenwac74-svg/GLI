@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, BellRing, LoaderCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { MemberNotification } from "../../db/member-notifications";
 
@@ -10,7 +9,6 @@ export function MemberNotificationList({
 }: {
   notifications: MemberNotification[];
 }) {
-  const router = useRouter();
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState("");
 
@@ -42,7 +40,7 @@ export function MemberNotificationList({
         return;
       }
     }
-    router.push(notification.href);
+    window.location.assign(notification.href);
   }
 
   return (
