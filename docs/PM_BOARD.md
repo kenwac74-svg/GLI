@@ -60,6 +60,8 @@ Updated: 2026-07-31
 | GLI-032 | Codex | Security/Data review | COMPLETE | authorized UTF-8 CSV partner import with strict field contract, exact R2 provenance and shared privacy/dedupe/review boundaries |
 | GLI-033 | Codex | Security/Operations review | COMPLETE | per-listing due-diligence page, mandatory publication checklist, bounded analyst note and immutable review-decision ledger |
 | GLI-034 | Codex | Product review | COMPLETE | five-level asset-detail demonstrator, hierarchical access preview and blockchain-free GLI Cash simulation boundary |
+| GLI-035 | Codex | Security/Data review | COMPLETE | bounded Khmer24 reference-search connector, robots content-signal enforcement, HTML provenance and source-side refusal handling |
+| GLI-036 | GLI Product Owner | Human/Legal | BLOCKED | Khmer24 AI-use scope approval and collector allowlisting or authorized partner-feed handoff |
 
 ## Decisions
 
@@ -92,6 +94,7 @@ Updated: 2026-07-31
 ## Human gates
 
 - Approve the first production data source and written usage basis.
+- Obtain Khmer24 collector allowlisting or an authorized feed/API credential.
 - Approve Trust Score public wording and legal disclaimer.
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.

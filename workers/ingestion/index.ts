@@ -17,6 +17,10 @@ import {
   createLicensedJsonFeedConnector,
   LICENSED_JSON_CONNECTOR_KIND,
 } from "../../ingestion/licensed-json-feed.ts";
+import {
+  createKhmer24ReferenceConnector,
+  KHMER24_REFERENCE_CONNECTOR_KIND,
+} from "../../ingestion/khmer24-reference-feed.ts";
 import { SourcePolicyError } from "../../ingestion/source-policy.ts";
 
 export type LicensedFeedJob = {
@@ -41,38 +45,43 @@ export async function executeLicensedFeedJob(
     dependencies.database,
     job.sourceSlug,
   );
-  if (configuration.connectorKind !== LICENSED_JSON_CONNECTOR_KIND) {
+  if (
+    configuration.connectorKind !== LICENSED_JSON_CONNECTOR_KIND &&
+    configuration.connectorKind !== KHMER24_REFERENCE_CONNECTOR_KIND
+  ) {
     throw new Error(
-      `Source ${job.sourceSlug} is not configured for a licensed JSON feed`,
+      `Source ${job.sourceSlug} is not configured for a supported connector`,
     );
   }
-
-  const feedUrl = requiredString(
-    configuration.connectorConfig.feedUrl,
-    "connectorConfig.feedUrl",
-  );
-  const authorizationSecretName = optionalString(
-    configuration.connectorConfig.authorizationSecretName,
-    "connectorConfig.authorizationSecretName",
-  );
-  const authorizationHeader = authorizationSecretName
-    ? requiredString(
-        dependencies.secrets?.[authorizationSecretName],
-        `secret ${authorizationSecretName}`,
-      )
-    : undefined;
   const executedAt = dependencies.now?.() ?? new Date();
-
-  const connector = createLicensedJsonFeedConnector({
+  const common = {
     sourceSlug: job.sourceSlug,
-    feedUrl,
     allowedHosts: configuration.policy.allowedHosts ?? [],
     maxRecords: configuration.policy.maxRecordsPerRun ?? 100,
     rawStore: dependencies.rawStore,
-    authorizationHeader,
     fetchImpl: dependencies.fetchImpl,
     now: () => executedAt,
-  });
+  };
+  const connector =
+    configuration.connectorKind === KHMER24_REFERENCE_CONNECTOR_KIND
+      ? createKhmer24ReferenceConnector({
+          ...common,
+          categoryUrl: requiredString(
+            configuration.connectorConfig.categoryUrl,
+            "connectorConfig.categoryUrl",
+          ),
+        })
+      : createLicensedJsonFeedConnector({
+          ...common,
+          feedUrl: requiredString(
+            configuration.connectorConfig.feedUrl,
+            "connectorConfig.feedUrl",
+          ),
+          authorizationHeader: resolveAuthorizationHeader(
+            configuration.connectorConfig.authorizationSecretName,
+            dependencies.secrets,
+          ),
+        });
 
   return runApprovedConnectorIngestion(
     dependencies.database,
@@ -162,4 +171,20 @@ function requiredString(value: unknown, field: string): string {
 function optionalString(value: unknown, field: string): string | undefined {
   if (value === undefined || value === null || value === "") return undefined;
   return requiredString(value, field);
+}
+
+function resolveAuthorizationHeader(
+  value: unknown,
+  secrets: Record<string, string | undefined> | undefined,
+): string | undefined {
+  const authorizationSecretName = optionalString(
+    value,
+    "connectorConfig.authorizationSecretName",
+  );
+  return authorizationSecretName
+    ? requiredString(
+        secrets?.[authorizationSecretName],
+        `secret ${authorizationSecretName}`,
+      )
+    : undefined;
 }

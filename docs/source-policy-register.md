@@ -1,12 +1,12 @@
 # Cambodia Source Policy Register
 
-Updated: 2026-07-30
+Updated: 2026-07-31
 
 This register controls production collection. Technical accessibility is not permission to collect or republish.
 
 | Source | Status | Current basis | MVP action |
 |---|---|---|---|
-| Khmer24 | PENDING_WRITTEN_APPROVAL | Public listing pages and posting/privacy policies are available, but an explicit aggregation licence was not found in the reviewed public policies. | Use anonymized fixtures and a disabled connector. Request written permission or partnership terms before recurring production collection. |
+| Khmer24 | AUTHORIZATION_REQUIRED | `robots.txt` currently advertises `search=yes` and `use=reference`, while reserving AI training and returning a Cloudflare 403 challenge to the server collector. No public API or partner feed was found. | The bounded reference-search connector is installed but cannot run until GLI records the permitted AI-use scope and Khmer24 allowlists the collector or provides an authorized feed. |
 | Realestate.com.kh | AUTHORIZATION_REQUIRED | Published terms prohibit using or indexing content to construct or populate a searchable property database unless specifically authorized. | Do not crawl. Pursue API, feed, licence, or partnership authorization. |
 | FazWaz Cambodia | PENDING_REVIEW | Public access alone is insufficient; applicable terms and feed options require review. | Do not enable production collection until review is complete. |
 
@@ -37,8 +37,14 @@ This register controls production collection. Technical accessibility is not per
   permitted standard fields, and record limit.
 - Suspending a source immediately changes its policy to `SUSPENDED` while
   preserving the connection record and audit history.
-- Khmer24, Realestate.com.kh, and FazWaz remain `DISABLED` until their individual
-  written authorization and connector configuration are approved.
+- Khmer24 is configured as `KHMER24_REFERENCE_SEARCH_V1` but remains
+  `AUTHORIZATION_REQUIRED`; Realestate.com.kh and FazWaz remain `DISABLED`.
+- The Khmer24 connector reads `robots.txt` on every run, requires
+  `search=yes,use=reference`, rejects disallowed paths, and stops on HTTP 403 or
+  429 without attempting to bypass source-side controls.
+- The Khmer24 parser keeps only reference-search fields and excludes seller
+  profiles, phone numbers, chats, and account-area data. Incomplete or currently
+  unsupported land/commercial cards are rejected instead of guessed.
 
 ## Reviewed pages
 
