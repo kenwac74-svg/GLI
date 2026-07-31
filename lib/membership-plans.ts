@@ -44,3 +44,7 @@ export function getMembershipPlan(value: string): MembershipPlan {
   }
   return plan;
 }
+
+export function canAccessFullTrustReport(planId: string): boolean {
+  return planId === "investor" || planId === "private";
+}

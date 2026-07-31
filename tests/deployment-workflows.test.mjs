@@ -127,14 +127,16 @@ async function dispatch(worker, database, pathname, options = {}) {
     headers.set("x-request-id", options.requestId);
   }
 
-  Object.assign(cloudflareEnv, {
+  const runtimeEnv = {
     DB: database,
     DATA_MODE: "d1",
-    DEPLOYMENT_STAGE: "production",
-    DEMO_AUTH_ENABLED: "false",
+    DEPLOYMENT_STAGE: "demo",
+    DEMO_AUTH_ENABLED: "true",
     DEMO_ADMIN_ENABLED: "false",
     LLM_PROVIDER: "disabled",
-  });
+    ...options.runtimeEnv,
+  };
+  Object.assign(cloudflareEnv, runtimeEnv);
 
   return worker.fetch(
     new Request(`${APP_ORIGIN}${pathname}`, {
@@ -147,12 +149,7 @@ async function dispatch(worker, database, pathname, options = {}) {
       ASSETS: {
         fetch: async () => new Response("Not found", { status: 404 }),
       },
-      DB: database,
-      DATA_MODE: "d1",
-      DEPLOYMENT_STAGE: "production",
-      DEMO_AUTH_ENABLED: "false",
-      DEMO_ADMIN_ENABLED: "false",
-      LLM_PROVIDER: "disabled",
+      ...runtimeEnv,
     },
     {
       waitUntil() {},
@@ -182,6 +179,18 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.deepEqual(initialDashboard.favorites, []);
     assert.deepEqual(initialDashboard.consultations, []);
     assert.equal(initialDashboard.activeMembership, null);
+
+    const lockedReportResponse = await dispatch(
+      worker,
+      database,
+      "/api/assets/GLI-KH-004/trust-report",
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(lockedReportResponse.status, 403);
+    assert.equal(
+      (await lockedReportResponse.json()).code,
+      "MEMBERSHIP_REQUIRED",
+    );
 
     const favoriteResponse = await dispatch(
       worker,
@@ -273,6 +282,35 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(confirmation.membership.planId, "investor");
     assert.equal(confirmation.membership.status, "ACTIVE");
 
+    const reportResponse = await dispatch(
+      worker,
+      database,
+      "/api/assets/GLI-KH-004/trust-report",
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(reportResponse.status, 200);
+    assert.match(reportResponse.headers.get("cache-control") ?? "", /no-store/);
+    const reportAccess = await reportResponse.json();
+    assert.equal(reportAccess.granted, true);
+    assert.equal(reportAccess.membershipPlanId, "investor");
+    assert.equal(reportAccess.report.listingPublicId, "GLI-KH-004");
+    assert.equal(reportAccess.report.ruleVersion, "trust-v0.1-fixture");
+    assert.equal(reportAccess.report.sourceCount, 1);
+    assert.equal(reportAccess.report.humanApproved, false);
+    assert.equal(reportAccess.report.evidence.length, 6);
+
+    const reportPageResponse = await dispatch(
+      worker,
+      database,
+      "/assets/GLI-KH-004/trust-report",
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(reportPageResponse.status, 200);
+    const reportPageHtml = await reportPageResponse.text();
+    assert.match(reportPageHtml, /GLI FULL TRUST REPORT/);
+    assert.match(reportPageHtml, /trust-v0\.1-fixture/);
+    assert.match(reportPageHtml, /PDF로 저장/);
+
     const finalDashboardResponse = await dispatch(
       worker,
       database,
@@ -311,6 +349,116 @@ test("built worker completes the member discovery and cash membership journey", 
       "DEMO_CASH_MEMBERSHIP_ACTIVATED",
       "CASH_CHECKOUT_COMPLETED",
     ]);
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("built worker keeps the full Trust Report outside the Explore plan", async () => {
+  const worker = await loadWorker();
+  const { database, sqlite } = await createDatabase();
+
+  try {
+    const dashboardResponse = await dispatch(worker, database, "/api/me", {
+      email: MEMBER_EMAIL,
+    });
+    assert.equal(dashboardResponse.status, 200);
+    const dashboard = await dashboardResponse.json();
+    const now = Date.now();
+    sqlite
+      .prepare(
+        `INSERT INTO memberships (
+           id, user_id, plan_id, provider,
+           provider_customer_id, provider_subscription_id,
+           status, period_start, period_end, created_at, updated_at
+         ) VALUES (?, ?, 'explore', 'PAYMENT_TEST', NULL, NULL, 'ACTIVE', ?, ?, ?, ?)`,
+      )
+      .run(
+        "mem_explore_e2e",
+        dashboard.user.id,
+        now,
+        now + 30 * 24 * 60 * 60 * 1000,
+        now,
+        now,
+      );
+
+    const reportResponse = await dispatch(
+      worker,
+      database,
+      "/api/assets/GLI-KH-004/trust-report",
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(reportResponse.status, 403);
+    const denial = await reportResponse.json();
+    assert.equal(denial.code, "PLAN_UPGRADE_REQUIRED");
+    assert.equal(denial.membershipPlanId, "explore");
+
+    const reportPageResponse = await dispatch(
+      worker,
+      database,
+      "/assets/GLI-KH-004/trust-report",
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(reportPageResponse.status, 200);
+    const reportPageHtml = await reportPageResponse.text();
+    assert.match(reportPageHtml, /Investor/);
+    assert.doesNotMatch(reportPageHtml, /trust-v0\.1-fixture/);
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("built worker disables no-charge billing outside the demo environment", async () => {
+  const worker = await loadWorker();
+  const { database, sqlite } = await createDatabase();
+
+  try {
+    const response = await dispatch(
+      worker,
+      database,
+      "/api/memberships/checkout",
+      {
+        method: "POST",
+        email: MEMBER_EMAIL,
+        body: { planId: "investor" },
+        runtimeEnv: {
+          DEPLOYMENT_STAGE: "production",
+          DEMO_AUTH_ENABLED: "false",
+        },
+      },
+    );
+    assert.equal(response.status, 503);
+    assert.equal((await response.json()).code, "DEMO_BILLING_DISABLED");
+    assert.equal(
+      sqlite
+        .prepare("SELECT count(*) AS count FROM cash_checkout_sessions")
+        .get().count,
+      0,
+    );
+
+    const directActivation = await dispatch(
+      worker,
+      database,
+      "/api/memberships/demo",
+      {
+        method: "POST",
+        email: MEMBER_EMAIL,
+        body: { planId: "investor" },
+        runtimeEnv: {
+          DEPLOYMENT_STAGE: "production",
+          DEMO_AUTH_ENABLED: "false",
+        },
+      },
+    );
+    assert.equal(directActivation.status, 503);
+    assert.equal(
+      (await directActivation.json()).code,
+      "DEMO_BILLING_DISABLED",
+    );
+    assert.equal(
+      sqlite.prepare("SELECT count(*) AS count FROM memberships").get().count,
+      0,
+    );
   } finally {
     sqlite.close();
   }

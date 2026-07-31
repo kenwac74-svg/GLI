@@ -137,6 +137,13 @@ export default async function AssetPage({
                 <b>대기</b>
               </div>
             </div>
+            <Link
+              className="report-action"
+              href={`/assets/${asset.id}/trust-report`}
+            >
+              <FileCheck2 size={18} />
+              전체 Trust Report
+            </Link>
             <Link className="primary-action" href={`/my?consult=${asset.id}`}>
               전문가 상담 신청
             </Link>
