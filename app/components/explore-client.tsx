@@ -35,6 +35,17 @@ type ConversationTurn = {
   clarification?: string | null;
 };
 
+type SearchMembershipAccess = {
+  authenticated: boolean;
+  planId: "explore" | "investor" | "private" | null;
+  runtimeAvailable: boolean;
+  deepSearchEligible: boolean;
+  monthlyLimit: number | null;
+  used: number;
+  remaining: number | null;
+  deliveredMode: "openai" | "rules";
+};
+
 const welcomeTurn: ConversationTurn = {
   id: 0,
   role: "advisor",
@@ -50,6 +61,8 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
     AdvisorSearchResult["citations"]
   >([]);
   const [loading, setLoading] = useState(false);
+  const [searchAccess, setSearchAccess] =
+    useState<SearchMembershipAccess | null>(null);
   const [filter, setFilter] = useState<"all" | "sale" | "rent" | "direct">("all");
 
   const visibleAssets = useMemo(
@@ -80,10 +93,13 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
         body: JSON.stringify({ query: clean, context: criteria ?? undefined }),
       });
       if (!response.ok) throw new Error("search_failed");
-      const result = (await response.json()) as AdvisorSearchResult;
+      const result = (await response.json()) as AdvisorSearchResult & {
+        membershipAccess: SearchMembershipAccess;
+      };
       setAssets(result.matches);
       setCriteria(result.criteria);
       setCitations(result.citations);
+      setSearchAccess(result.membershipAccess);
       setFilter("all");
       setTurns((current) =>
         [
@@ -130,6 +146,7 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
     setTurns([welcomeTurn]);
     setCriteria(null);
     setCitations([]);
+    setSearchAccess(null);
     setFilter("all");
   }
 
@@ -204,6 +221,24 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
               </button>
             )}
           </div>
+
+          {searchAccess && (
+            <div className="search-access-status" role="status">
+              <div>
+                <strong>
+                  {searchAccess.deliveredMode === "openai"
+                    ? "멤버십 심화 AI 탐색"
+                    : "규칙 기반 무료 탐색"}
+                </strong>
+                <span>{searchAccessLabel(searchAccess)}</span>
+              </div>
+              {(!searchAccess.authenticated || !searchAccess.planId) && (
+                <Link href="/membership">
+                  멤버십 보기 <ArrowRight size={14} />
+                </Link>
+              )}
+            </div>
+          )}
 
           <div className="conversation-log" aria-live="polite" aria-busy={loading}>
             {turns.map((turn) => (
@@ -421,4 +456,20 @@ function describeCriteria(criteria: SearchCriteria): string[] {
   if (criteria.wantsShortStay) items.push("부재 중 단기 임대");
   if (criteria.wantsRiver) items.push("강 전망");
   return items;
+}
+
+function searchAccessLabel(access: SearchMembershipAccess): string {
+  if (!access.authenticated) {
+    return "로그인 없이 기본 추천을 이용 중입니다.";
+  }
+  if (!access.planId) {
+    return "Explore부터 근거 기반 심화 AI 답변을 이용할 수 있습니다.";
+  }
+  if (!access.runtimeAvailable) {
+    return "AI 연결 대기 중에는 사용량 차감 없이 기본 추천을 제공합니다.";
+  }
+  if (access.monthlyLimit === null) {
+    return "무제한 심화 AI 검색이 적용되었습니다.";
+  }
+  return `이번 달 ${access.used}/${access.monthlyLimit}회 사용`;
 }
