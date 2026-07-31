@@ -12,6 +12,10 @@ import {
   type SourceConnector,
   type SourcePolicy,
 } from "../ingestion/source-policy.ts";
+import {
+  LICENSED_JSON_CONNECTOR_KIND,
+  LICENSED_JSON_REQUESTED_FIELDS,
+} from "../ingestion/licensed-json-feed.ts";
 import { calculateTrustScore, type ReviewStatus } from "../lib/trust.ts";
 import type { D1DatabaseLike } from "./user-workflows.ts";
 
@@ -86,12 +90,39 @@ export type SourceConnectorConfiguration = {
   policy: SourcePolicy;
 };
 
+export type SourceManagementDetail = {
+  id: number;
+  slug: string;
+  nameInternal: string;
+  country: string;
+  baseUrl: string;
+  policyUrl: string | null;
+  approvalStatus: string;
+  approvalReference: string | null;
+  approvedAt: number | null;
+  approvalExpiresAt: number | null;
+  policyReviewedAt: number | null;
+  connectorKind: string;
+  feedUrl: string | null;
+  authorizationSecretName: string | null;
+  allowedHosts: string[];
+  permittedFields: string[];
+  maxRecordsPerRun: number;
+  updatedAt: number;
+};
+
 type SourceRow = {
   id: number;
   slug: string;
   nameInternal: string;
   country: string;
+  baseUrl: string;
+  policyUrl: string | null;
   approvalStatus: string;
+  approvalReference: string | null;
+  approvedAt: number | null;
+  approvedByUserId: string | null;
+  policyReviewedAt: number | null;
   permittedFieldsJson: string;
   connectorKind: string;
   connectorConfigJson: string;
@@ -268,6 +299,151 @@ export async function getSourceConnectorConfiguration(
     ),
     policy: sourcePolicy(source),
   };
+}
+
+export async function getSourceManagementDetail(
+  database: D1DatabaseLike,
+  sourceSlug: string,
+  actorUserId: string,
+): Promise<SourceManagementDetail> {
+  assertDatabase(database);
+  const actor = validateIdentifier(actorUserId, "actorUserId");
+  await requireAdmin(database, actor);
+  return sourceManagementDetail(await loadSourceRow(database, sourceSlug));
+}
+
+export async function configureLicensedSource(
+  database: D1DatabaseLike,
+  input: {
+    sourceSlug: string;
+    approvalReference: string;
+    approvalExpiresAt: number | null;
+    feedUrl: string;
+    authorizationSecretName?: string | null;
+    maxRecordsPerRun: number;
+  },
+  actorUserId: string,
+  now = Date.now(),
+): Promise<SourceManagementDetail> {
+  assertDatabase(database);
+  const actor = validateIdentifier(actorUserId, "actorUserId");
+  const timestamp = validateTimestamp(now, "now");
+  await requireAdmin(database, actor);
+  const source = await loadSourceRow(
+    database,
+    validateSourceSlug(input.sourceSlug),
+  );
+  const approvalReference = validateText(
+    input.approvalReference,
+    "approvalReference",
+    6,
+    500,
+  );
+  const approvalExpiresAt = validateApprovalExpiry(
+    input.approvalExpiresAt,
+    timestamp,
+  );
+  const feedUrl = validateFeedUrl(input.feedUrl);
+  const authorizationSecretName = validateSourceSecretName(
+    input.authorizationSecretName,
+  );
+  const maxRecordsPerRun = validateIntegerRange(
+    input.maxRecordsPerRun,
+    "maxRecordsPerRun",
+    1,
+    1_000,
+  );
+  const before = sourceManagementDetail(source);
+  const connectorConfig = {
+    feedUrl: feedUrl.toString(),
+    ...(authorizationSecretName
+      ? { authorizationSecretName }
+      : {}),
+  };
+
+  await database
+    .prepare(
+      `UPDATE sources
+       SET approval_status = 'APPROVED',
+           permitted_fields_json = ?,
+           approved_at = ?,
+           approval_expires_at = ?,
+           connector_kind = ?,
+           connector_config_json = ?,
+           allowed_hosts_json = ?,
+           max_records_per_run = ?,
+           approval_reference = ?,
+           approved_by_user_id = ?,
+           policy_reviewed_at = ?,
+           updated_at = ?
+       WHERE id = ?`,
+    )
+    .bind(
+      JSON.stringify(LICENSED_JSON_REQUESTED_FIELDS),
+      timestamp,
+      approvalExpiresAt,
+      LICENSED_JSON_CONNECTOR_KIND,
+      JSON.stringify(connectorConfig),
+      JSON.stringify([feedUrl.hostname.toLocaleLowerCase("en-US")]),
+      maxRecordsPerRun,
+      approvalReference,
+      actor,
+      timestamp,
+      timestamp,
+      source.id,
+    )
+    .run();
+
+  const after = sourceManagementDetail(
+    await loadSourceRow(database, source.slug),
+  );
+  await insertAudit(database, {
+    actorUserId: actor,
+    action: "SOURCE_CONNECTOR_APPROVED",
+    resourceType: "SOURCE",
+    resourceId: source.slug,
+    before: sourceAuditView(before),
+    after: sourceAuditView(after),
+    createdAt: timestamp,
+  });
+  return after;
+}
+
+export async function suspendSourceConnector(
+  database: D1DatabaseLike,
+  sourceSlug: string,
+  actorUserId: string,
+  now = Date.now(),
+): Promise<SourceManagementDetail> {
+  assertDatabase(database);
+  const actor = validateIdentifier(actorUserId, "actorUserId");
+  const timestamp = validateTimestamp(now, "now");
+  await requireAdmin(database, actor);
+  const source = await loadSourceRow(
+    database,
+    validateSourceSlug(sourceSlug),
+  );
+  const before = sourceManagementDetail(source);
+  if (source.approvalStatus !== "SUSPENDED") {
+    await database
+      .prepare(
+        `UPDATE sources
+         SET approval_status = 'SUSPENDED', updated_at = ?
+         WHERE id = ?`,
+      )
+      .bind(timestamp, source.id)
+      .run();
+    await insertAudit(database, {
+      actorUserId: actor,
+      action: "SOURCE_CONNECTOR_SUSPENDED",
+      resourceType: "SOURCE",
+      resourceId: source.slug,
+      before: sourceAuditView(before),
+      after: { approvalStatus: "SUSPENDED" },
+      createdAt: timestamp,
+    });
+  }
+  return sourceManagementDetail(await loadSourceRow(database, source.slug));
 }
 
 export async function runApprovedConnectorIngestion(
@@ -732,7 +908,13 @@ async function loadSourceRow(
          slug,
          name_internal AS nameInternal,
          country,
+         base_url AS baseUrl,
+         policy_url AS policyUrl,
          approval_status AS approvalStatus,
+         approval_reference AS approvalReference,
+         approved_at AS approvedAt,
+         approved_by_user_id AS approvedByUserId,
+         policy_reviewed_at AS policyReviewedAt,
          permitted_fields_json AS permittedFieldsJson,
          connector_kind AS connectorKind,
          connector_config_json AS connectorConfigJson,
@@ -747,6 +929,61 @@ async function loadSourceRow(
     .first<SourceRow>();
   if (!source) throw new Error(`Source ${sourceSlug} not found`);
   return source;
+}
+
+function sourceManagementDetail(source: SourceRow): SourceManagementDetail {
+  const connectorConfig = parseObjectJson(
+    source.connectorConfigJson,
+    `Source ${source.slug} has invalid connector configuration`,
+  );
+  const feedUrl =
+    typeof connectorConfig.feedUrl === "string"
+      ? connectorConfig.feedUrl
+      : null;
+  const authorizationSecretName =
+    typeof connectorConfig.authorizationSecretName === "string"
+      ? connectorConfig.authorizationSecretName
+      : null;
+  return {
+    id: source.id,
+    slug: source.slug,
+    nameInternal: source.nameInternal,
+    country: source.country,
+    baseUrl: source.baseUrl,
+    policyUrl: source.policyUrl,
+    approvalStatus: source.approvalStatus,
+    approvalReference: source.approvalReference,
+    approvedAt: source.approvedAt,
+    approvalExpiresAt: source.approvalExpiresAt,
+    policyReviewedAt: source.policyReviewedAt,
+    connectorKind: source.connectorKind,
+    feedUrl,
+    authorizationSecretName,
+    allowedHosts: parseStringArrayJson(
+      source.allowedHostsJson,
+      `Source ${source.slug} has invalid allowed hosts`,
+    ),
+    permittedFields: parseStringArrayJson(
+      source.permittedFieldsJson,
+      `Source ${source.slug} has invalid permitted fields`,
+    ),
+    maxRecordsPerRun: source.maxRecordsPerRun,
+    updatedAt: source.updatedAt,
+  };
+}
+
+function sourceAuditView(source: SourceManagementDetail) {
+  return {
+    approvalStatus: source.approvalStatus,
+    approvalReference: source.approvalReference,
+    approvalExpiresAt: source.approvalExpiresAt,
+    connectorKind: source.connectorKind,
+    feedUrl: source.feedUrl,
+    authorizationSecretName: source.authorizationSecretName,
+    allowedHosts: source.allowedHosts,
+    permittedFieldCount: source.permittedFields.length,
+    maxRecordsPerRun: source.maxRecordsPerRun,
+  };
 }
 
 function assertCandidateBatch(
@@ -940,6 +1177,151 @@ async function insertAudit(
       event.createdAt,
     )
     .run();
+}
+
+async function requireAdmin(
+  database: D1DatabaseLike,
+  userId: string,
+): Promise<void> {
+  const user = await database
+    .prepare("SELECT role, status FROM users WHERE id = ? LIMIT 1")
+    .bind(userId)
+    .first<{ role: string; status: string }>();
+  if (!user || user.status !== "ACTIVE" || user.role !== "ADMIN") {
+    throw new Error("An active administrator is required");
+  }
+}
+
+function validateSourceSlug(value: unknown): string {
+  if (
+    typeof value !== "string" ||
+    !/^[a-z0-9][a-z0-9-]{2,63}$/.test(value)
+  ) {
+    throw new TypeError("sourceSlug is invalid");
+  }
+  return value;
+}
+
+function validateIdentifier(value: unknown, field: string): string {
+  if (
+    typeof value !== "string" ||
+    !value ||
+    value.trim() !== value ||
+    value.length > 128 ||
+    !/^[A-Za-z0-9._:-]+$/.test(value)
+  ) {
+    throw new TypeError(`${field} is invalid`);
+  }
+  return value;
+}
+
+function validateText(
+  value: unknown,
+  field: string,
+  minimumLength: number,
+  maximumLength: number,
+): string {
+  if (typeof value !== "string") {
+    throw new TypeError(`${field} must be a string`);
+  }
+  const normalized = value.trim().replace(/\s+/g, " ");
+  if (
+    normalized.length < minimumLength ||
+    normalized.length > maximumLength ||
+    /[\u0000-\u001f\u007f]/.test(normalized)
+  ) {
+    throw new TypeError(`${field} is invalid`);
+  }
+  return normalized;
+}
+
+function validateApprovalExpiry(value: unknown, now: number): number | null {
+  if (value === null) return null;
+  const timestamp = validateTimestamp(value, "approvalExpiresAt");
+  const maximum = now + 2 * 365 * 24 * 60 * 60 * 1000;
+  if (timestamp <= now || timestamp > maximum) {
+    throw new RangeError(
+      "approvalExpiresAt must be in the future and within two years",
+    );
+  }
+  return timestamp;
+}
+
+function validateFeedUrl(value: unknown): URL {
+  if (typeof value !== "string" || !value || value.trim() !== value) {
+    throw new TypeError("feedUrl must be a non-empty, trimmed string");
+  }
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new TypeError("feedUrl must be an absolute URL");
+  }
+  const hostname = url.hostname.toLocaleLowerCase("en-US");
+  if (
+    url.protocol !== "https:" ||
+    url.username ||
+    url.password ||
+    url.hash ||
+    url.port ||
+    hostname === "localhost" ||
+    hostname.endsWith(".localhost") ||
+    isPrivateIpv4(hostname)
+  ) {
+    throw new TypeError(
+      "feedUrl must use a public HTTPS host without credentials, a port, or a fragment",
+    );
+  }
+  return url;
+}
+
+function isPrivateIpv4(hostname: string): boolean {
+  if (!/^\d{1,3}(?:\.\d{1,3}){3}$/.test(hostname)) return false;
+  const octets = hostname.split(".").map(Number);
+  if (octets.some((octet) => octet < 0 || octet > 255)) return true;
+  return (
+    octets[0] === 10 ||
+    octets[0] === 127 ||
+    (octets[0] === 169 && octets[1] === 254) ||
+    (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+    (octets[0] === 192 && octets[1] === 168)
+  );
+}
+
+function validateSourceSecretName(value: unknown): string | null {
+  if (value === undefined || value === null || value === "") return null;
+  if (
+    typeof value !== "string" ||
+    !/^SOURCE_SECRET_[A-Z0-9_]{3,96}$/.test(value)
+  ) {
+    throw new TypeError(
+      "authorizationSecretName must use the SOURCE_SECRET_ prefix",
+    );
+  }
+  return value;
+}
+
+function validateIntegerRange(
+  value: unknown,
+  field: string,
+  minimum: number,
+  maximum: number,
+): number {
+  if (
+    !Number.isSafeInteger(value) ||
+    (value as number) < minimum ||
+    (value as number) > maximum
+  ) {
+    throw new RangeError(`${field} must be between ${minimum} and ${maximum}`);
+  }
+  return value as number;
+}
+
+function validateTimestamp(value: unknown, field: string): number {
+  if (!Number.isSafeInteger(value) || (value as number) <= 0) {
+    throw new TypeError(`${field} must be a positive integer timestamp`);
+  }
+  return value as number;
 }
 
 function assertDatabase(
