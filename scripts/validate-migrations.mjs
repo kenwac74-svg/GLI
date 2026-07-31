@@ -6,6 +6,7 @@ const migrationFiles = [
   "drizzle/0000_elite_adam_destine.sql",
   "drizzle/0001_seed_approved_fixture.sql",
   "drizzle/0002_admin_ingestion_pipeline.sql",
+  "drizzle/0003_cash_checkout_sessions.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -69,8 +70,15 @@ try {
     .get();
   assert.equal(fingerprintIndex.count, 1);
 
+  const checkoutTable = database
+    .prepare(
+      "SELECT count(*) AS count FROM sqlite_master WHERE type = 'table' AND name = 'cash_checkout_sessions'",
+    )
+    .get();
+  assert.equal(checkoutTable.count, 1);
+
   console.log(
-    "D1 migrations validated: 8 listings, versions, Trust scores, and ingestion fingerprint index.",
+    "D1 migrations validated: listings, Trust scores, ingestion, and cash checkout sessions.",
   );
 } finally {
   database.close();
