@@ -8,6 +8,7 @@ const migrationFiles = [
   "drizzle/0002_admin_ingestion_pipeline.sql",
   "drizzle/0003_cash_checkout_sessions.sql",
   "drizzle/0004_authorized_source_connectors.sql",
+  "drizzle/0005_payment_webhook_ledger.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -109,8 +110,25 @@ try {
     disabled: 3,
   });
 
+  const paymentLedger = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'payment_webhook_events') AS tableCount,
+         (SELECT count(*) FROM pragma_index_list('payment_webhook_events')
+          WHERE name = 'payment_webhook_provider_event_uidx') AS eventIndex,
+         (SELECT count(*) FROM pragma_index_list('cash_checkout_sessions')
+          WHERE name = 'cash_checkout_provider_session_uidx') AS sessionIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...paymentLedger }, {
+    tableCount: 1,
+    eventIndex: 1,
+    sessionIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, and cash checkout sessions.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, cash checkout sessions, and payment webhook ledger.",
   );
 } finally {
   database.close();
