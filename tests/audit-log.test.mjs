@@ -216,6 +216,10 @@ test("audit access and query options fail closed", async () => {
       /between 1 and 100/i,
     );
     assert.equal(categoryForAction("CASH_MEMBERSHIP_ACTIVATED"), "MEMBERSHIP");
+    assert.equal(
+      categoryForAction("DEMO_CASH_MEMBERSHIP_ACTIVATED"),
+      "MEMBERSHIP",
+    );
     assert.equal(categoryForAction("OPERATIONS_HEALTH_SCAN_COMPLETED"), "OPERATIONS");
   } finally {
     sqlite.close();

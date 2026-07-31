@@ -156,7 +156,9 @@ export function categoryForAction(
   if (/^INGESTION_/.test(action)) return "COLLECTION";
   if (/^SOURCE_/.test(action)) return "SOURCE";
   if (/^CONSULTATION_/.test(action)) return "CONSULTATION";
-  if (/^(CASH_|MEMBERSHIP_|PAYMENT_)/.test(action)) return "MEMBERSHIP";
+  if (/^(CASH_|DEMO_CASH_|MEMBERSHIP_|PAYMENT_)/.test(action)) {
+    return "MEMBERSHIP";
+  }
   if (/^(OPERATIONS_|OPERATIONAL_)/.test(action)) return "OPERATIONS";
   return "OTHER";
 }
@@ -224,7 +226,7 @@ function categoryPredicate(category: AuditCategory): string {
     case "CONSULTATION":
       return "WHERE audit_logs.action LIKE 'CONSULTATION_%'";
     case "MEMBERSHIP":
-      return "WHERE (audit_logs.action LIKE 'CASH_%' OR audit_logs.action LIKE 'MEMBERSHIP_%' OR audit_logs.action LIKE 'PAYMENT_%')";
+      return "WHERE (audit_logs.action LIKE 'CASH_%' OR audit_logs.action LIKE 'DEMO_CASH_%' OR audit_logs.action LIKE 'MEMBERSHIP_%' OR audit_logs.action LIKE 'PAYMENT_%')";
     case "OPERATIONS":
       return "WHERE (audit_logs.action LIKE 'OPERATIONS_%' OR audit_logs.action LIKE 'OPERATIONAL_%')";
     default:
