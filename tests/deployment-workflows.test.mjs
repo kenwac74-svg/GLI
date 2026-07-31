@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 
+import { LICENSED_JSON_REQUESTED_FIELDS } from "../ingestion/licensed-json-feed.ts";
 import { env as cloudflareEnv } from "./support/cloudflare-workers-shim.mjs";
 
 const APP_ORIGIN = "http://localhost";
@@ -641,6 +642,164 @@ test("built worker enforces admin boundaries and records release evidence", asyn
       .get();
     assert.equal(evidenceAudit.action, "BACKUP_EVIDENCE_RECORDED");
     assert.equal(evidenceAudit.requestId, "e2e.backup");
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("built worker imports an authorized partner file into the review queue", async () => {
+  const worker = await loadWorker();
+  const { database, sqlite } = await createDatabase();
+  const rawWrites = [];
+
+  try {
+    const dashboardResponse = await dispatch(
+      worker,
+      database,
+      "/api/me",
+      { email: ADMIN_EMAIL },
+    );
+    assert.equal(dashboardResponse.status, 200);
+    const adminUserId = (await dashboardResponse.json()).user.id;
+    sqlite
+      .prepare("UPDATE users SET role = 'ADMIN' WHERE id = ?")
+      .run(adminUserId);
+
+    const now = Date.now();
+    sqlite
+      .prepare(`
+        UPDATE sources
+        SET approval_status = 'APPROVED',
+            permitted_fields_json = ?,
+            connector_kind = 'LICENSED_JSON_V1',
+            connector_config_json = ?,
+            allowed_hosts_json = ?,
+            max_records_per_run = 25,
+            approval_reference = 'E2E licensed partner agreement',
+            approved_by_user_id = ?,
+            policy_reviewed_at = ?,
+            approved_at = ?,
+            approval_expires_at = ?,
+            updated_at = ?
+        WHERE slug = 'realestate-kh'
+      `)
+      .run(
+        JSON.stringify(LICENSED_JSON_REQUESTED_FIELDS),
+        JSON.stringify({
+          feedUrl: "https://feeds.partner.example/v1/listings",
+          authorizationSecretName: null,
+        }),
+        JSON.stringify(["feeds.partner.example"]),
+        adminUserId,
+        now,
+        now,
+        now + 86_400_000,
+        now,
+      );
+
+    const feed = {
+      schemaVersion: "gli.partner-listings.v1",
+      sourceSlug: "realestate-kh",
+      generatedAt: new Date(now).toISOString(),
+      listings: [
+        {
+          externalId: "partner-e2e-301",
+          country: "Cambodia",
+          city: "Phnom Penh",
+          district: "BKK1",
+          transaction: "rent",
+          propertyType: "condo",
+          price: 720,
+          currency: "USD",
+          areaSqm: 58,
+          bedrooms: 1,
+          bathrooms: 1,
+          imageUrl:
+            "https://feeds.partner.example/images/partner-e2e-301.jpg",
+          title: "Licensed BKK1 partner residence",
+          summary:
+            "Structured partner material awaiting GLI verification and publication.",
+          sourceUrl:
+            "https://feeds.partner.example/listings/partner-e2e-301",
+          observedAt: new Date(now).toISOString(),
+        },
+      ],
+    };
+    const importResponse = await dispatch(
+      worker,
+      database,
+      "/api/admin/ingestion/import",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        requestId: "e2e.partner-import",
+        body: {
+          sourceSlug: "realestate-kh",
+          feedText: JSON.stringify(feed),
+        },
+        runtimeEnv: {
+          FILES: {
+            async put(...args) {
+              rawWrites.push(args);
+            },
+          },
+        },
+      },
+    );
+    assert.equal(importResponse.status, 200);
+    const result = (await importResponse.json()).result;
+    assert.equal(result.status, "SUCCEEDED");
+    assert.equal(result.acceptedCount, 1);
+    assert.equal(result.rejectedCount, 0);
+    assert.equal(rawWrites.length, 1);
+    assert.equal(
+      rawWrites[0][2].customMetadata.collectionMode,
+      "manual-upload",
+    );
+
+    const importedListing = sqlite
+      .prepare(`
+        SELECT title, status
+        FROM listings
+        WHERE title = 'Licensed BKK1 partner residence'
+      `)
+      .get();
+    assert.equal(importedListing.status, "REVIEW_PENDING");
+    assert.equal(
+      sqlite
+        .prepare(`
+          SELECT count(*) AS count
+          FROM raw_snapshots
+          WHERE ingestion_run_id = ?
+        `)
+        .get(result.runId).count,
+      1,
+    );
+
+    sqlite
+      .prepare(
+        "UPDATE sources SET approval_status = 'SUSPENDED' WHERE slug = 'realestate-kh'",
+      )
+      .run();
+    const blockedResponse = await dispatch(
+      worker,
+      database,
+      "/api/admin/ingestion/import",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        body: {
+          sourceSlug: "realestate-kh",
+          feedText: JSON.stringify(feed),
+        },
+        runtimeEnv: {
+          FILES: { async put() {} },
+        },
+      },
+    );
+    assert.equal(blockedResponse.status, 409);
+    assert.equal((await blockedResponse.json()).code, "NOT_APPROVED");
+    assert.equal(rawWrites.length, 1);
   } finally {
     sqlite.close();
   }
