@@ -181,6 +181,34 @@ export const trustScoreRuns = sqliteTable(
   ],
 );
 
+export const listingReviewDecisions = sqliteTable(
+  "listing_review_decisions",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    listingId: integer("listing_id")
+      .notNull()
+      .references(() => listings.id),
+    trustScoreRunId: integer("trust_score_run_id").references(
+      () => trustScoreRuns.id,
+    ),
+    action: text("action").notNull(),
+    reviewerUserId: text("reviewer_user_id").notNull(),
+    checklistJson: text("checklist_json").notNull(),
+    note: text("note").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    index("listing_review_decisions_listing_created_idx").on(
+      table.listingId,
+      table.createdAt,
+    ),
+    index("listing_review_decisions_reviewer_created_idx").on(
+      table.reviewerUserId,
+      table.createdAt,
+    ),
+  ],
+);
+
 export const users = sqliteTable(
   "users",
   {
@@ -530,3 +558,4 @@ export const aiEvaluationRuns = sqliteTable(
     ),
   ],
 );
+
