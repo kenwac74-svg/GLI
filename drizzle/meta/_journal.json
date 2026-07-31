@@ -64,6 +64,13 @@
       "when": 1785510000000,
       "tag": "0008_audit_log_query_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1785513600000,
+      "tag": "0009_backup_restore_evidence",
+      "breakpoints": true
     }
   ]
 }
