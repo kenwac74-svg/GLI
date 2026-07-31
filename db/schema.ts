@@ -249,6 +249,34 @@ export const consultationEvents = sqliteTable(
   ],
 );
 
+export const memberNotifications = sqliteTable(
+  "member_notifications",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    kind: text("kind").notNull(),
+    title: text("title").notNull(),
+    body: text("body").notNull(),
+    href: text("href").notNull(),
+    resourceType: text("resource_type").notNull(),
+    resourceId: text("resource_id").notNull(),
+    eventKey: text("event_key").notNull(),
+    readAt: integer("read_at"),
+    createdAt: integer("created_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("member_notifications_event_uidx").on(table.eventKey),
+    index("member_notifications_user_unread_idx").on(
+      table.userId,
+      table.readAt,
+      table.createdAt,
+      table.id,
+    ),
+  ],
+);
+
 export const memberships = sqliteTable(
   "memberships",
   {
