@@ -947,6 +947,85 @@ test("built worker imports an authorized partner file into the review queue", as
       1,
     );
 
+    const importedIdentity = sqlite
+      .prepare(
+        `SELECT public_id AS publicId
+         FROM listings
+         WHERE title = 'Licensed BKK1 partner residence'`,
+      )
+      .get();
+    const incompleteReview = await dispatch(
+      worker,
+      database,
+      "/api/admin/listings/review",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        body: {
+          publicId: importedIdentity.publicId,
+          action: "PUBLISH",
+          evidence: {
+            sourceRightsConfirmed: true,
+            factsCrossChecked: false,
+            publicCopyReviewed: true,
+            limitationsRecorded: true,
+            note:
+              "The price still needs to be checked against the licensed source material.",
+          },
+        },
+      },
+    );
+    assert.equal(incompleteReview.status, 400);
+
+    const reviewPage = await dispatch(
+      worker,
+      database,
+      `/admin/listings/${importedIdentity.publicId}`,
+      { email: ADMIN_EMAIL },
+    );
+    assert.equal(reviewPage.status, 200);
+    const reviewHtml = await reviewPage.text();
+    assert.match(reviewHtml, /LISTING DUE DILIGENCE/);
+    assert.match(reviewHtml, /DECISION LEDGER/);
+    assert.match(reviewHtml, /검토 체크리스트/);
+
+    const completedReview = await dispatch(
+      worker,
+      database,
+      "/api/admin/listings/review",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        requestId: "e2e.listing-review",
+        body: {
+          publicId: importedIdentity.publicId,
+          action: "PUBLISH",
+          evidence: {
+            sourceRightsConfirmed: true,
+            factsCrossChecked: true,
+            publicCopyReviewed: true,
+            limitationsRecorded: true,
+            note:
+              "Licensed source rights and normalized public facts were checked; title verification remains a stated next action.",
+          },
+        },
+      },
+    );
+    assert.equal(completedReview.status, 200);
+    assert.equal((await completedReview.json()).result.status, "ACTIVE");
+    assert.equal(
+      sqlite
+        .prepare(
+          `SELECT count(*) AS count
+           FROM listing_review_decisions
+           WHERE listing_id = (
+             SELECT id FROM listings WHERE public_id = ?
+           )`,
+        )
+        .get(importedIdentity.publicId).count,
+      1,
+    );
+
     sqlite
       .prepare(
         "UPDATE sources SET approval_status = 'SUSPENDED' WHERE slug = 'realestate-kh'",
