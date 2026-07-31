@@ -1920,7 +1920,7 @@ button {
 
 .source-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
@@ -1938,6 +1938,18 @@ button {
 
 .source-list article:last-child {
   border-right: 0;
+}
+
+.source-state-stack {
+  display: grid;
+  gap: 5px;
+  justify-items: end;
+}
+
+.source-state-stack small {
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
 }
 
 .source-list article > div {
