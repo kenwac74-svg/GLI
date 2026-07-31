@@ -107,3 +107,19 @@ test("returns grounded Cambodia results from the search API", async () => {
     "INVALID_SEARCH_CONTEXT",
   );
 });
+
+test("renders the five-level asset access demo without blockchain purchase language", async () => {
+  const response = await render("/assets/GLI-KH-004");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /FREE/);
+  assert.match(html, /BASIC/);
+  assert.match(html, /STANDARD/);
+  assert.match(html, /PREMIUM/);
+  assert.match(html, /BUSINESS/);
+  assert.match(html, /GLI Cash/);
+  assert.match(html, /상위 등급|모든 하위 등급/);
+  assert.match(html, /실제 결제.*발생하지 않습니다/);
+  assert.doesNotMatch(html, /Confirm Staking|Staking Amount|Connect Wallet|GLIB/i);
+});

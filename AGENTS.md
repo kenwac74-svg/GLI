@@ -4,8 +4,17 @@
 
 - Build the blockchain-free Web2 MVP first.
 - Cash membership is global and account-scoped.
-- Asset-specific programs are available only for GLI Direct assets.
+- GLI Cash is a non-transferable prepaid platform balance for asset access,
+  travel products, and future convenience services. It is not a coin, reward,
+  deposit, staking product, or investment return in the Web2 MVP.
+- Asset-specific Premium and Business access uses GLI Cash in the product model.
+  Unlocking a higher asset tier also unlocks every lower tier for that asset.
+- Keep GLI Cash provider-neutral so a later token payment rail can coexist with
+  it without changing the Web2 entitlement model.
+- Asset-specific programs are available only for GLI Direct or GLI-curated assets.
 - GLIB staking, GLID rewards, wallet flows, DAO, IPFS, and on-chain claims are not production Web2 features.
+- The five-level asset-detail screen is a demonstrative UI until GLI approves
+  category-specific content, price, duration, service, and evidence matrices.
 - Never present simulated verification, returns, legal status, or live data as confirmed facts.
 
 ## Architecture

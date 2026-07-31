@@ -59,6 +59,7 @@ Updated: 2026-07-31
 | GLI-031 | Codex | Product review | COMPLETE | MY GLI server-derived favorite, deep-AI, consultation and Trust Report entitlement usage summary |
 | GLI-032 | Codex | Security/Data review | COMPLETE | authorized UTF-8 CSV partner import with strict field contract, exact R2 provenance and shared privacy/dedupe/review boundaries |
 | GLI-033 | Codex | Security/Operations review | COMPLETE | per-listing due-diligence page, mandatory publication checklist, bounded analyst note and immutable review-decision ledger |
+| GLI-034 | Codex | Product review | COMPLETE | five-level asset-detail demonstrator, hierarchical access preview and blockchain-free GLI Cash simulation boundary |
 
 ## Decisions
 
@@ -85,6 +86,8 @@ Updated: 2026-07-31
 | DEC-019 | Enforce global cash-plan benefits server-side; keep anonymous search in rules mode, restore failed model usage, and retain GLIB staking as a later asset-specific boundary | ACCEPTED |
 | DEC-020 | Treat JSON and CSV as delivery formats inside one licensed partner-source boundary; neither format may bypass source approval, host, field, privacy, dedupe or private-review controls | ACCEPTED |
 | DEC-021 | Require source-rights, fact, public-copy and limitation checks plus an analyst note before publication; store the full note only in the review ledger and keep audit metadata bounded | ACCEPTED |
+| DEC-022 | Treat GLI Cash as provider-neutral prepaid platform value; use it for asset passes and future GLI products while keeping later token rails optional and separate | ACCEPTED |
+| DEC-023 | Keep the five-level asset detail as a demonstrative UI until category content, pricing, duration, service scope and production entitlement matrices are separately approved | ACCEPTED |
 
 ## Human gates
 
