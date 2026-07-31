@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   reviewListing,
   type ReviewAction,
+  type ListingReviewEvidence,
 } from "../../../../../db/operations";
 import {
   requireApiAdmin,
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
     const body = (await request.json()) as {
       publicId?: unknown;
       action?: unknown;
+      evidence?: unknown;
     };
     if (typeof body.publicId !== "string") {
       throw new TypeError("publicId is required");
@@ -33,6 +35,7 @@ export async function POST(request: Request) {
       body.publicId,
       body.action as ReviewAction,
       authorization.context.workflowUser.id,
+      body.evidence as ListingReviewEvidence,
     );
     return NextResponse.json(
       { result },
@@ -42,3 +45,4 @@ export async function POST(request: Request) {
     return workflowErrorResponse(error);
   }
 }
+
