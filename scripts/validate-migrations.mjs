@@ -16,6 +16,7 @@ const migrationFiles = [
   "drizzle/0010_consultation_threads.sql",
   "drizzle/0011_member_notifications.sql",
   "drizzle/0012_ai_evaluation_evidence.sql",
+  "drizzle/0013_membership_entitlements.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -247,8 +248,28 @@ try {
     statusIndex: 1,
   });
 
+  const membershipEntitlements = database
+    .prepare(
+      `SELECT
+         (SELECT count(*) FROM pragma_table_info('consultations')
+          WHERE name = 'priority') AS priorityColumn,
+         (SELECT count(*) FROM pragma_index_list('consultations')
+          WHERE name = 'consultations_priority_status_created_idx') AS priorityIndex,
+         (SELECT count(*) FROM sqlite_master
+          WHERE type = 'table' AND name = 'membership_usage_counters') AS usageTable,
+         (SELECT count(*) FROM pragma_index_list('membership_usage_counters')
+          WHERE name = 'membership_usage_user_period_metric_uidx') AS usageIndex`,
+    )
+    .get();
+  assert.deepEqual({ ...membershipEntitlements }, {
+    priorityColumn: 1,
+    priorityIndex: 1,
+    usageTable: 1,
+    usageIndex: 1,
+  });
+
   console.log(
-    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, consultation threads, member alerts, and AI evaluation evidence.",
+    "D1 migrations validated: listings, Trust scores, authorized connectors, payments, operations health, notifications, audit queries, backup evidence, consultation threads, member alerts, AI evaluation evidence, and membership entitlements.",
   );
 } finally {
   database.close();
