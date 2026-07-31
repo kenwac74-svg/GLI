@@ -69,6 +69,10 @@ OPENAI_MODEL=gpt-5.6-sol
   30-day membership activation without collecting card data
 - `db/payment-webhooks.ts` owns verified, idempotent payment completion,
   expiry, refund, membership-access, and audit transitions
+- `db/operations-health.ts` owns operational alerts, health scans, retry
+  backoff, and dead-letter isolation
+- `/admin` exposes source-approval expiry, collection failures, payment
+  failures, delayed consultations, data freshness, and retry status
 - `drizzle.config.ts` supports local migration generation when needed
 
 ## Workspace Auth Headers
@@ -179,6 +183,19 @@ activate duplicate memberships. Amount or currency mismatches fail closed.
 Refund events end the corresponding cash membership and preserve the audit
 trail. No public webhook route is enabled until the provider-specific verifier
 and secret are configured.
+
+## Operations Health
+
+The administrator health scan reconciles source-approval expiry, recent
+ingestion failures, failed payment events, delayed consultations, and stale
+active listings into a deduplicated alert ledger. Operators can acknowledge or
+resolve alerts without deleting their history.
+
+Transient licensed-feed failures enter a separate retry queue with bounded
+exponential backoff. Jobs that reach their attempt limit move to the
+dead-letter state for human review. Source-policy denials are never retried.
+The public web process does not execute external retries; a separately
+scheduled worker must call the retry executor.
 
 ## Learn More
 
