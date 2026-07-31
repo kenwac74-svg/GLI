@@ -7,6 +7,7 @@ import {
   LockKeyhole,
   MessagesSquare,
   RefreshCw,
+  ScrollText,
   Settings2,
   Shield,
 } from "lucide-react";
@@ -80,7 +81,13 @@ export default async function AdminPage() {
             <h1>검증 운영센터</h1>
             <p>승인된 자료를 수집하고 검토가 끝난 자산만 사용자 검색에 게시합니다.</p>
           </div>
-          <span className="environment-badge">WEB2 MVP</span>
+          <div className="admin-head-actions">
+            <Link href="/admin/audit">
+              <ScrollText size={16} />
+              감사 기록
+            </Link>
+            <span className="environment-badge">WEB2 MVP</span>
+          </div>
         </div>
 
         <div className="ops-grid">
@@ -456,3 +463,4 @@ function operationalAlertStatusLabel(status: string): string {
   if (status === "RESOLVED") return "해결";
   return status;
 }
+
