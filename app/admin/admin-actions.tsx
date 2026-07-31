@@ -1,8 +1,11 @@
 "use client";
 
 import {
+  CalendarCheck2,
   Check,
+  CircleX,
   LoaderCircle,
+  PhoneCall,
   PauseCircle,
   Play,
   RefreshCw,
@@ -143,6 +146,102 @@ export function ListingReviewActions({
           <PauseCircle size={15} />
         )}
         보류
+      </button>
+      {message ? <small>{message}</small> : null}
+    </div>
+  );
+}
+
+type ConsultationStatus =
+  | "RECEIVED"
+  | "CONTACTED"
+  | "SCHEDULED"
+  | "COMPLETED"
+  | "CANCELLED";
+
+export function ConsultationAdminActions({
+  consultationId,
+  status,
+}: {
+  consultationId: string;
+  status: ConsultationStatus;
+}) {
+  const router = useRouter();
+  const [pending, setPending] = useState<ConsultationStatus | null>(null);
+  const [message, setMessage] = useState("");
+
+  async function update(nextStatus: ConsultationStatus) {
+    setPending(nextStatus);
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/consultations", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ consultationId, status: nextStatus }),
+      });
+      const payload = (await response.json()) as {
+        result?: { status: string };
+        error?: string;
+      };
+      if (!response.ok || !payload.result) {
+        throw new Error(payload.error ?? "상담 상태를 변경할 수 없습니다.");
+      }
+      setMessage("변경 완료");
+      router.refresh();
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "상담 상태를 변경할 수 없습니다.",
+      );
+    } finally {
+      setPending(null);
+    }
+  }
+
+  if (status === "COMPLETED" || status === "CANCELLED") {
+    return <span className="consultation-final">처리 종료</span>;
+  }
+
+  const next =
+    status === "RECEIVED"
+      ? { status: "CONTACTED" as const, label: "담당 시작", icon: PhoneCall }
+      : status === "CONTACTED"
+        ? {
+            status: "SCHEDULED" as const,
+            label: "일정 확정",
+            icon: CalendarCheck2,
+          }
+        : { status: "COMPLETED" as const, label: "상담 완료", icon: Check };
+  const NextIcon = next.icon;
+
+  return (
+    <div className="consultation-admin-actions">
+      <button
+        type="button"
+        onClick={() => update(next.status)}
+        disabled={pending !== null}
+      >
+        {pending === next.status ? (
+          <LoaderCircle className="spin" size={15} />
+        ) : (
+          <NextIcon size={15} />
+        )}
+        {next.label}
+      </button>
+      <button
+        className="is-cancel"
+        type="button"
+        title="상담 요청 취소 처리"
+        aria-label="상담 요청 취소 처리"
+        onClick={() => update("CANCELLED")}
+        disabled={pending !== null}
+      >
+        {pending === "CANCELLED" ? (
+          <LoaderCircle className="spin" size={15} />
+        ) : (
+          <CircleX size={15} />
+        )}
       </button>
       {message ? <small>{message}</small> : null}
     </div>
