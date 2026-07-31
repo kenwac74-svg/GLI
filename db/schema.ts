@@ -240,6 +240,34 @@ export const memberships = sqliteTable(
   (table) => [index("memberships_user_status_idx").on(table.userId, table.status)],
 );
 
+export const cashCheckoutSessions = sqliteTable(
+  "cash_checkout_sessions",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    planId: text("plan_id").notNull(),
+    amountMinor: integer("amount_minor").notNull(),
+    currency: text("currency").notNull(),
+    provider: text("provider").notNull(),
+    providerSessionId: text("provider_session_id"),
+    status: text("status").notNull(),
+    membershipId: text("membership_id").references(() => memberships.id),
+    expiresAt: integer("expires_at").notNull(),
+    completedAt: integer("completed_at"),
+    createdAt: integer("created_at").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    index("cash_checkout_user_status_idx").on(
+      table.userId,
+      table.status,
+      table.createdAt,
+    ),
+  ],
+);
+
 export const auditLogs = sqliteTable(
   "audit_logs",
   {
