@@ -850,6 +850,84 @@ test("built worker imports an authorized partner file into the review queue", as
       "manual-upload",
     );
 
+    const csvRecord = {
+      ...feed.listings[0],
+      externalId: "partner-e2e-302",
+      price: 810,
+      areaSqm: 61,
+      title: "Licensed CSV Tonle Bassac residence",
+      sourceUrl:
+        "https://feeds.partner.example/listings/partner-e2e-302",
+    };
+    const csvText = [
+      LICENSED_JSON_REQUESTED_FIELDS.join(","),
+      LICENSED_JSON_REQUESTED_FIELDS.map((field) =>
+        String(csvRecord[field] ?? ""),
+      ).join(","),
+    ].join("\r\n");
+    const csvImportResponse = await dispatch(
+      worker,
+      database,
+      "/api/admin/ingestion/import",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        requestId: "e2e.partner-csv-import",
+        body: {
+          sourceSlug: "realestate-kh",
+          feedFormat: "csv",
+          feedText: csvText,
+        },
+        runtimeEnv: {
+          FILES: {
+            async put(...args) {
+              rawWrites.push(args);
+            },
+          },
+        },
+      },
+    );
+    assert.equal(csvImportResponse.status, 200);
+    const csvResult = (await csvImportResponse.json()).result;
+    assert.equal(csvResult.acceptedCount, 1);
+    assert.equal(csvResult.rejectedCount, 0);
+    assert.match(rawWrites[1][0], /\.csv$/);
+    assert.equal(rawWrites[1][2].customMetadata.feedFormat, "csv");
+
+    const privateCsvText = csvText
+      .replace("partner-e2e-302", "partner-e2e-303")
+      .replace("price,810", "price,820")
+      .replace(
+        "Structured partner material awaiting GLI verification and publication.",
+        "Call +855 12 345 678 for private contact details.",
+      );
+    const privateImportResponse = await dispatch(
+      worker,
+      database,
+      "/api/admin/ingestion/import",
+      {
+        method: "POST",
+        email: ADMIN_EMAIL,
+        requestId: "e2e.partner-csv-private-rejection",
+        body: {
+          sourceSlug: "realestate-kh",
+          feedFormat: "csv",
+          feedText: privateCsvText,
+        },
+        runtimeEnv: {
+          FILES: {
+            async put(...args) {
+              rawWrites.push(args);
+            },
+          },
+        },
+      },
+    );
+    assert.equal(privateImportResponse.status, 200);
+    const privateResult = (await privateImportResponse.json()).result;
+    assert.equal(privateResult.acceptedCount, 0);
+    assert.equal(privateResult.rejectedCount, 1);
+
     const importedListing = sqlite
       .prepare(`
         SELECT title, status
@@ -892,8 +970,9 @@ test("built worker imports an authorized partner file into the review queue", as
     );
     assert.equal(blockedResponse.status, 409);
     assert.equal((await blockedResponse.json()).code, "NOT_APPROVED");
-    assert.equal(rawWrites.length, 1);
+    assert.equal(rawWrites.length, 3);
   } finally {
     sqlite.close();
   }
 });
+
