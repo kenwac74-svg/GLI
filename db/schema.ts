@@ -381,5 +381,18 @@ export const auditLogs = sqliteTable(
     requestId: text("request_id"),
     createdAt: integer("created_at").notNull(),
   },
-  (table) => [index("audit_logs_resource_idx").on(table.resourceType, table.resourceId, table.createdAt)],
+  (table) => [
+    index("audit_logs_resource_idx").on(
+      table.resourceType,
+      table.resourceId,
+      table.createdAt,
+    ),
+    index("audit_logs_created_idx").on(table.createdAt, table.id),
+    index("audit_logs_action_created_idx").on(
+      table.action,
+      table.createdAt,
+      table.id,
+    ),
+  ],
 );
+
