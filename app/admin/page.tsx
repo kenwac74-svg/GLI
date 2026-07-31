@@ -125,13 +125,18 @@ export default async function AdminPage() {
               <article key={source.id}>
                 <div>
                   <strong>{source.nameInternal}</strong>
-                  <span>{source.country}</span>
+                  <span>
+                    {source.country} · {source.connectorKind}
+                  </span>
                 </div>
-                <span
-                  className={`source-status status-${source.approvalStatus.toLowerCase()}`}
-                >
-                  {source.approvalStatus}
-                </span>
+                <aside className="source-state-stack">
+                  <span
+                    className={`source-status status-${source.approvalStatus.toLowerCase()}`}
+                  >
+                    {source.approvalStatus}
+                  </span>
+                  <small>{connectorStatusLabel(source.connectorStatus)}</small>
+                </aside>
               </article>
             ))}
           </div>
@@ -318,5 +323,12 @@ function consultationStatusLabel(status: string): string {
   if (status === "SCHEDULED") return "일정 확정";
   if (status === "COMPLETED") return "완료";
   if (status === "CANCELLED") return "취소";
+  return status;
+}
+
+function connectorStatusLabel(status: string): string {
+  if (status === "READY") return "실행 준비";
+  if (status === "APPROVAL_REQUIRED") return "이용 승인 필요";
+  if (status === "CONFIGURATION_REQUIRED") return "연결 설정 필요";
   return status;
 }
