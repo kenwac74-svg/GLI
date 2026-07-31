@@ -21,7 +21,7 @@ Updated: 2026-07-31
 | Conversational property search | VERIFIED | `/api/search`, intent extraction, district-aware filtering, validated multi-turn criteria context, deterministic fallback and rendered-worker tests | None for rules mode |
 | Grounded LLM advisor | TECHNICALLY READY | `lib/ai-search.ts`, five-case evaluation suite, D1 quality-evidence ledger, 30-day readiness gate, grounded citation tests and unsafe-output fallback | Hosted OpenAI key, selected model evaluation and human quality approval |
 | Trust Score | VERIFIED | deterministic versioned rules, evidence dimensions, non-guarantee language, Trust tests | Public wording and legal disclaimer approval before pilot |
-| Trust review and publication | VERIFIED | ingestion review queue, administrator review API, publication audit trail and tests | Named GLI analyst/verifier for live operation |
+| Trust review and publication | VERIFIED | per-listing due-diligence page, mandatory four-part checklist, bounded analyst note, immutable decision ledger, publication audit trail and built-worker tests | Named GLI analyst/verifier for live operation |
 | Full Trust Report access | VERIFIED | separate private report API/page, Investor/Private server entitlement, Explore paywall, evidence-only content and print/PDF UX | Legal wording approval and live analyst-approved reports |
 | Account and MY GLI | VERIFIED | authenticated user creation, plan-enforced favorites, prioritized consultations, member-scoped in-app alerts, server-derived entitlement usage dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
 | Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, server-enforced favorite and deep-AI limits, consultation priority, Investor/Private report entitlement, demo no-charge activation | None for the product model |
@@ -50,7 +50,7 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 9. A non-admin cannot export audit history.
 10. An administrator can record backup/restore evidence and export redacted audit CSV.
 11. The administrator readiness page renders from the migrated database.
-12. An authorized partner JSON file is stored as an exact R2 raw snapshot,
+12. An authorized partner JSON or CSV file is stored as an exact R2 raw snapshot,
     normalized, deduplicated, and placed in `REVIEW_PENDING`; suspension blocks
     the next import before another raw object is written.
 13. An administrator can run the five-case rules evaluation through the built
@@ -60,9 +60,12 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
     plan entitlement, and a disabled model runtime does not consume usage.
 15. MY GLI returns and renders the server-derived favorite, deep-AI,
     consultation-priority and Trust Report entitlement state.
+16. The per-listing due-diligence page renders source and Trust evidence,
+    incomplete publication evidence is rejected, and a complete analyst decision
+    is written to the immutable review ledger before the listing becomes active.
 
 The full `npm run check` gate currently covers lint, migration validation,
-production build, and 105 automated tests.
+production build, and 109 automated tests.
 
 ## Pilot blockers
 
@@ -83,3 +86,4 @@ The pilot remains blocked until all of the following are recorded:
 8. Security, privacy, and pilot launch approvals are signed by their named owners.
 
 The `/admin/readiness` page is the operational source of truth for these gates.
+
