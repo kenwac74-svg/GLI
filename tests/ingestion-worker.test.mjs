@@ -4,7 +4,11 @@ import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 
 import { LICENSED_JSON_REQUESTED_FIELDS } from "../ingestion/licensed-json-feed.ts";
-import { executeLicensedFeedJob } from "../workers/ingestion/index.ts";
+import {
+  executeLicensedFeedJob,
+  executeLicensedFeedJobWithRetry,
+  executeNextLicensedFeedRetry,
+} from "../workers/ingestion/index.ts";
 
 const NOW = new Date("2026-07-31T02:30:00.000Z");
 
@@ -16,6 +20,8 @@ async function createDatabase() {
     "drizzle/0002_admin_ingestion_pipeline.sql",
     "drizzle/0003_cash_checkout_sessions.sql",
     "drizzle/0004_authorized_source_connectors.sql",
+    "drizzle/0005_payment_webhook_ledger.sql",
+    "drizzle/0006_operations_health_and_retry.sql",
   ]) {
     const sql = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     for (const statement of sql
@@ -193,6 +199,88 @@ test("worker records connector failures without creating or publishing a listing
           "SELECT count(*) AS count FROM listings WHERE title = 'Licensed Daun Penh partner residence'",
         )
         .get().count,
+      0,
+    );
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("worker queues transient failures and completes the next retry", async () => {
+  const { database, sqlite } = await createDatabase();
+  let upstreamAvailable = false;
+  try {
+    const dependencies = {
+      database,
+      rawStore: { async put() {} },
+      fetchImpl: async () =>
+        upstreamAvailable
+          ? feedResponse()
+          : new Response("upstream unavailable", { status: 503 }),
+      now: () => NOW,
+    };
+
+    await assert.rejects(
+      executeLicensedFeedJobWithRetry(
+        { sourceSlug: "approved-fixture", actorUserId: "usr_admin" },
+        dependencies,
+      ),
+      /HTTP 503/,
+    );
+
+    const queued = sqlite
+      .prepare(
+        "SELECT id, status, attempt_count AS attemptCount FROM retry_jobs",
+      )
+      .get();
+    assert.equal(queued.status, "PENDING");
+    assert.equal(queued.attemptCount, 0);
+
+    upstreamAvailable = true;
+    const completed = await executeNextLicensedFeedRetry(
+      dependencies,
+      NOW.getTime() + 60_000,
+    );
+    assert.equal(completed?.status, "SUCCEEDED");
+    assert.equal(completed?.attemptCount, 1);
+    assert.equal(
+      sqlite
+        .prepare(
+          "SELECT status FROM operational_alerts WHERE resource_type = 'RETRY_JOB'",
+        )
+        .get().status,
+      "RESOLVED",
+    );
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("worker never retries a source-policy denial", async () => {
+  const { database, sqlite } = await createDatabase();
+  try {
+    sqlite
+      .prepare(
+        `UPDATE sources
+         SET allowed_hosts_json = ?
+         WHERE slug = 'approved-fixture'`,
+      )
+      .run(JSON.stringify(["different.partner.example"]));
+
+    await assert.rejects(
+      executeLicensedFeedJobWithRetry(
+        { sourceSlug: "approved-fixture", actorUserId: "usr_admin" },
+        {
+          database,
+          rawStore: { async put() {} },
+          fetchImpl: async () => feedResponse(),
+          now: () => NOW,
+        },
+      ),
+      /allowed|host|policy/i,
+    );
+    assert.equal(
+      sqlite.prepare("SELECT count(*) AS count FROM retry_jobs").get().count,
       0,
     );
   } finally {
