@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
+import {
+  claimAiSearch,
+  getMembershipAccess,
+  releaseAiSearch,
+  type MembershipAccess,
+} from "../../../db/membership-entitlements.ts";
 import { listAssets } from "../../../lib/assets-data";
 import {
   createSafetyIdentifier,
   runAdvisorSearch,
 } from "../../../lib/ai-search";
 import { parseSearchContext } from "../../../lib/search";
+import { getCurrentUser } from "../../auth";
+import { ensureMemberContext } from "../../../lib/member-data";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -51,15 +59,83 @@ export async function POST(request: Request) {
   }
 
   const source = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
+  const currentUser = await getCurrentUser();
+  const memberContext = currentUser
+    ? await ensureMemberContext(currentUser)
+    : null;
+  const now = Date.now();
+  let access: MembershipAccess | null = memberContext
+    ? await getMembershipAccess(
+        memberContext.database,
+        memberContext.workflowUser.id,
+        now,
+      )
+    : null;
+  const runtimeAvailable =
+    process.env.LLM_PROVIDER === "openai" && Boolean(process.env.OPENAI_API_KEY);
+  const canUseDeepSearch =
+    access !== null &&
+    access.aiMonthlyLimit !== 0 &&
+    (access.aiRemaining === null || access.aiRemaining > 0);
+  let usageClaimed = false;
+
+  if (runtimeAvailable && canUseDeepSearch && memberContext) {
+    access = await claimAiSearch(
+      memberContext.database,
+      memberContext.workflowUser.id,
+      now,
+    );
+    usageClaimed = access.aiMonthlyLimit !== null;
+  }
+
   const safetyIdentifier = createSafetyIdentifier(
     request.headers.get("cf-connecting-ip") ??
       request.headers.get("x-forwarded-for"),
   );
-  return NextResponse.json({
-    ...(await runAdvisorSearch(query, source.assets, {
+  const result = await runAdvisorSearch(query, source.assets, {
       safetyIdentifier,
       context,
-    })),
+      provider:
+        runtimeAvailable && canUseDeepSearch ? "openai" : "disabled",
+    });
+
+  if (
+    usageClaimed &&
+    result.advisor.mode !== "openai" &&
+    memberContext &&
+    access
+  ) {
+    await releaseAiSearch(
+      memberContext.database,
+      memberContext.workflowUser.id,
+      access.periodKey,
+      Date.now(),
+    );
+    access = {
+      ...access,
+      aiUsed: Math.max(0, access.aiUsed - 1),
+      aiRemaining:
+        access.aiMonthlyLimit === null
+          ? null
+          : Math.min(
+              access.aiMonthlyLimit,
+              (access.aiRemaining ?? 0) + 1,
+            ),
+    };
+  }
+
+  return NextResponse.json({
+    ...result,
     dataMode: source.mode,
+    membershipAccess: {
+      authenticated: Boolean(memberContext),
+      planId: access?.planId ?? null,
+      runtimeAvailable,
+      deepSearchEligible: canUseDeepSearch,
+      monthlyLimit: access ? access.aiMonthlyLimit : 0,
+      used: access?.aiUsed ?? 0,
+      remaining: access ? access.aiRemaining : 0,
+      deliveredMode: result.advisor.mode,
+    },
   });
 }

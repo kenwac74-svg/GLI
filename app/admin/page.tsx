@@ -260,6 +260,11 @@ export default async function AdminPage() {
                       >
                         {consultationStatusLabel(consultation.status)}
                       </span>
+                      <span
+                        className={`consultation-priority priority-${consultation.priority.toLowerCase()}`}
+                      >
+                        {consultationPriorityLabel(consultation.priority)}
+                      </span>
                       <strong>
                         {consultation.listingTitle ?? "일반 투자 상담"}
                       </strong>
@@ -459,6 +464,12 @@ function consultationStatusLabel(status: string): string {
   if (status === "COMPLETED") return "완료";
   if (status === "CANCELLED") return "취소";
   return status;
+}
+
+function consultationPriorityLabel(priority: string): string {
+  if (priority === "PRIVATE") return "전담 상담";
+  if (priority === "PRIORITY") return "우선 상담";
+  return "일반 상담";
 }
 
 function connectorStatusLabel(status: string): string {

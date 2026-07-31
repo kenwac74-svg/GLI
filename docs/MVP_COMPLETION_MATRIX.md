@@ -14,7 +14,7 @@ Updated: 2026-07-31
 
 | Area | Current status | Authoritative evidence | Remaining condition |
 |---|---|---|---|
-| Normalized property model | VERIFIED | D1 migrations `0000`-`0012`, `db/schema.ts`, normalization and repository tests | Expand mappings when a licensed source contract is received |
+| Normalized property model | VERIFIED | D1 migrations `0000`-`0013`, `db/schema.ts`, normalization and repository tests | Expand mappings when a licensed source contract is received |
 | Provenance and immutable source snapshots | VERIFIED | `ingestion/feed-worker.ts`, licensed network and manual-import connectors, R2 snapshot contract, listing versions, audit records, ingestion tests | Production R2 binding and retention approval |
 | Source authorization boundary | VERIFIED | source policy registry, allowlisted HTTPS hosts and fields, expiry/suspension checks, admin source and partner-file import UI, built-worker tests | None for the boundary itself |
 | Live external Cambodia sources | EXTERNAL GATE | Readiness gate and PM tasks GLI-002, GLI-005, GLI-010, GLI-013 remain open | Written permission or partner feed for each production source, credentials, permitted fields |
@@ -23,8 +23,8 @@ Updated: 2026-07-31
 | Trust Score | VERIFIED | deterministic versioned rules, evidence dimensions, non-guarantee language, Trust tests | Public wording and legal disclaimer approval before pilot |
 | Trust review and publication | VERIFIED | ingestion review queue, administrator review API, publication audit trail and tests | Named GLI analyst/verifier for live operation |
 | Full Trust Report access | VERIFIED | separate private report API/page, Investor/Private server entitlement, Explore paywall, evidence-only content and print/PDF UX | Legal wording approval and live analyst-approved reports |
-| Account and MY GLI | VERIFIED | authenticated user creation, favorites, consultations, member-scoped in-app alerts, membership dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
-| Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, Investor/Private report entitlement, demo no-charge activation | None for the product model |
+| Account and MY GLI | VERIFIED | authenticated user creation, plan-enforced favorites, prioritized consultations, member-scoped in-app alerts, membership dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
+| Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, server-enforced favorite and deep-AI limits, consultation priority, Investor/Private report entitlement, demo no-charge activation | None for the product model |
 | Real cash payment | TECHNICALLY READY | provider-neutral checkout adapter, signed webhook ledger, idempotency, refund access termination and tests | Provider selection, merchant account, credentials, refund policy, certification |
 | Consultation workflow | VERIFIED | member intake, member-scoped case page, member/operator messages, status history, in-app reply/status alerts, assignment, admin operations and built-worker tests | Named Cambodia consultation operator and SLA |
 | Administrator control center | VERIFIED | sources, authorized partner-file import, ingestion/review, AI quality rehearsal/evidence, consultation operations, alerts, audit center, CSV export and readiness center | Production administrators and least-privilege assignment |
@@ -56,9 +56,11 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 13. An administrator can run the five-case rules evaluation through the built
     Worker, persist its summary and case checks, and render the evidence in the
     readiness center.
+14. Authenticated free search remains rules-only, paid search exposes the correct
+    plan entitlement, and a disabled model runtime does not consume usage.
 
 The full `npm run check` gate currently covers lint, migration validation,
-production build, and 103 automated tests.
+production build, and 105 automated tests.
 
 ## Pilot blockers
 

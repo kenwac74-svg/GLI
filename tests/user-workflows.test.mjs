@@ -11,6 +11,11 @@ import {
   normalizeEmail,
   removeFavorite,
 } from "../db/user-workflows.ts";
+import {
+  claimAiSearch,
+  getMembershipAccess,
+  releaseAiSearch,
+} from "../db/membership-entitlements.ts";
 
 const NOW = Date.parse("2026-07-30T00:00:00.000Z");
 const UUIDS = {
@@ -49,6 +54,7 @@ class FakeD1 {
     this.favorites = [];
     this.consultations = [];
     this.memberships = [];
+    this.membershipUsageCounters = [];
     this.memberNotifications = [];
     this.auditLogs = [];
     this.statements = [];
@@ -95,6 +101,7 @@ class FakeStatement {
     const sql = this.sql;
     const v = this.values;
 
+    let changes = 1;
     if (sql.startsWith("INSERT INTO users")) {
       db.users.push({
         id: v[0],
@@ -132,10 +139,45 @@ class FakeStatement {
         listingId: v[2],
         requestText: v[3],
         preferredAt: v[4],
+        priority: v[5],
         status: "RECEIVED",
-        createdAt: v[5],
-        updatedAt: v[6],
+        createdAt: v[6],
+        updatedAt: v[7],
       });
+    } else if (sql.startsWith("INSERT INTO membership_usage_counters")) {
+      const existing = db.membershipUsageCounters.find(
+        (row) =>
+          row.userId === v[0] &&
+          row.periodKey === v[1] &&
+          row.metric === v[2],
+      );
+      if (!existing) {
+        db.membershipUsageCounters.push({
+          userId: v[0],
+          periodKey: v[1],
+          metric: v[2],
+          usedCount: 1,
+          updatedAt: v[3],
+        });
+      } else if (existing.usedCount < v[4]) {
+        existing.usedCount += 1;
+        existing.updatedAt = v[3];
+      } else {
+        changes = 0;
+      }
+    } else if (sql.startsWith("UPDATE membership_usage_counters")) {
+      const existing = db.membershipUsageCounters.find(
+        (row) =>
+          row.userId === v[1] &&
+          row.periodKey === v[2] &&
+          row.metric === v[3],
+      );
+      if (existing) {
+        existing.usedCount = Math.max(0, existing.usedCount - 1);
+        existing.updatedAt = v[0];
+      } else {
+        changes = 0;
+      }
     } else if (sql.startsWith("UPDATE memberships")) {
       for (const membership of db.memberships) {
         if (
@@ -176,7 +218,7 @@ class FakeStatement {
       throw new Error(`Unhandled write SQL: ${sql}`);
     }
 
-    return { success: true, meta: { changes: 1 } };
+    return { success: true, meta: { changes } };
   }
 
   #read() {
@@ -201,6 +243,13 @@ class FakeStatement {
       return db.favorites
         .filter((row) => row.userId === v[0] && row.listingId === v[1])
         .map((row) => ({ userId: row.userId }));
+    }
+    if (sql.includes("count(*) AS count") && sql.includes("FROM favorites")) {
+      return [
+        {
+          count: db.favorites.filter((row) => row.userId === v[0]).length,
+        },
+      ];
     }
     if (sql.includes("FROM favorites f")) {
       return db.favorites
@@ -246,6 +295,7 @@ class FakeStatement {
             requestText: row.requestText,
             preferredAt: row.preferredAt,
             status: row.status,
+            priority: row.priority ?? "STANDARD",
             createdAt: row.createdAt,
             updatedAt: row.updatedAt,
           };
@@ -272,6 +322,16 @@ class FakeStatement {
           createdAt: row.createdAt,
           updatedAt: row.updatedAt,
         }));
+    }
+    if (sql.includes("FROM membership_usage_counters")) {
+      return db.membershipUsageCounters
+        .filter(
+          (row) =>
+            row.userId === v[0] &&
+            row.periodKey === v[1] &&
+            row.metric === v[2],
+        )
+        .map((row) => ({ count: row.usedCount }));
     }
     if (
       sql.includes("FROM member_notifications") &&
@@ -433,6 +493,7 @@ test("creates listing and general consultations after validating input", async (
     requestText: "현지 실사 상담을 요청합니다.",
     preferredAt,
     status: "RECEIVED",
+    priority: "STANDARD",
     createdAt: NOW + 20,
     updatedAt: NOW + 20,
   });
@@ -445,6 +506,87 @@ test("creates listing and general consultations after validating input", async (
       requestText: "짧음",
     }),
     /between 5 and 2000/,
+  );
+});
+
+test("enforces the free favorite limit and assigns paid consultation priority", async () => {
+  const database = new FakeD1();
+  const user = await createUser(database);
+  for (let id = 3; id <= 7; id += 1) {
+    database.listings.push({
+      id,
+      publicId: `GLI-KH-00${id}`,
+      title: `Listing ${id}`,
+      status: "ACTIVE",
+    });
+  }
+  database.favorites.push(
+    ...[1, 3, 4, 5, 6].map((listingId) => ({
+      userId: user.id,
+      listingId,
+      createdAt: NOW,
+    })),
+  );
+
+  await assert.rejects(
+    addFavorite(database, {
+      userId: user.id,
+      listingPublicId: "GLI-KH-007",
+    }),
+    /한도 5개/,
+  );
+
+  await activateDemoCashMembership(
+    database,
+    { userId: user.id, planId: "investor" },
+    {
+      now: () => NOW + 100,
+      randomUUID: () => UUIDS.membership,
+    },
+  );
+  const consultation = await createConsultation(
+    database,
+    {
+      userId: user.id,
+      requestText: "우선 상담 권한을 확인합니다.",
+    },
+    {
+      now: () => NOW + 200,
+      randomUUID: () => UUIDS.consultation,
+    },
+  );
+  assert.equal(consultation.priority, "PRIORITY");
+});
+
+test("meters Explore deep AI searches and restores a failed model attempt", async () => {
+  const database = new FakeD1();
+  const user = await createUser(database);
+  await activateDemoCashMembership(
+    database,
+    { userId: user.id, planId: "explore" },
+    {
+      now: () => NOW,
+      randomUUID: () => UUIDS.membership,
+    },
+  );
+
+  const initial = await getMembershipAccess(database, user.id, NOW + 1);
+  assert.equal(initial.aiMonthlyLimit, 60);
+  assert.equal(initial.aiUsed, 0);
+
+  const claimed = await claimAiSearch(database, user.id, NOW + 2);
+  assert.equal(claimed.aiUsed, 1);
+  assert.equal(claimed.aiRemaining, 59);
+
+  await releaseAiSearch(database, user.id, claimed.periodKey, NOW + 3);
+  const restored = await getMembershipAccess(database, user.id, NOW + 4);
+  assert.equal(restored.aiUsed, 0);
+  assert.equal(restored.aiRemaining, 60);
+
+  database.membershipUsageCounters[0].usedCount = 60;
+  await assert.rejects(
+    claimAiSearch(database, user.id, NOW + 5),
+    /60회를 모두 사용/,
   );
 });
 
@@ -536,6 +678,7 @@ test("returns favorites, consultations, and the current active membership dashbo
   assert.equal(dashboard.favorites[0].trustScore, 81);
   assert.equal(dashboard.consultations.length, 1);
   assert.equal(dashboard.consultations[0].status, "RECEIVED");
+  assert.equal(dashboard.consultations[0].priority, "STANDARD");
   assert.equal(dashboard.activeMembership.planId, "private");
   assert.equal(dashboard.activeMembership.provider, "DEMO_CASH");
   assert.deepEqual(dashboard.notifications, []);

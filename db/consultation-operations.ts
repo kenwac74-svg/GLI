@@ -3,6 +3,7 @@ import type {
   D1StatementLike,
 } from "./user-workflows.ts";
 import { memberNotificationInsertStatement } from "./member-notifications.ts";
+import type { ConsultationPriority } from "../lib/membership-plans.ts";
 
 export const CONSULTATION_STATUSES = [
   "RECEIVED",
@@ -27,6 +28,7 @@ export type OperationsConsultation = {
   assigneeEmail: string | null;
   assigneeDisplayName: string | null;
   status: ConsultationStatus;
+  priority: ConsultationPriority;
   createdAt: number;
   updatedAt: number;
 };
@@ -74,6 +76,7 @@ const CONSULTATION_SELECT = `
     assignee.email AS assigneeEmail,
     assignee.display_name AS assigneeDisplayName,
     c.status,
+    c.priority,
     c.created_at AS createdAt,
     c.updated_at AS updatedAt
   FROM consultations c
@@ -89,7 +92,18 @@ export async function listConsultations(
   const result = await database
     .prepare(`
       ${CONSULTATION_SELECT}
-      ORDER BY c.created_at DESC, c.id DESC
+      ORDER BY
+        CASE
+          WHEN c.status IN ('COMPLETED', 'CANCELLED') THEN 1
+          ELSE 0
+        END,
+        CASE c.priority
+          WHEN 'PRIVATE' THEN 0
+          WHEN 'PRIORITY' THEN 1
+          ELSE 2
+        END,
+        c.created_at ASC,
+        c.id ASC
     `)
     .all<OperationsConsultation>();
 
@@ -270,7 +284,15 @@ function validateConsultationRow(
   return {
     ...row,
     status: normalizeStatus(row.status),
+    priority: normalizePriority(row.priority),
   };
+}
+
+function normalizePriority(value: unknown): ConsultationPriority {
+  if (value === "PRIVATE" || value === "PRIORITY" || value === "STANDARD") {
+    return value;
+  }
+  return "STANDARD";
 }
 
 function normalizeStatus(value: unknown): ConsultationStatus {

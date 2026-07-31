@@ -221,10 +221,18 @@ export const consultations = sqliteTable(
     preferredAt: integer("preferred_at"),
     assigneeUserId: text("assignee_user_id"),
     status: text("status").notNull().default("RECEIVED"),
+    priority: text("priority").notNull().default("STANDARD"),
     createdAt: integer("created_at").notNull(),
     updatedAt: integer("updated_at").notNull(),
   },
-  (table) => [index("consultations_user_status_idx").on(table.userId, table.status)],
+  (table) => [
+    index("consultations_user_status_idx").on(table.userId, table.status),
+    index("consultations_priority_status_created_idx").on(
+      table.priority,
+      table.status,
+      table.createdAt,
+    ),
+  ],
 );
 
 export const consultationEvents = sqliteTable(
@@ -295,6 +303,26 @@ export const memberships = sqliteTable(
     updatedAt: integer("updated_at").notNull(),
   },
   (table) => [index("memberships_user_status_idx").on(table.userId, table.status)],
+);
+
+export const membershipUsageCounters = sqliteTable(
+  "membership_usage_counters",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    periodKey: text("period_key").notNull(),
+    metric: text("metric").notNull(),
+    usedCount: integer("used_count").notNull().default(0),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("membership_usage_user_period_metric_uidx").on(
+      table.userId,
+      table.periodKey,
+      table.metric,
+    ),
+  ],
 );
 
 export const cashCheckoutSessions = sqliteTable(

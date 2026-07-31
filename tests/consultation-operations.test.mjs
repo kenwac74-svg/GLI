@@ -246,6 +246,7 @@ test("lists consultations with member, listing, assignee, and timing data", asyn
     assigneeEmail: null,
     assigneeDisplayName: null,
     status: "RECEIVED",
+    priority: "STANDARD",
     createdAt: NOW - 1_000,
     updatedAt: NOW - 1_000,
   });

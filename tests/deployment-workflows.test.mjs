@@ -181,6 +181,23 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.deepEqual(initialDashboard.consultations, []);
     assert.equal(initialDashboard.activeMembership, null);
 
+    const freeSearchResponse = await dispatch(
+      worker,
+      database,
+      "/api/search",
+      {
+        method: "POST",
+        email: MEMBER_EMAIL,
+        body: { query: "프놈펜에 임대수익용 콘도를 찾아줘" },
+      },
+    );
+    assert.equal(freeSearchResponse.status, 200);
+    const freeSearch = await freeSearchResponse.json();
+    assert.equal(freeSearch.membershipAccess.authenticated, true);
+    assert.equal(freeSearch.membershipAccess.planId, null);
+    assert.equal(freeSearch.membershipAccess.monthlyLimit, 0);
+    assert.equal(freeSearch.membershipAccess.deliveredMode, "rules");
+
     const lockedReportResponse = await dispatch(
       worker,
       database,
@@ -243,6 +260,7 @@ test("built worker completes the member discovery and cash membership journey", 
     const consultation = await consultationResponse.json();
     assert.equal(consultation.listingPublicId, "GLI-KH-004");
     assert.equal(consultation.status, "RECEIVED");
+    assert.equal(consultation.priority, "STANDARD");
 
     const memberMessageResponse = await dispatch(
       worker,
@@ -372,6 +390,30 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(confirmation.checkout.status, "COMPLETED");
     assert.equal(confirmation.membership.planId, "investor");
     assert.equal(confirmation.membership.status, "ACTIVE");
+
+    const investorSearchResponse = await dispatch(
+      worker,
+      database,
+      "/api/search",
+      {
+        method: "POST",
+        email: MEMBER_EMAIL,
+        body: { query: "BKK1 투자 후보를 다시 비교해줘" },
+      },
+    );
+    assert.equal(investorSearchResponse.status, 200);
+    const investorSearch = await investorSearchResponse.json();
+    assert.equal(investorSearch.membershipAccess.planId, "investor");
+    assert.equal(investorSearch.membershipAccess.monthlyLimit, null);
+    assert.equal(investorSearch.membershipAccess.deliveredMode, "rules");
+    assert.equal(
+      sqlite
+        .prepare(
+          "SELECT count(*) AS count FROM membership_usage_counters WHERE user_id = ?",
+        )
+        .get(initialDashboard.user.id).count,
+      0,
+    );
 
     const reportResponse = await dispatch(
       worker,
