@@ -70,7 +70,7 @@ OPENAI_MODEL=gpt-5.6-sol
 - `/admin/readiness` provides evidence-based pilot release gates and
   administrator-recorded backup and restore verification
 - `/api/search` provides grounded conversational advice with a deterministic
-  fallback and server-owned Trust data
+  fallback, validated multi-turn criteria context, and server-owned Trust data
 - `/membership/checkout` exercises plan selection, checkout confirmation, and
   30-day membership activation without collecting card data
 - `db/payment-webhooks.ts` owns verified, idempotent payment completion,
@@ -200,6 +200,18 @@ No-charge checkout and activation endpoints are available only when the runtime
 is explicitly configured as a demo. A production environment returns
 `DEMO_BILLING_DISABLED` until a real payment provider adapter is enabled.
 
+## Conversational Search Context
+
+The advisor keeps the visible conversation in browser memory and sends only the
+latest server-issued search criteria with a follow-up question. The API validates
+every contextual field, enum, and numeric bound before reusing it. Invalid or
+cross-country context fails closed with `INVALID_SEARCH_CONTEXT`.
+
+Follow-up messages can add or replace budget, district, transaction, property
+type, bedroom, seasonal-use, short-stay, and river-view preferences. The user can
+start a new search at any time. Raw conversation history is not persisted or
+replayed to the model by this flow.
+
 ## Pilot Release Readiness
 
 The readiness center does not infer launch readiness from feature flags alone.
@@ -288,4 +300,3 @@ must be stored as worker secrets, not committed as configuration variables.
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
-
