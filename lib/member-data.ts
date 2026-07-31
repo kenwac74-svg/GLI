@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { MembershipLimitError } from "../db/membership-entitlements.ts";
 import {
   ensureUser,
   getUserDashboard,
@@ -163,6 +164,12 @@ export function requestId(request: Request): string {
 }
 
 export function workflowErrorResponse(error: unknown): NextResponse {
+  if (error instanceof MembershipLimitError) {
+    return NextResponse.json(
+      { error: error.message, code: error.code },
+      { status: error.status, headers: { "cache-control": "no-store" } },
+    );
+  }
   const message =
     error instanceof Error ? error.message : "요청을 처리할 수 없습니다.";
   const isValidation =
