@@ -4,7 +4,9 @@ import { DatabaseSync } from "node:sqlite";
 import test from "node:test";
 
 import {
+  buildAuditCsv,
   categoryForAction,
+  exportAuditCsv,
   getAuditDashboard,
   parseAndRedact,
 } from "../db/audit-log.ts";
@@ -22,6 +24,7 @@ async function createDatabase() {
     "drizzle/0005_payment_webhook_ledger.sql",
     "drizzle/0006_operations_health_and_retry.sql",
     "drizzle/0007_operations_notification_delivery.sql",
+    "drizzle/0008_audit_log_query_indexes.sql",
   ]) {
     const sql = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     for (const statement of sql
@@ -176,6 +179,41 @@ test("audit category filter returns only the selected workflow", async () => {
   }
 });
 
+test("audit cursor pagination remains stable without duplicate events", async () => {
+  const { database, sqlite } = await createDatabase();
+  try {
+    const first = await getAuditDashboard(database, "usr_admin", {
+      limit: 2,
+      now: NOW,
+    });
+    assert.deepEqual(
+      first.events.map((event) => event.action),
+      ["SOURCE_CONNECTOR_APPROVED", "CONSULTATION_CREATED"],
+    );
+    assert.equal(first.page.hasMore, true);
+    assert.match(first.page.nextCursor ?? "", /^\d+\.\d+$/);
+
+    const second = await getAuditDashboard(database, "usr_admin", {
+      limit: 2,
+      cursor: first.page.nextCursor,
+      now: NOW,
+    });
+    assert.deepEqual(
+      second.events.map((event) => event.action),
+      ["INGESTION_RUN_FAILED"],
+    );
+    assert.equal(second.page.hasMore, false);
+    assert.equal(second.page.nextCursor, null);
+    assert.equal(
+      new Set([...first.events, ...second.events].map((event) => event.id))
+        .size,
+      3,
+    );
+  } finally {
+    sqlite.close();
+  }
+});
+
 test("audit output recursively redacts secrets and tolerates invalid JSON", async () => {
   const { database, sqlite } = await createDatabase();
   try {
@@ -192,6 +230,29 @@ test("audit output recursively redacts secrets and tolerates invalid JSON", asyn
     assert.deepEqual(parseAndRedact('{"header":"Bearer abc123"}'), {
       header: "[REDACTED]",
     });
+  } finally {
+    sqlite.close();
+  }
+});
+
+test("audit CSV export is bounded, redacted, and spreadsheet-safe", async () => {
+  const { database, sqlite } = await createDatabase();
+  try {
+    sqlite
+      .prepare("UPDATE users SET display_name = ? WHERE id = 'usr_admin'")
+      .run("=HYPERLINK(\"https://unsafe.example\")");
+    const exported = await exportAuditCsv(database, "usr_admin", {
+      category: "SOURCE",
+      now: NOW,
+    });
+
+    assert.equal(exported.rowCount, 1);
+    assert.equal(exported.truncated, false);
+    assert.match(exported.csv, /^\uFEFF"timestamp","category"/);
+    assert.match(exported.csv, /"'=HYPERLINK\(/);
+    assert.match(exported.csv, /\[REDACTED\]/);
+    assert.doesNotMatch(exported.csv, /must-not-leak|SOURCE_SECRET_REALESTATE/);
+    assert.match(buildAuditCsv([]), /^\uFEFF"timestamp"/);
   } finally {
     sqlite.close();
   }
@@ -214,6 +275,17 @@ test("audit access and query options fail closed", async () => {
     await assert.rejects(
       getAuditDashboard(database, "usr_admin", { limit: 101, now: NOW }),
       /between 1 and 100/i,
+    );
+    await assert.rejects(
+      getAuditDashboard(database, "usr_admin", {
+        cursor: "not-a-cursor",
+        now: NOW,
+      }),
+      /cursor is invalid/i,
+    );
+    await assert.rejects(
+      exportAuditCsv(database, "usr_member", { now: NOW }),
+      /active administrator/i,
     );
     assert.equal(categoryForAction("CASH_MEMBERSHIP_ACTIVATED"), "MEMBERSHIP");
     assert.equal(
