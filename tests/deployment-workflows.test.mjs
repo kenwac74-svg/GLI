@@ -303,6 +303,36 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.match(consultationPageHtml, /latest management fee/);
     assert.match(consultationPageHtml, /local partner/);
 
+    const notificationDashboardResponse = await dispatch(
+      worker,
+      database,
+      "/api/me",
+      { email: MEMBER_EMAIL },
+    );
+    assert.equal(notificationDashboardResponse.status, 200);
+    const notificationDashboard =
+      await notificationDashboardResponse.json();
+    assert.equal(notificationDashboard.unreadNotificationCount, 1);
+    assert.equal(notificationDashboard.notifications.length, 1);
+    assert.equal(
+      notificationDashboard.notifications[0].kind,
+      "CONSULTATION_REPLY",
+    );
+
+    const readNotificationResponse = await dispatch(
+      worker,
+      database,
+      `/api/notifications/${notificationDashboard.notifications[0].id}/read`,
+      {
+        method: "PATCH",
+        email: MEMBER_EMAIL,
+        requestId: "e2e.notification.read",
+        body: {},
+      },
+    );
+    assert.equal(readNotificationResponse.status, 200);
+    assert.ok((await readNotificationResponse.json()).result.readAt > 0);
+
     const checkoutResponse = await dispatch(
       worker,
       database,
@@ -384,6 +414,8 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(finalDashboard.consultations.length, 1);
     assert.equal(finalDashboard.consultations[0].status, "RECEIVED");
     assert.equal(finalDashboard.activeMembership.planId, "investor");
+    assert.equal(finalDashboard.notifications.length, 1);
+    assert.equal(finalDashboard.unreadNotificationCount, 0);
 
     const myPageResponse = await dispatch(worker, database, "/my", {
       email: MEMBER_EMAIL,
@@ -407,6 +439,7 @@ test("built worker completes the member discovery and cash membership journey", 
       "CONSULTATION_CREATED",
       "CONSULTATION_MESSAGE_ADDED",
       "CONSULTATION_MESSAGE_ADDED",
+      "MEMBER_NOTIFICATION_READ",
       "CASH_CHECKOUT_CREATED",
       "DEMO_CASH_MEMBERSHIP_ACTIVATED",
       "CASH_CHECKOUT_COMPLETED",
