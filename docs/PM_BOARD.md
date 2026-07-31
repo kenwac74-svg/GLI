@@ -44,6 +44,7 @@ Updated: 2026-07-31
 | GLI-016 | Codex | Operations review | COMPLETE | health scan, alert lifecycle, retry backoff and dead-letter isolation |
 | GLI-017 | Codex | Operations review | COMPLETE | scheduled worker entrypoint, bounded retry processing and allowlisted alert delivery |
 | GLI-018 | GLI Operations | Security review | IN PROGRESS | production scheduler deployment, alert destination approval and secret provisioning |
+| GLI-019 | Codex | Security/Data review | COMPLETE | administrator source onboarding, approval audit, demo read-only gate and emergency suspension |
 
 ## Decisions
 
@@ -56,6 +57,7 @@ Updated: 2026-07-31
 | DEC-005 | Keep all Web3 screens outside the production Web2 navigation | ACCEPTED |
 | DEC-006 | Retry transient connector failures outside the public web process and never retry policy denials | ACCEPTED |
 | DEC-007 | Deliver only new or materially changed alerts to an exact allowlisted HTTPS destination | ACCEPTED |
+| DEC-008 | Store source credential names only and reject source approval mutations from shared demo administrators | ACCEPTED |
 
 ## Human gates
 
