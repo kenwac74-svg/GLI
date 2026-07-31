@@ -8,7 +8,10 @@ import {
   CircleAlert,
   LoaderCircle,
   MapPin,
+  MessageCircle,
+  RotateCcw,
   Search,
+  SendHorizontal,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -17,6 +20,7 @@ import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import type { Asset } from "../../lib/assets";
 import type { AdvisorSearchResult } from "../../lib/ai-search";
+import type { SearchCriteria } from "../../lib/search";
 
 const prompts = [
   "프놈펜에 5,000만원으로 월세가 잘 나오는 투자가 가능할까?",
@@ -24,13 +28,24 @@ const prompts = [
   "월 500달러 이하 2베드 강 전망 임대 콘도",
 ];
 
+type ConversationTurn = {
+  id: number;
+  role: "user" | "advisor";
+  text: string;
+  clarification?: string | null;
+};
+
+const welcomeTurn: ConversationTurn = {
+  id: 0,
+  role: "advisor",
+  text: "찾으시는 목적과 예산을 편하게 말씀해 주세요. 조건을 정리해 검토할 후보와 확인할 위험을 함께 보여드립니다.",
+};
+
 export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
   const [query, setQuery] = useState("");
   const [assets, setAssets] = useState(initialAssets);
-  const [answer, setAnswer] = useState(
-    "찾으시는 목적과 예산을 편하게 말씀해 주세요. 조건을 정리해 검토할 후보와 확인할 위험을 함께 보여드립니다.",
-  );
-  const [clarification, setClarification] = useState<string | null>(null);
+  const [turns, setTurns] = useState<ConversationTurn[]>([welcomeTurn]);
+  const [criteria, setCriteria] = useState<SearchCriteria | null>(null);
   const [citations, setCitations] = useState<
     AdvisorSearchResult["citations"]
   >([]);
@@ -49,27 +64,58 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
 
   async function runSearch(value: string) {
     const clean = value.trim();
-    if (!clean) return;
+    if (!clean || loading) return;
+    const userTurn: ConversationTurn = {
+      id: Date.now(),
+      role: "user",
+      text: clean,
+    };
+    setTurns((current) => [...current, userTurn].slice(-9));
+    setQuery("");
     setLoading(true);
     try {
       const response = await fetch("/api/search", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ query: clean }),
+        body: JSON.stringify({ query: clean, context: criteria ?? undefined }),
       });
       if (!response.ok) throw new Error("search_failed");
       const result = (await response.json()) as AdvisorSearchResult;
       setAssets(result.matches);
-      setAnswer(result.answer);
-      setClarification(result.clarification);
+      setCriteria(result.criteria);
       setCitations(result.citations);
       setFilter("all");
+      setTurns((current) =>
+        [
+          ...current,
+          {
+            id: Date.now() + 1,
+            role: "advisor" as const,
+            text: result.answer,
+            clarification: result.clarification,
+          },
+        ].slice(-10),
+      );
     } catch {
-      setAnswer("검색을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
-      setClarification(null);
+      setTurns((current) =>
+        [
+          ...current,
+          {
+            id: Date.now() + 1,
+            role: "advisor" as const,
+            text: "검색을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+          },
+        ].slice(-10),
+      );
       setCitations([]);
     } finally {
       setLoading(false);
+      window.setTimeout(() => {
+        document.getElementById("advisor")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 50);
     }
   }
 
@@ -77,6 +123,17 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
     event.preventDefault();
     void runSearch(query);
   }
+
+  function resetConversation() {
+    setQuery("");
+    setAssets(initialAssets);
+    setTurns([welcomeTurn]);
+    setCriteria(null);
+    setCitations([]);
+    setFilter("all");
+  }
+
+  const activeCriteria = criteria ? describeCriteria(criteria) : [];
 
   return (
     <>
@@ -125,27 +182,94 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
       </section>
 
       <main className="explore-main">
-        <section className="advisor-response" aria-live="polite">
-          <div className="advisor-icon">
-            <Sparkles size={22} />
+        <section className="advisor-response advisor-conversation" id="advisor">
+          <div className="advisor-panel-head">
+            <div className="advisor-heading">
+              <div className="advisor-icon">
+                <MessageCircle size={22} />
+              </div>
+              <div>
+                <span>GLI AI PROPERTY ADVISOR</span>
+                <h2>조건을 이어서 상담하세요</h2>
+              </div>
+            </div>
+            {criteria && (
+              <button
+                className="conversation-reset"
+                type="button"
+                onClick={resetConversation}
+              >
+                <RotateCcw size={15} />
+                새 탐색
+              </button>
+            )}
           </div>
-          <div>
-            <span>GLI AI 답변</span>
-            <p>{answer}</p>
-            {clarification && <button onClick={() => setQuery(clarification)}>{clarification}</button>}
-            {citations.length > 0 && (
-              <div className="advisor-citations" aria-label="답변 근거 매물">
-                <strong>
-                  <BadgeCheck size={14} /> 근거 매물
-                </strong>
-                {citations.map((citation) => (
-                  <Link key={citation.assetId} href={`/assets/${citation.assetId}`}>
-                    {citation.label}
-                  </Link>
-                ))}
+
+          <div className="conversation-log" aria-live="polite" aria-busy={loading}>
+            {turns.map((turn) => (
+              <div className={`conversation-turn ${turn.role}`} key={turn.id}>
+                <span>{turn.role === "user" ? "나" : "GLI AI"}</span>
+                <p>{turn.text}</p>
+                {turn.clarification && (
+                  <p className="clarification">
+                    <strong>추가 질문</strong>
+                    {turn.clarification}
+                  </p>
+                )}
+              </div>
+            ))}
+            {loading && (
+              <div className="conversation-turn advisor loading-turn">
+                <LoaderCircle className="spin" size={18} />
+                <p>조건을 정리하고 근거가 있는 후보를 비교하고 있습니다.</p>
               </div>
             )}
           </div>
+
+          {activeCriteria.length > 0 && (
+            <div className="active-criteria" aria-label="현재 적용 중인 검색 조건">
+              <strong>현재 조건</strong>
+              {activeCriteria.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          )}
+
+          {criteria && (
+            <form className="followup-composer" onSubmit={submit}>
+              <label htmlFor="followup-query">답변하거나 조건을 더해주세요</label>
+              <div>
+                <input
+                  id="followup-query"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="예: 예산은 1억이고 BKK1을 우선해줘"
+                  maxLength={800}
+                />
+                <button type="submit" disabled={loading || !query.trim()}>
+                  {loading ? (
+                    <LoaderCircle className="spin" size={19} />
+                  ) : (
+                    <SendHorizontal size={19} />
+                  )}
+                  <span>보내기</span>
+                </button>
+              </div>
+            </form>
+          )}
+
+          {citations.length > 0 && (
+            <div className="advisor-citations" aria-label="답변 근거 매물">
+              <strong>
+                <BadgeCheck size={14} /> 근거 매물
+              </strong>
+              {citations.map((citation) => (
+                <Link key={citation.assetId} href={`/assets/${citation.assetId}`}>
+                  {citation.label}
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="result-section" id="assets">
@@ -264,4 +388,37 @@ export function ExploreClient({ initialAssets }: { initialAssets: Asset[] }) {
       </main>
     </>
   );
+}
+
+function describeCriteria(criteria: SearchCriteria): string[] {
+  const purposeLabels: Record<SearchCriteria["purpose"], string> = {
+    income: "임대수익",
+    seasonal: "계절 체류",
+    residence: "실거주",
+    general: "일반 탐색",
+  };
+  const items = [purposeLabels[criteria.purpose]];
+  if (criteria.transaction) {
+    items.push(criteria.transaction === "sale" ? "매매" : "임대");
+  }
+  if (criteria.district) items.push(criteria.district);
+  if (criteria.propertyType) {
+    const labels: Record<Asset["propertyType"], string> = {
+      condo: "콘도",
+      house: "주택",
+      villa: "빌라",
+      land: "토지",
+      commercial: "상업용",
+    };
+    items.push(labels[criteria.propertyType]);
+  }
+  if (criteria.budgetKrw) {
+    items.push(`약 ${(criteria.budgetKrw / 10_000).toLocaleString("ko-KR")}만원`);
+  } else if (criteria.maxPriceUsd) {
+    items.push(`$${criteria.maxPriceUsd.toLocaleString("en-US")} 이하`);
+  }
+  if (criteria.bedrooms !== null) items.push(`${criteria.bedrooms}베드`);
+  if (criteria.wantsShortStay) items.push("부재 중 단기 임대");
+  if (criteria.wantsRiver) items.push("강 전망");
+  return items;
 }
