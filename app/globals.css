@@ -344,16 +344,29 @@ button {
   z-index: 2;
   margin: -34px 0 48px;
   padding: 20px;
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
   box-shadow: var(--shadow);
 }
 
+.advisor-panel-head,
+.advisor-heading {
+  display: flex;
+  align-items: center;
+}
+
+.advisor-panel-head {
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.advisor-heading {
+  gap: 12px;
+}
+
 .advisor-icon {
+  flex: 0 0 auto;
   width: 44px;
   height: 44px;
   display: grid;
@@ -363,25 +376,170 @@ button {
   background: var(--mint);
 }
 
-.advisor-response span {
+.advisor-heading span {
   color: var(--teal-dark);
   font-size: 12px;
   font-weight: 900;
 }
 
-.advisor-response p {
-  margin: 6px 0 0;
+.advisor-heading h2 {
+  margin: 3px 0 0;
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.conversation-reset {
+  min-height: 38px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  font-weight: 800;
+}
+
+.conversation-reset:hover {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+}
+
+.conversation-log {
+  max-height: 380px;
+  margin-top: 18px;
+  padding: 4px 2px;
+  display: grid;
+  gap: 12px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.conversation-turn {
+  width: min(88%, 880px);
+  padding: 10px 13px;
+  border-left: 3px solid var(--teal);
+  background: var(--mint);
+}
+
+.conversation-turn.user {
+  margin-left: auto;
+  border-right: 3px solid #8b99a9;
+  border-left: 0;
+  background: #f2f5f7;
+}
+
+.conversation-turn > span {
+  color: var(--teal-dark);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.conversation-turn.user > span {
+  color: var(--ink-soft);
+}
+
+.conversation-turn p {
+  margin: 4px 0 0;
   line-height: 1.65;
 }
 
-.advisor-response button {
-  margin-top: 10px;
-  padding: 0;
-  border: 0;
+.conversation-turn .clarification {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(20, 169, 154, 0.24);
+}
+
+.conversation-turn .clarification strong {
+  margin-right: 7px;
   color: var(--teal-dark);
-  background: transparent;
-  text-align: left;
+  font-size: 11px;
+}
+
+.loading-turn {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.loading-turn p {
+  margin: 0;
+}
+
+.active-criteria {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.active-criteria strong {
+  margin-right: 2px;
+  font-size: 12px;
+}
+
+.active-criteria span {
+  padding: 6px 8px;
+  border: 1px solid rgba(20, 169, 154, 0.32);
+  border-radius: 4px;
+  color: var(--teal-dark);
+  background: var(--mint);
+  font-size: 12px;
   font-weight: 800;
+}
+
+.followup-composer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.followup-composer label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.followup-composer > div {
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 1fr 104px;
+  gap: 8px;
+}
+
+.followup-composer input {
+  min-width: 0;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  outline: none;
+  font-size: 15px;
+}
+
+.followup-composer input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(20, 169, 154, 0.12);
+}
+
+.followup-composer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  background: var(--teal-dark);
+  font-weight: 900;
+}
+
+.followup-composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
 }
 
 .advisor-citations {
@@ -3256,12 +3414,42 @@ button {
 
   .advisor-response {
     margin-top: -24px;
-    grid-template-columns: 36px 1fr;
+    padding: 15px;
   }
 
   .advisor-icon {
     width: 36px;
     height: 36px;
+  }
+
+  .advisor-heading h2 {
+    font-size: 17px;
+  }
+
+  .conversation-reset {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .conversation-reset {
+    font-size: 0;
+  }
+
+  .conversation-turn {
+    width: 94%;
+  }
+
+  .followup-composer > div {
+    grid-template-columns: 1fr 48px;
+  }
+
+  .followup-composer button {
+    width: 48px;
+  }
+
+  .followup-composer button span {
+    display: none;
   }
 
   .section-head {
@@ -4082,4 +4270,3 @@ button {
     box-shadow: none;
   }
 }
-
