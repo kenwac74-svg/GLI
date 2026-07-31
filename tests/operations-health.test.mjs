@@ -25,6 +25,7 @@ async function createDatabase() {
     "drizzle/0004_authorized_source_connectors.sql",
     "drizzle/0005_payment_webhook_ledger.sql",
     "drizzle/0006_operations_health_and_retry.sql",
+    "drizzle/0007_operations_notification_delivery.sql",
   ]) {
     const sql = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     for (const statement of sql
@@ -141,6 +142,7 @@ test("health scan opens current alerts and resolves recovered conditions", async
     const firstDashboard = await getOperationsHealthDashboard(database);
     assert.equal(firstDashboard.metrics.openCritical, 2);
     assert.equal(firstDashboard.metrics.openWarnings, 2);
+    assert.equal(firstDashboard.metrics.pendingNotifications, 4);
     assert.deepEqual(
       new Set(firstDashboard.alerts.map((alert) => alert.category)),
       new Set(["SOURCE_APPROVAL", "INGESTION", "PAYMENT", "CONSULTATION"]),
@@ -191,6 +193,7 @@ test("health scan opens current alerts and resolves recovered conditions", async
     const secondDashboard = await getOperationsHealthDashboard(database);
     assert.equal(secondDashboard.metrics.openCritical, 0);
     assert.equal(secondDashboard.metrics.openWarnings, 0);
+    assert.equal(secondDashboard.metrics.pendingNotifications, 0);
     assert.equal(
       secondDashboard.alerts.filter((alert) => alert.status === "RESOLVED")
         .length,

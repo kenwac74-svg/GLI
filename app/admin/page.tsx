@@ -142,6 +142,9 @@ export default async function AdminPage() {
             <span>
               최종 실패 <strong>{health.metrics.deadLetters}</strong>
             </span>
+            <span>
+              알림 대기 <strong>{health.metrics.pendingNotifications}</strong>
+            </span>
           </div>
           {health.alerts.length ? (
             <div className="ops-alert-list">

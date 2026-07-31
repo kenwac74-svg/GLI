@@ -71,6 +71,10 @@ OPENAI_MODEL=gpt-5.6-sol
   expiry, refund, membership-access, and audit transitions
 - `db/operations-health.ts` owns operational alerts, health scans, retry
   backoff, and dead-letter isolation
+- `db/operations-notifications.ts` owns allowlisted, occurrence-idempotent
+  operations alert delivery
+- `workers/ingestion/scheduled.ts` is the scheduled-only entrypoint for retry,
+  health scanning, and alert delivery
 - `/admin` exposes source-approval expiry, collection failures, payment
   failures, delayed consultations, data freshness, and retry status
 - `drizzle.config.ts` supports local migration generation when needed
@@ -196,6 +200,27 @@ exponential backoff. Jobs that reach their attempt limit move to the
 dead-letter state for human review. Source-policy denials are never retried.
 The public web process does not execute external retries; a separately
 scheduled worker must call the retry executor.
+
+## Scheduled Operations Worker
+
+`wrangler.ingestion.example.jsonc` documents the separate Cloudflare Worker
+shape. Copy its values into an environment-specific deployment configuration
+only after the real D1 database, R2 bucket, operations administrator, and alert
+destination have been approved.
+
+The scheduled worker:
+
+- processes at most `RETRY_JOBS_PER_TICK` queued collection retries
+- runs the operations health scan after retry processing
+- sends only new or materially changed alerts
+- keeps failed notification deliveries pending for the next schedule
+- accepts connector credentials only from secrets whose names start with
+  `SOURCE_SECRET_`
+- sends alerts only to an exact hostname listed in
+  `ALERT_WEBHOOK_ALLOWED_HOSTS`
+
+`ALERT_WEBHOOK_URL`, `ALERT_WEBHOOK_BEARER`, and all `SOURCE_SECRET_*` values
+must be stored as worker secrets, not committed as configuration variables.
 
 ## Learn More
 

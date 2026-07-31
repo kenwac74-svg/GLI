@@ -50,6 +50,13 @@
       "when": 1785502800000,
       "tag": "0006_operations_health_and_retry",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1785506400000,
+      "tag": "0007_operations_notification_delivery",
+      "breakpoints": true
     }
   ]
 }
