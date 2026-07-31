@@ -17,6 +17,7 @@ import {
 import { ensureMemberContext } from "../../../lib/member-data";
 import { getCurrentUser } from "../../auth";
 import { SiteHeader } from "../../components/site-header";
+import { AiEvaluationPanel } from "./ai-evaluation-panel";
 import { BackupEvidenceForm } from "./backup-evidence-form";
 
 export const dynamic = "force-dynamic";
@@ -43,13 +44,14 @@ export default async function ReadinessPage() {
     );
   }
 
+  const aiConfigured =
+    process.env.LLM_PROVIDER === "openai" &&
+    Boolean(process.env.OPENAI_API_KEY);
   const dashboard = await getReleaseReadinessDashboard(
     context.database,
     context.workflowUser.id,
     {
-      aiConfigured:
-        process.env.LLM_PROVIDER === "openai" &&
-        Boolean(process.env.OPENAI_API_KEY),
+      aiConfigured,
       paymentConfigured:
         process.env.PRODUCTION_PAYMENT_ADAPTER_ENABLED === "true",
       schedulerConfigured:
@@ -113,6 +115,12 @@ export default async function ReadinessPage() {
             ))}
           </div>
         </section>
+
+        <AiEvaluationPanel
+          latest={dashboard.latestAiEvaluation}
+          demoReadOnly={demoReadOnly}
+          aiConfigured={aiConfigured}
+        />
 
         <div className="readiness-columns">
           <section className="readiness-section">
@@ -228,4 +236,3 @@ function formatDate(timestamp: number): string {
     timeZone: "Asia/Phnom_Penh",
   }).format(new Date(timestamp));
 }
-
