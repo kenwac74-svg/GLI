@@ -45,6 +45,7 @@ Updated: 2026-07-31
 | GLI-017 | Codex | Operations review | COMPLETE | scheduled worker entrypoint, bounded retry processing and allowlisted alert delivery |
 | GLI-018 | GLI Operations | Security review | IN PROGRESS | production scheduler deployment, alert destination approval and secret provisioning |
 | GLI-019 | Codex | Security/Data review | COMPLETE | administrator source onboarding, approval audit, demo read-only gate and emergency suspension |
+| GLI-020 | Codex | Security/Operations review | COMPLETE | administrator audit center, workflow filters and recursive sensitive-value redaction |
 
 ## Decisions
 
@@ -58,6 +59,7 @@ Updated: 2026-07-31
 | DEC-006 | Retry transient connector failures outside the public web process and never retry policy denials | ACCEPTED |
 | DEC-007 | Deliver only new or materially changed alerts to an exact allowlisted HTTPS destination | ACCEPTED |
 | DEC-008 | Store source credential names only and reject source approval mutations from shared demo administrators | ACCEPTED |
+| DEC-009 | Keep audit history administrator-only, read-only and redacted before rendering | ACCEPTED |
 
 ## Human gates
 
@@ -66,3 +68,4 @@ Updated: 2026-07-31
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.
 - Approve the production alert destination and provision the scheduled worker secrets.
+
