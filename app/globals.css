@@ -914,11 +914,29 @@ button {
 .back-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
   margin-bottom: 18px;
-  color: var(--ink-soft);
-  font-size: 13px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--paper);
+  box-shadow: 0 2px 8px rgba(14, 35, 51, 0.05);
+  font-size: 14px;
   font-weight: 800;
+}
+
+.back-link:hover {
+  border-color: var(--teal-dark);
+  color: var(--teal-dark);
+  background: #f1faf8;
+}
+
+.back-link:focus-visible {
+  outline: 3px solid rgba(20, 153, 137, 0.22);
+  outline-offset: 2px;
 }
 
 .detail-layout {
