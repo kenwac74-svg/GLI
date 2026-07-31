@@ -51,8 +51,10 @@ export default async function ListingReviewPage({
             <p className="section-kicker">LISTING DUE DILIGENCE</p>
             <h1>{detail.listing.title}</h1>
             <p>
-              {detail.listing.publicId} · {detail.listing.district ?? detail.listing.city},{" "}
-              {detail.listing.country}
+              {detail.listing.publicId} ·{" "}
+              {[detail.listing.district, detail.listing.city, detail.listing.country]
+                .filter(Boolean)
+                .join(", ")}
             </p>
           </div>
           <span
@@ -103,12 +105,18 @@ export default async function ListingReviewPage({
                   <dd>{detail.listing.bathrooms ?? "-"}</dd>
                 </div>
               </dl>
-              <Link
-                className="review-public-link"
-                href={`/assets/${detail.listing.publicId}`}
-              >
-                사용자 자산 화면 확인 <ExternalLink size={14} />
-              </Link>
+              {detail.listing.status === "ACTIVE" ? (
+                <Link
+                  className="review-public-link"
+                  href={`/assets/${detail.listing.publicId}`}
+                >
+                  사용자 자산 화면 확인 <ExternalLink size={14} />
+                </Link>
+              ) : (
+                <span className="review-public-pending">
+                  검토 승인 후 사용자 자산 화면이 공개됩니다.
+                </span>
+              )}
             </section>
 
             <section className="review-evidence-section">
