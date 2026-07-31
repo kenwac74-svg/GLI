@@ -29,6 +29,13 @@
       "when": 1785481200000,
       "tag": "0003_cash_checkout_sessions",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1785488400000,
+      "tag": "0004_authorized_source_connectors",
+      "breakpoints": true
     }
   ]
 }
