@@ -55,6 +55,7 @@ Updated: 2026-07-31
 | GLI-027 | Codex | Security/Product review | COMPLETE | member-scoped consultation alerts, unread count, idempotent read action and MY GLI alert center |
 | GLI-028 | Codex | Security/Data review | COMPLETE | authorized partner-file import through exact R2 raw provenance, source policy, privacy/dedupe and private review queue |
 | GLI-029 | Codex | Product/Security review | COMPLETE | five-case AI search evaluation, D1 evidence ledger, rules rehearsal and 30-day OpenAI readiness gate |
+| GLI-030 | Codex | Product/Security review | COMPLETE | enforced cash-plan favorite limits, model-cost boundary, monthly Explore usage ledger and consultation priority queue |
 
 ## Decisions
 
@@ -78,6 +79,7 @@ Updated: 2026-07-31
 | DEC-016 | Notify members in-app for operator replies and status changes, without copying consultation message bodies into alert or general audit metadata | ACCEPTED |
 | DEC-017 | Manual partner-file imports never bypass source approval, field, host, size or record limits; shared demo administrators may validate files only | ACCEPTED |
 | DEC-018 | Require a recent successful current-suite OpenAI evaluation in addition to runtime configuration; rules rehearsals never satisfy the production AI gate | ACCEPTED |
+| DEC-019 | Enforce global cash-plan benefits server-side; keep anonymous search in rules mode, restore failed model usage, and retain GLIB staking as a later asset-specific boundary | ACCEPTED |
 
 ## Human gates
 
