@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../components/site-header";
+import { PriceDisplay } from "../../components/price-display";
 import { getAsset } from "../../../lib/assets-data";
 import { AssetActions } from "./asset-actions";
 import { AssetAccessDemo } from "./asset-access-demo";
@@ -78,15 +79,17 @@ export default async function AssetPage({
                 <MapPin size={15} /> {asset.district}, {asset.city}, {asset.country}
               </p>
               <h1>{asset.title}</h1>
-              <div className="detail-price">
-                <strong>
-                  {asset.priceLabel ?? `$${asset.price.toLocaleString("en-US")}`}
-                </strong>
-                <span>
-                  {asset.offerLabel ??
-                    (asset.transaction === "rent" ? "월 임대료" : "매매가")}
-                </span>
-              </div>
+              <PriceDisplay
+                className="detail-price price-display"
+                amount={asset.price}
+                currency={asset.currency}
+                contextLabel={
+                  asset.offerLabel ??
+                  (asset.transaction === "rent" ? "월 임대료" : "매매가")
+                }
+                originalLabel={asset.priceLabel}
+                showAttribution
+              />
             </div>
             <div className="detail-facts">
               {detailFacts.map((fact) => (

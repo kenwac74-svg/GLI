@@ -1,4 +1,5 @@
 import type { Asset, TrustStatus } from "../lib/assets";
+import { isPriceCurrency } from "../lib/currency.ts";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 100;
@@ -182,7 +183,7 @@ export function mapListingRowToAsset(input: unknown): Asset {
   }
 
   const currency = requiredText(read(row, "currency"), "currency", publicId);
-  if (currency !== "USD") {
+  if (!isPriceCurrency(currency)) {
     throw new Error(`Listing ${publicId} has unsupported currency: ${currency}`);
   }
 
@@ -233,7 +234,7 @@ export function mapListingRowToAsset(input: unknown): Asset {
       nullableInteger(read(row, "bathrooms"), "bathrooms", publicId) ?? 0,
     title: requiredText(read(row, "title"), "title", publicId),
     price: priceMinor / 100,
-    currency: "USD",
+    currency,
     areaSqm: areaSqmX100 === null ? 0 : areaSqmX100 / 100,
     image:
       optionalText(read(row, "imageUrl", "image_url"), "imageUrl", publicId) ?? "",

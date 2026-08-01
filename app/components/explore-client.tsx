@@ -26,6 +26,7 @@ import { FormEvent, useMemo, useState } from "react";
 import type { Asset, AssetCategory } from "../../lib/assets";
 import type { AdvisorSearchResult } from "../../lib/ai-search";
 import type { SearchCriteria } from "../../lib/search";
+import { PriceDisplay } from "./price-display";
 
 const prompts = [
   "프놈펜에 5,000만원으로 월세가 잘 나오는 투자가 가능할까?",
@@ -463,14 +464,15 @@ export function ExploreClient({
                       </div>
                     )}
                     <div className="asset-card-foot">
-                      <div>
-                        <small>
-                          {asset.offerLabel ?? (asset.transaction === "rent" ? "월 임대료" : "매매가")}
-                        </small>
-                        <strong>
-                          {asset.priceLabel ?? `$${asset.price.toLocaleString("en-US")}`}
-                        </strong>
-                      </div>
+                      <PriceDisplay
+                        amount={asset.price}
+                        currency={asset.currency}
+                        contextLabel={
+                          asset.offerLabel ??
+                          (asset.transaction === "rent" ? "월 임대료" : "매매가")
+                        }
+                        originalLabel={asset.priceLabel}
+                      />
                       <div className={`trust-pill status-${asset.trustStatus.toLowerCase()}`}>
                         <ShieldCheck size={17} />
                         <span>
@@ -496,6 +498,14 @@ export function ExploreClient({
               </p>
             </div>
           )}
+          <a
+            className="fx-attribution"
+            href="https://www.exchangerate-api.com"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            환산 가격은 참고용입니다 · Rates by Exchange Rate API
+          </a>
         </section>
 
         <section className="trust-band">

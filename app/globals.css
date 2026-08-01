@@ -946,16 +946,50 @@ button {
 .asset-card-foot > div:first-child {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .asset-card-foot small {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .asset-card-foot strong {
   font-size: 19px;
   overflow-wrap: anywhere;
+}
+
+.price-display {
+  display: grid;
+  gap: 3px;
+}
+
+.price-converted {
+  color: var(--teal-dark);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.fx-source {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fx-attribution {
+  width: max-content;
+  max-width: 100%;
+  margin: 14px 0 0 auto;
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: right;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .trust-pill {
@@ -1207,15 +1241,27 @@ button {
   right: 24px;
   display: grid;
   justify-items: end;
+  gap: 3px;
+  text-align: right;
 }
 
 .detail-price strong {
   font-size: 26px;
 }
 
-.detail-price span {
+.detail-price small {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 14px;
+  order: -1;
+}
+
+.detail-price .price-converted {
+  font-size: 15px;
+}
+
+.detail-price .fx-source {
+  max-width: 180px;
+  line-height: 1.4;
 }
 
 .detail-facts {
@@ -5550,6 +5596,7 @@ button {
     position: static;
     margin-top: 16px;
     justify-items: start;
+    text-align: left;
   }
 
   .detail-facts {

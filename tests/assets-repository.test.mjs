@@ -214,8 +214,14 @@ test("rejects inactive, unsupported, or structurally unsafe rows", () => {
     () => mapListingRowToAsset(listingRow({ status: "ARCHIVED" })),
     /is not public/,
   );
+  assert.equal(
+    mapListingRowToAsset(
+      listingRow({ currency: "KHR", priceMinor: 410_000_000 }),
+    ).currency,
+    "KHR",
+  );
   assert.throws(
-    () => mapListingRowToAsset(listingRow({ currency: "KHR" })),
+    () => mapListingRowToAsset(listingRow({ currency: "BTC" })),
     /unsupported currency/,
   );
   assert.throws(

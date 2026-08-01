@@ -30,6 +30,7 @@ test("normalizes approved fixture values to storage units and canonical fields",
   assert.equal(listing.country, "Cambodia");
   assert.equal(listing.countryCode, "KH");
   assert.equal(listing.city, "Phnom Penh");
+  assert.equal(listing.currency, "USD");
   assert.equal(listing.priceMinor, 50_025);
   assert.equal(listing.areaSqmX100, 7_450);
   assert.equal(listing.observedAt, "2026-07-30T02:00:00.000Z");
@@ -42,6 +43,9 @@ test("is deterministic and changes hashes when core fields change", () => {
   const same = normalizeApprovedFixture(structuredClone(fixture()));
   const changedPrice = normalizeApprovedFixture(fixture({ price: 501.25 }));
   const changedBedrooms = normalizeApprovedFixture(fixture({ bedrooms: 1 }));
+  const changedCurrency = normalizeApprovedFixture(
+    fixture({ currency: "KHR", price: 500.25 }),
+  );
   const changedTitle = normalizeApprovedFixture(
     fixture({ title: "Renovated high-floor 2BR residence" }),
   );
@@ -51,6 +55,7 @@ test("is deterministic and changes hashes when core fields change", () => {
   assert.notEqual(first.normalizedHash, changedPrice.normalizedHash);
   assert.notEqual(first.fingerprint, changedBedrooms.fingerprint);
   assert.notEqual(first.normalizedHash, changedBedrooms.normalizedHash);
+  assert.notEqual(first.fingerprint, changedCurrency.fingerprint);
   assert.equal(first.fingerprint, changedTitle.fingerprint);
   assert.notEqual(first.normalizedHash, changedTitle.normalizedHash);
 });
@@ -130,8 +135,12 @@ test("strictly validates enums, units, counts, source URL, and observed time", (
     () => normalizeApprovedFixture(fixture({ propertyType: "land" })),
     /propertyType must be one of/,
   );
+  assert.equal(
+    normalizeApprovedFixture(fixture({ currency: "KHR", price: 4_100_000 })).currency,
+    "KHR",
+  );
   assert.throws(
-    () => normalizeApprovedFixture(fixture({ currency: "KHR" })),
+    () => normalizeApprovedFixture(fixture({ currency: "BTC" })),
     /currency must be one of/,
   );
   assert.throws(

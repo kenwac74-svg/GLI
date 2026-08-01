@@ -1,3 +1,5 @@
+import type { PriceCurrency } from "./currency.ts";
+
 export type TrustStatus =
   | "PRELIMINARY"
   | "REVIEWING"
@@ -33,7 +35,7 @@ export type Asset = {
   bathrooms: number;
   title: string;
   price: number;
-  currency: "USD";
+  currency: PriceCurrency;
   areaSqm: number;
   image: string;
   summary: string;
