@@ -22,6 +22,7 @@ Updated: 2026-08-01
 | Sprint 5: Direct, reports, alerts, operations | COMPLETE | collection, review, publish, alerts, retry loop and membership-gated report packaging complete |
 | Sprint 6: end-user UI refinement | IN PROGRESS | consistent typography, responsive explore/detail flows, final-state visual simulation |
 | Sprint 7: demand-driven discovery | BACKLOG | tiered live source search, searched-listing persistence, source recheck and staff research queue |
+| Sprint 8: administrator operations console | BACKLOG | GLI-provided sample reviewed; role-based source, asset, research, member, cash, consultation and audit workflows connected |
 | Pilot release | BACKLOG | security, data audit, production deployment |
 
 ## Active tasks
@@ -72,7 +73,9 @@ Updated: 2026-08-01
 | GLI-042 | Codex | GLI Product Owner | IN PROGRESS | prototype-wide visual, responsive and interaction refinement before new operational features |
 | GLI-043 | Codex | Product/Data review | BACKLOG | demand-driven tiered live discovery, searched-listing persistence and source-current-state recheck |
 | GLI-044 | Codex | Product/Operations review | BACKLOG | source-specific nullable field states, `조사 예정` presentation and favorite-triggered staff research queue |
-| GLI-045 | Codex | GLI Product Owner | BACKLOG | four-category Residential/Commercial/Leisure/Project navigation, representative UI inventory and category-aware detail forms |
+| GLI-045 | Codex | GLI Product Owner | COMPLETE | four-category Residential/Commercial/Leisure/Project navigation, representative UI inventory and category-aware detail forms |
+| GLI-046 | GLI Product Owner | Product/Operations review | BACKLOG | provide the existing administrator-tool sample and identify the required navigation, roles and highest-priority operating workflows |
+| GLI-047 | Codex | Product/Security/Operations review | BACKLOG | build a sample-aligned administrator console for source configuration, collection status, asset review/publish, favorite-triggered research, GLI-curated inventory, member/membership/GLI Cash, consultation, audit and operational monitoring |
 
 ## Decisions
 
@@ -111,6 +114,7 @@ Updated: 2026-08-01
 | DEC-031 | Present source age with `신규`, `최신`, and `1년 경과` background badges while keeping source reliability internal | ACCEPTED |
 | DEC-032 | Exclude social and community channels from automated discovery; GLI staff may research them manually | ACCEPTED |
 | DEC-033 | Organize the global platform into Residential, Commercial, Leisure and Project; treat country as a separate filter and curate Project inventory through GLI | ACCEPTED |
+| DEC-034 | Keep the administrator console visually separate from the end-user site but connect both to the same asset lifecycle, entitlement, consultation, audit and role-based service boundaries; finalize its information architecture from the GLI-provided sample before implementation | ACCEPTED |
 
 ## Human gates
 
