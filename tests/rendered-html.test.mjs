@@ -177,3 +177,43 @@ test("renders category-specific facts for a GLI curated project", async () => {
   assert.doesNotMatch(html, />침실</);
   assert.doesNotMatch(html, />욕실</);
 });
+
+test("renders the information center navigation and GLI whitepaper link", async () => {
+  const response = await render("/");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /안내센터/);
+  assert.match(html, /href="\/notices"/);
+  assert.match(html, /href="\/news"/);
+  assert.match(html, /가이드 &amp; FAQ/);
+  assert.match(html, /파트너스/);
+  assert.match(html, /href="\/whitepaper\/gli-whitepaper\.html"/);
+  assert.match(html, /GLI 백서/);
+});
+
+test("renders the GLI newsroom content and filters", async () => {
+  const response = await render("/news");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /GLI NEWSROOM/);
+  assert.match(html, /전체보기/);
+  assert.match(html, /보도자료/);
+  assert.match(html, /Seafood Club/);
+  assert.match(html, /RLC/);
+});
+
+test("renders the notice-board sample and guide construction page", async () => {
+  const noticeResponse = await render("/notices");
+  assert.equal(noticeResponse.status, 200);
+  const noticeHtml = await noticeResponse.text();
+  assert.match(noticeHtml, /주요 공지/);
+  assert.match(noticeHtml, /서비스 이용약관 개정 사전 안내/);
+
+  const guideResponse = await render("/coming-soon?section=guide");
+  assert.equal(guideResponse.status, 200);
+  const guideHtml = await guideResponse.text();
+  assert.match(guideHtml, /가이드 &amp; FAQ/);
+  assert.match(guideHtml, /페이지 준비 중/);
+});
