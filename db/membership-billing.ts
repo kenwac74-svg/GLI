@@ -1,4 +1,9 @@
-import { getMembershipPlan } from "../lib/membership-plans.ts";
+import {
+  getMembershipOffer,
+  getMembershipPlan,
+  inferBillingCycle,
+  type BillingCycle,
+} from "../lib/membership-plans.ts";
 import {
   activateDemoCashMembership,
   type D1DatabaseLike,
@@ -30,6 +35,7 @@ export type CashCheckoutProviderAdapter = {
     referenceId: string;
     userId: string;
     planId: string;
+    billingCycle?: BillingCycle;
     amountMinor: number;
     currency: string;
     expiresAt: number;
@@ -50,6 +56,7 @@ export async function createCashCheckout(
   input: {
     userId: string;
     planId: string;
+    billingCycle?: BillingCycle;
     requestId?: string | null;
   },
   options: WorkflowOptions = {},
@@ -57,6 +64,7 @@ export async function createCashCheckout(
   assertDatabase(database);
   const userId = validateId(input.userId, "userId");
   const plan = getMembershipPlan(input.planId);
+  const offer = getMembershipOffer(plan.id, input.billingCycle);
   await requireActiveUser(database, userId);
   const now = getNow(options);
   const id = `chk_${getRandomUUID(options)}`;
@@ -64,7 +72,7 @@ export async function createCashCheckout(
     id,
     userId,
     planId: plan.id,
-    amountMinor: plan.price,
+    amountMinor: offer.amountKrw,
     currency: plan.currency,
     provider: "DEMO_CASH",
     providerSessionId: null,
@@ -96,7 +104,7 @@ export async function createCashCheckout(
         id,
         userId,
         plan.id,
-        plan.price,
+        offer.amountKrw,
         plan.currency,
         session.expiresAt,
         now,
@@ -108,8 +116,9 @@ export async function createCashCheckout(
       resourceId: id,
       after: {
         planId: plan.id,
-        amountMinor: plan.price,
+        amountMinor: offer.amountKrw,
         currency: plan.currency,
+        billingCycle: offer.billingCycle,
         provider: "DEMO_CASH",
         status: "PENDING",
       },
@@ -125,6 +134,7 @@ export async function createProviderCashCheckout(
   input: {
     userId: string;
     planId: string;
+    billingCycle?: BillingCycle;
     requestId?: string | null;
   },
   adapter: CashCheckoutProviderAdapter,
@@ -138,6 +148,7 @@ export async function createProviderCashCheckout(
   const userId = validateId(input.userId, "userId");
   const provider = validateProvider(adapter.provider);
   const plan = getMembershipPlan(input.planId);
+  const offer = getMembershipOffer(plan.id, input.billingCycle);
   await requireActiveUser(database, userId);
   const now = getNow(options);
   const id = `chk_${getRandomUUID(options)}`;
@@ -163,7 +174,7 @@ export async function createProviderCashCheckout(
         id,
         userId,
         plan.id,
-        plan.price,
+        offer.amountKrw,
         plan.currency,
         provider,
         initialExpiresAt,
@@ -176,8 +187,9 @@ export async function createProviderCashCheckout(
       resourceId: id,
       after: {
         planId: plan.id,
-        amountMinor: plan.price,
+        amountMinor: offer.amountKrw,
         currency: plan.currency,
+        billingCycle: offer.billingCycle,
         provider,
         status: "CREATING",
       },
@@ -194,7 +206,8 @@ export async function createProviderCashCheckout(
       referenceId: id,
       userId,
       planId: plan.id,
-      amountMinor: plan.price,
+      billingCycle: offer.billingCycle,
+      amountMinor: offer.amountKrw,
       currency: plan.currency,
       expiresAt: initialExpiresAt,
     });
@@ -257,7 +270,7 @@ export async function createProviderCashCheckout(
       id,
       userId,
       planId: plan.id,
-      amountMinor: plan.price,
+      amountMinor: offer.amountKrw,
       currency: plan.currency,
       provider,
       providerSessionId: providerSession.providerSessionId,
@@ -348,6 +361,10 @@ export async function completeDemoCashCheckout(
     {
       userId,
       planId: checkout.planId,
+      periodDays:
+        inferBillingCycle(checkout.planId, checkout.amountMinor) === "yearly"
+          ? 365
+          : 30,
       requestId: input.requestId,
     },
     options,

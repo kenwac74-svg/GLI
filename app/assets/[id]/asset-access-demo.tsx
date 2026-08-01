@@ -16,6 +16,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import type { MembershipPlanId } from "../../../lib/membership-plans";
 
 type AccessTierId = "free" | "basic" | "standard" | "premium" | "business";
 
@@ -43,12 +44,16 @@ const CASH_COST: Partial<Record<AccessTierId, number>> = {
 export function AssetAccessDemo({
   assetTitle,
   trustScore,
+  initialUnlockedLevel,
+  membershipPlanId,
 }: {
   assetTitle: string;
   trustScore: number;
+  initialUnlockedLevel: 1 | 2 | 3 | 4;
+  membershipPlanId: MembershipPlanId | null;
 }) {
   const [selectedId, setSelectedId] = useState<AccessTierId>("free");
-  const [unlockedLevel, setUnlockedLevel] = useState(1);
+  const [unlockedLevel, setUnlockedLevel] = useState(initialUnlockedLevel);
   const [cashBalance, setCashBalance] = useState(5000);
   const [pendingId, setPendingId] = useState<AccessTierId | null>(null);
 
@@ -56,6 +61,7 @@ export function AssetAccessDemo({
   const pending = TIERS.find((tier) => tier.id === pendingId) ?? null;
   const hasAccess = selected.level <= unlockedLevel;
   const cashCost = CASH_COST[selected.id];
+  const canUseGliCash = membershipPlanId !== null;
   const standardPrice = unlockedLevel >= 2 ? 1 : 2.99;
 
   const accessLabel = useMemo(() => {
@@ -147,11 +153,22 @@ export function AssetAccessDemo({
             <Check size={17} /> 현재 열람 가능
           </button>
         ) : (
-          <button type="button" onClick={() => setPendingId(selected.id)}>
+          <button
+            type="button"
+            onClick={() => {
+              if (cashCost && !canUseGliCash) {
+                window.location.assign("/membership");
+                return;
+              }
+              setPendingId(selected.id);
+            }}
+          >
             {cashCost
-              ? `${cashCost.toLocaleString("en-US")} GLI Cash로 열기`
+              ? canUseGliCash
+                ? `${cashCost.toLocaleString("en-US")} GLI Cash로 열기`
+                : "멤버십 가입 후 GLI Cash 이용"
               : selected.id === "basic"
-                ? "월 $1.99로 시작"
+                ? "Explorer 월 $1.99로 시작"
                 : `$${standardPrice.toFixed(2)}로 업그레이드`}
             <ChevronRight size={17} />
           </button>

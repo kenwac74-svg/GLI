@@ -509,7 +509,7 @@ test("creates listing and general consultations after validating input", async (
   );
 });
 
-test("enforces the free favorite limit and assigns paid consultation priority", async () => {
+test("allows unlimited favorites and assigns paid consultation priority", async () => {
   const database = new FakeD1();
   const user = await createUser(database);
   for (let id = 3; id <= 7; id += 1) {
@@ -528,13 +528,11 @@ test("enforces the free favorite limit and assigns paid consultation priority", 
     })),
   );
 
-  await assert.rejects(
-    addFavorite(database, {
-      userId: user.id,
-      listingPublicId: "GLI-KH-007",
-    }),
-    /한도 5개/,
-  );
+  const favorite = await addFavorite(database, {
+    userId: user.id,
+    listingPublicId: "GLI-KH-007",
+  });
+  assert.equal(favorite.created, true);
 
   await activateDemoCashMembership(
     database,
@@ -683,7 +681,7 @@ test("returns favorites, consultations, and the current active membership dashbo
   assert.equal(dashboard.activeMembership.provider, "DEMO_CASH");
   assert.equal(dashboard.membershipAccess.planId, "private");
   assert.equal(dashboard.membershipAccess.favoriteLimit, null);
-  assert.equal(dashboard.membershipAccess.aiMonthlyLimit, null);
+  assert.equal(dashboard.membershipAccess.aiMonthlyLimit, 400);
   assert.equal(dashboard.membershipAccess.consultationPriority, "PRIVATE");
   assert.equal(dashboard.membershipAccess.fullTrustReport, true);
   assert.deepEqual(dashboard.notifications, []);

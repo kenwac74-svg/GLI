@@ -29,12 +29,13 @@ export function PriceDisplay({
   className = "price-display",
   showAttribution = false,
 }: PriceDisplayProps) {
-  const [language, setLanguage] = useState("ko-KR");
+  const [language] = useState(() => {
+    if (typeof document === "undefined") return "ko-KR";
+    return document.documentElement.lang || navigator.language || "en";
+  });
   const [snapshot, setSnapshot] = useState<ExchangeRateSnapshot | null>(null);
 
   useEffect(() => {
-    const documentLanguage = document.documentElement.lang || navigator.language || "en";
-    setLanguage(documentLanguage);
     if (!exchangeRateRequest) exchangeRateRequest = loadExchangeRates();
     void exchangeRateRequest.then(setSnapshot);
   }, []);

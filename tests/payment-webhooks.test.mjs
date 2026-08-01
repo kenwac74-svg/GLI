@@ -78,7 +78,7 @@ async function createCheckout(database) {
       provider: "PAYMENT_TEST",
       async createSession(input) {
         assert.match(input.referenceId, /^chk_/);
-        assert.equal(input.amountMinor, 59_000);
+        assert.equal(input.amountMinor, 4_500);
         return {
           providerSessionId: "provider-session-101",
           checkoutUrl: "https://checkout.payment.example/session/101",
@@ -108,7 +108,7 @@ function completedEvent(overrides = {}) {
     type: "CHECKOUT_COMPLETED",
     providerSessionId: "provider-session-101",
     occurredAt: NOW + 1_000,
-    amountMinor: 59_000,
+    amountMinor: 4_500,
     currency: "KRW",
     providerCustomerId: "customer-101",
     providerSubscriptionId: "subscription-101",
@@ -263,7 +263,7 @@ test("processes a later refund by ending access and preserving the audit trail",
           type: "PAYMENT_REFUNDED",
           providerSessionId: "provider-session-101",
           occurredAt: refundedAt,
-          amountMinor: 59_000,
+          amountMinor: 4_500,
           currency: "KRW",
         }),
       },

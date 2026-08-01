@@ -202,6 +202,20 @@ test("renders the GLI newsroom content and filters", async () => {
   assert.match(html, /보도자료/);
   assert.match(html, /Seafood Club/);
   assert.match(html, /RLC/);
+  assert.match(html, /href="\/news\/33d997d3-5984-4554-b3be-5fd9ddf41b00"/);
+});
+
+test("renders a linked insight article in the GLI detail layout", async () => {
+  const response = await render(
+    "/news/33d997d3-5984-4554-b3be-5fd9ddf41b00",
+  );
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /인사이트/);
+  assert.match(html, /베트남/);
+  assert.match(html, /기사 원문 보기/);
+  assert.match(html, /https:\/\/www\.facebook\.com/);
 });
 
 test("renders the notice-board sample and guide construction page", async () => {

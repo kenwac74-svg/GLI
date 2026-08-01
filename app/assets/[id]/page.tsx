@@ -11,7 +11,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../components/site-header";
 import { PriceDisplay } from "../../components/price-display";
+import { getCurrentUser } from "../../auth";
+import { getMembershipAccess } from "../../../db/membership-entitlements.ts";
 import { getAsset } from "../../../lib/assets-data";
+import { ensureMemberContext } from "../../../lib/member-data";
+import { getMembershipEntitlements } from "../../../lib/membership-plans.ts";
 import { AssetActions } from "./asset-actions";
 import { AssetAccessDemo } from "./asset-access-demo";
 
@@ -25,6 +29,15 @@ export default async function AssetPage({
   const { id } = await params;
   const { asset } = await getAsset(id);
   if (!asset) notFound();
+  const currentUser = await getCurrentUser();
+  let membershipAccess = getMembershipEntitlements(null);
+  if (currentUser) {
+    const context = await ensureMemberContext(currentUser);
+    membershipAccess = await getMembershipAccess(
+      context.database,
+      context.workflowUser.id,
+    );
+  }
   const hasExternalSource = Boolean(
     !asset.isGliDirect && asset.sourceName && asset.sourceUrl,
   );
@@ -142,7 +155,12 @@ export default async function AssetPage({
             </section>
           </section>
 
-          <AssetAccessDemo assetTitle={asset.title} trustScore={asset.trustScore} />
+          <AssetAccessDemo
+            assetTitle={asset.title}
+            trustScore={asset.trustScore}
+            initialUnlockedLevel={membershipAccess.includedAssetTierLevel}
+            membershipPlanId={membershipAccess.planId}
+          />
 
           <section className="detail-action-bar" aria-label="자산 상세 작업">
             <Link className="primary-action" href={`/my?consult=${asset.id}`}>

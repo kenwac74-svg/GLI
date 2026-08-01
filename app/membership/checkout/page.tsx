@@ -4,7 +4,11 @@ import { getCurrentUser } from "../../auth";
 import { SiteHeader } from "../../components/site-header";
 import { getCashCheckout } from "../../../db/membership-billing";
 import { ensureMemberContext } from "../../../lib/member-data";
-import { getMembershipPlan } from "../../../lib/membership-plans";
+import {
+  getMembershipOffer,
+  getMembershipPlan,
+  inferBillingCycle,
+} from "../../../lib/membership-plans";
 import { CheckoutAction } from "./checkout-action";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +59,8 @@ export default async function MembershipCheckoutPage({
   }
 
   const plan = getMembershipPlan(checkout.planId);
+  const billingCycle = inferBillingCycle(plan.id, checkout.amountMinor);
+  const offer = getMembershipOffer(plan.id, billingCycle);
   const isComplete = checkout.status === "COMPLETED";
   const isUsable = checkout.status === "PENDING";
 
@@ -80,8 +86,9 @@ export default async function MembershipCheckoutPage({
           </div>
           <div className="checkout-payment">
             <div>
-              <span>월 이용 금액</span>
-              <strong>{plan.price.toLocaleString("ko-KR")}원</strong>
+              <span>{billingCycle === "yearly" ? "연간 이용 금액" : "월 이용 금액"}</span>
+              <strong>{checkout.amountMinor.toLocaleString("ko-KR")}원</strong>
+              <small>${offer.amountUsd.toFixed(offer.amountUsd % 1 ? 2 : 0)}</small>
             </div>
             <dl>
               <div>
@@ -90,7 +97,7 @@ export default async function MembershipCheckoutPage({
               </div>
               <div>
                 <dt>이용 기간</dt>
-                <dd>활성화일로부터 30일</dd>
+                <dd>활성화일로부터 {offer.periodDays}일</dd>
               </div>
               <div>
                 <dt>자동 갱신</dt>

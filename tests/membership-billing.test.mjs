@@ -200,7 +200,7 @@ test("creates a priced checkout and cancels a prior pending session", async () =
   assert.equal(database.checkouts[0].status, "CANCELLED");
   assert.equal(checkout.id, `chk_${CHECKOUT_UUID}`);
   assert.equal(checkout.planId, "investor");
-  assert.equal(checkout.amountMinor, 59_000);
+  assert.equal(checkout.amountMinor, 4_500);
   assert.equal(checkout.currency, "KRW");
   assert.equal(checkout.status, "PENDING");
   assert.equal(checkout.expiresAt - checkout.createdAt, 30 * 60 * 1000);
@@ -234,6 +234,29 @@ test("completes a checkout into a 30-day membership without a charge", async () 
   });
   assert.equal(repeated.membership.id, result.membership.id);
   assert.equal(database.memberships.length, 1);
+});
+
+test("applies the annual private discount and activates a 365-day membership", async () => {
+  const database = new FakeD1();
+  const checkout = await createCashCheckout(
+    database,
+    { userId: USER_ID, planId: "private", billingCycle: "yearly" },
+    { now: () => NOW, randomUUID: () => CHECKOUT_UUID },
+  );
+
+  assert.equal(checkout.amountMinor, 144_000);
+  assert.equal(checkout.currency, "KRW");
+
+  const result = await completeDemoCashCheckout(
+    database,
+    { checkoutId: checkout.id, userId: USER_ID },
+    { now: () => NOW + 1_000, randomUUID: () => MEMBERSHIP_UUID },
+  );
+
+  assert.equal(
+    result.membership.periodEnd - result.membership.periodStart,
+    365 * 86_400_000,
+  );
 });
 
 test("expires an old checkout and prevents activation", async () => {
