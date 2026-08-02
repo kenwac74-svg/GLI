@@ -484,6 +484,94 @@ button {
   font-weight: 800;
 }
 
+.gli-ai-process {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid rgba(20, 169, 154, 0.3);
+  border-radius: 6px;
+  background: #f5fbfa;
+}
+
+.gli-ai-process-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: var(--teal-dark);
+}
+
+.gli-ai-process-head > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.gli-ai-process-head strong,
+.gli-ai-process-head span {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.gli-ai-process-head span {
+  color: var(--ink-soft);
+}
+
+.gli-ai-process-steps {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.gli-ai-process-steps > div {
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  color: var(--muted);
+  background: var(--paper);
+}
+
+.gli-ai-process-steps > div > span {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #8a98a7;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.gli-ai-process-steps strong {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.gli-ai-process-steps > div.is-active {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+  box-shadow: 0 0 0 2px rgba(20, 169, 154, 0.1);
+}
+
+.gli-ai-process-steps > div.is-complete {
+  border-color: rgba(20, 169, 154, 0.3);
+  color: var(--teal-dark);
+  background: var(--mint);
+}
+
+.gli-ai-process-steps > div.is-active > span,
+.gli-ai-process-steps > div.is-complete > span {
+  background: var(--teal-dark);
+}
+
 .advisor-heading {
   gap: 12px;
 }
@@ -858,6 +946,8 @@ button {
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
   background: var(--paper);
   transition:
     transform 160ms ease,
@@ -912,7 +1002,10 @@ button {
 }
 
 .asset-card-body {
+  flex: 1;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .asset-location {
@@ -938,6 +1031,15 @@ button {
   font-size: 13px;
 }
 
+.asset-document-date {
+  min-height: 20px;
+  margin: 8px 0 0;
+  color: var(--teal-dark);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
 .reason-row {
   min-height: 29px;
   margin-top: 12px;
@@ -958,7 +1060,7 @@ button {
 
 .asset-card-foot {
   min-height: 62px;
-  margin-top: 14px;
+  margin-top: auto;
   padding-top: 13px;
   display: flex;
   align-items: center;
@@ -1163,20 +1265,60 @@ button {
 
 .detail-action-bar {
   grid-column: 1 / -1;
-  padding: 20px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
-  gap: 14px;
+  overflow: hidden;
   background: var(--paper);
   box-shadow: var(--shadow);
 }
 
-.detail-action-bar .primary-action,
-.detail-action-bar .secondary-action,
-.detail-action-bar .back-link {
+.detail-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.detail-review-grid > div {
+  min-width: 0;
+  min-height: 190px;
+  padding: 22px 24px;
+}
+
+.detail-review-grid > div + div {
+  border-left: 1px solid var(--line);
+}
+
+.detail-review-grid h2 {
+  min-height: 30px;
+  margin: 0 0 14px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+
+.detail-review-grid ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+.detail-action-grid {
+  padding: 18px 20px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 14px;
+}
+
+.detail-action-grid .primary-action,
+.detail-action-grid .secondary-action,
+.detail-action-grid .back-link {
+  width: 100%;
   min-height: 52px;
   margin: 0;
   font-size: 14px;
@@ -1201,15 +1343,99 @@ button {
   overflow: hidden;
 }
 
+.asset-gallery {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background: #071525;
+}
+
 .detail-image {
   position: relative;
   aspect-ratio: 16 / 8.5;
+  overflow: hidden;
+  background: #071525;
 }
 
-.detail-image > span {
+.detail-image img {
+  object-fit: cover;
+  transition: opacity 180ms ease;
+}
+
+.gallery-arrow {
   position: absolute;
-  top: 16px;
+  top: 50%;
+  z-index: 3;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(7, 21, 37, 0.78);
+  transform: translateY(-50%);
+}
+
+.gallery-arrow:hover {
+  background: rgba(7, 21, 37, 0.94);
+}
+
+.gallery-arrow-previous {
   left: 16px;
+}
+
+.gallery-arrow-next {
+  right: 16px;
+}
+
+.gallery-counter {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  z-index: 3;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  background: rgba(7, 21, 37, 0.82);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.gallery-thumbnails {
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.gallery-thumbnails button {
+  flex: 0 0 auto;
+  width: 76px;
+  height: 52px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  opacity: 0.7;
+  background: transparent;
+}
+
+.gallery-thumbnails button:hover,
+.gallery-thumbnails button.is-active {
+  border-color: var(--teal);
+  opacity: 1;
+}
+
+.gallery-thumbnails img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .asset-origin-badges {
@@ -1271,6 +1497,7 @@ button {
 
 .detail-price strong {
   font-size: 26px;
+  white-space: nowrap;
 }
 
 .detail-price small {
@@ -1359,6 +1586,20 @@ button {
   font-weight: 900;
 }
 
+.partner-source {
+  align-items: stretch;
+}
+
+.partner-source > div {
+  flex: 1 1 0;
+}
+
+.partner-source-date {
+  padding-left: 16px;
+  border-left: 1px solid #c8ddd9;
+  text-align: right;
+}
+
 .content-section {
   margin: 24px;
   padding-top: 22px;
@@ -1377,6 +1618,28 @@ button {
   margin: 0;
   color: var(--ink-soft);
   line-height: 1.75;
+}
+
+.asset-summary {
+  height: 220px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  background: #fbfcfc;
+}
+
+.asset-summary h2 {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.asset-summary p {
+  padding-right: 10px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .two-column-list {
@@ -1550,8 +1813,7 @@ button {
 }
 
 .asset-access-demo {
-  position: sticky;
-  top: 94px;
+  position: static;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -1724,6 +1986,41 @@ button {
 .tier-preview-stack {
   display: grid;
   gap: 12px;
+}
+
+.tier-public-resources {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #f8fbfc;
+}
+
+.tier-public-resources h3 {
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--teal-dark);
+  font-size: 14px;
+}
+
+.tier-public-resources a {
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.tier-public-resources a + a {
+  margin-top: 7px;
 }
 
 .tier-feature-panel {
@@ -5603,6 +5900,10 @@ button {
     width: 94%;
   }
 
+  .gli-ai-process-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .followup-composer > div {
     grid-template-columns: 1fr 48px;
   }
@@ -5717,13 +6018,24 @@ button {
   }
 
   .two-column-list,
+  .detail-review-grid,
   .detail-service-actions,
   .my-summary,
   .ops-grid {
     grid-template-columns: 1fr;
   }
 
-  .detail-action-bar {
+  .detail-review-grid > div {
+    min-height: 0;
+    padding: 19px;
+  }
+
+  .detail-review-grid > div + div {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .detail-action-grid {
     padding: 14px;
     grid-template-columns: 1fr;
   }

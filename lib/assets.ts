@@ -17,6 +17,12 @@ export type AssetFact = {
   value: string;
 };
 
+export type AssetPublicResource = {
+  label: string;
+  url: string;
+  type: "website" | "video" | "article";
+};
+
 export type Asset = {
   id: string;
   country: string;
@@ -35,13 +41,19 @@ export type Asset = {
   bathrooms: number;
   title: string;
   price: number;
+  maxPrice?: number;
   currency: PriceCurrency;
   areaSqm: number;
   image: string;
+  images?: string[];
+  publicResources?: AssetPublicResource[];
   summary: string;
   trustScore: number;
   trustStatus: TrustStatus;
   isGliDirect: boolean;
+  originLabel?: string;
+  documentDateLabel?: string;
+  publicationBasis?: string;
   sourceName?: string;
   sourceUrl?: string;
   updatedAt: string;

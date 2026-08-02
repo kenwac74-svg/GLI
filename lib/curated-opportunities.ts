@@ -1,6 +1,8 @@
 import type { Asset, AssetCategory } from "./assets";
+import { partnerAssets } from "./partner-assets.ts";
 
 export const curatedOpportunities: Asset[] = [
+  ...partnerAssets,
   {
     id: "GLI-CM-KH-201",
     country: "Cambodia",

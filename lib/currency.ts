@@ -46,6 +46,28 @@ export function formatSourceMoney(amount: number, currency: PriceCurrency): stri
   }).format(amount);
 }
 
+export function formatSourceMoneyRange(
+  minimum: number,
+  maximum: number,
+  currency: PriceCurrency,
+): string {
+  const divisor = maximum >= 10_000_000 ? 1_000_000 : 1_000;
+  const suffix = divisor === 1_000_000 ? "M" : "K";
+  const locale = SOURCE_LOCALES[currency];
+  const currencyPart = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+  })
+    .formatToParts(0)
+    .find((part) => part.type === "currency")?.value ?? currency;
+  const number = new Intl.NumberFormat(locale, {
+    maximumFractionDigits: divisor === 1_000_000 ? 1 : 0,
+  });
+
+  return `${currencyPart} ${number.format(minimum / divisor)}${suffix}~${number.format(maximum / divisor)}${suffix}`;
+}
+
 export function formatConvertedMoney(
   amount: number,
   currency: DisplayCurrency,
@@ -57,6 +79,23 @@ export function formatConvertedMoney(
     currencyDisplay: "narrowSymbol",
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+export function formatConvertedMoneyRange(
+  minimum: number,
+  maximum: number,
+  currency: DisplayCurrency,
+  language: string,
+): string {
+  const locale = language.startsWith("ko") ? "ko-KR" : "en-US";
+  const formatter = new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+    notation: "compact",
+    maximumFractionDigits: 1,
+  });
+  return `${formatter.format(minimum)}~${formatter.format(maximum)}`;
 }
 
 export function convertCurrency(

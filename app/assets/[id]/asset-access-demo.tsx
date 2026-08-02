@@ -6,7 +6,9 @@ import {
   BriefcaseBusiness,
   Check,
   ChevronRight,
+  ExternalLink,
   FileText,
+  Globe2,
   Landmark,
   LockKeyhole,
   Map,
@@ -17,6 +19,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { MembershipPlanId } from "../../../lib/membership-plans";
+import type { AssetPublicResource } from "../../../lib/assets";
 
 type AccessTierId = "free" | "basic" | "standard" | "premium" | "business";
 
@@ -46,11 +49,13 @@ export function AssetAccessDemo({
   trustScore,
   initialUnlockedLevel,
   membershipPlanId,
+  publicResources,
 }: {
   assetTitle: string;
   trustScore: number;
   initialUnlockedLevel: 1 | 2 | 3 | 4;
   membershipPlanId: MembershipPlanId | null;
+  publicResources: AssetPublicResource[];
 }) {
   const [selectedId, setSelectedId] = useState<AccessTierId>("free");
   const [unlockedLevel, setUnlockedLevel] = useState(initialUnlockedLevel);
@@ -122,7 +127,7 @@ export function AssetAccessDemo({
           </span>
         </div>
 
-        {selected.id === "free" ? <FreePreview /> : null}
+        {selected.id === "free" ? <FreePreview publicResources={publicResources} /> : null}
         {selected.id === "basic" ? <BasicPreview /> : null}
         {selected.id === "standard" ? <StandardPreview /> : null}
         {selected.id === "premium" ? <PremiumPreview /> : null}
@@ -212,7 +217,11 @@ export function AssetAccessDemo({
   );
 }
 
-function FreePreview() {
+function FreePreview({
+  publicResources,
+}: {
+  publicResources: AssetPublicResource[];
+}) {
   return (
     <div className="tier-preview-stack">
       <section className="tier-feature-panel">
@@ -231,6 +240,22 @@ function FreePreview() {
       <div className="tier-compact-row">
         <Newspaper size={18} /><div><strong>공개 미디어</strong><span>관련 보도 및 공개 자료</span></div>
       </div>
+      {publicResources.length ? (
+        <section className="tier-public-resources" aria-label="공개 웹 자료">
+          <h3><Globe2 size={18} /> 공개 웹 자료</h3>
+          {publicResources.map((resource) => (
+            <a
+              href={resource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              key={`${resource.type}-${resource.url}`}
+            >
+              <span>{resource.label}</span>
+              <ExternalLink size={15} />
+            </a>
+          ))}
+        </section>
+      ) : null}
     </div>
   );
 }

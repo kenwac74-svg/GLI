@@ -34,6 +34,9 @@ test("server-renders the GLI application shell", async () => {
   assert.match(html, /후보와 자료 신뢰도,/);
   assert.match(html, /다음 확인 단계를 한 번에 정리합니다/);
   assert.match(html, /GLI AI INVESTMENT ADVISOR/);
+  assert.match(html, /AI가 탐색하고, 전문가가 직접 검증합니다/);
+  assert.match(html, /AI와 사람의 상호보완/);
+  assert.doesNotMatch(html, /점수보다 근거를 먼저 봅니다/);
   assert.match(html, /\/brand\/gli-logo\.png/);
   assert.doesNotMatch(html, /gli-ai-prototype\.html|<iframe/i);
   assert.doesNotMatch(html, /Your site is taking shape|Building your site/i);
@@ -112,6 +115,32 @@ test("returns grounded Cambodia results from the search API", async () => {
   );
 });
 
+test("keeps Vietnam advisor results inside Vietnam", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-vietnam-api`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/api/search", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ query: "베트남에서 매물을 찾아줘" }),
+    }),
+    {
+      ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
+    },
+    { waitUntil() {}, passThroughOnException() {}, },
+  );
+
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.criteria.country, "Vietnam");
+  assert.ok(result.matches.length >= 1);
+  assert.ok(result.matches.every((asset) => asset.country === "Vietnam"));
+  assert.ok(result.citations.every((citation) =>
+    result.matches.some((asset) => asset.id === citation.assetId),
+  ));
+});
+
 test("renders the five-level asset access demo without blockchain purchase language", async () => {
   const response = await render("/assets/GLI-KH-004");
   assert.equal(response.status, 200);
@@ -158,11 +187,58 @@ test("renders global country controls and the four investment asset categories",
   assert.match(html, /캄보디아/);
   assert.match(html, /베트남/);
   assert.match(html, /필리핀/);
+  assert.match(html, /말레이시아/);
   assert.match(html, /주거용/);
   assert.match(html, /상업용/);
   assert.match(html, /레저/);
   assert.match(html, /프로젝트/);
   assert.match(html, /GLI 직접 발굴 사업 기회/);
+});
+
+test("publishes partner assets at their stated document reference point", async () => {
+  const response = await render("/assets/GLI-PT-MY-510");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /Pavilion Square/);
+  assert.match(html, /GLI 검증/);
+  assert.doesNotMatch(html, /자료 기준|등록 근거|자료 작성 시점/);
+  assert.doesNotMatch(html, /Pavilion Square 프로젝트 브리프·GLI 게시 승인/);
+  assert.doesNotMatch(html, /관리자 전용|공개 보류/);
+});
+
+test("lists document-dated partner opportunities across the requested categories", async () => {
+  const response = await render("/");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /Orchard Grand at Sycamore/);
+  assert.match(html, /RLC Philippines Residential Portfolio/);
+  assert.match(html, /Golden Crown Residence/);
+  assert.match(html, /GLI 검증/);
+  assert.doesNotMatch(html, /자료 기준 ·|자료 작성 시점|문서 시점 포트폴리오/);
+
+  const projectResponse = await render("/assets/GLI-PJ-VN-504");
+  const projectHtml = await projectResponse.text();
+  assert.match(projectHtml, /Thu Thiem Lots 4-26 &amp; 3-14 Development/);
+  assert.match(projectHtml, /프로젝트/);
+  assert.doesNotMatch(projectHtml, /2023년 사업계획 기준|자료 기준|등록 근거/);
+});
+
+test("renders the Golden Crown compact range and official multi-image gallery", async () => {
+  const response = await render("/assets/GLI-PT-MY-509");
+  assert.equal(response.status, 200);
+
+  const html = await response.text();
+  assert.match(html, /RM 1,352K~3,174K/);
+  assert.match(html, /aria-label="8번 사진 보기"/);
+  assert.match(html, /golden-crown\/facade\.jpg/);
+  assert.match(html, /golden-crown\/pool\.jpg/);
+  assert.match(html, /공개 웹 자료/);
+  assert.doesNotMatch(html, /사진 출처/);
+  assert.match(html, /gsklproperty\.com\/portfolio\/golden-crown-residence/);
+  assert.match(html, /detail-review-grid/);
+  assert.match(html, /detail-action-grid/);
 });
 
 test("renders category-specific facts for a GLI curated project", async () => {

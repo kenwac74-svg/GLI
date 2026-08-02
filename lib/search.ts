@@ -1,8 +1,8 @@
 import type { Asset } from "./assets";
 
 export type SearchCriteria = {
-  country: "Cambodia";
-  city: "Phnom Penh";
+  country: SearchCountry;
+  city: string | null;
   district: string | null;
   transaction: "sale" | "rent" | null;
   propertyType: Asset["propertyType"] | null;
@@ -14,6 +14,8 @@ export type SearchCriteria = {
   wantsRiver: boolean;
 };
 
+export type SearchCountry = "Cambodia" | "Vietnam" | "Philippines" | "Malaysia";
+
 export type SearchResult = {
   criteria: SearchCriteria;
   answer: string;
@@ -21,6 +23,8 @@ export type SearchResult = {
   matches: Array<Asset & { matchReasons: string[] }>;
   rate: { krwPerUsd: number; asOf: string };
 };
+
+const SEARCH_RESULT_LIMIT = 18;
 
 const DEMO_KRW_PER_USD = 1380;
 const PROPERTY_TYPES = new Set<Asset["propertyType"]>([
@@ -36,6 +40,46 @@ const PURPOSES = new Set<SearchCriteria["purpose"]>([
   "residence",
   "general",
 ]);
+const COUNTRIES = new Set<SearchCountry>([
+  "Cambodia",
+  "Vietnam",
+  "Philippines",
+  "Malaysia",
+]);
+const COUNTRY_PATTERNS: ReadonlyArray<{
+  country: SearchCountry;
+  pattern: RegExp;
+}> = [
+  { country: "Vietnam", pattern: /\b(?:vietnam|viet nam)\b|\uBCA0\uD2B8\uB0A8/i },
+  { country: "Philippines", pattern: /\bphilippines?\b|\uD544\uB9AC\uD540/i },
+  { country: "Malaysia", pattern: /\bmalaysia\b|\uB9D0\uB808\uC774\uC2DC\uC544/i },
+  { country: "Cambodia", pattern: /\bcambodia\b|\uCE84\uBCF4\uB514\uC544|\uD504\uB188\uD39C/i },
+];
+const CITY_PATTERNS: ReadonlyArray<{
+  country: SearchCountry;
+  city: string;
+  pattern: RegExp;
+}> = [
+  { country: "Cambodia", city: "Phnom Penh", pattern: /phnom penh|\uD504\uB188\uD39C/i },
+  { country: "Cambodia", city: "Sihanoukville", pattern: /sihanoukville|preah sihanouk|\uC2DC\uD558\uB204\uD06C\uBE4C|\uC2DC\uC544\uB204\uD06C\uBE4C/i },
+  { country: "Cambodia", city: "Siem Reap", pattern: /siem reap|\uC2DC\uC5E0\uB9BD|\uC528\uC5E0\uB9BD/i },
+  { country: "Cambodia", city: "Kampot", pattern: /\bkampot\b|\uCEA0\uD3FF/i },
+  { country: "Cambodia", city: "Kep", pattern: /\bkep\b|\uCF00\uD504/i },
+  { country: "Cambodia", city: "Battambang", pattern: /battambang|\uBC14\uD0D0\uBC29/i },
+  { country: "Vietnam", city: "Ho Chi Minh City", pattern: /ho chi minh|hcmc|saigon|\uD638\uCE58\uBBFC|\uC0AC\uC774\uACF5/i },
+  { country: "Vietnam", city: "Hanoi", pattern: /\bhanoi\b|\uD558\uB178\uC774/i },
+  { country: "Vietnam", city: "Da Nang", pattern: /da nang|danang|\uB2E4\uB0AD/i },
+  { country: "Vietnam", city: "Nha Trang", pattern: /nha trang|\uB098\uD2B8\uB791|\uB098\uC9F1/i },
+  { country: "Vietnam", city: "Phu Quoc", pattern: /phu quoc|\uD478\uAFB8\uC625/i },
+  { country: "Philippines", city: "Cebu", pattern: /\bcebu\b|\uC138\uBD80/i },
+  { country: "Philippines", city: "Manila", pattern: /\bmanila\b|\uB9C8\uB2D0\uB77C/i },
+  { country: "Philippines", city: "Makati", pattern: /\bmakati\b|\uB9C8\uCE74\uD2F0/i },
+  { country: "Philippines", city: "Taguig", pattern: /\btaguig\b|\uD0C0\uAE30\uADF8/i },
+  { country: "Philippines", city: "Davao", pattern: /\bdavao\b|\uB2E4\uBC14\uC624/i },
+  { country: "Malaysia", city: "Kuala Lumpur", pattern: /kuala lumpur|\bklcc\b|\uCFE0\uC54C\uB77C\uB8F8\uD478\uB974/i },
+  { country: "Malaysia", city: "Johor Bahru", pattern: /johor bahru|\bjb\b|\uC870\uD638\uBC14\uB8E8/i },
+  { country: "Malaysia", city: "Penang", pattern: /\bpenang\b|\uD398\uB0AD/i },
+];
 const DISTRICT_ALIASES: ReadonlyArray<{
   district: string;
   patterns: readonly string[];
@@ -59,7 +103,15 @@ const DISTRICT_ALIASES: ReadonlyArray<{
 
 export function parseSearchContext(value: unknown): SearchCriteria | null {
   if (!isRecord(value)) return null;
-  if (value.country !== "Cambodia" || value.city !== "Phnom Penh") return null;
+  if (typeof value.country !== "string" || !COUNTRIES.has(value.country as SearchCountry)) {
+    return null;
+  }
+  if (
+    value.city !== null &&
+    (typeof value.city !== "string" || value.city.length === 0 || value.city.length > 80)
+  ) {
+    return null;
+  }
   if (
     value.district !== null &&
     (typeof value.district !== "string" ||
@@ -104,8 +156,8 @@ export function parseSearchContext(value: unknown): SearchCriteria | null {
   }
 
   return {
-    country: "Cambodia",
-    city: "Phnom Penh",
+    country: value.country as SearchCountry,
+    city: value.city,
     district: value.district,
     transaction: value.transaction,
     propertyType: value.propertyType as Asset["propertyType"] | null,
@@ -123,6 +175,14 @@ export function extractCriteria(
   context: SearchCriteria | null = null,
 ): SearchCriteria {
   const text = query.toLowerCase();
+  const explicitCity = CITY_PATTERNS.find(({ pattern }) => pattern.test(text));
+  const explicitCountry =
+    COUNTRY_PATTERNS.find(({ pattern }) => pattern.test(text))?.country ??
+    explicitCity?.country;
+  const country = explicitCountry ?? context?.country ?? "Cambodia";
+  const city = explicitCity?.country === country ? explicitCity.city : extractCity(text, country) ??
+    (explicitCountry && explicitCountry !== context?.country ? defaultCity(country) : context?.city) ??
+    defaultCity(country);
   const district =
     DISTRICT_ALIASES.find(({ patterns }) =>
       patterns.some((pattern) => text.includes(pattern)),
@@ -154,8 +214,8 @@ export function extractCriteria(
   }
 
   const current: SearchCriteria = {
-    country: "Cambodia",
-    city: "Phnom Penh",
+    country,
+    city,
     district,
     transaction: explicitRent && !income ? "rent" : explicitSale || income || seasonal ? "sale" : null,
     propertyType: type,
@@ -177,8 +237,8 @@ export function extractCriteria(
     /(?:에어비앤비|airbnb|단기\s*임대).*(?:필요\s*없|상관\s*없|제외)/.test(text);
 
   return {
-    country: "Cambodia",
-    city: "Phnom Penh",
+    country,
+    city,
     district: current.district ?? context.district,
     transaction: current.transaction ?? context.transaction,
     propertyType: current.propertyType ?? context.propertyType,
@@ -199,7 +259,13 @@ export function searchAssets(
   context: SearchCriteria | null = null,
 ): SearchResult {
   const criteria = extractCriteria(query, context);
-  const exact = allAssets.filter((asset) => {
+  // Country and city are hard recommendation boundaries. Other conditions may
+  // be relaxed only inside the requested location and only as a visible fallback.
+  const countryAssets = allAssets.filter((asset) => asset.country === criteria.country);
+  const locationAssets = criteria.city
+    ? countryAssets.filter((asset) => sameLocation(asset.city, criteria.city))
+    : countryAssets;
+  const exact = locationAssets.filter((asset) => {
     if (criteria.transaction && asset.transaction !== criteria.transaction) return false;
     if (criteria.district && asset.district !== criteria.district) return false;
     if (criteria.propertyType && asset.propertyType !== criteria.propertyType) return false;
@@ -216,7 +282,7 @@ export function searchAssets(
 
   const pool = exact.length
     ? exact
-    : allAssets.filter(
+    : locationAssets.filter(
         (asset) =>
           (!criteria.transaction || asset.transaction === criteria.transaction) &&
           (!criteria.district || asset.district === criteria.district) &&
@@ -230,7 +296,7 @@ export function searchAssets(
       rank: rankAsset(asset, criteria),
     }))
     .sort((a, b) => b.rank - a.rank)
-    .slice(0, 6)
+    .slice(0, SEARCH_RESULT_LIMIT)
     .map(({ rank, ...asset }) => {
       void rank;
       return asset;
@@ -238,11 +304,18 @@ export function searchAssets(
 
   return {
     criteria,
-    answer: buildAnswer(criteria, exact.length, matches.length),
-    clarification: buildClarification(criteria),
+    answer: buildAnswer(criteria, exact.length, matches.length, locationAssets.length),
+    clarification:
+      matches.length === 0
+        ? `${locationLabel(criteria)}에서 현재 조건에 맞는 자산을 찾지 못했습니다. 다른 도시나 국가까지 범위를 넓혀 검토할까요?`
+        : buildClarification(criteria),
     matches,
     rate: { krwPerUsd: DEMO_KRW_PER_USD, asOf: "demo-reference" },
   };
+}
+
+function sameLocation(left: string, right: string): boolean {
+  return left.trim().toLocaleLowerCase("en-US") === right.trim().toLocaleLowerCase("en-US");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -287,7 +360,7 @@ function buildReasons(asset: Asset, criteria: SearchCriteria, nearest: boolean):
   if (criteria.purpose === "income") reasons.push("임대 수요 검토 후보");
   if (criteria.purpose === "seasonal") reasons.push("계절 체류 후보");
   if (criteria.wantsRiver && /river|mekong|riverside/i.test(asset.title)) reasons.push("강변 조건");
-  if (asset.isGliDirect) reasons.push("GLI Direct");
+  if (asset.isGliDirect) reasons.push(asset.originLabel ?? "GLI Direct");
   return reasons.slice(0, 3);
 }
 
@@ -304,10 +377,24 @@ function buildClarification(criteria: SearchCriteria): string | null {
   return null;
 }
 
-function buildAnswer(criteria: SearchCriteria, exactCount: number, shownCount: number): string {
+function buildAnswer(
+  criteria: SearchCriteria,
+  exactCount: number,
+  shownCount: number,
+  locationAssetCount: number,
+): string {
+  if (shownCount === 0) {
+    const reason = locationAssetCount === 0
+      ? "현재 공개된 자산이 없습니다."
+      : "현재 요청 조건에 맞는 자산이 없습니다.";
+    return `${locationLabel(criteria)}에는 ${reason} 국가 조건을 임의로 변경하지 않았고, 도시 조건도 유지해 다른 지역의 자산을 추천하지 않았습니다.`;
+  }
   const budget = criteria.budgetKrw
     ? `약 ${(criteria.budgetKrw / 10_000).toLocaleString("ko-KR")}만원은 데모 기준 약 $${criteria.maxPriceUsd?.toLocaleString("en-US")}입니다. `
     : "";
+  const location = criteria.city
+    ? `${countryLabel(criteria.country)} ${criteria.city}`
+    : countryLabel(criteria.country);
 
   if (criteria.purpose === "income") {
     return exactCount
@@ -319,5 +406,30 @@ function buildAnswer(criteria: SearchCriteria, exactCount: number, shownCount: n
       ? `${budget}3개월 체류와 부재 중 운영을 함께 고려한 후보 ${shownCount}개를 정리했습니다. 단기 임대 가능 여부는 건물 규정, 현지 규제와 운영대행 수수료를 별도로 확인해야 합니다.`
       : `${budget}요청 조건과 정확히 일치하는 매매 후보가 없어 가까운 대안 ${shownCount}개를 보여드립니다. 침실 수와 가격 차이를 확인한 뒤, 단기 임대 가능 여부와 운영대행 수수료를 별도로 검토해야 합니다.`;
   }
-  return `${budget}프놈펜 조건에서 ${shownCount}개 후보를 찾았습니다. Trust Score는 자료 신뢰도를 뜻하며 투자 수익을 보장하지 않습니다.`;
+  return `${budget}${location} 조건에서 ${shownCount}개 후보를 찾았습니다. Trust Score는 자료 신뢰도를 뜻하며 투자 수익을 보장하지 않습니다.`;
+}
+
+function extractCity(text: string, country: SearchCountry): string | null {
+  return CITY_PATTERNS.find(
+    (entry) => entry.country === country && entry.pattern.test(text),
+  )?.city ?? null;
+}
+
+function locationLabel(criteria: SearchCriteria): string {
+  return criteria.city
+    ? `${countryLabel(criteria.country)} ${criteria.city}`
+    : countryLabel(criteria.country);
+}
+
+function defaultCity(country: SearchCountry): string | null {
+  return country === "Cambodia" ? "Phnom Penh" : null;
+}
+
+function countryLabel(country: SearchCountry): string {
+  return {
+    Cambodia: "캄보디아",
+    Vietnam: "베트남",
+    Philippines: "필리핀",
+    Malaysia: "말레이시아",
+  }[country];
 }

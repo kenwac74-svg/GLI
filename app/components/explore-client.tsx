@@ -22,11 +22,18 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { Asset, AssetCategory } from "../../lib/assets";
 import type { AdvisorSearchResult } from "../../lib/ai-search";
+import type { GliAiPublicPlan } from "../../lib/gli-ai-orchestration";
 import type { SearchCriteria } from "../../lib/search";
 import { PriceDisplay } from "./price-display";
+import {
+  EXPLORE_RETURN_KEY,
+  EXPLORE_STATE_KEY,
+  EXPLORE_STATE_MAX_AGE_MS,
+  rememberExploreResult,
+} from "../../lib/explore-session";
 
 const prompts = [
   "프놈펜에 5,000만원으로 월세가 잘 나오는 투자가 가능할까?",
@@ -46,7 +53,15 @@ const COUNTRY_OPTIONS = [
   { id: "Cambodia", label: "캄보디아" },
   { id: "Vietnam", label: "베트남" },
   { id: "Philippines", label: "필리핀" },
+  { id: "Malaysia", label: "말레이시아" },
 ] as const;
+
+const DEFAULT_AI_PROCESS_STAGES: GliAiPublicPlan["stages"] = [
+  { id: "intent", label: "요청 이해", description: "" },
+  { id: "discovery", label: "후보 탐색", description: "" },
+  { id: "review", label: "근거 검토", description: "" },
+  { id: "synthesis", label: "답변 구성", description: "" },
+];
 
 type CountryFilter = (typeof COUNTRY_OPTIONS)[number]["id"];
 
@@ -66,6 +81,33 @@ type SearchMembershipAccess = {
   used: number;
   remaining: number | null;
   deliveredMode: "openai" | "rules";
+};
+
+type SearchDiscovery = {
+  checkedAt: string;
+  cached: boolean;
+  collectedCount: number;
+  displayedCount: number;
+  sources: Array<{
+    slug: string;
+    name: string;
+    status: "collected" | "snapshot" | "unavailable";
+    count: number;
+  }>;
+};
+
+type StoredExploreState = {
+  savedAt: number;
+  assets: Asset[];
+  turns: ConversationTurn[];
+  criteria: SearchCriteria;
+  citations: AdvisorSearchResult["citations"];
+  searchAccess: SearchMembershipAccess;
+  discovery: SearchDiscovery | null;
+  orchestration?: GliAiPublicPlan | null;
+  filter: "all" | "sale" | "rent" | "direct";
+  assetCategory: AssetCategory;
+  countryFilter: CountryFilter;
 };
 
 const welcomeTurn: ConversationTurn = {
@@ -91,16 +133,75 @@ export function ExploreClient({
   const [loading, setLoading] = useState(false);
   const [searchAccess, setSearchAccess] =
     useState<SearchMembershipAccess | null>(null);
+  const [discovery, setDiscovery] = useState<SearchDiscovery | null>(null);
+  const [orchestration, setOrchestration] =
+    useState<GliAiPublicPlan | null>(null);
+  const [activeProcessStep, setActiveProcessStep] = useState(0);
   const [filter, setFilter] = useState<"all" | "sale" | "rent" | "direct">("all");
   const [assetCategory, setAssetCategory] =
     useState<AssetCategory>("residential");
   const [countryFilter, setCountryFilter] = useState<CountryFilter>("all");
 
+  useEffect(() => {
+    const returnState = window.sessionStorage.getItem(EXPLORE_RETURN_KEY);
+    const storedState = window.sessionStorage.getItem(EXPLORE_STATE_KEY);
+    if (!returnState || !storedState) return;
+    let restoreTimer: number | undefined;
+    try {
+      const restored = JSON.parse(storedState) as StoredExploreState;
+      if (
+        typeof restored.savedAt !== "number" ||
+        Date.now() - restored.savedAt >= EXPLORE_STATE_MAX_AGE_MS ||
+        !Array.isArray(restored.assets) ||
+        !Array.isArray(restored.turns) ||
+        !restored.criteria
+      ) {
+        return;
+      }
+      restoreTimer = window.setTimeout(() => {
+        setAssets(restored.assets);
+        setTurns(restored.turns);
+        setCriteria(restored.criteria);
+        setCitations(restored.citations ?? []);
+        setSearchAccess(restored.searchAccess ?? null);
+        setDiscovery(restored.discovery ?? null);
+        setOrchestration(restored.orchestration ?? null);
+        setFilter(restored.filter ?? "all");
+        setAssetCategory(restored.assetCategory ?? "residential");
+        setCountryFilter(restored.countryFilter ?? "all");
+      }, 0);
+    } catch {
+      window.sessionStorage.removeItem(EXPLORE_STATE_KEY);
+    } finally {
+      window.sessionStorage.removeItem(EXPLORE_RETURN_KEY);
+    }
+    return () => {
+      if (restoreTimer !== undefined) window.clearTimeout(restoreTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!loading) return;
+    setActiveProcessStep(0);
+    const timer = window.setInterval(() => {
+      setActiveProcessStep((current) => Math.min(current + 1, 3));
+    }, 850);
+    return () => window.clearInterval(timer);
+  }, [loading]);
+
   const visibleAssets = useMemo(
     () => {
-      const categoryAssets =
-        assetCategory === "residential"
-          ? assets
+      const categoryAssets = criteria
+        ? assets.filter(
+            (asset) => (asset.assetCategory ?? "residential") === assetCategory,
+          )
+        : assetCategory === "residential"
+          ? [
+              ...assets,
+              ...curatedAssets.filter(
+                (asset) => asset.assetCategory === "residential",
+              ),
+            ]
           : curatedAssets.filter(
               (asset) => asset.assetCategory === assetCategory,
             );
@@ -114,7 +215,7 @@ export function ExploreClient({
         return asset.transaction === filter;
       });
     },
-    [assetCategory, assets, countryFilter, curatedAssets, filter],
+    [assetCategory, assets, countryFilter, criteria, curatedAssets, filter],
   );
 
   async function runSearch(value: string) {
@@ -128,6 +229,7 @@ export function ExploreClient({
     setTurns((current) => [...current, userTurn].slice(-9));
     setQuery("");
     setLoading(true);
+    setOrchestration(null);
     try {
       const response = await fetch("/api/search", {
         method: "POST",
@@ -137,14 +239,22 @@ export function ExploreClient({
       if (!response.ok) throw new Error("search_failed");
       const result = (await response.json()) as AdvisorSearchResult & {
         membershipAccess: SearchMembershipAccess;
+        discovery: SearchDiscovery | null;
+        orchestration: GliAiPublicPlan;
       };
       setAssets(result.matches);
       setCriteria(result.criteria);
       setCitations(result.citations);
       setSearchAccess(result.membershipAccess);
+      setDiscovery(result.discovery);
+      setOrchestration(result.orchestration);
       setFilter("all");
-      setTurns((current) =>
-        [
+      setAssetCategory(result.matches[0]?.assetCategory ?? "residential");
+      setCountryFilter(result.criteria.country as CountryFilter);
+      const resultCategory = result.matches[0]?.assetCategory ?? "residential";
+      const resultCountry = result.criteria.country as CountryFilter;
+      setTurns((current) => {
+        const nextTurns = [
           ...current,
           {
             id: Date.now() + 1,
@@ -152,8 +262,23 @@ export function ExploreClient({
             text: result.answer,
             clarification: result.clarification,
           },
-        ].slice(-10),
-      );
+        ].slice(-10);
+        const stored: StoredExploreState = {
+          savedAt: Date.now(),
+          assets: result.matches,
+          turns: nextTurns,
+          criteria: result.criteria,
+          citations: result.citations,
+          searchAccess: result.membershipAccess,
+          discovery: result.discovery,
+          orchestration: result.orchestration,
+          filter: "all",
+          assetCategory: resultCategory,
+          countryFilter: resultCountry,
+        };
+        window.sessionStorage.setItem(EXPLORE_STATE_KEY, JSON.stringify(stored));
+        return nextTurns;
+      });
     } catch {
       setTurns((current) =>
         [
@@ -166,6 +291,8 @@ export function ExploreClient({
         ].slice(-10),
       );
       setCitations([]);
+      setDiscovery(null);
+      setOrchestration(null);
     } finally {
       setLoading(false);
       window.setTimeout(() => {
@@ -189,9 +316,13 @@ export function ExploreClient({
     setCriteria(null);
     setCitations([]);
     setSearchAccess(null);
+    setDiscovery(null);
+    setOrchestration(null);
     setFilter("all");
     setAssetCategory("residential");
     setCountryFilter("all");
+    window.sessionStorage.removeItem(EXPLORE_RETURN_KEY);
+    window.sessionStorage.removeItem(EXPLORE_STATE_KEY);
   }
 
   const activeCriteria = criteria ? describeCriteria(criteria) : [];
@@ -276,8 +407,8 @@ export function ExploreClient({
               <div>
                 <strong>
                   {searchAccess.deliveredMode === "openai"
-                    ? "멤버십 심화 AI 탐색"
-                    : "규칙 기반 무료 탐색"}
+                    ? "GLI 심화 투자 탐색"
+                    : "GLI 빠른 자산 탐색"}
                 </strong>
                 <span>{searchAccessLabel(searchAccess)}</span>
               </div>
@@ -286,6 +417,62 @@ export function ExploreClient({
                   멤버십 보기 <ArrowRight size={14} />
                 </Link>
               )}
+            </div>
+          )}
+
+          {(loading || orchestration) && (
+            <div className="gli-ai-process" role="status" aria-live="polite">
+              <div className="gli-ai-process-head">
+                <div>
+                  <strong>GLI AI 통합 분석</strong>
+                  <span>
+                    {loading
+                      ? "질문의 목적에 맞춰 탐색과 검토 단계를 진행하고 있습니다."
+                      : orchestration?.summary}
+                  </span>
+                </div>
+                {loading ? (
+                  <LoaderCircle className="spin" size={19} />
+                ) : (
+                  <CheckCircle2 size={19} />
+                )}
+              </div>
+              <div className="gli-ai-process-steps">
+                {(orchestration?.stages ?? DEFAULT_AI_PROCESS_STAGES).map(
+                  (stage, index) => {
+                    const completed = !loading || index < activeProcessStep;
+                    const active = loading && index === activeProcessStep;
+                    return (
+                      <div
+                        className={`${completed ? "is-complete" : ""} ${active ? "is-active" : ""}`}
+                        key={stage.id}
+                      >
+                        <span>
+                          {completed ? <CheckCircle2 size={16} /> : index + 1}
+                        </span>
+                        <strong>{stage.label}</strong>
+                      </div>
+                    );
+                  },
+                )}
+              </div>
+            </div>
+          )}
+
+          {discovery && discovery.collectedCount > 0 && (
+            <div className="search-access-status live-discovery-status" role="status">
+              <div>
+                <strong>
+                  {discovery.sources.some((source) => source.status === "collected")
+                    ? "캄보디아 공개 매물 실시간 탐색"
+                    : "캄보디아 공개 매물 검색"}
+                </strong>
+                <span>
+                  정보 사이트 {discovery.sources.filter((source) => source.status !== "unavailable").length}곳에서
+                  후보 {discovery.collectedCount}건을 확인했고, 현재 조건과 일치하는 외부 매물 {discovery.displayedCount ?? 0}건을 표시합니다.
+                </span>
+              </div>
+              <BadgeCheck size={18} />
             </div>
           )}
 
@@ -305,7 +492,9 @@ export function ExploreClient({
             {loading && (
               <div className="conversation-turn advisor loading-turn">
                 <LoaderCircle className="spin" size={18} />
-                <p>조건을 정리하고 근거가 있는 후보를 비교하고 있습니다.</p>
+                <p>
+                  공개 정보 사이트와 GLI 보유 자산에서 조건에 맞는 후보를 확인하고 있습니다.
+                </p>
               </div>
             )}
           </div>
@@ -405,10 +594,20 @@ export function ExploreClient({
           <div className="section-head">
             <div>
               <p className="section-kicker">
-                {countryFilter === "all" ? "GLOBAL" : countryLabel(countryFilter)} · {categoryLabel(assetCategory)}
+                {criteria
+                  ? `AI SEARCH · ${countryLabel(criteria.country)}`
+                  : `${countryFilter === "all" ? "GLOBAL" : countryLabel(countryFilter)} · ${categoryLabel(assetCategory)}`}
               </p>
-              <h2>{categoryLabel(assetCategory)} 추천 자산</h2>
-              <span>{visibleAssets.length}개 후보를 비교 중입니다.</span>
+              <h2>
+                {criteria
+                  ? `${categoryLabel(assetCategory)} 검색 결과`
+                  : `${categoryLabel(assetCategory)} 추천 자산`}
+              </h2>
+              <span>
+                {criteria
+                  ? `이번 조건에 맞는 후보 ${visibleAssets.length}개입니다.`
+                  : `${visibleAssets.length}개 후보를 비교 중입니다.`}
+              </span>
             </div>
             {assetCategory === "residential" ? (
               <div className="segmented" aria-label="자산 필터">
@@ -445,7 +644,11 @@ export function ExploreClient({
                     />
                     <div className="asset-badges">
                       <span>{asset.categoryLabel ?? "주거용"}</span>
-                      {asset.isGliDirect && <strong>GLI 추천</strong>}
+                      {asset.originLabel ? (
+                        <strong>{asset.originLabel}</strong>
+                      ) : (
+                        asset.isGliDirect && <strong>GLI 추천</strong>
+                      )}
                     </div>
                   </div>
                   <div className="asset-card-body">
@@ -466,6 +669,7 @@ export function ExploreClient({
                     <div className="asset-card-foot">
                       <PriceDisplay
                         amount={asset.price}
+                        maxAmount={asset.maxPrice}
                         currency={asset.currency}
                         contextLabel={
                           asset.offerLabel ??
@@ -480,7 +684,11 @@ export function ExploreClient({
                         </span>
                       </div>
                     </div>
-                    <Link className="asset-link" href={`/assets/${asset.id}`}>
+                    <Link
+                      className="asset-link"
+                      href={`/assets/${asset.id}`}
+                      onClick={() => rememberExploreResult(asset.id)}
+                    >
                       상세 정보 확인 <ArrowRight size={17} />
                     </Link>
                   </div>
@@ -511,10 +719,11 @@ export function ExploreClient({
         <section className="trust-band">
           <div>
             <p className="section-kicker">GLI TRUST STANDARD</p>
-            <h2>점수보다 근거를 먼저 봅니다</h2>
+            <h2>AI가 탐색하고, 전문가가 직접 검증합니다</h2>
             <p>
-              Trust Score는 투자 수익률이 아니라 현재 자료의 완전성, 최신성, 일관성과 검토
-              상태를 나타냅니다.
+              AI가 여러 출처의 자산 정보를 탐색하고 교차 분석하면, GLI 전문가가 핵심
+              자료와 현지 확인 사항을 직접 검토합니다. Trust Score는 AI와 사람의 상호보완
+              검토를 통해 확인된 현재 정보의 완전성, 최신성, 일관성을 나타냅니다.
             </p>
           </div>
           <div className="trust-steps">
@@ -555,6 +764,7 @@ function countryLabel(country: Exclude<CountryFilter, "all">): string {
     Cambodia: "캄보디아",
     Vietnam: "베트남",
     Philippines: "필리핀",
+    Malaysia: "말레이시아",
   };
   return labels[country];
 }

@@ -5,7 +5,9 @@ import {
   convertCurrency,
   displayCurrencyForLanguage,
   formatConvertedMoney,
+  formatConvertedMoneyRange,
   formatSourceMoney,
+  formatSourceMoneyRange,
   type ExchangeRateSnapshot,
   type PriceCurrency,
 } from "../../lib/currency";
@@ -14,6 +16,7 @@ let exchangeRateRequest: Promise<ExchangeRateSnapshot | null> | null = null;
 
 type PriceDisplayProps = {
   amount: number;
+  maxAmount?: number;
   currency: PriceCurrency;
   contextLabel: string;
   originalLabel?: string;
@@ -23,6 +26,7 @@ type PriceDisplayProps = {
 
 export function PriceDisplay({
   amount,
+  maxAmount,
   currency,
   contextLabel,
   originalLabel,
@@ -48,7 +52,17 @@ export function PriceDisplay({
         : null,
     [amount, currency, snapshot, targetCurrency],
   );
-  const originalPrice = originalLabel ?? formatSourceMoney(amount, currency);
+  const convertedMaximum = useMemo(
+    () =>
+      snapshot && maxAmount && maxAmount > amount
+        ? convertCurrency(maxAmount, currency, targetCurrency, snapshot.rates)
+        : null,
+    [amount, currency, maxAmount, snapshot, targetCurrency],
+  );
+  const hasRange = Boolean(maxAmount && maxAmount > amount);
+  const originalPrice = hasRange && maxAmount
+    ? formatSourceMoneyRange(amount, maxAmount, currency)
+    : originalLabel ?? formatSourceMoney(amount, currency);
 
   return (
     <div className={className}>
@@ -56,7 +70,14 @@ export function PriceDisplay({
       <strong>{originalPrice}</strong>
       {converted !== null && targetCurrency !== currency ? (
         <span className="price-converted">
-          약 {formatConvertedMoney(converted, targetCurrency, language)}
+          약 {convertedMaximum !== null
+            ? formatConvertedMoneyRange(
+                converted,
+                convertedMaximum,
+                targetCurrency,
+                language,
+              )
+            : formatConvertedMoney(converted, targetCurrency, language)}
         </span>
       ) : null}
       {showAttribution && snapshot ? (

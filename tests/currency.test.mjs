@@ -5,6 +5,8 @@ import {
   convertCurrency,
   displayCurrencyForLanguage,
   formatSourceMoney,
+  formatSourceMoneyRange,
+  formatConvertedMoneyRange,
   isPriceCurrency,
 } from "../lib/currency.ts";
 
@@ -31,4 +33,15 @@ test("formats and validates supported source currencies", () => {
   assert.match(formatSourceMoney(4_100_000, "KHR"), /4[,.]100[,.]000/);
   assert.equal(isPriceCurrency("VND"), true);
   assert.equal(isPriceCurrency("BTC"), false);
+});
+
+test("formats long source and converted price ranges compactly", () => {
+  assert.equal(
+    formatSourceMoneyRange(1_352_000, 3_174_000, "MYR"),
+    "RM 1,352K~3,174K",
+  );
+  assert.match(
+    formatConvertedMoneyRange(476_000_000, 1_118_000_000, "KRW", "ko-KR"),
+    /₩4\.8억~₩11\.2억/,
+  );
 });

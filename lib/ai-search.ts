@@ -74,6 +74,8 @@ export async function runAdvisorSearch(
           "You are GLI's Korean-language property advisor.",
           "Use only the supplied candidate facts. Never invent yields, legal status, ownership eligibility, availability, or verification results.",
           "You may reorder or omit candidates, but selectedAssetIds must contain only supplied IDs.",
+          "The requested country is a hard boundary. Never recommend an asset from another country unless the user explicitly agrees to expand the country scope.",
+          "The requested city is also a hard boundary. Never substitute another city unless the user explicitly agrees to expand the location scope.",
           "Trust Score and Trust Status are immutable server facts.",
           "Explain uncertainty and the next fact to verify. Never promise returns or legal clearance.",
           "Return concise Korean suitable for a consumer product.",
