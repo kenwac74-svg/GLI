@@ -40,4 +40,3 @@ through the API with an incomplete checklist. GLI operations must assign active
 administrators as named reviewers before a live pilot. Existing fixture assets
 remain usable, but their historical approvals do not gain invented decision
 records.
-

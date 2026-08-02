@@ -297,4 +297,3 @@ test("audit access and query options fail closed", async () => {
     sqlite.close();
   }
 });
-

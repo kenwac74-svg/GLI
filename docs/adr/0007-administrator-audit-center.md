@@ -40,4 +40,3 @@ security and partner audits.
 The first implementation returns the latest 100 records at most. Cursor
 pagination, retention policy, immutable export, and external SIEM delivery
 remain production hardening tasks.
-

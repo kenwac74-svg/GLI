@@ -341,7 +341,7 @@ export function toLicensedPartnerNormalizationInput(
     propertyType:
       listing.propertyType as NormalizationInput["propertyType"],
     price: listing.price as number,
-    currency: listing.currency as "USD",
+    currency: listing.currency as NormalizationInput["currency"],
     areaSqm: listing.areaSqm as number,
     bedrooms: listing.bedrooms as number,
     bathrooms: listing.bathrooms as number,
@@ -375,4 +375,3 @@ function validNow(value: Date): Date {
 function sha256(value: Uint8Array): string {
   return createHash("sha256").update(value).digest("hex");
 }
-

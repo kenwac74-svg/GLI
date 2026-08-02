@@ -14,7 +14,7 @@ Updated: 2026-07-31
 
 | Area | Current status | Authoritative evidence | Remaining condition |
 |---|---|---|---|
-| Normalized property model | VERIFIED | D1 migrations `0000`-`0013`, `db/schema.ts`, normalization and repository tests | Expand mappings when a licensed source contract is received |
+| Normalized property model | VERIFIED FOR CURRENT DEMO | D1 migrations `0000`-`0013`, `db/schema.ts`, normalization and repository tests | Add source-specific nullable field states and `조사 예정` handling from ADR 0021 before demand-driven discovery |
 | Provenance and immutable source snapshots | VERIFIED | `ingestion/feed-worker.ts`, licensed network and manual-import connectors, R2 snapshot contract, listing versions, audit records, ingestion tests | Production R2 binding and retention approval |
 | Source authorization boundary | VERIFIED | source policy registry, allowlisted HTTPS hosts and fields, expiry/suspension checks, admin source and partner-file import UI, built-worker tests | None for the boundary itself |
 | Live external Cambodia sources | EXTERNAL GATE | Readiness gate and PM tasks GLI-002, GLI-005, GLI-010, GLI-013 remain open | Written permission or partner feed for each production source, credentials, permitted fields |
@@ -25,6 +25,7 @@ Updated: 2026-07-31
 | Full Trust Report access | VERIFIED | separate private report API/page, Investor/Private server entitlement, Explore paywall, evidence-only content and print/PDF UX | Legal wording approval and live analyst-approved reports |
 | Account and MY GLI | VERIFIED | authenticated user creation, plan-enforced favorites, prioritized consultations, member-scoped in-app alerts, server-derived entitlement usage dashboard, `/my`, built-worker E2E test | Production identity policy and account support owner |
 | Cash membership product | VERIFIED | separate `/membership` and checkout routes, global account-level plans, server-enforced favorite and deep-AI limits, consultation priority, Investor/Private report entitlement, demo no-charge activation | None for the product model |
+| Tiered asset detail and GLI Cash | VERIFIED FOR DEMO | five-level Free/Basic/Standard/Premium/Business detail tabs, inherited lower-level access, local no-charge GLI Cash confirmation flow and ADR 0020 | Approve category content matrices, prices, access duration, durable cash ledger, recharge/refund rules and Business service scope |
 | Real cash payment | TECHNICALLY READY | provider-neutral checkout adapter, signed webhook ledger, idempotency, refund access termination and tests | Provider selection, merchant account, credentials, refund policy, certification |
 | Consultation workflow | VERIFIED | member intake, member-scoped case page, member/operator messages, status history, in-app reply/status alerts, assignment, admin operations and built-worker tests | Named Cambodia consultation operator and SLA |
 | Administrator control center | VERIFIED | sources, authorized partner-file import, ingestion/review, AI quality rehearsal/evidence, consultation operations, alerts, audit center, CSV export and readiness center | Production administrators and least-privilege assignment |
@@ -51,7 +52,7 @@ D1 migration to an isolated SQLite-backed D1 adapter and verifies:
 10. An administrator can record backup/restore evidence and export redacted audit CSV.
 11. The administrator readiness page renders from the migrated database.
 12. An authorized partner JSON or CSV file is stored as an exact R2 raw snapshot,
-    normalized, deduplicated, and placed in `REVIEW_PENDING`; suspension blocks
+    normalized, kept idempotent for the same source post, and placed in `REVIEW_PENDING`; suspension blocks
     the next import before another raw object is written.
 13. An administrator can run the five-case rules evaluation through the built
     Worker, persist its summary and case checks, and render the evidence in the
@@ -86,4 +87,3 @@ The pilot remains blocked until all of the following are recorded:
 8. Security, privacy, and pilot launch approvals are signed by their named owners.
 
 The `/admin/readiness` page is the operational source of truth for these gates.
-

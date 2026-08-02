@@ -2,8 +2,15 @@
 
 import { CreditCard, LoaderCircle } from "lucide-react";
 import { useState } from "react";
+import type { BillingCycle } from "../../lib/membership-plans";
 
-export function MembershipAction({ planId }: { planId: string }) {
+export function MembershipAction({
+  planId,
+  billingCycle,
+}: {
+  planId: string;
+  billingCycle: BillingCycle;
+}) {
   const [state, setState] = useState<
     "idle" | "saving" | "active" | "error"
   >("idle");
@@ -14,7 +21,7 @@ export function MembershipAction({ planId }: { planId: string }) {
       const response = await fetch("/api/memberships/checkout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ planId }),
+        body: JSON.stringify({ planId, billingCycle }),
       });
       const payload = (await response.json()) as {
         checkoutUrl?: string;

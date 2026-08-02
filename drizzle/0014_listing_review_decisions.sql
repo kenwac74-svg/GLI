@@ -15,4 +15,3 @@ CREATE TABLE `listing_review_decisions` (
 CREATE INDEX `listing_review_decisions_listing_created_idx` ON `listing_review_decisions` (`listing_id`,`created_at`);
 --> statement-breakpoint
 CREATE INDEX `listing_review_decisions_reviewer_created_idx` ON `listing_review_decisions` (`reviewer_user_id`,`created_at`);
-

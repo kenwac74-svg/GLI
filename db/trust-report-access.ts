@@ -264,4 +264,3 @@ function assertDatabase(
     throw new TypeError("A D1 database binding is required");
   }
 }
-

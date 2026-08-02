@@ -48,6 +48,10 @@ export type OperationsRun = {
   errorSummary: string | null;
 };
 
+export type IngestionExecutionOptions = {
+  demoAutoApproval?: boolean;
+};
+
 export type OperationsListing = {
   publicId: string;
   title: string;
@@ -517,6 +521,7 @@ export async function runApprovedFixtureIngestion(
   candidates: readonly NormalizationInput[],
   actorUserId: string,
   now = new Date(),
+  options: IngestionExecutionOptions = {},
 ): Promise<IngestionResult> {
   return runApprovedConnectorIngestion(
     database,
@@ -528,6 +533,7 @@ export async function runApprovedFixtureIngestion(
     },
     actorUserId,
     now,
+    options,
   );
 }
 
@@ -700,10 +706,22 @@ export async function runApprovedConnectorIngestion(
   connector: SourceConnector<CollectedListingBatch>,
   actorUserId: string,
   now = new Date(),
+  options: IngestionExecutionOptions = {},
 ): Promise<IngestionResult> {
   assertDatabase(database);
   const source = await loadSourceRow(database, connector.sourceSlug);
-  const policy = sourcePolicy(source);
+  const configuredPolicy = sourcePolicy(source);
+  // DEMO-ONLY EXCEPTION: the hosted product simulation may treat a configured
+  // source as approved and publish its records immediately. Production must
+  // omit this option and retain source authorization plus human listing review.
+  const demoAutoApproval = options.demoAutoApproval === true;
+  const policy: SourcePolicy = demoAutoApproval
+    ? {
+        ...configuredPolicy,
+        approvalStatus: "APPROVED",
+        approvalExpiresAt: null,
+      }
+    : configuredPolicy;
   assertSourceCollectionAllowed(connector, policy, now);
 
   const startedAt = now.getTime();
@@ -777,6 +795,15 @@ export async function runApprovedConnectorIngestion(
         startedAt,
         rawSnapshotId,
       );
+      if (demoAutoApproval) {
+        await autoPublishDemoListing(
+          database,
+          listing,
+          source.slug,
+          actorUserId,
+          startedAt,
+        );
+      }
       acceptedCount += 1;
       listingPublicIds.push(listing.publicId);
     } catch (error) {
@@ -829,6 +856,32 @@ export async function runApprovedConnectorIngestion(
     listingPublicIds,
     errors,
   };
+}
+
+async function autoPublishDemoListing(
+  database: D1DatabaseLike,
+  listing: ListingIdentityRow,
+  sourceSlug: string,
+  actorUserId: string,
+  now: number,
+): Promise<void> {
+  if (listing.status === "ACTIVE") return;
+  await database
+    .prepare("UPDATE listings SET status = 'ACTIVE', updated_at = ? WHERE id = ?")
+    .bind(now, listing.id)
+    .run();
+  await insertAudit(database, {
+    actorUserId,
+    action: "DEMO_LISTING_AUTO_PUBLISHED",
+    resourceType: "LISTING",
+    resourceId: listing.publicId,
+    after: {
+      sourceSlug,
+      status: "ACTIVE",
+      mode: "DEMO_SOURCE_AUTO_APPROVAL",
+    },
+    createdAt: now,
+  });
 }
 
 export async function reviewListing(
@@ -1716,4 +1769,3 @@ function assertDatabase(
     throw new TypeError("database must expose prepare()");
   }
 }
-

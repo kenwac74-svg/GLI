@@ -292,4 +292,3 @@ try {
 } finally {
   database.close();
 }
-

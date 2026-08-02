@@ -5,4 +5,3 @@ export async function isDemoBillingEnabled(): Promise<boolean> {
     env.DEMO_AUTH_ENABLED === "true"
   );
 }
-

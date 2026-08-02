@@ -15,6 +15,7 @@ import {
   workflowErrorResponse,
 } from "../../../../../lib/member-data";
 import { getWorkflowRawStore } from "../../../../../lib/raw-store.ts";
+import { isRuntimeDemoSourceAutoApprovalEnabled } from "../../../../../lib/demo-data-mode";
 
 const MAX_REQUEST_BYTES = 2_100_000;
 const MAX_FEED_BYTES = 2_000_000;
@@ -64,6 +65,11 @@ export async function POST(request: Request) {
       auth.context.database,
       body.sourceSlug,
       auth.context.workflowUser.id,
+      new Date(),
+      {
+        demoAutoApproval:
+          await isRuntimeDemoSourceAutoApprovalEnabled(),
+      },
     );
     if (
       source.connectorKind !== LICENSED_JSON_CONNECTOR_KIND ||
@@ -117,4 +123,3 @@ export async function POST(request: Request) {
     return workflowErrorResponse(error);
   }
 }
-

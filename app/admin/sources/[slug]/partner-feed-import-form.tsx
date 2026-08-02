@@ -216,4 +216,3 @@ function validatePreview(
   }
   return null;
 }
-

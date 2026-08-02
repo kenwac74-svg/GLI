@@ -15,4 +15,3 @@ CREATE TABLE `backup_verifications` (
 );--> statement-breakpoint
 CREATE UNIQUE INDEX `backup_verifications_object_manifest_uidx` ON `backup_verifications` (`object_key`,`manifest_sha256`);--> statement-breakpoint
 CREATE INDEX `backup_verifications_environment_created_idx` ON `backup_verifications` (`environment`,`created_at`);
-

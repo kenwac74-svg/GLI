@@ -288,3 +288,43 @@ test("blocks collection immediately when source approval is suspended", async ()
   }
 });
 
+test("demo auto-approval publishes collected records without weakening production defaults", async () => {
+  const { database, sqlite } = await createDatabase();
+  try {
+    sqlite
+      .prepare(
+        "UPDATE sources SET approval_status = 'SUSPENDED' WHERE slug = 'approved-fixture'",
+      )
+      .run();
+
+    const result = await runApprovedFixtureIngestion(
+      database,
+      "approved-fixture",
+      APPROVED_FIXTURE_REQUESTED_FIELDS,
+      createApprovedDemoFeed(NOW.toISOString()),
+      "usr_admin",
+      NOW,
+      { demoAutoApproval: true },
+    );
+
+    assert.equal(result.status, "SUCCEEDED");
+    assert.equal(
+      sqlite
+        .prepare(
+          "SELECT status FROM listings WHERE title = 'Tonle Bassac serviced 1BR residence'",
+        )
+        .get().status,
+      "ACTIVE",
+    );
+    assert.equal(
+      sqlite
+        .prepare(
+          "SELECT count(*) AS count FROM audit_logs WHERE action = 'DEMO_LISTING_AUTO_PUBLISHED'",
+        )
+        .get().count,
+      1,
+    );
+  } finally {
+    sqlite.close();
+  }
+});

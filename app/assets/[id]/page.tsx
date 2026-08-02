@@ -1,18 +1,23 @@
 import {
-  ArrowLeft,
-  CalendarCheck,
   CheckCircle2,
   CircleAlert,
-  FileCheck2,
+  ExternalLink,
   MapPin,
-  ShieldCheck,
+  MessageCircle,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "../../components/site-header";
+import { PriceDisplay } from "../../components/price-display";
+import { AssetGallery } from "./asset-gallery";
+import { getCurrentUser } from "../../auth";
+import { getMembershipAccess } from "../../../db/membership-entitlements.ts";
 import { getAsset } from "../../../lib/assets-data";
+import { ensureMemberContext } from "../../../lib/member-data";
+import { getMembershipEntitlements } from "../../../lib/membership-plans.ts";
 import { AssetActions } from "./asset-actions";
+import { AssetAccessDemo } from "./asset-access-demo";
+import { BackToResultsButton } from "./back-to-results-button";
 
 export const dynamic = "force-dynamic";
 
@@ -24,59 +29,114 @@ export default async function AssetPage({
   const { id } = await params;
   const { asset } = await getAsset(id);
   if (!asset) notFound();
+  const currentUser = await getCurrentUser();
+  let membershipAccess = getMembershipEntitlements(null);
+  if (currentUser) {
+    const context = await ensureMemberContext(currentUser);
+    membershipAccess = await getMembershipAccess(
+      context.database,
+      context.workflowUser.id,
+    );
+  }
+  const hasExternalSource = Boolean(
+    !asset.isGliDirect && asset.sourceName && asset.sourceUrl,
+  );
+  const categoryLabel = asset.categoryLabel ?? "주거용";
+  const detailFacts = (asset.detailFacts ?? [
+    {
+      label: "면적",
+      value: asset.areaSqm ? `${asset.areaSqm}㎡` : "조사 예정",
+    },
+    {
+      label: "침실",
+      value: asset.bedrooms ? String(asset.bedrooms) : "Studio",
+    },
+    {
+      label: "욕실",
+      value: asset.bathrooms ? String(asset.bathrooms) : "조사 예정",
+    },
+    {
+      label: "마지막 자료 갱신",
+      value: new Date(asset.updatedAt).toLocaleDateString("ko-KR"),
+    },
+  ]).filter((fact) => fact.label !== "자료 기준");
 
   return (
     <>
       <SiteHeader />
       <main className="detail-page">
-        <Link className="back-link" href="/">
-          <ArrowLeft size={17} /> 탐색 결과로
-        </Link>
         <div className="detail-layout">
           <section className="detail-primary">
-            <div className="detail-image">
-              <Image
-                src={asset.image}
-                alt={`${asset.title} 이미지`}
-                fill
-                sizes="(max-width: 960px) 100vw, 820px"
-                unoptimized
-              />
-              {asset.isGliDirect && <span>GLI DIRECT</span>}
-            </div>
+            <AssetGallery
+              title={asset.title}
+              images={asset.images ?? [asset.image]}
+              badges={[
+                asset.originLabel ?? (asset.isGliDirect
+                  ? "GLI 추천"
+                  : hasExternalSource
+                    ? "MARKET DATA"
+                    : "REFERENCE DATA"),
+                categoryLabel,
+                ...(hasExternalSource && asset.sourceName ? [asset.sourceName] : []),
+              ]}
+            />
             <div className="detail-title">
               <p>
                 <MapPin size={15} /> {asset.district}, {asset.city}, {asset.country}
               </p>
               <h1>{asset.title}</h1>
-              <div className="detail-price">
-                <strong>${asset.price.toLocaleString("en-US")}</strong>
-                <span>{asset.transaction === "rent" ? "월 임대료" : "매매가"}</span>
-              </div>
+              <PriceDisplay
+                className="detail-price price-display"
+                amount={asset.price}
+                maxAmount={asset.maxPrice}
+                currency={asset.currency}
+                contextLabel={
+                  asset.offerLabel ??
+                  (asset.transaction === "rent" ? "월 임대료" : "매매가")
+                }
+                originalLabel={asset.priceLabel}
+                showAttribution
+              />
             </div>
             <div className="detail-facts">
-              <div>
-                <span>면적</span>
-                <strong>{asset.areaSqm}㎡</strong>
-              </div>
-              <div>
-                <span>침실</span>
-                <strong>{asset.bedrooms || "Studio"}</strong>
-              </div>
-              <div>
-                <span>욕실</span>
-                <strong>{asset.bathrooms}</strong>
-              </div>
-              <div>
-                <span>마지막 자료 갱신</span>
-                <strong>{new Date(asset.updatedAt).toLocaleDateString("ko-KR")}</strong>
-              </div>
+              {detailFacts.map((fact) => (
+                <div key={fact.label}>
+                  <span>{fact.label}</span>
+                  <strong>{fact.value}</strong>
+                </div>
+              ))}
             </div>
-            <section className="content-section">
+            {hasExternalSource && asset.sourceName && asset.sourceUrl ? (
+              <section className="asset-source" aria-label="외부 매물 출처">
+                <div>
+                  <span>매물 출처</span>
+                  <strong>{asset.sourceName}</strong>
+                </div>
+                <a
+                  href={asset.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  원문 매물 보기 <ExternalLink size={16} />
+                </a>
+              </section>
+            ) : null}
+            <section className="content-section asset-summary">
               <h2>자산 요약</h2>
               <p>{asset.summary}</p>
             </section>
-            <section className="content-section two-column-list">
+          </section>
+
+          <AssetAccessDemo
+            assetTitle={asset.title}
+            trustScore={asset.trustScore}
+            initialUnlockedLevel={membershipAccess.includedAssetTierLevel}
+            membershipPlanId={membershipAccess.planId}
+            publicResources={asset.publicResources ?? []}
+          />
+
+          <section className="detail-action-bar" aria-label="자산 검토와 상세 작업">
+            <div className="detail-review-grid">
               <div>
                 <h2>
                   <CheckCircle2 size={19} /> 검토 강점
@@ -97,74 +157,19 @@ export default async function AssetPage({
                   ))}
                 </ul>
               </div>
-            </section>
+            </div>
+            <div className="detail-action-grid">
+              <Link className="primary-action" href={`/my?consult=${asset.id}`}>
+                <MessageCircle size={19} /> 전문가 상담 신청
+              </Link>
+              <div className="detail-favorite-action">
+                <AssetActions assetId={asset.id} />
+              </div>
+              <BackToResultsButton assetId={asset.id} />
+            </div>
           </section>
-
-          <aside className="trust-panel">
-            <div className="trust-panel-head">
-              <span>GLI TRUST SCORE</span>
-              <strong>{asset.trustScore}</strong>
-              <small>100점 만점</small>
-            </div>
-            <div className="trust-meter">
-              <span style={{ width: `${asset.trustScore}%` }} />
-            </div>
-            <div className="status-line">
-              <ShieldCheck size={20} />
-              <div>
-                <strong>{statusLabel(asset.trustStatus)}</strong>
-                <span>규칙 엔진 v0.1 · 사람 승인 전</span>
-              </div>
-            </div>
-            <p className="trust-note">
-              Trust Score는 현재 자료의 신뢰도를 나타내며, 수익률이나 법적 안전을 보장하지
-              않습니다.
-            </p>
-            <div className="evidence-list">
-              <div>
-                <FileCheck2 size={18} />
-                <span>기본 매물 자료</span>
-                <b>확인</b>
-              </div>
-              <div>
-                <FileCheck2 size={18} />
-                <span>가격·면적 정규화</span>
-                <b>확인</b>
-              </div>
-              <div className="pending">
-                <CalendarCheck size={18} />
-                <span>현장·권리 자료</span>
-                <b>대기</b>
-              </div>
-            </div>
-            <Link
-              className="report-action"
-              href={`/assets/${asset.id}/trust-report`}
-            >
-              <FileCheck2 size={18} />
-              전체 Trust Report
-            </Link>
-            <Link className="primary-action" href={`/my?consult=${asset.id}`}>
-              전문가 상담 신청
-            </Link>
-            <AssetActions assetId={asset.id} />
-            {asset.isGliDirect && (
-              <div className="direct-box">
-                <strong>GLI Direct 실행 프로그램</strong>
-                <p>현장 확인과 계약 추진 지원 범위는 상담 후 별도로 안내합니다.</p>
-              </div>
-            )}
-          </aside>
         </div>
       </main>
     </>
   );
 }
-
-function statusLabel(status: string) {
-  if (status === "VERIFIED") return "검증 완료";
-  if (status === "REVIEWING") return "전문가 검토 대기";
-  if (status === "NEEDS_ATTENTION") return "우선 확인 필요";
-  return "예비 평가";
-}
-

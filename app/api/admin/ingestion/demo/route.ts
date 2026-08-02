@@ -10,6 +10,7 @@ import {
   validateMutationRequest,
   workflowErrorResponse,
 } from "../../../../../lib/member-data";
+import { isRuntimeDemoSourceAutoApprovalEnabled } from "../../../../../lib/demo-data-mode";
 
 export async function POST(request: Request) {
   const invalid = validateMutationRequest(request);
@@ -25,6 +26,11 @@ export async function POST(request: Request) {
       APPROVED_FIXTURE_REQUESTED_FIELDS,
       createApprovedDemoFeed(),
       authorization.context.workflowUser.id,
+      new Date(),
+      {
+        demoAutoApproval:
+          await isRuntimeDemoSourceAutoApprovalEnabled(),
+      },
     );
     return NextResponse.json(
       { result },

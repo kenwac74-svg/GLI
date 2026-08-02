@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLI Documentation Center</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts: Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .nav-link { cursor: pointer; }
+        .nav-link.active { 
+            background-color: #f0f9ff; 
+            color: #0284c7; 
+            border-right: 3px solid #0284c7; 
+            font-weight: 600; 
+        }
+        
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        html { scroll-behavior: smooth; }
+        h1 { letter-spacing: -0.02em; }
+        h2 { 
+            letter-spacing: -0.01em; 
+            margin-top: 3.5rem; 
+            margin-bottom: 1.5rem; 
+            padding-top: 1rem; 
+            border-top: 1px solid #f1f5f9;
+        }
+        h2:first-of-type { border-top: none; margin-top: 2rem; }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="bg-white text-slate-800 antialiased flex flex-col h-screen overflow-hidden">
+
+    <!-- TOP HEADER -->
+    <header class="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 flex-shrink-0 z-30 relative">
+        <div class="flex items-center gap-3">
+            <a href="javascript:window.location.reload()" class="flex items-center gap-2 group" title="Reset to Home">
+                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold group-hover:bg-brand-600 transition">G</div>
+                <span class="text-lg font-bold text-slate-900 tracking-tight">GLI <span class="text-slate-400 font-normal">Docs</span></span>
+            </a>
+        </div>
+        
+        <div class="flex items-center gap-6">
+             <nav class="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-500">
+                <a href="#" class="hover:text-brand-600 transition">Home</a>
+                <a href="#" class="hover:text-brand-600 transition">Launchpad</a>
+                <a href="#" class="hover:text-brand-600 transition">Exchange</a>
+            </nav>
+            <div class="h-6 w-px bg-slate-200 hidden lg:block"></div>
+            <div class="relative hidden md:block">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Search..." class="pl-9 pr-4 py-1.5 bg-slate-100 border border-transparent focus:bg-white focus:border-brand-500 rounded-md text-sm w-64 transition outline-none">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                    <span class="text-[10px] bg-white border border-slate-200 rounded px-1.5 text-slate-400">/</span>
+                </div>
+            </div>
+            <div class="h-6 w-px bg-slate-200 mx-2"></div>
+            <a href="#" class="text-sm font-medium text-slate-500 hover:text-brand-600 transition flex items-center gap-1">Go to App <i class="ph ph-arrow-up-right"></i></a>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- 1. LEFT SIDEBAR -->
+        <aside class="w-64 border-r border-slate-200 bg-white flex-shrink-0 overflow-y-auto hidden md:block z-20 sidebar-scroll">
+            <nav class="p-4 space-y-8">
+                
+                <!-- Category 1: Overview -->
+                <div>
+                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">Overview</h5>
+                    <ul class="space-y-0.5">
+                        <li>
+                            <div onclick="switchView('main', 'intro')" class="nav-link active flex items-center gap-2 px-3 py-2 text-sm text-slate-700 rounded-l hover:bg-slate-100 transition" id="nav-intro">
+                                <i class="ph-fill ph-house"></i> Introduction
+                            </div>
+                        </li>
+                        <li>
+                            <div onclick="switchView('main', 'our-products')" class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition" id="nav-our-products">
+                                <i class="ph ph-cube"></i> Our Products
+                            </div>
+                        </li>
+                        <li>
+                            <div onclick="switchView('main', 'ecosystem')" class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition" id="nav-ecosystem">
+                                <i class="ph ph-circles-three-plus"></i> GLI Ecosystem
+                            </div>
+                        </li>
+                        
+                        <!-- Project Details Dropdown -->
+                        <li>
+                            <div class="flex items-center justify-between pr-3 rounded-l hover:bg-slate-100 transition group cursor-pointer" onclick="toggleSubmenu('project-details-sub', 'arrow-project-details')">
+                                <div onclick="switchView('main', 'project-details')" class="nav-link flex-1 flex items-center gap-2 px-3 py-2 text-sm text-slate-600" id="nav-project-details">
+                                    <i class="ph ph-list-magnifying-glass"></i> Project Details
+                                </div>
+                                <i id="arrow-project-details" class="ph ph-caret-right text-slate-400 text-xs transition-transform duration-200"></i>
+                            </div>
+                            <ul id="project-details-sub" class="hidden pl-8 mt-1 space-y-1 border-l border-slate-100 ml-5 mb-1">
+                                <li><div onclick="switchView('whitepaper')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer" id="nav-whitepaper">Whitepaper</div></li>
+                                <li><div onclick="switchView('tokenomics')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer" id="nav-tokenomics">Tokenomics</div></li>
+                                <li><div onclick="switchView('pitch-deck')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer" id="nav-pitchdeck">Pitch Deck</div></li>
+                                <li><div onclick="switchView('audit')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer" id="nav-audit">Smart Contract Audit</div></li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <div onclick="switchView('main', 'roadmap')" class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition" id="nav-roadmap">
+                                <i class="ph ph-road-horizon"></i> Project Roadmap
+                            </div>
+                        </li>
+
+                        <li>
+                            <div onclick="switchView('about')" class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition" id="nav-about">
+                                <i class="ph ph-users-three"></i> About Us
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Category 2: Investor Platform & Staking -->
+                <div>
+                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">Investor Platform & Staking</h5>
+                    <ul class="space-y-0.5">
+                        <!-- Welcome Dropdown -->
+                        <li>
+                            <div class="flex items-center justify-between pr-3 rounded-l hover:bg-slate-100 transition group cursor-pointer" onclick="toggleSubmenu('welcome-sub', 'arrow-welcome')">
+                                <div onclick="switchView('welcome', 'welcome-top')" class="nav-link flex-1 flex items-center gap-2 px-3 py-2 text-sm text-slate-600" id="nav-welcome">
+                                    <i class="ph ph-hand-waving"></i> Welcome
+                                </div>
+                                <i id="arrow-welcome" class="ph ph-caret-right text-slate-400 text-xs transition-transform duration-200"></i>
+                            </div>
+                            <ul id="welcome-sub" class="hidden pl-8 mt-1 space-y-1 border-l border-slate-100 ml-5 mb-1">
+                                <li><div onclick="switchView('welcome', 'why-choose')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer">Why Choose GLI?</div></li>
+                                <li><div onclick="switchView('welcome', 'how-ido-works')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer">How does an IDO work?</div></li>
+                                <li><div onclick="switchView('welcome', 'glib-token')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer">How is GLIB involved?</div></li>
+                                <li><div onclick="switchView('welcome', 'how-to-participate')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer">How to Participate</div></li>
+                                <li><div onclick="switchView('welcome', 'investor-protection')" class="block py-1.5 text-xs text-slate-500 hover:text-brand-600 transition cursor-pointer">Investor Protection</div></li>
+                            </ul>
+                        </li>
+
+                        <!-- Other Investor Links -->
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-rocket-launch"></i> Get Started with GLI</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-crown"></i> Tier System</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-coins"></i> Staking Policies</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-users-three"></i> Referral Program</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-arrow-u-up-left"></i> Refund Policy</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-question"></i> FAQs</div></li>
+                    </ul>
+                </div>
+
+                <!-- Category 3: Stay Connected -->
+                <div>
+                    <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">Stay Connected</h5>
+                    <ul class="space-y-0.5">
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-users"></i> Community</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-megaphone"></i> Announcements</div></li>
+                        <li><div class="nav-link flex items-center gap-2 px-3 py-2 text-sm text-slate-600 rounded-l hover:bg-slate-100 transition"><i class="ph ph-shield-check"></i> Legal & Privacy</div></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 2. CENTER CONTENT (Dynamic Views) -->
+        <main class="flex-1 overflow-y-auto relative scroll-smooth bg-white" id="scroll-container">
+            <div class="max-w-4xl mx-auto px-8 py-12 lg:px-12 min-h-screen">
+                
+                <!-- VIEW 1: MAIN DOCUMENTATION (Intro ... Roadmap) -->
+                <div id="view-main" class="fade-in">
+                    <!-- Breadcrumb -->
+                    <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium"><span>Overview</span><i class="ph ph-caret-right text-xs"></i><span class="text-brand-600">Introduction</span></div>
+                    <div id="intro" class="mb-12 border-b border-slate-100 pb-8">
+                        <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">Introduction</h1>
+                        <p class="text-lg lg:text-xl text-slate-600 leading-relaxed font-light mb-8">
+                            GLI (Global Leisure Investment) is a next-generation <strong class="text-slate-900 font-semibold">RWA Platform</strong> combining blockchain with global real estate, casino, and leisure assets.
+                        </p>
+                        <div class="w-full h-80 bg-white rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-slate-400 mb-10"><i class="ph ph-image text-5xl mb-2 text-slate-300"></i><span class="text-sm font-medium">Main Banner Image</span></div>
+                        <div class="mt-8 prose prose-slate max-w-none text-slate-600">
+                            <h3 class="text-2xl font-bold text-slate-900 mb-4">Welcome to GLI Platform</h3>
+                            <p class="mb-4 leading-relaxed">
+                                It is with great pleasure that I welcome you to <strong>GLI (Global Leisure Investment)</strong>. Our platform bridges the gap between traditional finance and decentralized technology, offering a tokenization platform, investment marketplace, and instant settlement capabilities – all seamlessly integrated and powered by the <strong>GLIB token</strong>.
+                            </p>
+                            <p class="mb-4 leading-relaxed">
+                                GLI’s platform simplifies the tokenization of high-value assets, providing access to diverse investment opportunities across <strong>Game (Social Casino), Leisure (Resorts & Travel), and Investment (Global Real Estate)</strong> sectors. The GLIB token is central to our ecosystem, granting users access to all services and offering Initial DEX Offering tokens, while ensuring liquidity through listings on multiple exchanges.
+                            </p>
+                            <p class="leading-relaxed">
+                                Our vision is to become the <strong>"Gateway to the Next Lifestyle Economy"</strong>, empowering users to own, trade, and profit from premium assets worldwide through a transparent, secure, and community-driven ecosystem.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <section id="our-products" class="mb-16">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-6">Our Products</h2>
+                         <p class="text-slate-600 mb-8 leading-relaxed">
+                            The GLI ecosystem is built upon three core product pillars, designed to maximize value through synergy between digital gaming and physical assets.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="p-6 rounded-2xl bg-white border border-slate-200 hover:border-brand-500 transition group hover:-translate-y-1 duration-300">
+                                <div class="text-2xl font-bold text-brand-600 mb-2">G</div>
+                                <h3 class="font-bold text-slate-900 text-lg">Game</h3>
+                                <div class="h-1 w-8 bg-brand-200 mt-2 mb-3 group-hover:w-full transition-all duration-500"></div>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    <strong>Social Casino Ventures.</strong><br>
+                                    Generate high-yield revenue shares from global gaming operations and participate in the rapidly growing digital entertainment market.
+                                </p>
+                            </div>
+                            <div class="p-6 rounded-2xl bg-white border border-slate-200 hover:border-purple-500 transition group hover:-translate-y-1 duration-300">
+                                <div class="text-2xl font-bold text-purple-600 mb-2">L</div>
+                                <h3 class="font-bold text-slate-900 text-lg">Leisure</h3>
+                                <div class="h-1 w-8 bg-purple-200 mt-2 mb-3 group-hover:w-full transition-all duration-500"></div>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    <strong>Resorts & Travel.</strong><br>
+                                    Unlock exclusive membership benefits, priority booking access, and real-world utility from premium vacation assets worldwide.
+                                </p>
+                            </div>
+                            <div class="p-6 rounded-2xl bg-white border border-slate-200 hover:border-emerald-500 transition group hover:-translate-y-1 duration-300">
+                                <div class="text-2xl font-bold text-emerald-600 mb-2">I</div>
+                                <h3 class="font-bold text-slate-900 text-lg">Investment</h3>
+                                <div class="h-1 w-8 bg-emerald-200 mt-2 mb-3 group-hover:w-full transition-all duration-500"></div>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    <strong>Global Real Estate.</strong><br>
+                                    Secure stable monthly dividends and potential capital appreciation by co-owning prime commercial and residential properties in high-growth markets.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <section id="ecosystem" class="mb-16">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-6">GLI Ecosystem</h2>
+                        <div class="bg-white rounded-xl p-8 border border-slate-200 mb-8 shadow-sm">
+                            <div class="flex items-start gap-4 mb-6">
+                                <div class="p-3 bg-brand-50 rounded-lg text-brand-600">
+                                    <i class="ph-fill ph-cube-transparent text-3xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-xl mb-2">Tokenization as-a Service (TaaS)</h4>
+                                    <p class="text-slate-600 leading-relaxed">
+                                        GLI provides an institutional-grade, end-to-end tokenization infrastructure. We bridge the gap between high-value physical assets (Real Estate, Casino) and the digital economy through a compliant and secure process.
+                                    </p>
+                                </div>
+                            </div>
+    
+                            <!-- 3 Key Features -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                                <div class="p-5 border border-slate-100 bg-slate-50 rounded-xl hover:border-brand-200 transition">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="ph-fill ph-scan text-brand-600"></i> Asset Digitization</h5>
+                                    <p class="text-xs text-slate-500 leading-relaxed">Converting physical ownership rights into secure, fractionalized digital tokens on the blockchain.</p>
+                                </div>
+                                <div class="p-5 border border-slate-100 bg-slate-50 rounded-xl hover:border-brand-200 transition">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="ph-fill ph-gavel text-purple-600"></i> Regulatory Compliance</h5>
+                                    <p class="text-xs text-slate-500 leading-relaxed">Built-in KYC/AML protocols and legal frameworks compliant with global jurisdictions (e.g., Singapore).</p>
+                                </div>
+                                <div class="p-5 border border-slate-100 bg-slate-50 rounded-xl hover:border-brand-200 transition">
+                                    <h5 class="font-bold text-slate-900 mb-2 flex items-center gap-2"><i class="ph-fill ph-code-block text-emerald-600"></i> Smart Contracts</h5>
+                                    <p class="text-xs text-slate-500 leading-relaxed">Automated governance voting and dividend distribution directly to investor wallets.</p>
+                                </div>
+                            </div>
+    
+                            <!-- Lifecycle Visual (Timeline) -->
+                            <div class="relative pt-4 pb-8">
+                                <h5 class="text-sm font-bold text-slate-800 mb-8 flex items-center gap-2 uppercase tracking-wider">
+                                    <i class="ph-fill ph-arrows-left-right text-slate-400"></i> GLI Tokenization Lifecycle
+                                </h5>
+                                
+                                <!-- Connecting Line -->
+                                <div class="absolute top-[88px] left-0 w-full h-1 bg-slate-100 -translate-y-1/2 hidden md:block rounded-full overflow-hidden">
+                                    <div class="h-full w-full bg-gradient-to-r from-brand-200 via-purple-200 to-emerald-200 opacity-50"></div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative z-10">
+                                    <!-- Step 1 -->
+                                    <div class="bg-white p-5 rounded-xl border border-slate-200 text-center shadow-sm hover:-translate-y-1 hover:shadow-md transition duration-300 group">
+                                        <div class="w-10 h-10 bg-brand-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-sm border-4 border-white shadow-md group-hover:scale-110 transition">1</div>
+                                        <h4 class="font-bold text-slate-900 text-sm mb-2">Sourcing</h4>
+                                        <p class="text-xs text-slate-500 leading-snug">Vetting premium Casinos & Resorts with partners (Vista Land, TA Global).</p>
+                                    </div>
+                                    <!-- Step 2 -->
+                                    <div class="bg-white p-5 rounded-xl border border-slate-200 text-center shadow-sm hover:-translate-y-1 hover:shadow-md transition duration-300 group">
+                                        <div class="w-10 h-10 bg-brand-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-sm border-4 border-white shadow-md group-hover:scale-110 transition">2</div>
+                                        <h4 class="font-bold text-slate-900 text-sm mb-2">Structuring</h4>
+                                        <p class="text-xs text-slate-500 leading-snug">Establishing SPV (Special Purpose Vehicle) & Legal Framework.</p>
+                                    </div>
+                                    <!-- Step 3 -->
+                                    <div class="bg-white p-5 rounded-xl border border-slate-200 text-center shadow-sm hover:-translate-y-1 hover:shadow-md transition duration-300 group">
+                                        <div class="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-sm border-4 border-white shadow-md group-hover:scale-110 transition">3</div>
+                                        <h4 class="font-bold text-slate-900 text-sm mb-2">Issuance</h4>
+                                        <p class="text-xs text-slate-500 leading-snug">Minting Security Tokens on Blockchain & Smart Contract Audit.</p>
+                                    </div>
+                                    <!-- Step 4 -->
+                                    <div class="bg-white p-5 rounded-xl border border-slate-200 text-center shadow-sm hover:-translate-y-1 hover:shadow-md transition duration-300 group">
+                                        <div class="w-10 h-10 bg-emerald-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 font-bold text-sm border-4 border-white shadow-md group-hover:scale-110 transition">4</div>
+                                        <h4 class="font-bold text-slate-900 text-sm mb-2">Distribution</h4>
+                                        <p class="text-xs text-slate-500 leading-snug">Global Trading on GLI Marketplace & Auto-Dividend Payouts.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-50 rounded-xl p-8 border border-slate-200 mt-6">
+                            <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <i class="ph-fill ph-globe-stand text-brand-600"></i> Comprehensive Ecosystem Support
+                            </h3>
+                            <p class="text-slate-700 leading-relaxed text-base">
+                                All projects supported by GLI benefit from access to industry-leading <strong>casino operators, real estate developers, and leisure management teams</strong>. We connect tokenized assets with market makers, launchpads, centralized exchanges, KOL managers, and a vast network of global investors, ensuring a successful and sustainable entry into the Web3 RWA space.
+                            </p>
+                        </div>
+                    </section>
+
+                    <section id="project-details" class="mb-16">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-6">Project Details</h2>
+                        <div class="bg-white border border-slate-200 rounded-xl p-8 mb-6">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg shrink-0">G</div>
+                                <div>
+                                    <h3 class="text-2xl font-bold text-slate-900">The GLIB Utility Token</h3>
+                                    <p class="text-sm text-brand-600 font-medium">Native Currency & Membership Key</p>
+                                </div>
+                            </div>
+                            <div class="prose prose-slate max-w-none text-slate-600 mb-8">
+                                <p class="leading-relaxed">
+                                    The <strong>GLIB Token</strong> is the heartbeat of the GLI ecosystem, designed to capture value from every transaction within our Game, Leisure, and Investment sectors. It serves not only as a medium of exchange but as a <strong>governance instrument</strong> and a <strong>key to exclusive wealth creation opportunities</strong>.
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-400 transition group">
+                                    <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2 text-lg"><i class="ph-fill ph-gavel text-2xl text-slate-700"></i> DAO Governance</h4>
+                                    <p class="text-sm text-slate-600 leading-relaxed">GLIB holders wield direct influence over the platform. Vote on critical decisions such as <strong>new asset listings</strong> and fee structures.</p>
+                                </div>
+                                <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-400 transition group">
+                                    <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2 text-lg"><i class="ph-fill ph-safe text-2xl text-brand-600"></i> High-Yield Staking</h4>
+                                    <p class="text-sm text-slate-600 leading-relaxed">Maximize returns by locking GLIB. Stakers earn <strong>high APY rewards</strong> funded by platform revenue.</p>
+                                </div>
+                                <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-400 transition group">
+                                    <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2 text-lg"><i class="ph-fill ph-crown text-2xl text-amber-500"></i> VIP Tier Access</h4>
+                                    <p class="text-sm text-slate-600 leading-relaxed">Higher tiers grant <strong>guaranteed whitelist spots</strong> for hot IDOs and premium concierge services.</p>
+                                </div>
+                                <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-400 transition group">
+                                    <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2 text-lg"><i class="ph-fill ph-tag text-2xl text-rose-500"></i> Discounts & Utility</h4>
+                                    <p class="text-sm text-slate-600 leading-relaxed">Enjoy up to <strong>50% discount on trading fees</strong> when paying with GLIB.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Roadmap (Updated with Phase 1-4 from PDF Page 19) -->
+                    <section id="roadmap" class="mb-20">
+                        <h2 class="text-3xl font-bold text-slate-900 mb-8">Project Roadmap</h2>
+                        <div class="relative border-l-2 border-brand-100 ml-3 space-y-12 pl-8 py-2">
+                            <!-- Phase 1 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[43px] top-1 w-6 h-6 bg-white border-4 border-brand-500 rounded-full shadow-sm group-hover:scale-110 transition"></div>
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                    <span class="text-xs font-bold text-brand-600 uppercase tracking-wider mb-1 block">Phase 1 (2024 Q3-Q4)</span>
+                                    <h4 class="text-lg font-bold text-slate-900 mb-3">Foundation & Partnership</h4>
+                                    <ul class="text-sm text-slate-600 space-y-2">
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-check-circle text-emerald-500 mt-0.5"></i> Global IP License & Legal Entity (Singapore)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-check-circle text-emerald-500 mt-0.5"></i> Core Team Setup & Office Establishment (Seoul, Vietnam)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-check-circle text-emerald-500 mt-0.5"></i> Strategic Partnership (Vista Land, TA Global)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-check-circle text-emerald-500 mt-0.5"></i> Platform Beta Development</li>
+                                    </ul>
+                                </div>
+                            </div>
+                             <!-- Phase 2 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[43px] top-1 w-6 h-6 bg-white border-4 border-slate-300 rounded-full shadow-sm group-hover:border-purple-500 transition"></div>
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                    <span class="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1 block">Phase 2 (2025 Q1-Q2)</span>
+                                    <h4 class="text-lg font-bold text-slate-900 mb-3">Platform Launch & TGE</h4>
+                                    <ul class="text-sm text-slate-600 space-y-2">
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> GLIB Token Generation Event (TGE)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> CEX / DEX Listing (Global Tier 1)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> 1st RWA Product Launch (Casino Equity / Resort)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> Staking & Membership Service Open</li>
+                                    </ul>
+                                </div>
+                            </div>
+                             <!-- Phase 3 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[43px] top-1 w-6 h-6 bg-white border-4 border-slate-300 rounded-full shadow-sm group-hover:border-emerald-500 transition"></div>
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1 block">Phase 3 (2025 Q3-Q4)</span>
+                                    <h4 class="text-lg font-bold text-slate-900 mb-3">Global Expansion</h4>
+                                    <ul class="text-sm text-slate-600 space-y-2">
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> Market Expansion (Vietnam, Malaysia, Philippines)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> GLI Mobile App Launch (iOS/Android)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> 2nd Asset Portfolio Update (Global Real Estate)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> Cross-chain Bridge Implementation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                             <!-- Phase 4 -->
+                            <div class="relative group">
+                                <div class="absolute -left-[43px] top-1 w-6 h-6 bg-white border-4 border-slate-300 rounded-full shadow-sm group-hover:border-amber-500 transition"></div>
+                                <div class="bg-white p-5 rounded-xl border border-slate-200 hover:shadow-md transition">
+                                    <span class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1 block">Phase 4 (2026 onwards)</span>
+                                    <h4 class="text-lg font-bold text-slate-900 mb-3">Ecosystem Completion</h4>
+                                    <ul class="text-sm text-slate-600 space-y-2">
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> Fully Decentralized DAO Governance Activation</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> Global Payment Gateway Integration (Crypto-Fiat)</li>
+                                        <li class="flex items-start gap-2"><i class="ph-fill ph-circle text-slate-300 mt-0.5"></i> Expansion to Additional Leisure Assets (Golf/Hotel Chains)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="pt-8 border-t border-slate-200 flex justify-between text-sm text-slate-500">
+                        <span>Last updated: 2026.01.05</span>
+                        <div onclick="switchView('about')" class="hover:text-brand-600 font-medium cursor-pointer">Next: About Us →</div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: ABOUT US (Dedicated SPA Section) - UNCHANGED -->
+                <div id="view-about" class="hidden fade-in">
+                    <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium"><span>Overview</span><i class="ph ph-caret-right text-xs"></i><span class="text-brand-600">About Us</span></div>
+                    <div class="mb-12 border-b border-slate-100 pb-8"><h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">About Us</h1><p class="text-lg lg:text-xl text-slate-600 leading-relaxed font-light">GLI is driven by a team of experts in real estate, gaming, finance, and blockchain technology, dedicated to democratizing asset ownership for the global community.</p></div>
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><i class="ph-fill ph-users text-brand-600"></i> Leadership Team</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 text-center hover:shadow-md transition hover:-translate-y-1 duration-300">
+                                <div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 overflow-hidden"><i class="ph-fill ph-user text-4xl"></i></div>
+                                <h4 class="font-bold text-slate-900 text-lg">James Han</h4><p class="text-brand-600 text-sm font-medium mb-2">CEO & Founder</p>
+                                <p class="text-xs text-slate-500 leading-tight">Ex-Goldman Sachs<br>15y Real Estate Investment</p>
+                            </div>
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 text-center hover:shadow-md transition hover:-translate-y-1 duration-300"><div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 overflow-hidden"><i class="ph-fill ph-user text-4xl"></i></div><h4 class="font-bold text-slate-900 text-lg">Sarah Lee</h4><p class="text-brand-600 text-sm font-medium mb-2">CTO</p><p class="text-xs text-slate-500 leading-tight">Blockchain Architect<br>Ex-Ethereum Core Dev</p></div>
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 text-center hover:shadow-md transition hover:-translate-y-1 duration-300"><div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 overflow-hidden"><i class="ph-fill ph-user text-4xl"></i></div><h4 class="font-bold text-slate-900 text-lg">Michael Kim</h4><p class="text-brand-600 text-sm font-medium mb-2">COO</p><p class="text-xs text-slate-500 leading-tight">Global Operations<br>Casino Strategy Expert</p></div>
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 text-center hover:shadow-md transition hover:-translate-y-1 duration-300"><div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 overflow-hidden"><i class="ph-fill ph-user text-4xl"></i></div><h4 class="font-bold text-slate-900 text-lg">David Park</h4><p class="text-brand-600 text-sm font-medium mb-2">CFO</p><p class="text-xs text-slate-500 leading-tight">Financial Analyst<br>Risk Management</p></div>
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 text-center hover:shadow-md transition hover:-translate-y-1 duration-300"><div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 overflow-hidden"><i class="ph-fill ph-user text-4xl"></i></div><h4 class="font-bold text-slate-900 text-lg">Emma Choi</h4><p class="text-brand-600 text-sm font-medium mb-2">CMO</p><p class="text-xs text-slate-500 leading-tight">Brand Strategy<br>Global Marketing</p></div>
+                             <div class="bg-white p-6 rounded-xl border border-slate-200 text-center hover:shadow-md transition hover:-translate-y-1 duration-300"><div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 overflow-hidden"><i class="ph-fill ph-user text-4xl"></i></div><h4 class="font-bold text-slate-900 text-lg">Robert Chen</h4><p class="text-brand-600 text-sm font-medium mb-2">Head of Legal</p><p class="text-xs text-slate-500 leading-tight">Compliance &<br>Regulatory Affairs</p></div>
+                             <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 text-center flex flex-col items-center justify-center h-full min-h-[200px]"><i class="ph ph-plus text-3xl text-slate-300 mb-2"></i><span class="text-sm text-slate-400 font-medium">Head of Product<br>(Hiring)</span></div>
+                             <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 text-center flex flex-col items-center justify-center h-full min-h-[200px]"><i class="ph ph-plus text-3xl text-slate-300 mb-2"></i><span class="text-sm text-slate-400 font-medium">Head of Partnership<br>(Hiring)</span></div>
+                             <div class="bg-slate-50 p-6 rounded-xl border border-dashed border-slate-300 text-center flex flex-col items-center justify-center h-full min-h-[200px]"><i class="ph ph-plus text-3xl text-slate-300 mb-2"></i><span class="text-sm text-slate-400 font-medium">Head of Sales<br>(Hiring)</span></div>
+                        </div>
+                    </section>
+                    <hr class="border-slate-100 my-12">
+                    <section class="mb-16"><h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><i class="ph-fill ph-graduation-cap text-purple-600"></i> Strategic Advisors</h2><div class="grid grid-cols-2 md:grid-cols-3 gap-6"><div class="p-5 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 hover:shadow-md transition"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center text-purple-600 border border-purple-100 flex-shrink-0"><i class="ph-fill ph-chart-pie-slice text-xl"></i></div><div><h5 class="font-bold text-slate-900 text-sm">Dr. Alan Smith</h5><span class="text-xs text-brand-600 font-bold uppercase">Tokenomics</span></div></div><p class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">Ph.D. in Economics, specializing in deflationary token models.</p></div><div class="p-5 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 hover:shadow-md transition"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 border border-emerald-100 flex-shrink-0"><i class="ph-fill ph-buildings text-xl"></i></div><div><h5 class="font-bold text-slate-900 text-sm">Jonathan Doe</h5><span class="text-xs text-brand-600 font-bold uppercase">Real Estate</span></div></div><p class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">25+ years in global commercial real estate development.</p></div><div class="p-5 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 hover:shadow-md transition"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center text-slate-500 border border-slate-100 flex-shrink-0"><i class="ph-fill ph-scales text-xl"></i></div><div><h5 class="font-bold text-slate-900 text-sm">Kenji Tanaka</h5><span class="text-xs text-brand-600 font-bold uppercase">Legal (Asia)</span></div></div><p class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">International law expert focusing on crypto regulations.</p></div><div class="p-5 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 hover:shadow-md transition"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-600 border border-amber-100 flex-shrink-0"><i class="ph-fill ph-club text-xl"></i></div><div><h5 class="font-bold text-slate-900 text-sm">Li Wei Wang</h5><span class="text-xs text-brand-600 font-bold uppercase">Gaming Ops</span></div></div><p class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">Former executive at major Macau casino operators.</p></div><div class="p-5 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 hover:shadow-md transition"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-600 border border-red-100 flex-shrink-0"><i class="ph-fill ph-shield-check text-xl"></i></div><div><h5 class="font-bold text-slate-900 text-sm">Peter Johnson</h5><span class="text-xs text-brand-600 font-bold uppercase">Security</span></div></div><p class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">Cybersecurity veteran with background in smart contract auditing.</p></div><div class="p-5 bg-white rounded-xl border border-slate-200 flex flex-col gap-3 hover:shadow-md transition"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600 border border-blue-100 flex-shrink-0"><i class="ph-fill ph-bank text-xl"></i></div><div><h5 class="font-bold text-slate-900 text-sm">Sanjay Gupta</h5><span class="text-xs text-brand-600 font-bold uppercase">DeFi Strategy</span></div></div><p class="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">Pioneer in decentralized finance protocols.</p></div></div></section>
+                    <hr class="border-slate-100 my-12">
+                    <section class="mb-16"><h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2"><i class="ph-fill ph-buildings text-emerald-500"></i> Our Offices</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="p-6 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 transition group relative overflow-hidden"><div class="absolute right-4 top-4 text-slate-100 group-hover:text-emerald-50 transition"><i class="ph-fill ph-globe-hemisphere-east text-6xl"></i></div><h5 class="font-bold text-lg mb-2 flex items-center gap-2 text-slate-900"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> GLI Gateway Holdings</h5><div class="text-sm text-slate-600 space-y-1 relative z-10"><p class="font-medium text-slate-500 mb-2">Singapore HQ</p><p>160 Robinson Road, #14-04</p><p>Singapore Business Federation Center</p><p>Singapore (068914)</p><p class="mt-3 text-brand-600 font-bold">+65 6789-0123</p></div></div><div class="p-6 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 transition group relative overflow-hidden"><div class="absolute right-4 top-4 text-slate-100 group-hover:text-emerald-50 transition"><i class="ph-fill ph-flag text-6xl"></i></div><h5 class="font-bold text-lg mb-2 flex items-center gap-2 text-slate-900"><span class="w-2 h-2 rounded-full bg-red-500"></span> GLI Vietnam</h5><div class="text-sm text-slate-600 space-y-1 relative z-10"><p class="font-medium text-slate-500 mb-2">Vietnam Office</p><p>72 Nguyen Thi Minh Khai, Ward 6</p><p>District 3, Ho Chi Minh City</p><p>Vietnam</p><p class="mt-3 text-brand-600 font-bold">+84 28 1234 5678</p></div></div></div></section>
+                    <div class="pt-8 border-t border-slate-200 flex justify-between text-sm text-slate-500"><span>Last updated: 2026.01.05</span><div onclick="switchView('main')" class="hover:text-brand-600 font-medium cursor-pointer">Back to Overview →</div></div>
+                </div>
+
+                <!-- VIEW 3: WELCOME -->
+                <div id="view-welcome" class="hidden fade-in">
+                    <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium"><span>Investor Platform</span><i class="ph ph-caret-right text-xs"></i><span class="text-brand-600">Welcome</span></div>
+                    <div class="mb-12 border-b border-slate-100 pb-8"><h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">Welcome to GLI Investor Platform</h1><p class="text-lg lg:text-xl text-slate-600 leading-relaxed font-light">Your gateway to fractional ownership of premium global assets.</p></div>
+                    <section class="mb-16"><h2 class="text-3xl font-bold text-slate-900 mb-6">Why Choose GLI?</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="p-6 bg-slate-50 rounded-xl border border-slate-200"><h4 class="text-lg font-bold text-slate-900 mb-2">High-Yield Assets</h4><p class="text-slate-600 text-sm">Access to premium assets like casinos and resorts typically reserved for institutional investors.</p></div><div class="p-6 bg-slate-50 rounded-xl border border-slate-200"><h4 class="text-lg font-bold text-slate-900 mb-2">Liquidity & Access</h4><p class="text-slate-600 text-sm">Trade fractional shares 24/7 on our marketplace. No more 10-year lock-ups.</p></div><div class="p-6 bg-slate-50 rounded-xl border border-slate-200"><h4 class="text-lg font-bold text-slate-900 mb-2">Transparency</h4><p class="text-slate-600 text-sm">All revenue streams and dividend payouts are verifiable on-chain.</p></div><div class="p-6 bg-slate-50 rounded-xl border border-slate-200"><h4 class="text-lg font-bold text-slate-900 mb-2">Global Portfolio</h4><p class="text-slate-600 text-sm">Diversify your portfolio with assets from Korea, Philippines, Vietnam, and Malaysia.</p></div></div></section>
+                    <section id="how-ido-works" class="mb-16"><h2 class="text-3xl font-bold text-slate-900 mb-6">How does an IDO work?</h2><div class="relative border-l-2 border-brand-200 ml-4 space-y-8 pl-8 py-2"><div class="relative"><div class="absolute -left-[41px] w-6 h-6 bg-brand-600 rounded-full border-4 border-white shadow"></div><h4 class="font-bold text-slate-900">1. Whitelist Period</h4><p class="text-sm text-slate-600">Stake GLIB tokens to qualify for the whitelist.</p></div><div class="relative"><div class="absolute -left-[41px] w-6 h-6 bg-white border-2 border-brand-300 rounded-full"></div><h4 class="font-bold text-slate-900">2. Subscription</h4><p class="text-sm text-slate-600">Commit USDC/USDT to purchase.</p></div><div class="relative"><div class="absolute -left-[41px] w-6 h-6 bg-white border-2 border-brand-300 rounded-full"></div><h4 class="font-bold text-slate-900">3. Distribution & Trading</h4><p class="text-sm text-slate-600">Tokens are airdropped and trading begins.</p></div></div></section>
+                    <section id="glib-token" class="mb-16"><h2 class="text-3xl font-bold text-slate-900 mb-6">How is GLIB token involved?</h2><div class="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row gap-6 items-center"><div class="w-20 h-20 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-2xl shadow-lg flex-shrink-0">G</div><div><h4 class="font-bold text-slate-900 mb-2">The Engine of the Ecosystem</h4><ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700"><li class="flex items-center gap-2"><i class="ph-fill ph-check-circle text-green-500"></i> Discounted Trading Fees</li><li class="flex items-center gap-2"><i class="ph-fill ph-check-circle text-green-500"></i> Priority Access to IDOs</li></ul></div></div></section>
+                    <section id="how-to-participate" class="mb-16"><h2 class="text-3xl font-bold text-slate-900 mb-6">How to Participate</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-6"><div class="bg-slate-50 p-6 rounded-lg border border-slate-200"><span class="text-4xl font-black text-slate-200 mb-4 block">01</span><h4 class="font-bold text-slate-900 mb-2">Connect Wallet</h4></div><div class="bg-slate-50 p-6 rounded-lg border border-slate-200"><span class="text-4xl font-black text-slate-200 mb-4 block">02</span><h4 class="font-bold text-slate-900 mb-2">Complete KYC</h4></div><div class="bg-slate-50 p-6 rounded-lg border border-slate-200"><span class="text-4xl font-black text-slate-200 mb-4 block">03</span><h4 class="font-bold text-slate-900 mb-2">Start Investing</h4></div></div></section>
+                    <section id="investor-protection" class="mb-20"><h2 class="text-3xl font-bold text-slate-900 mb-6">Investor Protection</h2><div class="bg-red-50 border border-red-100 rounded-xl p-6"><h4 class="font-bold text-lg text-red-700 mb-2">Refund Policy</h4><p class="text-sm text-slate-700">100% refund if soft cap is not met.</p></div></section>
+                    <div class="pt-8 border-t border-slate-200 flex justify-between text-sm text-slate-500"><span>Last updated: 2026.01.02</span><div onclick="switchView('main')" class="hover:text-brand-600 font-medium cursor-pointer">Back to Overview →</div></div>
+                </div>
+
+                <!-- VIEW 4: WHITEPAPER -->
+                <div id="view-whitepaper" class="hidden fade-in">
+                    <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium"><span>Project Details</span><i class="ph ph-caret-right text-xs"></i><span class="text-brand-600">Whitepaper</span></div>
+                    <div class="mb-12 border-b border-slate-100 pb-8 flex justify-between gap-6"><div><h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">Whitepaper</h1><p class="text-lg text-slate-600">Comprehensive overview.</p></div><button class="bg-brand-600 text-white px-5 py-3 rounded-lg font-bold">Download PDF</button></div>
+                    <section class="mb-16"><h2 class="text-2xl font-bold text-slate-900 mb-6">1. Executive Summary</h2><div class="prose prose-slate max-w-none text-slate-600"><p>RWA platform tokenizing assets.</p></div></section>
+                </div>
+
+                <!-- VIEW 5: TOKENOMICS -->
+                <div id="view-tokenomics" class="hidden fade-in">
+                    <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium">
+                        <span>Project Details</span>
+                        <i class="ph ph-caret-right text-xs"></i>
+                        <span class="text-brand-600">Tokenomics</span>
+                    </div>
+
+                    <div class="mb-12 border-b border-slate-100 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-6 tracking-tight">Tokenomics</h1>
+                            <p class="text-lg lg:text-xl text-slate-600 leading-relaxed font-light">
+                                The economic model of the GLIB Token, designed for sustainability, value accrual, and ecosystem growth.
+                            </p>
+                        </div>
+                        <button class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-5 py-3 rounded-lg font-bold transition shadow-md whitespace-nowrap">
+                            <i class="ph-bold ph-download-simple"></i> Download Report
+                        </button>
+                    </div>
+
+                    <!-- 1. Allocation Chart -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Token Allocation</h2>
+                        <div class="flex flex-col lg:flex-row items-center gap-12 bg-slate-50 p-8 rounded-xl border border-slate-200">
+                            <!-- Chart Container -->
+                            <div class="chart-container relative" style="height:300px; width:300px;">
+                                <canvas id="tokenChart"></canvas>
+                            </div>
+                            <!-- Legend / Details -->
+                            <div class="w-full lg:w-1/2 space-y-4">
+                                <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-brand-500"></span><span class="text-sm font-bold text-slate-700">Public Sale (IDO)</span></div>
+                                    <span class="text-sm font-bold text-slate-900">20% (200M)</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span><span class="text-sm font-bold text-slate-700">Staking Rewards</span></div>
+                                    <span class="text-sm font-bold text-slate-900">30% (300M)</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-amber-500"></span><span class="text-sm font-bold text-slate-700">Team & Advisors</span></div>
+                                    <span class="text-sm font-bold text-slate-900">15% (150M)</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                    <div class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-purple-500"></span><span class="text-sm font-bold text-slate-700">Ecosystem Fund</span></div>
+                                    <span class="text-sm font-bold text-slate-900">35% (350M)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 2. Vesting Schedule -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Vesting Schedule</h2>
+                        <div class="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-6 py-4">Allocation</th>
+                                        <th class="px-6 py-4">TGE Unlock</th>
+                                        <th class="px-6 py-4">Cliff</th>
+                                        <th class="px-6 py-4">Vesting Period</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white">
+                                    <tr><td class="px-6 py-4 font-medium">Public Sale</td><td class="px-6 py-4 text-green-600 font-bold">100%</td><td class="px-6 py-4 text-slate-500">None</td><td class="px-6 py-4 text-slate-500">Immediate Liquidity</td></tr>
+                                    <tr><td class="px-6 py-4 font-medium">Staking Rewards</td><td class="px-6 py-4 text-slate-500">0%</td><td class="px-6 py-4 text-slate-500">None</td><td class="px-6 py-4 text-slate-500">Linear release over 60 months</td></tr>
+                                    <tr><td class="px-6 py-4 font-medium">Team & Advisors</td><td class="px-6 py-4 text-slate-500">0%</td><td class="px-6 py-4 text-slate-500">12 Months</td><td class="px-6 py-4 text-slate-500">Linear release over 24 months</td></tr>
+                                    <tr><td class="px-6 py-4 font-medium">Ecosystem Fund</td><td class="px-6 py-4 text-slate-500">10%</td><td class="px-6 py-4 text-slate-500">3 Months</td><td class="px-6 py-4 text-slate-500">Controlled by DAO Governance Vote</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- 3. Utility & Burn -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Utility & Deflationary Mechanism</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl hover:shadow-md transition">
+                                <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2"><i class="ph-fill ph-coin text-brand-600 text-xl"></i> Token Utility</h4>
+                                <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
+                                    <li><strong>Payment Currency:</strong> Accepted for all asset purchases and service fees.</li>
+                                    <li><strong>Governance:</strong> Voting power in DAO for critical protocol decisions.</li>
+                                    <li><strong>Staking:</strong> Stake to access tiered benefits and higher yields.</li>
+                                    <li><strong>Fees:</strong> Up to 50% discount on platform transaction fees.</li>
+                                </ul>
+                            </div>
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl hover:shadow-md transition">
+                                <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2"><i class="ph-fill ph-fire text-red-500 text-xl"></i> Burn Mechanism</h4>
+                                <p class="text-sm text-slate-600 mb-3 leading-relaxed">
+                                    To ensure long-term value appreciation for holders, GLI implements a strategic buy-back and burn program funded by platform profits.
+                                </p>
+                                <ul class="text-sm text-slate-600 space-y-2 list-disc pl-4">
+                                    <li><strong>Buy-Back:</strong> 20% of platform net profits used to buy back GLIB from the open market.</li>
+                                    <li><strong>Burn:</strong> Purchased tokens are permanently removed from circulation, reducing total supply.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                    
+                     <!-- 4. Staking Tiers Table -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Staking Tiers</h2>
+                        <div class="overflow-hidden border border-slate-200 rounded-xl shadow-sm">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-6 py-4">Tier</th>
+                                        <th class="px-6 py-4">Required Stake</th>
+                                        <th class="px-6 py-4">Multiplier</th>
+                                        <th class="px-6 py-4">Access</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white">
+                                    <tr><td class="px-6 py-4 font-bold text-amber-700">Bronze</td><td class="px-6 py-4">1,000 GLIB</td><td class="px-6 py-4">1.0x</td><td class="px-6 py-4">Basic Access</td></tr>
+                                    <tr><td class="px-6 py-4 font-bold text-slate-400">Silver</td><td class="px-6 py-4">10,000 GLIB</td><td class="px-6 py-4">1.2x</td><td class="px-6 py-4">Voting Rights</td></tr>
+                                    <tr><td class="px-6 py-4 font-bold text-yellow-500">Gold</td><td class="px-6 py-4">50,000 GLIB</td><td class="px-6 py-4">1.5x</td><td class="px-6 py-4">Priority IDO</td></tr>
+                                    <tr class="bg-brand-50"><td class="px-6 py-4 font-bold text-brand-600">Diamond</td><td class="px-6 py-4">200,000 GLIB</td><td class="px-6 py-4">2.0x</td><td class="px-6 py-4">VIP Concierge</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <div class="pt-8 border-t border-slate-200 flex justify-between text-sm text-slate-500">
+                        <span>Last updated: 2026.01.05</span>
+                        <div onclick="switchView('main', 'project-details')" class="hover:text-brand-600 font-medium cursor-pointer">Back to Project Details →</div>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: PITCH DECK -->
+                <div id="view-pitch-deck" class="hidden fade-in">
+                     <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium"><span>Project Details</span><i class="ph ph-caret-right text-xs"></i><span class="text-brand-600">Pitch Deck</span></div>
+                    <div class="mb-12 border-b border-slate-100 pb-8 flex justify-between gap-6"><div><h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">Pitch Deck</h1></div><button class="bg-brand-600 text-white px-5 py-3 rounded-lg font-bold">Download PDF</button></div>
+                    <section class="mb-16"><h2 class="text-2xl font-bold text-slate-900 mb-6">Key Highlights</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="p-6 bg-slate-50 rounded-xl border border-slate-200"><h4 class="font-bold text-slate-900 mb-2">The Problem</h4></div></div></section>
+                </div>
+
+                <!-- VIEW 7: AUDIT (Dedicated SPA Section) - REINFORCED -->
+                <div id="view-audit" class="hidden fade-in">
+                    <!-- Breadcrumb -->
+                    <div class="flex items-center gap-2 text-sm text-slate-400 mb-8 font-medium">
+                        <span>Project Details</span>
+                        <i class="ph ph-caret-right text-xs"></i>
+                        <span class="text-brand-600">Smart Contract Audit</span>
+                    </div>
+
+                    <!-- Title & Download -->
+                    <div class="mb-12 border-b border-slate-100 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                            <h1 class="text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">Security & Audit</h1>
+                            <p class="text-lg text-slate-600 leading-relaxed font-light">
+                                Ensuring a <strong>"Solid Structure"</strong> for the GLI Ecosystem through rigorous multi-layer audits and government-certified compliance.
+                            </p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-3 rounded-lg font-bold hover:bg-slate-50 transition shadow-sm">
+                                <i class="ph-bold ph-file-text"></i> License Info
+                            </button>
+                            <button class="flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white px-5 py-3 rounded-lg font-bold transition shadow-md whitespace-nowrap">
+                                <i class="ph-bold ph-shield-check"></i> Audit Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 1. Security Score & Compliance -->
+                    <section class="mb-16">
+                        <div class="bg-slate-50 rounded-xl border border-slate-200 p-8">
+                            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                                <!-- Score -->
+                                <div class="flex items-center gap-6">
+                                    <div class="w-28 h-28 bg-white rounded-full flex items-center justify-center border-8 border-emerald-500 shadow-sm relative">
+                                        <div class="text-center">
+                                            <span class="block text-3xl font-black text-emerald-600">98</span>
+                                            <span class="text-[10px] text-slate-400 uppercase font-bold">Safe</span>
+                                        </div>
+                                        <span class="absolute -bottom-3 bg-emerald-600 text-white text-[10px] px-3 py-1 rounded-full shadow-md">TIER 1</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-slate-900 mb-1">Ecosystem Security</h3>
+                                        <p class="text-sm text-slate-500 mb-2">Based on Business Plan "Solid Structure"</p>
+                                        <div class="flex gap-2">
+                                            <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 flex items-center gap-1"><i class="ph-fill ph-check-circle text-brand-600"></i> KYC/AML</span>
+                                            <span class="px-2 py-1 bg-white border border-slate-200 rounded text-xs text-slate-600 flex items-center gap-1"><i class="ph-fill ph-check-circle text-brand-600"></i> Gov License</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Detailed Metrics -->
+                                <div class="flex-1 w-full md:w-auto grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                        <span class="text-xs text-slate-400 uppercase font-bold">Code Quality</span>
+                                        <div class="flex justify-between items-end mt-1">
+                                            <span class="text-lg font-bold text-slate-900">A+</span>
+                                            <i class="ph-fill ph-code text-brand-500"></i>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                        <span class="text-xs text-slate-400 uppercase font-bold">Centralization</span>
+                                        <div class="flex justify-between items-end mt-1">
+                                            <span class="text-lg font-bold text-slate-900">Low</span>
+                                            <i class="ph-fill ph-lock-key text-emerald-500"></i>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                        <span class="text-xs text-slate-400 uppercase font-bold">Gateway License</span>
+                                        <div class="flex justify-between items-end mt-1">
+                                            <span class="text-lg font-bold text-slate-900">Verified</span>
+                                            <i class="ph-fill ph-certificate text-amber-500"></i>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 bg-white rounded-lg border border-slate-100 shadow-sm">
+                                        <span class="text-xs text-slate-400 uppercase font-bold">Incident History</span>
+                                        <div class="flex justify-between items-end mt-1">
+                                            <span class="text-lg font-bold text-slate-900">None</span>
+                                            <i class="ph-fill ph-shield-check text-brand-500"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 2. Ecosystem Token Audit Scope (Based on PDF Page 2) -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                            <i class="ph-fill ph-scan text-slate-700"></i> Ecosystem Token Audit
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- GLIB -->
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl hover:border-brand-500 transition group relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-16 h-16 bg-brand-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-brand-100"></div>
+                                <div class="relative z-10">
+                                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold mb-4">B</div>
+                                    <h4 class="font-bold text-slate-900 mb-1">GLIB Token</h4>
+                                    <p class="text-xs text-brand-600 font-bold mb-3 uppercase">Governance & Utility</p>
+                                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                                        Audited for standard compliance, voting mechanisms, and deflationary burn logic.
+                                    </p>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                                        <i class="ph-fill ph-check-circle"></i> Passed
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- GLID -->
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl hover:border-purple-500 transition group relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-16 h-16 bg-purple-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-purple-100"></div>
+                                <div class="relative z-10">
+                                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold mb-4">D</div>
+                                    <h4 class="font-bold text-slate-900 mb-1">GLID Token</h4>
+                                    <p class="text-xs text-purple-600 font-bold mb-3 uppercase">Dividend & Asset</p>
+                                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                                        Security checks on automated dividend distribution smart contracts from RWA revenue.
+                                    </p>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                                        <i class="ph-fill ph-check-circle"></i> Passed
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- GLIL -->
+                            <div class="p-6 bg-white border border-slate-200 rounded-xl hover:border-amber-500 transition group relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-16 h-16 bg-amber-50 rounded-bl-full -mr-4 -mt-4 transition group-hover:bg-amber-100"></div>
+                                <div class="relative z-10">
+                                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold mb-4">L</div>
+                                    <h4 class="font-bold text-slate-900 mb-1">GLIL Token</h4>
+                                    <p class="text-xs text-amber-600 font-bold mb-3 uppercase">Liquidity & Leisure</p>
+                                    <p class="text-xs text-slate-500 leading-relaxed mb-4">
+                                        Verification of point system integration and exchange liquidity pool mechanisms.
+                                    </p>
+                                    <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                                        <i class="ph-fill ph-check-circle"></i> Passed
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 3. History of Audits (Updated) -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">History of Audits</h2>
+                        <div class="overflow-x-auto border border-slate-200 rounded-xl shadow-sm">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-700 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-6 py-4">Date</th>
+                                        <th class="px-6 py-4">Target (Contract)</th>
+                                        <th class="px-6 py-4">Auditor</th>
+                                        <th class="px-6 py-4">Score</th>
+                                        <th class="px-6 py-4">Report</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 bg-white">
+                                    <tr>
+                                        <td class="px-6 py-4 font-mono text-slate-500">2025.12.10</td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-slate-900">GLIB Governance</div>
+                                            <span class="text-xs text-slate-400">ERC-20 / Governance Logic</span>
+                                        </td>
+                                        <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 rounded text-xs font-bold text-slate-600">CERTIK</span></td>
+                                        <td class="px-6 py-4 text-emerald-600 font-bold">98/100</td>
+                                        <td class="px-6 py-4"><a href="#" class="text-brand-600 hover:underline flex items-center gap-1">PDF <i class="ph-bold ph-download-simple"></i></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 font-mono text-slate-500">2025.11.20</td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-slate-900">GLID Dividend Vault</div>
+                                            <span class="text-xs text-slate-400">Profit Distribution Contract</span>
+                                        </td>
+                                        <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 rounded text-xs font-bold text-slate-600">HACKEN</span></td>
+                                        <td class="px-6 py-4 text-emerald-600 font-bold">10/10</td>
+                                        <td class="px-6 py-4"><a href="#" class="text-brand-600 hover:underline flex items-center gap-1">PDF <i class="ph-bold ph-download-simple"></i></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 font-mono text-slate-500">2025.10.15</td>
+                                        <td class="px-6 py-4">
+                                            <div class="font-bold text-slate-900">Gateway Exchange Link</div>
+                                            <span class="text-xs text-slate-400">Wallet Integration</span>
+                                        </td>
+                                        <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-100 rounded text-xs font-bold text-slate-600">SLOWMIST</span></td>
+                                        <td class="px-6 py-4 text-slate-600 font-bold">Pass</td>
+                                        <td class="px-6 py-4"><a href="#" class="text-brand-600 hover:underline flex items-center gap-1">PDF <i class="ph-bold ph-download-simple"></i></a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- 4. Audited By -->
+                    <section class="mb-16">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Audited By</h2>
+                        <div class="flex gap-4">
+                            <div class="h-14 px-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-500 font-bold text-lg hover:border-brand-300 transition shadow-sm">
+                                <i class="ph-fill ph-shield-check mr-2"></i> CERTIK
+                            </div>
+                            <div class="h-14 px-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-500 font-bold text-lg hover:border-brand-300 transition shadow-sm">
+                                <i class="ph-fill ph-code mr-2"></i> HACKEN
+                            </div>
+                             <div class="h-14 px-8 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-500 font-bold text-lg hover:border-brand-300 transition shadow-sm">
+                                <i class="ph-fill ph-lock-key mr-2"></i> SLOWMIST
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="pt-8 border-t border-slate-200 flex justify-between text-sm text-slate-500">
+                        <span>Last updated: 2026.01.05</span>
+                        <div onclick="switchView('main', 'roadmap')" class="hover:text-brand-600 font-medium cursor-pointer">Next: Project Roadmap →</div>
+                    </div>
+                </div>
+
+                <!-- MEGA FOOTER (Global) -->
+                <footer class="bg-white border-t border-slate-200 py-12 mt-12">
+                     <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                        <div class="col-span-1 md:col-span-2">
+                            <span class="text-xl font-bold text-slate-900 tracking-tight">GLI Platform</span>
+                            <p class="text-sm text-slate-500 mt-2">Global Leisure Investment.</p>
+                        </div>
+                         <div>
+                            <h4 class="text-slate-900 font-bold text-sm mb-4">Product</h4>
+                            <ul class="space-y-2 text-sm text-slate-500"><li>Real Estate</li><li>Casino</li></ul>
+                        </div>
+                         <div>
+                            <h4 class="text-slate-900 font-bold text-sm mb-4">Legal</h4>
+                            <ul class="space-y-2 text-sm text-slate-500"><li>Privacy Policy</li><li>Terms</li></ul>
+                        </div>
+                    </div>
+                     <div class="border-t border-slate-100 pt-6 text-xs text-slate-400">&copy; 2026 GLI Corp.</div>
+                </footer>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Script for SPA Behavior -->
+    <script>
+        // Chart Initialization Flag
+        let chartInitialized = false;
+
+        function toggleSubmenu(menuId, arrowId) {
+            document.getElementById(menuId).classList.toggle('hidden');
+            document.getElementById(arrowId).classList.toggle('rotate-90');
+        }
+
+        function switchView(viewName, scrollTargetId = null) {
+            // Hide all views first
+            const views = ['view-main', 'view-about', 'view-welcome', 'view-whitepaper', 'view-tokenomics', 'view-pitch-deck', 'view-audit'];
+            views.forEach(id => document.getElementById(id).classList.add('hidden'));
+
+            // Show selected view
+            const targetView = document.getElementById('view-' + viewName);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+                targetView.classList.add('fade-in');
+            }
+            
+            // Initialize Chart if Tokenomics View is opened for the first time
+            if (viewName === 'tokenomics' && !chartInitialized) {
+                initTokenChart();
+                chartInitialized = true;
+            }
+
+            // Update Active Link Visuals
+            document.querySelectorAll('.nav-link').forEach(el => {
+                el.classList.remove('active', 'text-slate-700');
+                el.classList.add('text-slate-600');
+            });
+            
+            // Handle Navigation Active State
+            let activeNavId = 'nav-' + viewName;
+            // Map submenu items to their parent or specific ID if exists
+            if (['whitepaper', 'tokenomics', 'pitch-deck', 'audit'].includes(viewName)) activeNavId = 'nav-details'; 
+            
+            // If navigating within main view sections
+            if (viewName === 'main' && scrollTargetId) {
+                 activeNavId = 'nav-' + (scrollTargetId === 'intro' ? 'intro' : scrollTargetId.split('-')[0]);
+            }
+
+            const activeEl = document.getElementById(activeNavId);
+            if(activeEl) {
+                activeEl.classList.add('active', 'text-slate-700');
+                activeEl.classList.remove('text-slate-600');
+            }
+
+            // Scroll Logic
+            if (scrollTargetId) {
+                setTimeout(() => {
+                    const target = document.getElementById(scrollTargetId);
+                    if (target) target.scrollIntoView({ behavior: 'smooth' });
+                }, 10);
+            } else {
+                document.getElementById('scroll-container').scrollTop = 0;
+            }
+        }
+        
+        function initTokenChart() {
+            const ctx = document.getElementById('tokenChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Public Sale', 'Staking Rewards', 'Team & Advisors', 'Ecosystem Fund'],
+                    datasets: [{
+                        data: [20, 30, 15, 35],
+                        backgroundColor: ['#0ea5e9', '#10b981', '#f59e0b', '#a855f7'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false } // Custom legend used in HTML
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -9,7 +9,6 @@ import {
 } from "./membership-entitlements.ts";
 
 const USER_ID_PREFIX = "usr_";
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 const DEMO_CASH_PLAN_IDS = new Set(["explore", "investor", "private"]);
 
 type D1Result<T = Record<string, unknown>> = {
@@ -531,6 +530,7 @@ export async function activateDemoCashMembership(
   input: {
     userId: string;
     planId: string;
+    periodDays?: 30 | 365;
     requestId?: string | null;
   },
   options: WorkflowOptions = {},
@@ -546,6 +546,10 @@ export async function activateDemoCashMembership(
   await requireActiveUser(database, userId);
 
   const now = getNow(options);
+  const periodDays = input.periodDays ?? 30;
+  if (periodDays !== 30 && periodDays !== 365) {
+    throw new TypeError("periodDays must be 30 or 365");
+  }
   const id = `mem_${getRandomUUID(options)}`;
   const membership = {
     id,
@@ -553,7 +557,7 @@ export async function activateDemoCashMembership(
     provider: "DEMO_CASH",
     status: "ACTIVE",
     periodStart: now,
-    periodEnd: now + THIRTY_DAYS_MS,
+    periodEnd: now + periodDays * 86_400_000,
     createdAt: now,
     updatedAt: now,
     demo: true as const,

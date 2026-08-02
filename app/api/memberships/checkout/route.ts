@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createCashCheckout } from "../../../../db/membership-billing.ts";
 import { isDemoBillingEnabled } from "../../../../lib/demo-billing";
+import { normalizeBillingCycle } from "../../../../lib/membership-plans";
 import {
   requestId,
   requireApiMember,
@@ -18,12 +19,16 @@ export async function POST(request: Request) {
   if (auth.response) return auth.response;
 
   try {
-    const body = (await request.json()) as { planId?: unknown };
+    const body = (await request.json()) as {
+      planId?: unknown;
+      billingCycle?: unknown;
+    };
     const checkout = await createCashCheckout(
       auth.context.database,
       {
         userId: auth.context.workflowUser.id,
         planId: String(body.planId ?? ""),
+        billingCycle: normalizeBillingCycle(body.billingCycle),
         requestId: requestId(request),
       },
     );
@@ -48,4 +53,3 @@ function demoBillingDisabledResponse() {
     { status: 503, headers: { "cache-control": "no-store" } },
   );
 }
-

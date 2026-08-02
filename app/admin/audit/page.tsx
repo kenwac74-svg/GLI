@@ -270,4 +270,3 @@ function formatDate(timestamp: number): string {
     timeZone: "Asia/Phnom_Penh",
   }).format(new Date(timestamp));
 }
-
