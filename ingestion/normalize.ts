@@ -1,4 +1,8 @@
 import { createHash } from "node:crypto";
+import {
+  PRICE_CURRENCIES,
+  type PriceCurrency,
+} from "../lib/currency.ts";
 
 export type NormalizationInput = {
   country: string;
@@ -7,7 +11,7 @@ export type NormalizationInput = {
   transaction: "sale" | "rent";
   propertyType: "condo" | "house" | "villa";
   price: number;
-  currency: "USD";
+  currency: PriceCurrency;
   areaSqm: number;
   bedrooms: number;
   bathrooms: number;
@@ -27,7 +31,7 @@ export type NormalizedListing = {
   transaction: "sale" | "rent";
   propertyType: "condo" | "house" | "villa";
   priceMinor: number;
-  currency: "USD";
+  currency: PriceCurrency;
   areaSqmX100: number;
   bedrooms: number;
   bathrooms: number;
@@ -260,8 +264,13 @@ export function normalizeApprovedFixture(input: unknown): NormalizedListing {
     "house",
     "villa",
   ] as const);
-  const currency = normalizeEnum(candidate.currency, "currency", ["USD"] as const);
-  const priceMinor = toScaledInteger(candidate.price, "price", 100, 100_000_000);
+  const currency = normalizeEnum(candidate.currency, "currency", PRICE_CURRENCIES);
+  const priceMinor = toScaledInteger(
+    candidate.price,
+    "price",
+    100,
+    10_000_000_000_000,
+  );
   const areaSqmX100 = toScaledInteger(candidate.areaSqm, "areaSqm", 100, 1_000_000);
   const bedrooms = normalizeCount(candidate.bedrooms, "bedrooms");
   const bathrooms = normalizeCount(candidate.bathrooms, "bathrooms");
@@ -282,6 +291,7 @@ export function normalizeApprovedFixture(input: unknown): NormalizedListing {
     bedrooms,
     city: city.toLocaleLowerCase("en-US"),
     countryCode,
+    currency,
     district: district.toLocaleLowerCase("en-US"),
     priceMinor,
   });

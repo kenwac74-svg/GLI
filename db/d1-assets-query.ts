@@ -77,6 +77,8 @@ export function createD1PublicListingQuery(
         l.image_url AS imageUrl,
         l.status,
         l.is_gli_direct AS isGliDirect,
+        s.slug AS sourceSlug,
+        ls.source_url AS sourceUrl,
         l.updated_at AS updatedAt,
         COALESCE(ts.score, 0) AS trustScore,
         COALESCE(ts.status, 'PRELIMINARY') AS trustStatus,
@@ -99,6 +101,15 @@ export function createD1PublicListingQuery(
           ORDER BY inner_lv.observed_at DESC, inner_lv.id DESC
           LIMIT 1
         )
+      LEFT JOIN listing_sources ls
+        ON ls.id = (
+          SELECT inner_ls.id
+          FROM listing_sources inner_ls
+          WHERE inner_ls.listing_id = l.id
+          ORDER BY inner_ls.last_seen_at DESC, inner_ls.id DESC
+          LIMIT 1
+        )
+      LEFT JOIN sources s ON s.id = ls.source_id
       WHERE ${clauses.join(" AND ")}
       ORDER BY
         l.updated_at DESC,

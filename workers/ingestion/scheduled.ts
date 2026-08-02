@@ -8,6 +8,7 @@ import { runOperationsHealthScan } from "../../db/operations-health.ts";
 import type { D1DatabaseLike } from "../../db/user-workflows.ts";
 import type { RawObjectStore } from "../../ingestion/contracts.ts";
 import { executeNextLicensedFeedRetry } from "./index.ts";
+import { isDemoSourceAutoApprovalEnabled } from "../../lib/demo-data-mode.ts";
 
 export type ScheduledIngestionEnv = {
   DB: D1DatabaseLike;
@@ -17,6 +18,8 @@ export type ScheduledIngestionEnv = {
   ALERT_WEBHOOK_URL?: string;
   ALERT_WEBHOOK_ALLOWED_HOSTS?: string;
   ALERT_WEBHOOK_BEARER?: string;
+  DEPLOYMENT_STAGE?: string;
+  DEMO_SOURCE_AUTO_APPROVAL?: string;
   [key: string]: unknown;
 };
 
@@ -68,6 +71,9 @@ export async function runScheduledOperations(
     secrets: sourceSecrets(env),
     fetchImpl,
     now: () => scheduledAt,
+    demoAutoApproval: isDemoSourceAutoApprovalEnabled(
+      env as Record<string, string | undefined>,
+    ),
   };
 
   for (let index = 0; index < retryLimit; index += 1) {

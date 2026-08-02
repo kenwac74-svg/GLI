@@ -171,4 +171,3 @@ function toTimestamp(value: FormDataEntryValue | null): number | null {
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) ? timestamp : null;
 }
-

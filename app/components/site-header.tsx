@@ -1,4 +1,4 @@
-import { LogOut, Menu, Search, UserRound } from "lucide-react";
+import { ChevronDown, LogOut, Menu, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { DEMO_ADMIN_EMAIL, getCurrentUser, signOutPath } from "../auth";
 
@@ -9,7 +9,13 @@ export async function SiteHeader() {
     <header className="site-header">
       <div className="nav-shell">
         <Link className="brand-link" href="/" aria-label="GLI 홈">
-          <span className="brand-mark">GLI</span>
+          <img
+            className="brand-logo"
+            src="/brand/gli-logo.png"
+            alt="GLI"
+            width={65}
+            height={30}
+          />
           <span className="brand-copy">
             <strong>Global Lifestyle Investment</strong>
             <small>AI Verified Assets</small>
@@ -21,6 +27,18 @@ export async function SiteHeader() {
           </Link>
           <Link href="/membership">멤버십</Link>
           <Link href="/my">MY GLI</Link>
+          <details className="center-menu">
+            <summary>
+              안내센터 <ChevronDown size={15} />
+            </summary>
+            <div className="center-menu-panel">
+              <Link href="/notices">공지</Link>
+              <Link href="/coming-soon?section=guide">가이드 &amp; FAQ</Link>
+              <Link href="/news">뉴스</Link>
+              <Link href="/coming-soon?section=partners">파트너스</Link>
+              <a href="/whitepaper/gli-whitepaper.html">GLI 백서</a>
+            </div>
+          </details>
           {user?.email === DEMO_ADMIN_EMAIL ? (
             <Link href="/admin">운영</Link>
           ) : null}
@@ -48,6 +66,12 @@ export async function SiteHeader() {
             <Link href="/">자산 탐색</Link>
             <Link href="/membership">멤버십</Link>
             <Link href="/my">MY GLI</Link>
+            <span className="mobile-menu-label">안내센터</span>
+            <Link href="/notices">공지</Link>
+            <Link href="/coming-soon?section=guide">가이드 &amp; FAQ</Link>
+            <Link href="/news">뉴스</Link>
+            <Link href="/coming-soon?section=partners">파트너스</Link>
+            <a href="/whitepaper/gli-whitepaper.html">GLI 백서</a>
             {user?.email === DEMO_ADMIN_EMAIL ? (
               <Link href="/admin">운영</Link>
             ) : null}

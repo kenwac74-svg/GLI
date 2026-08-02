@@ -32,6 +32,7 @@ import {
   OperationalAlertActions,
   OperationsHealthAction,
 } from "./admin-actions";
+import { listCuratedOpportunities } from "../../lib/curated-opportunities";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,7 @@ export default async function AdminPage() {
     getOperationsHealthDashboard(context.database),
   ]);
   const latestRun = dashboard.runs[0];
+  const curatedAssetRecords = listCuratedOpportunities();
 
   return (
     <>
@@ -139,6 +141,34 @@ export default async function AdminPage() {
             </small>
           </section>
         </div>
+
+        <section className="ops-workbench">
+          <div className="ops-section-head">
+            <div>
+              <p className="section-kicker">INTERNAL ASSET METADATA</p>
+              <h2>GLI 등록 자산 자료 관리</h2>
+            </div>
+            <ClipboardCheck size={24} />
+          </div>
+          <div className="source-list">
+            {curatedAssetRecords.map((asset) => (
+              <article key={asset.id}>
+                <div>
+                  <strong>{asset.title}</strong>
+                  <span>{asset.country} · {asset.city} · {asset.id}</span>
+                </div>
+                <aside className="source-state-stack">
+                  <small>자료 기준: {asset.documentDateLabel ?? "미등록"}</small>
+                  <small>등록 근거: {asset.publicationBasis ?? "미등록"}</small>
+                  <Link className="source-settings-link" href={`/assets/${asset.id}`}>
+                    <ArrowRight size={14} />
+                    사용자 화면 확인
+                  </Link>
+                </aside>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <section className="ops-workbench">
           <div className="ops-section-head">
@@ -486,4 +516,3 @@ function operationalAlertStatusLabel(status: string): string {
   if (status === "RESOLVED") return "해결";
   return status;
 }
-

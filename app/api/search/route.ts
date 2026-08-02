@@ -10,9 +10,12 @@ import {
   createSafetyIdentifier,
   runAdvisorSearch,
 } from "../../../lib/ai-search";
-import { parseSearchContext } from "../../../lib/search";
+import { extractCriteria, parseSearchContext } from "../../../lib/search";
 import { getCurrentUser } from "../../auth";
 import { ensureMemberContext } from "../../../lib/member-data";
+import { listCuratedOpportunities } from "../../../lib/curated-opportunities";
+import { discoverCambodiaAssets } from "../../../lib/cambodia-live-discovery";
+import { planGliAiRequest } from "../../../lib/gli-ai-orchestration";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -58,7 +61,24 @@ export async function POST(request: Request) {
     );
   }
 
-  const source = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
+  const source = await listAssets({ limit: 100 });
+  const requestedCriteria = extractCriteria(query, context);
+  const liveDiscoveryEnabled =
+    process.env.LIVE_CAMBODIA_DISCOVERY === "enabled" ||
+    (process.env.LIVE_CAMBODIA_DISCOVERY !== "disabled" &&
+      process.env.NODE_ENV !== "production");
+  const liveDiscovery =
+    requestedCriteria.country === "Cambodia" &&
+    liveDiscoveryEnabled
+      ? await discoverCambodiaAssets({ city: requestedCriteria.city })
+      : null;
+  const advisorAssets = [
+    ...(liveDiscovery?.assets ?? []),
+    ...source.assets,
+    ...listCuratedOpportunities().filter(
+      (asset) => !source.assets.some((candidate) => candidate.id === asset.id),
+    ),
+  ];
   const currentUser = await getCurrentUser();
   const memberContext = currentUser
     ? await ensureMemberContext(currentUser)
@@ -92,12 +112,19 @@ export async function POST(request: Request) {
     request.headers.get("cf-connecting-ip") ??
       request.headers.get("x-forwarded-for"),
   );
-  const result = await runAdvisorSearch(query, source.assets, {
+  const result = await runAdvisorSearch(query, advisorAssets, {
       safetyIdentifier,
       context,
       provider:
         runtimeAvailable && canUseDeepSearch ? "openai" : "disabled",
     });
+  const orchestration = planGliAiRequest(query, {
+    hasConversationContext: context !== null,
+  });
+  const liveAssetIds = new Set(liveDiscovery?.assets.map((asset) => asset.id) ?? []);
+  const displayedExternalCount = result.matches.filter((asset) =>
+    liveAssetIds.has(asset.id),
+  ).length;
 
   if (
     usageClaimed &&
@@ -126,6 +153,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     ...result,
+    orchestration,
     dataMode: source.mode,
     membershipAccess: {
       authenticated: Boolean(memberContext),
@@ -137,5 +165,14 @@ export async function POST(request: Request) {
       remaining: access ? access.aiRemaining : 0,
       deliveredMode: result.advisor.mode,
     },
+    discovery: liveDiscovery
+      ? {
+          checkedAt: liveDiscovery.checkedAt,
+          cached: liveDiscovery.cached,
+          collectedCount: liveDiscovery.assets.length,
+          displayedCount: displayedExternalCount,
+          sources: liveDiscovery.sources,
+        }
+      : null,
   });
 }

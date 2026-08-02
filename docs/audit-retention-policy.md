@@ -44,4 +44,3 @@ outside the application database.
 - Add restoration drills and evidence capture.
 - Add cursor-based export jobs if operational volume exceeds the synchronous
   1,000-row boundary.
-

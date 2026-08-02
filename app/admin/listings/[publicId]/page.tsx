@@ -298,4 +298,3 @@ function formatEvidenceValue(value: unknown): string {
   if (value && typeof value === "object") return "구조화 근거";
   return "-";
 }
-

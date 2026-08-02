@@ -42,4 +42,3 @@ report payload.
 Production deployments fail closed until a real payment adapter is selected and
 connected. Browser PDF output represents the current web report and must not be
 described as an immutable signed legal report.
-

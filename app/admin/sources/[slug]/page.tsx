@@ -169,4 +169,3 @@ function formatDate(timestamp: number | null): string {
     timeZone: "UTC",
   }).format(new Date(timestamp));
 }
-

@@ -1,0 +1,153 @@
+import type { NormalizationInput } from "../ingestion/normalize.ts";
+
+type CambodiaSourceSnapshot = {
+  checkedAt: string;
+  candidates: readonly NormalizationInput[];
+};
+
+// Demo fallback only: these are last-successful public-source snapshots. The live
+// collector always wins. In production, replace this file with persisted crawl
+// batches that pass the admin review/approval workflow before publication.
+const SNAPSHOTS: Readonly<Record<string, CambodiaSourceSnapshot>> = {
+  "cam-realty-cambodia": {
+    checkedAt: "2026-08-02T00:00:00+07:00",
+    candidates: [
+      {
+        country: "Cambodia",
+        city: "Phnom Penh",
+        district: "Toul Tum Poung",
+        transaction: "rent",
+        propertyType: "condo",
+        price: 650,
+        currency: "USD",
+        areaSqm: 85,
+        bedrooms: 2,
+        bathrooms: 1,
+        imageUrl: "https://camrealtyservice.com/wp-content/uploads/2022/07/Apartment-for-rent-in-Phnom-Penh-N1087168-19.jpg",
+        title: "2-bedroom serviced apartment near Russian Market",
+        summary: "러시안 마켓 인근의 가구 포함 서비스 아파트입니다. 월 임대료와 제공 서비스의 최신 조건은 원문 매물에서 확인할 수 있습니다.",
+        sourceExternalKey: "cam-realty-russian-market-2br-650",
+        sourceUrl: "https://camrealtyservice.com/property/2bedrooms-serviced-apartment-rent-near-russian-market-phnom-penh/",
+        observedAt: "2026-08-02T00:00:00+07:00",
+      },
+      {
+        country: "Cambodia",
+        city: "Phnom Penh",
+        district: "Toul Sleng",
+        transaction: "rent",
+        propertyType: "condo",
+        price: 1100,
+        currency: "USD",
+        areaSqm: 101,
+        bedrooms: 2,
+        bathrooms: 2,
+        imageUrl: "https://camrealtyservice.com/wp-content/uploads/2023/01/Apartments-for-rent-in-Phnom-Penh9-3.jpg",
+        title: "Modern 2-bedroom serviced apartment in Toul Sleng",
+        summary: "수영장, 체육관, 스팀 사우나를 갖춘 서비스 아파트입니다. 임대료 범위와 현재 공실 여부는 원문 매물에서 확인할 수 있습니다.",
+        sourceExternalKey: "cam-realty-toul-sleng-2br-1100",
+        sourceUrl: "https://camrealtyservice.com/property/toul-sleng-area-modern-style-2-bedrooms-fully-serviced-apartment-for-rent-in-phnom-penh-pool-gym-steam-sauna/",
+        observedAt: "2026-08-02T00:00:00+07:00",
+      },
+    ],
+  },
+  "cambodia-property-asia": {
+    checkedAt: "2026-08-02T00:00:00+07:00",
+    candidates: [
+      {
+        country: "Cambodia",
+        city: "Phnom Penh",
+        district: "BKK1",
+        transaction: "rent",
+        propertyType: "condo",
+        price: 850,
+        currency: "USD",
+        areaSqm: 120,
+        bedrooms: 2,
+        bathrooms: 2,
+        title: "Renovated 2-bedroom apartment in central BKK1",
+        summary: "BKK1 중심부의 리노베이션 2베드룸 임대 매물입니다. 세부 시설과 계약 조건은 원문 매물에서 확인할 수 있습니다.",
+        sourceExternalKey: "cpa-62526",
+        sourceUrl: "https://www.cambodiaproperty.asia/en/property/renovated-2-br-apartment-for-rent-central-bkk1-phnom-penh-62526/",
+        observedAt: "2026-05-23T00:00:00+07:00",
+      },
+      {
+        country: "Cambodia",
+        city: "Phnom Penh",
+        district: "Boeung Trabek",
+        transaction: "rent",
+        propertyType: "condo",
+        price: 450,
+        currency: "USD",
+        areaSqm: 43,
+        bedrooms: 1,
+        bathrooms: 1,
+        title: "15th-floor 1-bedroom condo at Parc 21",
+        summary: "Boeung Trabek의 Parc 21 고층 1베드룸 콘도입니다. 할인 여부와 현재 임대 조건은 원문 매물에서 확인할 수 있습니다.",
+        sourceExternalKey: "cpa-62505",
+        sourceUrl: "https://www.cambodiaproperty.asia/en/property/1-bedroom-condo-for-rent-parc-21-boeung-trabek-phnom-penh-62505/",
+        observedAt: "2026-05-20T00:00:00+07:00",
+      },
+      {
+        country: "Cambodia",
+        city: "Sihanoukville",
+        district: "Koh Rong",
+        transaction: "rent",
+        propertyType: "villa",
+        price: 5000,
+        currency: "USD",
+        areaSqm: 550,
+        bedrooms: 3,
+        bathrooms: 4,
+        imageUrl: "https://www.cambodiaproperty.asia/wp-content/uploads/2025/11/Luxury-Villa-For-Rent-in-Pagoda-Beach-Koh-Rong-Sihanoukville-3-1240x720.jpg?v=1763955424",
+        title: "Luxury villa for rent near Pagoda Beach, Koh Rong",
+        summary: "파고다 비치 인근의 가구 포함 3베드룸 빌라입니다. 전용 수영장과 정원을 갖추고 있으며 현재 공실과 장기 계약 조건은 원문에서 확인해야 합니다.",
+        sourceExternalKey: "cpa-59264",
+        sourceUrl: "https://www.cambodiaproperty.asia/en/property/luxury-villa-for-rent-pagoda-beach-koh-rong-sihanoukville/",
+        observedAt: "2025-11-24T00:00:00+07:00",
+      },
+    ],
+  },
+  "khmer24-cambodia": {
+    checkedAt: "2026-08-02T00:00:00+07:00",
+    candidates: [
+      {
+        country: "Cambodia",
+        city: "Phnom Penh",
+        district: "Chrouy Changva",
+        transaction: "rent",
+        propertyType: "condo",
+        price: 500,
+        currency: "USD",
+        areaSqm: 104,
+        bedrooms: 2,
+        bathrooms: 2,
+        title: "High-floor 2-bedroom apartment with Mekong River view",
+        summary: "Chrouy Changva의 메콩강 전망 고층 2베드룸 매물입니다. 가구와 공용시설 조건은 원문 매물에서 확인할 수 있습니다.",
+        sourceExternalKey: "khmer24-12437786",
+        sourceUrl: "https://m.khmer24.com/2-bedroom-apartment-for-rent-in-chroy-changva-adid-12437786",
+        observedAt: "2025-11-03T09:15:41+07:00",
+      },
+      {
+        country: "Cambodia",
+        city: "Phnom Penh",
+        district: "Chrouy Changva",
+        transaction: "rent",
+        propertyType: "condo",
+        price: 500,
+        currency: "USD",
+        areaSqm: 100,
+        bedrooms: 2,
+        bathrooms: 2,
+        title: "2-bedroom river-facing condo in Chroy Changvar",
+        summary: "강을 향한 고층 2베드룸 콘도입니다. 체육관과 관리비 포함 여부 및 계약 조건은 원문 매물에서 확인할 수 있습니다.",
+        sourceExternalKey: "khmer24-12609331",
+        sourceUrl: "https://www.khmer24.com/2-bedroom-for-rent-in-chroy-changvar----550--month-adid-12609331",
+        observedAt: "2026-05-24T15:45:04+07:00",
+      },
+    ],
+  },
+};
+
+export function getCambodiaSourceSnapshot(sourceSlug: string): CambodiaSourceSnapshot | null {
+  return SNAPSHOTS[sourceSlug] ?? null;
+}

@@ -37,4 +37,3 @@ operational evidence.
 The dashboard does not replace penetration testing, legal approval, payment
 certification, or a restoration drill. Production readiness remains blocked
 until those external gates are completed.
-

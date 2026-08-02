@@ -262,4 +262,3 @@ function validNow(value: Date): Date {
 function sha256(value: Uint8Array): string {
   return createHash("sha256").update(value).digest("hex");
 }
-

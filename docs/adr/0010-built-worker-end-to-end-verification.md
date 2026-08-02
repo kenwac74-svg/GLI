@@ -38,4 +38,3 @@ deployable artifact.
 The adapter is a compatibility verifier, not a replacement for Cloudflare D1
 staging tests. Production bindings and provider credentials still require
 environment-specific validation.
-

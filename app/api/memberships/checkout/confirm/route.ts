@@ -42,4 +42,3 @@ function demoBillingDisabledResponse() {
     { status: 503, headers: { "cache-control": "no-store" } },
   );
 }
-

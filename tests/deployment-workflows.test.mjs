@@ -181,7 +181,7 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.deepEqual(initialDashboard.consultations, []);
     assert.equal(initialDashboard.activeMembership, null);
     assert.equal(initialDashboard.membershipAccess.planId, null);
-    assert.equal(initialDashboard.membershipAccess.favoriteLimit, 5);
+    assert.equal(initialDashboard.membershipAccess.favoriteLimit, null);
     assert.equal(initialDashboard.membershipAccess.aiMonthlyLimit, 0);
     assert.equal(
       initialDashboard.membershipAccess.consultationPriority,
@@ -411,7 +411,7 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(investorSearchResponse.status, 200);
     const investorSearch = await investorSearchResponse.json();
     assert.equal(investorSearch.membershipAccess.planId, "investor");
-    assert.equal(investorSearch.membershipAccess.monthlyLimit, null);
+    assert.equal(investorSearch.membershipAccess.monthlyLimit, 150);
     assert.equal(investorSearch.membershipAccess.deliveredMode, "rules");
     assert.equal(
       sqlite
@@ -466,7 +466,7 @@ test("built worker completes the member discovery and cash membership journey", 
     assert.equal(finalDashboard.activeMembership.planId, "investor");
     assert.equal(finalDashboard.membershipAccess.planId, "investor");
     assert.equal(finalDashboard.membershipAccess.favoriteLimit, null);
-    assert.equal(finalDashboard.membershipAccess.aiMonthlyLimit, null);
+    assert.equal(finalDashboard.membershipAccess.aiMonthlyLimit, 150);
     assert.equal(
       finalDashboard.membershipAccess.consultationPriority,
       "PRIORITY",
@@ -1054,4 +1054,3 @@ test("built worker imports an authorized partner file into the review queue", as
     sqlite.close();
   }
 });
-

@@ -55,6 +55,9 @@ test("builds a parameterized D1 query with stable filter bindings", async () => 
     20,
   ]);
   assert.match(capturedSql, /json_extract/);
+  assert.match(capturedSql, /LEFT JOIN listing_sources ls/i);
+  assert.match(capturedSql, /s\.slug AS sourceSlug/i);
+  assert.match(capturedSql, /ls\.source_url AS sourceUrl/i);
   assert.match(capturedSql, /ORDER BY\s+l\.updated_at DESC/i);
 });
 
