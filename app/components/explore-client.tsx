@@ -182,7 +182,6 @@ export function ExploreClient({
 
   useEffect(() => {
     if (!loading) return;
-    setActiveProcessStep(0);
     const timer = window.setInterval(() => {
       setActiveProcessStep((current) => Math.min(current + 1, 3));
     }, 850);
@@ -228,6 +227,7 @@ export function ExploreClient({
     };
     setTurns((current) => [...current, userTurn].slice(-9));
     setQuery("");
+    setActiveProcessStep(0);
     setLoading(true);
     setOrchestration(null);
     try {
