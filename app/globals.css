@@ -1023,6 +1023,8 @@ button {
   margin: 8px 0 5px;
   font-size: 18px;
   line-height: 1.35;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .asset-spec {
@@ -1464,11 +1466,18 @@ button {
 }
 
 .detail-title {
-  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(160px, 2fr);
+  grid-template-areas:
+    "location location"
+    "title price";
+  column-gap: 24px;
+  align-items: start;
   padding: 24px;
 }
 
 .detail-title > p {
+  grid-area: location;
   margin: 0;
   display: flex;
   gap: 6px;
@@ -1479,16 +1488,19 @@ button {
 }
 
 .detail-title h1 {
-  max-width: calc(100% - 180px);
+  grid-area: title;
+  min-width: 0;
   margin: 9px 0 0;
   font-size: 30px;
   line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .detail-price {
-  position: absolute;
-  top: 24px;
-  right: 24px;
+  grid-area: price;
+  min-width: 0;
+  margin-top: 9px;
   display: grid;
   justify-items: end;
   gap: 3px;
@@ -1497,7 +1509,8 @@ button {
 
 .detail-price strong {
   font-size: 26px;
-  white-space: nowrap;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .detail-price small {
@@ -5985,12 +5998,18 @@ button {
   }
 
   .detail-title h1 {
-    max-width: none;
     font-size: 25px;
   }
 
+  .detail-title {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "location"
+      "title"
+      "price";
+  }
+
   .detail-price {
-    position: static;
     margin-top: 16px;
     justify-items: start;
     text-align: left;
