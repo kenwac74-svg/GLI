@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<meta name="ext-resource-dependency" content="public/partner-assets/orchard-grand.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/thu-thiem-zeit-river.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/rlc-portfolio.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/mantawi-residences.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/pavilion-square.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/clouthaus.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/times-square-2.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/facade.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/exterior.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/lobby.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/bedroom.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/pool.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/gym.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/bbq.jpg">
+<meta name="ext-resource-dependency" content="public/partner-assets/golden-crown/pavilion.jpg">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<style>
+  :root{
+    --forest:#0F3D33; --green:#1B6B58; --green-700:#15584A; --green-100:#E8F2EE; --green-300:#9CC9BC;
+    --gold:#7A5214; --gold-100:#F5EEE1;
+    --ink:#14201D; --ink-2:#4C5652; --paper:#FAF9F6; --surface:#FFFFFF;
+    --line:#E2E0D9; --red:#A63D34;
+    --r:6px; --sh:0 1px 3px rgba(20,32,29,.07); --sh-h:0 6px 18px rgba(20,32,29,.11);
+    --f:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f);font-size:16px;line-height:1.75;letter-spacing:0;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{margin:0;letter-spacing:0}
+  h1{font-size:44px;font-weight:700;line-height:1.3}
+  h2{font-size:32px;font-weight:700;line-height:1.35}
+  h3{font-size:24px;font-weight:600;line-height:1.4}
+  h4{font-size:19px;font-weight:600;line-height:1.45}
+  h1,h2,h3,h4,p,li,.chip{word-break:keep-all;line-break:strict;text-wrap:pretty}
+  p{margin:0}
+  ul{margin:0;padding-left:20px}
+  a{color:var(--green);text-decoration:none}
+  a:hover{color:var(--green-700)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px}
+  svg{display:block;flex:none}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 36px}
+  .kicker{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+  .sub{font-size:15px;color:var(--ink-2);line-height:1.6}
+  .min{font-size:14px}
+  .hide{display:none}
+
+  .nav{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;gap:30px;min-height:76px}
+  .nav-links{display:flex;gap:6px;align-items:center}
+  .nav-links a,.nav-links summary{display:flex;align-items:center;gap:7px;min-height:48px;padding:0 14px;border-radius:var(--r);font-size:16px;font-weight:600;color:var(--ink);white-space:nowrap;cursor:pointer;list-style:none}
+  .nav-links summary::-webkit-details-marker{display:none}
+  .nav-links a:hover,.nav-links summary:hover{background:var(--green-100);color:var(--green-700)}
+  .center-menu{position:relative}
+  .center-menu[open] summary{background:var(--green-100);color:var(--green-700)}
+  .center-menu-panel{position:absolute;top:calc(100% + 8px);left:0;min-width:200px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-h);padding:8px;display:flex;flex-direction:column;z-index:50}
+  .mobile-menu{display:none;position:relative}
+  .mobile-menu>summary{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink);cursor:pointer;list-style:none}
+  .mobile-menu>summary::-webkit-details-marker{display:none}
+  .mobile-menu>summary:hover{border-color:var(--green);color:var(--green-700)}
+  .mobile-menu[open]>summary{border-color:var(--green);background:var(--green-100);color:var(--green-700)}
+  .mobile-menu nav{position:absolute;right:0;top:calc(100% + 8px);min-width:236px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-h);padding:8px;display:flex;flex-direction:column;z-index:60}
+  .mobile-menu nav a{display:flex;align-items:center;min-height:48px;padding:0 14px;border-radius:var(--r);font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap}
+  .mobile-menu nav a:hover{background:var(--green-100);color:var(--green-700)}
+  .mobile-menu-label{display:block;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);padding:14px 14px 4px;margin-top:4px;border-top:1px solid var(--line)}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;font-family:var(--f);font-size:16px;font-weight:600;line-height:1.2;white-space:nowrap;border:1px solid transparent;border-radius:var(--r);cursor:pointer;transition:.15s;text-decoration:none}
+  .btn-p{background:var(--green);color:#fff}
+  .btn-p:hover{background:var(--green-700);color:#fff}
+  .btn-o{background:var(--surface);color:var(--ink);border-color:var(--line)}
+  .btn-o:hover{border-color:var(--green);color:var(--green-700);background:var(--green-100)}
+  .btn-full{width:100%}
+  .btn:disabled{opacity:.5;cursor:default}
+
+  .hero{position:relative;overflow:hidden}
+  .hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero>.scrim{position:absolute;inset:0;background:rgba(15,61,51,.8)}
+  .hero .in{position:relative;z-index:2;color:#fff}
+
+  .composer{background:var(--surface);border-radius:var(--r);margin-top:32px;max-width:860px;overflow:hidden}
+  .composer-main{padding:22px 22px 18px}
+  .composer label{display:block;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:5px}
+  .composer-hint{font-size:15px;color:var(--ink-2);margin-bottom:14px}
+  .composer-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .aitag{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;background:var(--green-100);color:var(--green-700);border:1px solid #CFE1DA;border-radius:999px;padding:5px 13px}
+  .dots span{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:999px;background:var(--green);animation:bl 1s infinite}
+  .dots span:nth-child(2){animation-delay:.15s}
+  .dots span:nth-child(3){animation-delay:.3s}
+  @keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+  .reason{display:flex;gap:8px;align-items:flex-start;font-size:15px;color:var(--green-700);background:var(--green-100);border-radius:var(--r);padding:10px 12px}
+  .rank{position:absolute;top:12px;right:66px;z-index:3;font-size:14px;font-weight:700;padding:6px 11px;border-radius:var(--r);background:rgba(255,255,255,.95);color:var(--forest)}
+  .composer textarea{flex:1;min-width:260px;min-height:88px;padding:14px 16px;font-family:var(--f);font-size:17px;line-height:1.6;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);outline:none;resize:vertical}
+  .composer textarea:focus{border-color:var(--green)}
+  .pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--green-100);border-top:1px solid #D3E3DD;padding:13px 22px}
+  .pipe-step{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--forest);white-space:nowrap}
+  .pipe-n{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;background:var(--forest);color:#fff;font-size:11px;font-weight:700}
+  .pipe-arrow{color:#7FA79B}
+  .pipe-note{font-size:14px;color:var(--green-700);margin-left:auto;white-space:nowrap}
+  .prompt-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .chip{min-height:48px;display:inline-flex;align-items:center;font-family:var(--f);font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 20px;cursor:pointer;transition:.15s;text-align:left}
+  .chip:hover{border-color:var(--green);background:var(--green-100);color:var(--green-700)}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:28px}
+  .turn{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding:18px 0;border-top:1px solid var(--line)}
+  .turn-who{font-size:14px;font-weight:700;color:var(--green-700);white-space:nowrap;padding-top:2px}
+
+  .ctabs{display:flex;gap:9px;flex-wrap:wrap}
+  .ctab{min-height:48px;display:inline-flex;align-items:center;font-family:var(--f);font-size:15px;font-weight:600;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;transition:.15s;white-space:nowrap}
+  .ctab:hover{border-color:var(--green);color:var(--green-700)}
+  .ctab.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+  .cat{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-height:48px;padding:18px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink);cursor:pointer;text-align:left;transition:.15s;font-family:var(--f)}
+  .cat:hover{border-color:var(--green);background:var(--green-100)}
+  .cat.on{border-color:var(--green);background:var(--green-100);box-shadow:inset 0 0 0 1px var(--green)}
+  .cat .l{font-size:18px;font-weight:700}
+  .cat .c{font-size:14px;color:var(--ink-2);line-height:1.45}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+  .seg button{min-height:48px;padding:0 20px;font-family:var(--f);font-size:15px;font-weight:600;border:0;background:transparent;color:var(--ink);cursor:pointer;white-space:nowrap}
+  .seg button+button{border-left:1px solid var(--line)}
+  .seg button:hover{background:var(--green-100);color:var(--green-700)}
+  .seg button.on{background:var(--green);color:#fff}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:64px;align-items:start}
+  .ftgrid{display:grid;grid-template-columns:1.9fr 1fr 1fr 1fr;gap:44px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--sh);transition:.18s}
+  .card:hover{box-shadow:var(--sh-h);border-color:#CFCBC1}
+  .photo{position:relative;aspect-ratio:16/10;overflow:hidden;background:#EDEAE3}
+  .photo-img{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .4s}
+  .c0{background-image:url(https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=900&q=80)}
+  .c1{background-image:url(https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&w=900&q=80)}
+  .c2{background-image:url(https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&fit=crop&w=900&q=80)}
+  .c3{background-image:url(https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80)}
+  .c4{background-image:url(https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80)}
+  .c5{background-image:url(https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=80)}
+  .c6{background-image:url(https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80)}
+  .c7{background-image:url(https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=900&q=80)}
+  .c8{background-image:url(public/partner-assets/orchard-grand.jpg)}
+  .c9{background-image:url(public/partner-assets/thu-thiem-zeit-river.jpg)}
+  .c10{background-image:url(public/partner-assets/rlc-portfolio.jpg)}
+  .c11{background-image:url(public/partner-assets/mantawi-residences.jpg)}
+  .c12,.g0{background-image:url(public/partner-assets/golden-crown/facade.jpg)}
+  .c13{background-image:url(public/partner-assets/pavilion-square.jpg)}
+  .c14{background-image:url(public/partner-assets/clouthaus.jpg)}
+  .c15{background-image:url(public/partner-assets/times-square-2.jpg)}
+  .g1{background-image:url(public/partner-assets/golden-crown/exterior.jpg)}
+  .g2{background-image:url(public/partner-assets/golden-crown/lobby.jpg)}
+  .g3{background-image:url(public/partner-assets/golden-crown/bedroom.jpg)}
+  .g4{background-image:url(public/partner-assets/golden-crown/pool.jpg)}
+  .g5{background-image:url(public/partner-assets/golden-crown/gym.jpg)}
+  .g6{background-image:url(public/partner-assets/golden-crown/bbq.jpg)}
+  .g7{background-image:url(public/partner-assets/golden-crown/pavilion.jpg)}
+  .card:hover .photo-img{transform:scale(1.04)}
+  .origin{position:absolute;top:12px;left:12px;z-index:2;font-size:14px;font-weight:700;padding:6px 12px;border-radius:var(--r);background:var(--forest);color:#fff}
+  .imgcap{position:absolute;left:12px;bottom:11px;z-index:2;font-size:14px;color:#fff;background:rgba(15,32,29,.72);padding:4px 9px;border-radius:4px}
+  .fav{position:absolute;top:10px;right:10px;z-index:3;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.94);border:0;border-radius:999px;cursor:pointer;color:var(--ink-2);transition:.15s}
+  .fav:hover{color:var(--red);background:#fff}
+  .fav.on{color:var(--red)}
+  .fav.on svg{fill:currentColor}
+  .type{font-size:14px;font-weight:600;color:var(--ink-2);letter-spacing:.02em}
+  .loc{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--green-700);margin:4px 0 5px}
+  .trust{display:inline-flex;align-items:center;gap:7px;background:var(--gold-100);color:var(--gold);border-radius:var(--r);padding:8px 12px;font-size:15px;font-weight:600;flex:none}
+  .trust b{font-size:19px;font-weight:700}
+  .trust .g{font-size:14px;font-weight:700;padding-left:7px;border-left:1px solid rgba(122,82,20,.3)}
+
+  .tstep{display:grid;grid-template-columns:auto 1fr;gap:18px;padding:22px 0;border-top:1px solid var(--line);align-items:start}
+  .tstep-ic{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);background:var(--green-100);color:var(--green-700)}
+  .role{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:700;letter-spacing:.02em;padding:7px 14px;border-radius:999px;margin-bottom:14px}
+  .role-ai{background:var(--green-100);color:var(--green-700)}
+  .role-hu{background:var(--gold-100);color:var(--gold)}
+  .track{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+  .track ol{list-style:none;margin:0;padding:0}
+  .track li{padding:16px 0;border-top:1px solid var(--line)}
+  .track li strong{display:block;font-size:17px;font-weight:700;margin-bottom:3px}
+  .track li span{display:block;font-size:15px;color:var(--ink-2);line-height:1.6}
+  .track .n{display:inline-block;min-width:22px;font-size:14px;font-weight:700;color:#9C978E}
+  .verdict{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;background:var(--green-100);border-radius:var(--r);padding:20px 22px;margin-top:26px}
+
+  .newsgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .ncard{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);cursor:pointer;text-align:left;font-family:var(--f);padding:0;transition:.18s}
+  .ncard:hover{box-shadow:var(--sh-h);border-color:#CFCBC1}
+  .nthumb{position:relative;aspect-ratio:16/9;background:#EDEAE3 center/cover no-repeat}
+  .ncat{position:absolute;top:12px;left:12px;font-size:14px;font-weight:700;padding:6px 12px;border-radius:var(--r);background:rgba(15,61,51,.92);color:#fff}
+  .n0{background-image:url(https://cliimage.commutil.kr/phpwas/restmb_allidxmake.php?pp=002&idx=5&simg=20251112173648019599aeda6993417521136223.jpg&nmt=7)}
+  .n1{background-image:url(https://cgeimage.commutil.kr/phpwas/restmb_allidxmake.php?pp=002&idx=3&simg=20251211163743054829aeda6993417521136223.jpg&nmt=30)}
+  .n2{background-image:url(public/partner-assets/thu-thiem-zeit-river.jpg)}
+  .n3{background-image:url(https://cgeimage.commutil.kr/phpwas/restmb_allidxmake.php?pp=002&idx=3&simg=20251120125706044839aeda6993417521136223.jpg&nmt=23)}
+  .n4{background-image:url(public/partner-assets/orchard-grand.jpg)}
+  .n5{background-image:url(public/partner-assets/pavilion-square.jpg)}
+
+  .doclayout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px;align-items:start}
+  .docnav{position:sticky;top:92px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:10px}
+  .docnav button{display:block;width:100%;text-align:left;min-height:46px;padding:0 14px;border:0;border-radius:var(--r);background:transparent;font-family:var(--f);font-size:15px;font-weight:600;color:var(--ink);cursor:pointer}
+  .docnav button:hover{background:var(--green-100);color:var(--green-700)}
+  .docnav button.on{background:var(--green);color:#fff}
+  .docnav .grp{font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);padding:14px 14px 6px}
+  .docbody h3{margin:32px 0 12px}
+  .docbody p{color:var(--ink-2);margin-bottom:14px}
+  .doccards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:20px 0}
+  .doccard{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:20px}
+  .doccard strong{display:block;font-size:18px;font-weight:700;margin-bottom:6px}
+  .doccard span{font-size:15px;color:var(--ink-2);line-height:1.6}
+  .dtable{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}
+  .dtable th,.dtable td{border:1px solid var(--line);padding:12px 14px;text-align:left}
+  .dtable th{background:var(--green-100);font-weight:700;color:var(--forest)}
+  .phase{border-left:2px solid var(--line);padding:0 0 26px 24px;position:relative}
+  .phase::before{content:"";position:absolute;left:-7px;top:4px;width:12px;height:12px;border-radius:999px;background:var(--green)}
+  .phase:last-child{padding-bottom:0}
+
+  .offices{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
+  .office{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:24px;display:flex;flex-direction:column;gap:9px}
+  .office .tagline{font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green-700)}
+  .office address{font-style:normal;font-size:15px;color:var(--ink-2);line-height:1.7}
+  .office .role-note{font-size:15px;color:var(--ink);border-top:1px solid var(--line);padding-top:11px;margin-top:auto}
+
+  .dlayout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:32px;align-items:start}
+  .gal{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:var(--r);background:#EDEAE3;border:1px solid var(--line)}
+  .gal-img{position:absolute;inset:0;background-size:cover;background-position:center}
+  .gal-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;display:flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:rgba(255,255,255,.94);color:var(--ink);cursor:pointer;z-index:3}
+  .gal-arrow:hover{background:#fff;color:var(--green-700)}
+  .gal-count{position:absolute;right:12px;bottom:12px;z-index:3;font-size:14px;color:#fff;background:rgba(15,32,29,.72);padding:5px 11px;border-radius:4px}
+  .gal-badges{position:absolute;top:12px;left:12px;z-index:3;display:flex;gap:7px;flex-wrap:wrap}
+  .gal-badges span{font-size:14px;font-weight:700;padding:6px 12px;border-radius:var(--r);background:rgba(15,61,51,.92);color:#fff}
+  .thumbs{display:flex;gap:9px;margin-top:12px;flex-wrap:wrap}
+  .thumbs button{width:84px;height:56px;padding:0;border:1px solid var(--line);border-radius:4px;overflow:hidden;background-color:#EDEAE3;background-size:cover;background-position:center;background-repeat:no-repeat;cursor:pointer}
+  .thumbs button.on{border-color:var(--green);box-shadow:0 0 0 2px var(--green-100)}
+  .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:26px}
+  .facts>div{background:var(--surface);padding:16px 18px}
+  .facts span{display:block;font-size:14px;color:var(--ink-2);margin-bottom:2px}
+  .facts strong{display:block;font-size:17px;font-weight:700;overflow-wrap:anywhere}
+  .aside{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;position:sticky;top:92px;max-height:calc(100vh - 108px);display:flex;flex-direction:column}
+  .aside>.metrics,.aside>.tiers,.aside>.pbar,.aside>.policy{flex:none}
+  .tierbody{flex:1;min-height:0;overflow-y:auto;padding:22px}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+  .metrics>div{background:var(--forest);color:#fff;padding:20px}
+  .metrics span{display:block;font-size:14px;color:var(--green-300);letter-spacing:.1em;margin-bottom:4px}
+  .metrics strong{font-size:34px;font-weight:700;line-height:1}
+  .metrics small{font-size:15px;color:rgba(255,255,255,.7);margin-left:4px}
+  .tiers{display:flex;overflow-x:auto;border-bottom:1px solid var(--line)}
+  .tiers button{flex:1;min-width:88px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px 6px;border:0;border-bottom:3px solid transparent;background:var(--surface);color:var(--ink-2);font-family:var(--f);font-size:14px;font-weight:700;cursor:pointer}
+  .tiers button small{font-size:14px;font-weight:500;opacity:.75}
+  .tiers button:hover{background:var(--green-100)}
+  .tiers button.on{color:var(--ink);border-bottom-color:var(--tc,var(--green));background:var(--green-100)}
+  .bars>div{display:grid;grid-template-columns:64px 1fr 34px;gap:11px;align-items:center;padding:6px 0;font-size:15px}
+  .bars i{display:block;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+  .bars i b{display:block;height:100%;background:var(--green)}
+  .bars strong{text-align:right;font-size:15px;font-weight:700}
+  .frow{display:flex;align-items:center;gap:13px;border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-top:10px}
+  .lock{display:flex;align-items:flex-start;gap:11px;background:var(--gold-100);border-radius:var(--r);padding:15px 16px;margin-top:16px;font-size:15px;color:var(--gold)}
+  .pbar{display:flex;align-items:center;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);padding:18px 22px;background:var(--paper)}
+  .pbar span{display:block;font-size:14px;color:var(--ink-2)}
+  .pbar strong{display:block;font-size:19px;font-weight:700}
+  .dlg-back{position:fixed;inset:0;z-index:90;background:rgba(15,32,29,.55);display:flex;align-items:center;justify-content:center;padding:24px}
+  .dlg{background:var(--surface);border-radius:var(--r);max-width:460px;width:100%;padding:28px}
+  .dlg dl{margin:18px 0 22px;display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .dlg dl>div{background:var(--surface);padding:13px 16px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .dlg dt{font-size:15px;color:var(--ink-2);margin:0}
+  .dlg dd{margin:0;font-size:15px;font-weight:700;text-align:right}
+
+  .soon{display:flex;align-items:center;justify-content:center;min-height:66vh;padding:72px 36px;text-align:center}
+  .soon-ic{width:82px;height:82px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);background:var(--green-100);color:var(--green-700)}
+  .cstate{display:inline-flex;align-items:center;gap:9px;background:var(--gold-100);color:var(--gold);border-radius:999px;padding:10px 20px;font-size:15px;font-weight:700;margin:22px 0 28px}
+
+  .ftcol a{display:flex;align-items:center;min-height:44px;color:rgba(255,255,255,.78);font-size:15px;background:none;border:0;font-family:var(--f);padding:0;cursor:pointer;text-align:left}
+  .ftcol a:hover{color:#fff}
+
+  @media(max-width:1024px){
+    .grid3{grid-template-columns:repeat(2,1fr)} .cats{grid-template-columns:repeat(2,1fr)}
+    .newsgrid{grid-template-columns:repeat(2,1fr)} .doccards{grid-template-columns:1fr 1fr}
+    .doclayout{grid-template-columns:1fr;gap:26px} .docnav{position:static}
+    .track{grid-template-columns:1fr;gap:20px} .offices{grid-template-columns:1fr}
+    .nav-links{display:none} .mobile-menu{display:block} .nav-in{gap:16px;min-height:68px}
+    .split{grid-template-columns:1fr;gap:32px} .dlayout{grid-template-columns:1fr}
+    .aside{position:static;max-height:none;display:block} .tierbody{overflow:visible} .ftgrid{grid-template-columns:1fr 1fr;gap:34px}
+    .facts{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:680px){ .brand-copy{display:none} }
+  @media(max-width:768px){
+    .grid3{grid-template-columns:1fr}
+    .newsgrid{grid-template-columns:1fr} .doccards{grid-template-columns:1fr}
+    h1{font-size:30px} h2{font-size:25px} h3{font-size:20px} h4{font-size:18px}
+    .wrap{padding:0 20px} .chip{width:100%} .seg{width:100%} .seg button{flex:1;padding:0 10px}
+    .pipe-note{margin-left:0;white-space:normal}
+  }
+  @media(max-width:480px){
+    .cats{grid-template-columns:1fr} .ftgrid{grid-template-columns:1fr;gap:26px}
+    .nav-in{gap:10px} .btn{padding:0 16px} .facts{grid-template-columns:1fr}
+  }
+</style>
+</helmet>
+
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0F3D33"/><g transform="translate(60 60)" fill="none" stroke="#9CC9BC" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M40 74V34a4 4 0 0 0-4-4H24a4 4 0 0 0-4 4v40"/><path d="M4 26a6 6 0 0 1 2.1-4.6l21-18a6 6 0 0 1 7.8 0l21 18A6 6 0 0 1 58 26v46a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6z"/></g><text x="100" y="176" fill="#9CC9BC" font-family="sans-serif" font-size="20" font-weight="700" text-anchor="middle">GLI</text></svg></template>
+<nav class="nav"><div class="wrap"><div class="nav-in">
+  <a href="#" aria-label="GLI 홈" onClick="{{ goHome }}" style="display:flex;align-items:center;gap:13px;color:var(--ink)">
+    <img src="public/brand/gli-logo.png" alt="GLI" style="height:42px;width:auto;display:block">
+    <span class="brand-copy" style="line-height:1.3;white-space:nowrap"><span style="display:block;font-size:17px;font-weight:700">Global Lifestyle Investment</span><span style="display:block;font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green)">AI Verified Assets</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#" onClick="{{ goHome }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>자산 탐색</a>
+    <a href="#" onClick="{{ goSoonMembership }}">멤버십</a>
+    <a href="#" onClick="{{ goSoonMy }}">MY GLI</a>
+    <details class="center-menu">
+      <summary>안내센터<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div class="center-menu-panel">
+        <a href="#" onClick="{{ goSoonNotice }}">공지</a>
+        <a href="#" onClick="{{ goSoonContact }}">고객문의</a>
+        <a href="#" onClick="{{ goSoonGuide }}">가이드 &amp; FAQ</a>
+        <a href="#" onClick="{{ goNews }}">뉴스</a>
+        <a href="#" onClick="{{ goSoonPartners }}">파트너스</a>
+        <a href="#" onClick="{{ goPaper }}">GLI 백서</a>
+      </div>
+    </details>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+    <a class="btn btn-o" href="#" onClick="{{ goSoonMy }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>로그인</a>
+    <details class="mobile-menu">
+      <summary aria-label="메뉴 열기"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></summary>
+      <nav aria-label="모바일 메뉴">
+        <a onClick="{{ goHome }}">자산 탐색</a>
+        <a onClick="{{ goSoonMembership }}">멤버십</a>
+        <a onClick="{{ goSoonMy }}">MY GLI</a>
+        <span class="mobile-menu-label">안내센터</span>
+        <a onClick="{{ goSoonNotice }}">공지</a>
+        <a onClick="{{ goSoonContact }}">고객문의</a>
+        <a onClick="{{ goSoonGuide }}">가이드 &amp; FAQ</a>
+        <a onClick="{{ goNews }}">뉴스</a>
+        <a onClick="{{ goSoonPartners }}">파트너스</a>
+        <a onClick="{{ goPaper }}">GLI 백서</a>
+      </nav>
+    </details>
+  </div>
+</div></div></nav>
+
+<div class="{{ homeCls }}">
+<section class="hero">
+  <img src="public/partner-assets/golden-crown/facade.jpg" alt="">
+  <div class="scrim"></div>
+  <div class="in"><div class="wrap" style="padding:64px 36px 68px">
+    <p class="kicker" style="color:var(--green-300);margin-bottom:16px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>GLI AI Investment Advisor</p>
+    <h1 style="color:#fff;margin-bottom:16px">국가와 자산의 경계를 넘어,<br>검증된 투자 기회를 탐색하세요</h1>
+    <p style="font-size:17px;color:rgba(255,255,255,.9)">예산과 투자 목적, 원하는 라이프스타일을 이야기하면 GLI가 적합한 후보와 자료 신뢰도,<br>다음 확인 단계를 한 번에 정리합니다.</p>
+
+    <div class="composer">
+      <div class="composer-main">
+        <label for="q">어떤 투자 기회를 찾고 계세요?</label>
+        <p class="composer-hint">조건을 정리하지 않아도 됩니다. 문장으로 쓰시면 GLI AI가 예산·지역·목적·기간을 검색 조건으로 분해합니다.</p>
+        <div class="composer-row">
+          <textarea id="q" rows="3" placeholder="예: 프놈펜에 5,000만원 정도로 월세가 잘 나오는 투자를 할 수 있을까?" value="{{ query }}" onInput="{{ onQuery }}" onKeyDown="{{ onQueryKey }}"></textarea>
+          <button class="btn btn-p" aria-label="AI 검색 실행" onClick="{{ runSearch }}" style="min-height:88px;padding:0 30px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>{{ searchLabel }}</button>
+        </div>
+      </div>
+      <div class="pipe" aria-label="GLI AI 탐색 단계">
+        <span class="pipe-step"><span class="pipe-n">1</span>요청 이해</span>
+        <svg class="pipe-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <span class="pipe-step"><span class="pipe-n">2</span>후보 탐색</span>
+        <svg class="pipe-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <span class="pipe-step"><span class="pipe-n">3</span>근거 검토</span>
+        <svg class="pipe-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        <span class="pipe-step"><span class="pipe-n">4</span>답변 구성</span>
+        <span class="pipe-note">공개 정보 사이트와 GLI 보유 자산을 교차 확인합니다</span>
+      </div>
+      <div style="padding:0 22px 20px">
+        <div class="prompt-row" aria-label="예시 질문">
+          <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3"><button class="chip" onClick="{{ pickPrompt }}" data-q="{{ p }}">{{ p }}</button></sc-for>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<main>
+<section class="wrap" style="padding:48px 36px 0">
+  <div class="panel">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div style="width:52px;height:52px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:var(--r);background:var(--green-100);color:var(--green-700)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg></div>
+      <div>
+        <div class="kicker" style="color:var(--green)">GLI AI Investment Advisor</div>
+        <h2 style="font-size:26px">조건을 이어서 상담하세요</h2>
+      </div>
+    </div>
+    <sc-for list="{{ chat }}" as="m" hint-placeholder-count="1">
+      <div class="turn" style="margin-top:0">
+        <span class="turn-who" style="{{ m.whoStyle }}">{{ m.who }}</span>
+        <div>
+          <p style="{{ m.style }}">{{ m.text }}</p>
+          <sc-if value="{{ m.hasChips }}">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:11px">
+              <sc-for list="{{ m.chips }}" as="c" hint-placeholder-count="3"><span class="aitag">{{ c }}</span></sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+    <sc-if value="{{ busy }}">
+      <div class="turn" style="margin-top:0">
+        <span class="turn-who">GLI AI</span>
+        <p class="dots" style="color:var(--ink-2)"><span></span><span></span><span></span>{{ busyLabel }}</p>
+      </div>
+    </sc-if>
+    <p class="min" style="color:var(--ink-2);margin-top:16px">{{ engineNote }}</p>
+  </div>
+</section>
+
+<section class="wrap" style="padding:52px 36px 0">
+  <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:8px">
+    <div>
+      <p class="kicker" style="color:var(--green);margin-bottom:8px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>Global Asset Discovery</p>
+      <h2>투자 자산 탐색</h2>
+    </div>
+    <div class="ctabs" style="margin-left:auto" aria-label="국가 선택">
+      <sc-for list="{{ countryTabs }}" as="c" hint-placeholder-count="5"><button class="{{ c.cls }}" onClick="{{ pickCountry }}" data-v="{{ c.id }}">{{ c.label }}</button></sc-for>
+    </div>
+  </div>
+
+  <div class="cats" aria-label="자산 카테고리">
+    <button class="cat on" aria-pressed="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span class="l">주거용</span><span class="c">주택·콘도·빌라</span>
+    </button>
+    <button class="cat" aria-pressed="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg>
+      <span class="l">상업용</span><span class="c">오피스·리테일·운영 자산</span>
+    </button>
+    <button class="cat" aria-pressed="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg>
+      <span class="l">레저</span><span class="c">리조트·관광·라이프스타일</span>
+    </button>
+    <button class="cat" aria-pressed="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
+      <span class="l">프로젝트</span><span class="c">GLI 직접 발굴 사업 기회</span>
+    </button>
+  </div>
+</section>
+
+<section class="wrap" style="padding:40px 36px 24px" data-results>
+  <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:20px">
+    <div>
+      <p class="kicker" style="color:var(--ink-2);margin-bottom:6px">{{ resultKicker }}</p>
+      <h2 style="font-size:28px">{{ resultTitle }}</h2>
+      <span class="sub">{{ resultCount }}</span>
+    </div>
+    <sc-if value="{{ isAiResult }}">
+      <button class="btn btn-o" onClick="{{ resetSearch }}" style="margin-left:auto"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.7L3 8"/><path d="M3 3v5h5"/></svg>전체 목록으로</button>
+    </sc-if>
+    <sc-if value="{{ isBrowse }}">
+      <div class="seg" style="margin-left:auto" aria-label="자산 필터">
+        <sc-for list="{{ txnTabs }}" as="t" hint-placeholder-count="4"><button class="{{ t.cls }}" onClick="{{ pickTxn }}" data-v="{{ t.id }}">{{ t.label }}</button></sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <p class="sub" style="margin-bottom:24px"><strong style="color:var(--ink)">GLI 추천</strong>은 투자 매력도까지 검토한 자산, <strong style="color:var(--ink)">GLI 검증</strong>은 자료의 진위와 출처를 확인한 자산입니다. Trust Score는 80 이상 A, 65 이상 B, 그 외 C 등급입니다.</p>
+
+  <div class="grid3">
+    <sc-for list="{{ shown }}" as="a" hint-placeholder-count="16">
+      <article class="card">
+        <div class="photo">
+          <sc-if value="{{ a.origin }}"><span class="origin" style="{{ a.bstyle }}">{{ a.origin }}</span></sc-if>
+          <sc-if value="{{ a.rank }}"><span class="rank">{{ a.rank }}</span></sc-if>
+          <button class="{{ a.favCls }}" aria-label="관심 자산으로 저장" onClick="{{ toggleFav }}" data-i="{{ a.i }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></button>
+          <span class="imgcap">{{ a.imgnote }}</span>
+          <div class="photo-img {{ a.imgCls }}" role="img" aria-label="{{ a.imgAlt }}"></div>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:13px;flex:1">
+          <div>
+            <span class="type">{{ a.category }}</span>
+            <p class="loc"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>{{ a.loc }}</p>
+            <h4 style="margin-bottom:5px">{{ a.title }}</h4>
+            <div style="font-size:15px;color:var(--ink-2);line-height:1.55;overflow-wrap:anywhere">{{ a.titleEn }}</div>
+          </div>
+          <p style="font-size:15px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:14px;margin-top:auto;overflow-wrap:anywhere">{{ a.spec }}</p>
+          <sc-if value="{{ a.reason }}">
+            <p class="reason"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-top:3px;flex:none"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>{{ a.reason }}</p>
+          </sc-if>
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px">
+            <div style="min-width:0">
+              <small style="display:block;font-size:14px;color:var(--ink-2)">{{ a.priceLabel }}</small>
+              <strong style="display:block;font-size:23px;font-weight:700;line-height:1.3;overflow-wrap:anywhere">{{ a.price }}</strong>
+              <span style="font-size:15px;color:var(--ink-2);overflow-wrap:anywhere">{{ a.krw }}</span>
+            </div>
+            <div class="trust"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Trust <b>{{ a.trust }}</b></span><span class="g">{{ a.grade }}</span></div>
+          </div>
+          <button class="btn btn-o btn-full" onClick="{{ openDetail }}" data-i="{{ a.i }}">상세 정보 확인<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+
+  <p style="text-align:center;margin-top:26px"><a class="min" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" style="color:var(--ink-2)">환산 가격은 참고용입니다 · Rates by Exchange Rate API</a></p>
+</section>
+
+<section style="background:var(--surface);border-top:1px solid var(--line);margin-top:44px">
+  <div class="wrap split" style="padding:64px 36px">
+    <div>
+      <p class="kicker" style="color:var(--green);margin-bottom:12px">GLI Trust Standard</p>
+      <h2 style="margin-bottom:18px">AI가 넓게 찾고,<br>전문가가 깊게 확인합니다</h2>
+      <p style="color:var(--ink-2)">두 주체는 같은 일을 반복하지 않습니다. AI는 4개국 자료를 빠짐없이 수집해 하나의 기준으로 정규화하고, 출처 간 어긋난 값을 찾아냅니다. 전문가는 그중 판단이 필요한 항목만 원본 문서와 현장에서 확인하고 게시를 승인합니다. Trust Score는 두 결과가 일치하는 범위만 점수로 환산한 값입니다.</p>
+      <p class="min" style="color:var(--ink-2);margin-top:16px">이 검증 절차는 ㈜솔리드넥스가 개발하고 특허를 보유한 기술입니다.</p>
+    </div>
+    <div>
+      <div class="track">
+        <div>
+          <span class="role role-ai"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>AI가 하는 일</span>
+          <ol>
+            <li><strong><span class="n">01</span> 전수 수집</strong><span>4개국 공개 등기·인허가 자료와 시행사 문서를 원문 그대로 모읍니다.</span></li>
+            <li><strong><span class="n">02</span> 기준 정규화</strong><span>통화·면적·권리 표기를 하나의 기준으로 환산해 비교 가능하게 만듭니다.</span></li>
+            <li><strong><span class="n">03</span> 불일치 탐지</strong><span>출처 간 어긋난 수치와 기준일이 지난 자료를 표시해 전문가에게 넘깁니다.</span></li>
+          </ol>
+        </div>
+        <div>
+          <span class="role role-hu"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></svg>전문가가 하는 일</span>
+          <ol>
+            <li><strong><span class="n">01</span> 원본 대조</strong><span>개발면허·광고허가·권리기간을 발급 문서와 직접 대조합니다.</span></li>
+            <li><strong><span class="n">02</span> 현지 실사</strong><span>현장과 시행사 이력을 확인하고 자료에 없는 위험을 기록합니다.</span></li>
+            <li><strong><span class="n">03</span> 게시 승인</strong><span>확인된 항목만 공개하고, 나머지는 조사 예정으로 명시합니다.</span></li>
+          </ol>
+        </div>
+      </div>
+      <div class="verdict">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700);margin-top:2px"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+        <p style="color:var(--forest);font-size:16px"><strong>AI가 찾은 값과 전문가가 확인한 값이 일치할 때만 Trust Score에 반영됩니다.</strong> 확인되지 않은 항목은 점수를 깎는 대신 &lsquo;조사 예정&rsquo;으로 표시해, 무엇을 아직 모르는지 함께 보여드립니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+
+<div class="{{ detailCls }}">
+<main class="wrap" style="padding:36px 36px 56px">
+  <div class="dlayout">
+    <section>
+      <div class="gal">
+        <div class="gal-img {{ galCls }}" role="img" aria-label="{{ d.imgAlt }}"></div>
+        <div class="gal-badges"><sc-if value="{{ d.origin }}"><span>{{ d.origin }}</span></sc-if><span>{{ d.category }}</span></div>
+        <sc-if value="{{ galMulti }}">
+          <div>
+            <button class="gal-arrow" aria-label="이전 사진" title="이전 사진" onClick="{{ galPrev }}" style="left:12px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="gal-arrow" aria-label="다음 사진" title="다음 사진" onClick="{{ galNext }}" style="right:12px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+            <span class="gal-count">사진 {{ galLabel }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ d.stock }}"><span class="imgcap">참고 이미지</span></sc-if>
+      </div>
+      <sc-if value="{{ galMulti }}">
+        <div class="thumbs" aria-label="사진 선택">
+          <sc-for list="{{ galThumbs }}" as="t" hint-placeholder-count="8">
+            <button class="{{ t.cls }}" aria-label="사진 보기" onClick="{{ galPick }}" data-i="{{ t.i }}"></button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:28px">
+        <p class="loc" style="font-size:16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>{{ d.fullLoc }}</p>
+        <h1 style="font-size:38px;margin-bottom:16px">{{ d.title }}</h1>
+        <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px">
+          <div>
+            <small style="display:block;font-size:15px;color:var(--ink-2)">{{ d.priceLabel }}</small>
+            <strong style="display:block;font-size:30px;font-weight:700;line-height:1.3;overflow-wrap:anywhere">{{ d.price }}</strong>
+            <span style="font-size:16px;color:var(--ink-2)">{{ d.krw }}</span>
+          </div>
+          <a class="min" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" style="color:var(--ink-2);margin-left:auto">참고 환율 · 2026. 8. 2.</a>
+        </div>
+      </div>
+
+      <div class="facts">
+        <sc-for list="{{ d.facts }}" as="f" hint-placeholder-count="4">
+          <div><span>{{ f.label }}</span><strong>{{ f.value }}</strong></div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ d.hasBasis }}">
+        <section style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-top:20px" aria-label="자료 근거">
+          <div>
+            <span style="display:block;font-size:14px;color:var(--ink-2)">게시 근거 자료</span>
+            <strong style="font-size:16px">{{ d.basis }}</strong>
+          </div>
+          <sc-if value="{{ d.resourceUrl }}">
+            <a href="{{ d.resourceUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-o" style="margin-left:auto">공식 홈페이지 보기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
+          </sc-if>
+        </section>
+      </sc-if>
+
+      <section style="margin-top:32px">
+        <h2 style="font-size:26px;margin-bottom:12px">자산 요약</h2>
+        <p style="color:var(--ink-2)">{{ d.summary }}</p>
+        <p class="min" style="color:var(--ink-2);margin-top:12px">{{ d.docDate }}</p>
+      </section>
+    </section>
+
+    <aside class="aside" aria-label="자산 등급별 정보">
+      <div class="metrics">
+        <div><span>GLI TRUST SCORE</span><strong>{{ d.trust }}</strong><small>/ 100</small></div>
+        <div><span>VERIFICATION</span><strong>64</strong><small>%</small></div>
+      </div>
+      <div class="tiers" role="tablist" aria-label="정보 등급">
+        <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="5">
+          <button class="{{ t.cls }}" role="tab" aria-selected="{{ t.sel }}" onClick="{{ pickTier }}" data-i="{{ t.i }}" style="{{ t.style }}"><span>{{ t.name }}</span><small>{{ t.lv }}</small></button>
+        </sc-for>
+      </div>
+      <div class="tierbody" role="tabpanel">
+        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">
+          <div>
+            <span style="display:block;font-size:14px;font-weight:700;letter-spacing:.08em;color:{{ tier.color }}">{{ tier.eyebrow }}</span>
+            <h3 style="font-size:21px">{{ tier.title }}</h3>
+          </div>
+          <span style="margin-left:auto;flex:none;font-size:14px;font-weight:700;padding:6px 12px;border-radius:999px;{{ tier.stateStyle }}">{{ tier.state }}</span>
+        </div>
+
+        <sc-if value="{{ tier.isFree }}">
+          <div>
+            <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px">
+              <h4 style="font-size:17px;margin-bottom:12px">공개 시장 정보</h4>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+                <div><span style="display:block;font-size:14px;color:var(--ink-2)">지역 관심도</span><strong style="font-size:17px">상승</strong></div>
+                <div><span style="display:block;font-size:14px;color:var(--ink-2)">자료 최신성</span><strong style="font-size:17px">7일 이내</strong></div>
+                <div><span style="display:block;font-size:14px;color:var(--ink-2)">비교 후보</span><strong style="font-size:17px">12건</strong></div>
+              </div>
+            </div>
+            <div class="frow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764V20"/><path d="M9 3.236v15"/></svg><div><strong style="display:block;font-size:16px">위치 및 생활권</strong><span style="font-size:15px;color:var(--ink-2)">지도 기반 입지 개요</span></div></div>
+            <div class="frow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/></svg><div><strong style="display:block;font-size:16px">공개 미디어</strong><span style="font-size:15px;color:var(--ink-2)">관련 보도 및 공개 자료</span></div></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tier.isBasic }}">
+          <div>
+            <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px">
+              <h4 style="font-size:17px;margin-bottom:12px">AI Risk Radar</h4>
+              <div class="bars">
+                <sc-for list="{{ risks }}" as="r" hint-placeholder-count="5">
+                  <div><span>{{ r.label }}</span><i><b style="{{ r.w }}"></b></i><strong>{{ r.v }}</strong></div>
+                </sc-for>
+              </div>
+            </div>
+            <div class="frow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><div><strong style="display:block;font-size:16px">AI 검토 요약</strong><span style="font-size:15px;color:var(--ink-2)">입지와 공개자료는 긍정적이며 권리·운영 조건은 추가 확인이 필요합니다.</span></div></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tier.isStandard }}">
+          <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px">
+            <h4 style="font-size:17px;margin-bottom:12px">상세 분석 자료</h4>
+            <sc-for list="{{ docs }}" as="doc" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;font-size:15px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-2)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>{{ doc }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tier.isPremium }}">
+          <div>
+            <div style="border:1px solid var(--gold);border-radius:var(--r);padding:18px;background:var(--gold-100)">
+              <h4 style="font-size:17px;margin-bottom:12px;color:var(--gold)">GLI Field Services</h4>
+              <sc-for list="{{ services }}" as="s" hint-placeholder-count="3">
+                <div style="padding:8px 0"><strong style="display:block;font-size:16px">{{ s.t }}</strong><span style="font-size:15px;color:var(--ink-2)">{{ s.d }}</span></div>
+              </sc-for>
+            </div>
+            <p class="min" style="color:var(--ink-2);margin-top:12px">서비스 범위와 이용 조건은 자산별로 안내합니다.</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tier.isBusiness }}">
+          <div>
+            <div style="border:1px solid var(--gold);border-radius:var(--r);padding:18px;background:var(--gold-100)">
+              <h4 style="font-size:17px;margin-bottom:8px;color:var(--gold)">GLI Deal Desk</h4>
+              <p style="font-size:15px;color:var(--ink-2);margin-bottom:14px">{{ d.title }}의 사업자 연결과 거래 추진을 위한 전담 실행 창구입니다.</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="btn btn-o">사업자 미팅 요청</button><button class="btn btn-o">협상 지원 요청</button>
+              </div>
+            </div>
+            <p class="min" style="color:var(--ink-2);margin-top:12px">계약·협상·전문가 용역은 추후 별도 범위와 조건으로 확정합니다.</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tier.locked }}">
+          <div class="lock">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
+            <p>{{ tier.lockCopy }}</p>
+          </div>
+        </sc-if>
+      </div>
+
+      <div class="pbar">
+        <div><span>현재 이용 등급</span><strong>{{ accessLabel }}</strong></div>
+        <div><span>GLI Cash</span><strong>{{ cashLabel }}</strong></div>
+        <button class="{{ buyCls }}" onClick="{{ openBuy }}" disabled="{{ tier.hasAccess }}" style="margin-left:auto">{{ buyLabel }}</button>
+      </div>
+      <p class="min policy" style="color:var(--ink-2);padding:12px 22px 18px;border-top:1px solid var(--line)">상위 등급은 모든 하위 등급을 포함합니다. 표시 정보는 검토 단계이며 확정된 수익이나 법률 판단을 의미하지 않습니다.</p>
+    </aside>
+
+  </div>
+
+  <section style="background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;margin-top:32px" aria-label="자산 검토와 상세 작업">
+      <div class="split" style="gap:44px;grid-template-columns:1fr 1fr">
+        <div>
+          <h2 style="font-size:22px;display:flex;align-items:center;gap:9px;margin-bottom:12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>검토 강점</h2>
+          <ul style="color:var(--ink-2)"><sc-for list="{{ d.strengths }}" as="s" hint-placeholder-count="3"><li>{{ s }}</li></sc-for></ul>
+        </div>
+        <div>
+          <h2 style="font-size:22px;display:flex;align-items:center;gap:9px;margin-bottom:12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--red)"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>추가 확인</h2>
+          <ul style="color:var(--ink-2)"><sc-for list="{{ d.checks }}" as="c" hint-placeholder-count="3"><li>{{ c }}</li></sc-for></ul>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;padding-top:24px;border-top:1px solid var(--line)">
+        <button class="btn btn-p" onClick="{{ goSoonConsult }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>전문가 상담 신청</button>
+        <button class="{{ dFavCls }}" onClick="{{ toggleDetailFav }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>{{ dFavLabel }}</button>
+        <button class="btn btn-o" onClick="{{ goHome }}" style="margin-left:auto"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>탐색 결과로 돌아가기</button>
+      </div>
+  </section>
+</main>
+</div>
+
+<div class="{{ soonCls }}">
+<main class="soon">
+  <section style="max-width:56ch">
+    <div class="soon-ic">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+    </div>
+    <p class="kicker" style="color:var(--green);justify-content:center;margin-bottom:10px">GLI Information Center</p>
+    <h1 style="margin-bottom:14px">{{ soon.title }}</h1>
+    <p style="font-size:17px;color:var(--ink-2)">{{ soon.desc }}</p>
+    <div class="cstate">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.373 8.373a1 1 0 1 1-3-3L12 9"/><path d="m18 15 4-4"/><path d="m21.5 11.5-1.914-1.914A2 2 0 0 1 19 8.172V7l-2.26-2.26a6 6 0 0 0-4.202-1.756L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.172a2 2 0 0 1 1.414.586L18.5 14.5"/></svg>
+      페이지 준비 중
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-p" onClick="{{ goHome }}">자산 탐색으로 돌아가기</button>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="{{ newsCls }}">
+<main>
+  <section style="background:var(--surface);border-bottom:1px solid var(--line)">
+    <div class="wrap" style="padding:52px 36px 44px">
+      <p class="kicker" style="color:var(--green);margin-bottom:12px">Insight Center</p>
+      <h1 style="margin-bottom:14px">GLI NEWSROOM</h1>
+      <p style="font-size:17px;color:var(--ink-2)">GLI의 최신 소식과 시장 리포트, 파트너십 업데이트를 확인하세요.<br>실물 자산과 새로운 투자 기회가 만나는 현장의 이야기를 전해드립니다.</p>
+    </div>
+  </section>
+  <section class="wrap" style="padding:32px 36px 64px">
+    <div class="ctabs" style="margin-bottom:28px" aria-label="분류 선택">
+      <sc-for list="{{ newsTabs }}" as="t" hint-placeholder-count="5"><button class="{{ t.cls }}" onClick="{{ pickNewsCat }}" data-v="{{ t.id }}">{{ t.label }}</button></sc-for>
+    </div>
+    <div class="newsgrid">
+      <sc-for list="{{ newsList }}" as="n" hint-placeholder-count="6">
+        <button class="ncard" onClick="{{ openNews }}" data-i="{{ n.i }}">
+          <span class="nthumb {{ n.cls }}"><span class="ncat">{{ n.cat }}</span><sc-if value="{{ n.stock }}"><span class="imgcap">참고 이미지</span></sc-if></span>
+          <span style="padding:20px;display:flex;flex-direction:column;gap:10px;flex:1">
+            <h4>{{ n.title }}</h4>
+            <span style="font-size:15px;color:var(--ink-2);line-height:1.6">{{ n.excerpt }}</span>
+            <span style="display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2)">{{ n.date }}<span style="margin-left:auto;color:var(--green-700);font-weight:600">Read More</span></span>
+          </span>
+        </button>
+      </sc-for>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="{{ articleCls }}">
+<main class="wrap" style="padding:32px 36px 64px;max-width:820px">
+  <button class="btn btn-o" onClick="{{ goNews }}" style="margin-bottom:26px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>뉴스 목록으로</button>
+  <p class="kicker" style="color:var(--green);margin-bottom:12px">{{ art.cat }}</p>
+  <h1 style="margin-bottom:14px">{{ art.title }}</h1>
+  <p style="font-size:15px;color:var(--ink-2);padding-bottom:20px;border-bottom:1px solid var(--line)">{{ art.date }} · GLI Newsroom</p>
+  <div class="nthumb {{ art.cls }}" style="aspect-ratio:16/9;border-radius:var(--r);margin:26px 0"></div>
+  <p style="font-size:18px;font-weight:600;margin-bottom:22px">{{ art.excerpt }}</p>
+  <sc-for list="{{ art.body }}" as="p" hint-placeholder-count="4">
+    <p style="color:var(--ink-2);margin-bottom:18px">{{ p }}</p>
+  </sc-for>
+  <p class="min" style="color:var(--ink-2);border-top:1px solid var(--line);padding-top:20px;margin-top:32px">본 자료는 GLI 뉴스룸이 배포한 내용이며 투자 권유가 아닙니다.</p>
+</main>
+</div>
+
+<div class="{{ paperCls }}">
+<main class="wrap" style="padding:32px 36px 64px">
+  <p class="kicker" style="color:var(--green);margin-bottom:10px">GLI Documentation Center</p>
+  <h1 style="margin-bottom:26px">GLI 백서</h1>
+  <div class="doclayout">
+    <nav class="docnav" aria-label="백서 목차">
+      <sc-for list="{{ docNav }}" as="d" hint-placeholder-count="6">
+        <div><sc-if value="{{ d.grp }}"><div class="grp">{{ d.grp }}</div></sc-if><button class="{{ d.cls }}" onClick="{{ pickDoc }}" data-v="{{ d.id }}">{{ d.label }}</button></div>
+      </sc-for>
+    </nav>
+    <div class="docbody">
+      <p class="min" style="color:var(--ink-2);margin-bottom:6px">{{ doc.crumb }}</p>
+      <h2 style="margin-bottom:14px">{{ doc.title }}</h2>
+      <p style="font-size:17px;color:var(--ink-2);margin-bottom:26px">{{ doc.lead }}</p>
+
+      <sc-if value="{{ doc.isIntro }}">
+        <div>
+          <h3>플랫폼 개요</h3>
+          <p>GLI는 블록체인과 글로벌 부동산·레저 자산을 결합한 차세대 RWA 플랫폼입니다. 고가치 자산의 토큰화를 단순화해, 개인 투자자가 기존에는 기관만 접근하던 자산에 참여할 수 있도록 합니다.</p>
+          <div class="doccards">
+            <div class="doccard"><strong>Investment</strong><span>글로벌 부동산. 검증된 주거·상업 자산의 공동 소유와 배당.</span></div>
+            <div class="doccard"><strong>Leisure</strong><span>리조트·트래블. 프리미엄 휴양 자산의 이용 권한과 멤버십 혜택.</span></div>
+            <div class="doccard"><strong>Game</strong><span>소셜 카지노. 글로벌 게이밍 사업의 수익 배분 참여.</span></div>
+          </div>
+          <h3>토큰화 절차</h3>
+          <table class="dtable">
+            <thead><tr><th>단계</th><th>내용</th></tr></thead>
+            <tbody>
+              <tr><td>1. Sourcing</td><td>파트너와 함께 프리미엄 자산을 발굴하고 검증합니다.</td></tr>
+              <tr><td>2. Structuring</td><td>SPV를 설립하고 법적 구조를 확정합니다.</td></tr>
+              <tr><td>3. Issuance</td><td>증권형 토큰을 발행하고 스마트 컨트랙트를 감사받습니다.</td></tr>
+              <tr><td>4. Distribution</td><td>마켓플레이스에서 거래하고 배당을 자동 지급합니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ doc.isAbout }}">
+        <div>
+          <h3>사업 주체와 기술 주체</h3>
+          <p>GLI는 운영 주체와 기술 주체를 분리해 운영합니다. 싱가포르 본사가 사업을 소유하고 서비스를 제공하며, 플랫폼과 검증 기술은 한국의 ㈜솔리드넥스가 개발해 공급합니다. 검증 절차에 관한 특허는 솔리드넥스가 보유합니다.</p>
+          <div class="offices" style="margin-top:22px">
+            <div class="office">
+              <span class="tagline">Global Headquarters</span>
+              <h4>GLI Gateway Holdings</h4>
+              <address>160 Robinson Road, #14-04<br>Singapore Business Federation Center<br>Singapore (068914)</address>
+              <p class="role-note">사업 소유·운영 주체</p>
+            </div>
+            <div class="office">
+              <span class="tagline">Regional Office</span>
+              <h4>GLI Vietnam</h4>
+              <address>2nd Floor, Sunshine Building<br>74C Nguyễn Văn Cừ, Cầu Ông Lãnh Ward<br>Ho Chi Minh City, Vietnam</address>
+              <p class="role-note">현지 자산 발굴과 실사</p>
+            </div>
+            <div class="office" style="border-color:var(--gold);background:var(--gold-100)">
+              <span class="tagline" style="color:var(--gold)">Technology &amp; IP Partner</span>
+              <h4>㈜솔리드넥스</h4>
+              <address>경기도 고양시 덕양구 화신로260번길 58<br>비전프라자 703호<br>CEO Kim Seho · 417-87-03550</address>
+              <p class="role-note" style="border-color:rgba(122,82,20,.28)">플랫폼 개발 · 특허 보유</p>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ doc.isToken }}">
+        <div>
+          <h3>토큰 배분</h3>
+          <table class="dtable">
+            <thead><tr><th>항목</th><th>비중</th><th>수량</th></tr></thead>
+            <tbody>
+              <tr><td>Ecosystem Fund</td><td>35%</td><td>350,000,000</td></tr>
+              <tr><td>Staking Rewards</td><td>30%</td><td>300,000,000</td></tr>
+              <tr><td>Public Sale (IDO)</td><td>20%</td><td>200,000,000</td></tr>
+              <tr><td>Team &amp; Advisors</td><td>15%</td><td>150,000,000</td></tr>
+            </tbody>
+          </table>
+          <h3>베스팅 일정</h3>
+          <table class="dtable">
+            <thead><tr><th>항목</th><th>TGE 해제</th><th>클리프</th><th>배분 기간</th></tr></thead>
+            <tbody>
+              <tr><td>Public Sale</td><td>100%</td><td>없음</td><td>즉시 유동화</td></tr>
+              <tr><td>Staking Rewards</td><td>0%</td><td>없음</td><td>60개월 선형</td></tr>
+              <tr><td>Team &amp; Advisors</td><td>0%</td><td>12개월</td><td>24개월 선형</td></tr>
+              <tr><td>Ecosystem Fund</td><td>10%</td><td>3개월</td><td>DAO 거버넌스 결정</td></tr>
+            </tbody>
+          </table>
+          <h3>스테이킹 등급</h3>
+          <table class="dtable">
+            <thead><tr><th>등급</th><th>요구 스테이킹</th><th>배수</th><th>혜택</th></tr></thead>
+            <tbody>
+              <tr><td>Bronze</td><td>1,000 GLIB</td><td>1.0x</td><td>기본 접근</td></tr>
+              <tr><td>Silver</td><td>10,000 GLIB</td><td>1.2x</td><td>투표권</td></tr>
+              <tr><td>Gold</td><td>50,000 GLIB</td><td>1.5x</td><td>IDO 우선권</td></tr>
+              <tr><td>Diamond</td><td>200,000 GLIB</td><td>2.0x</td><td>VIP 컨시어지</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ doc.isAudit }}">
+        <div>
+          <div class="doccards">
+            <div class="doccard"><strong>GLIB</strong><span>거버넌스·유틸리티 토큰. 표준 준수, 투표 메커니즘, 소각 로직 감사 통과.</span></div>
+            <div class="doccard"><strong>GLID</strong><span>배당·자산 토큰. RWA 수익의 자동 배당 컨트랙트 보안 검증 통과.</span></div>
+            <div class="doccard"><strong>GLIL</strong><span>유동성·레저 토큰. 포인트 연동과 유동성 풀 메커니즘 검증 통과.</span></div>
+          </div>
+          <h3>감사 이력</h3>
+          <table class="dtable">
+            <thead><tr><th>일자</th><th>대상</th><th>감사 기관</th><th>결과</th></tr></thead>
+            <tbody>
+              <tr><td>2025.12.10</td><td>GLIB 거버넌스 컨트랙트</td><td>CERTIK</td><td>98 / 100</td></tr>
+              <tr><td>2025.11.20</td><td>GLID 배당 볼트</td><td>HACKEN</td><td>10 / 10</td></tr>
+              <tr><td>2025.10.15</td><td>Gateway 지갑 연동</td><td>SLOWMIST</td><td>Pass</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ doc.isRoad }}">
+        <div style="margin-top:8px">
+          <sc-for list="{{ phases }}" as="p" hint-placeholder-count="4">
+            <div class="phase">
+              <p class="kicker" style="color:var(--green);margin-bottom:4px">{{ p.when }}</p>
+              <h4 style="margin-bottom:8px">{{ p.title }}</h4>
+              <ul style="color:var(--ink-2)"><sc-for list="{{ p.items }}" as="it" hint-placeholder-count="3"><li>{{ it }}</li></sc-for></ul>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <p class="min" style="color:var(--ink-2);border-top:1px solid var(--line);padding-top:18px;margin-top:34px">최종 업데이트 2026. 1. 5. · 본 문서는 정보 제공 목적이며 투자 권유가 아닙니다.</p>
+    </div>
+  </div>
+</main>
+</div>
+
+<section class="wrap" style="padding:64px 36px 8px" aria-label="회사 정보">
+  <p class="kicker" style="color:var(--green);margin-bottom:12px">Corporate Structure</p>
+  <h2 style="margin-bottom:14px">사업 주체와 기술 주체를<br>분리해 운영합니다</h2>
+  <p style="color:var(--ink-2);max-width:66ch">GLI 싱가포르 본사가 자산 소싱과 서비스 운영을 책임지고, 플랫폼과 검증 기술은 한국의 ㈜솔리드넥스가 개발해 공급합니다. 검증 절차에 관한 특허는 솔리드넥스가 보유합니다.</p>
+  <div class="offices">
+    <div class="office">
+      <span class="tagline">Global Headquarters</span>
+      <h4>GLI Gateway Holdings</h4>
+      <address>160 Robinson Road, #14-04<br>Singapore Business Federation Center<br>Singapore (068914)</address>
+      <p class="role-note">사업 소유·운영 주체. 자산 소싱과 파트너 계약, 서비스 제공을 총괄합니다.</p>
+    </div>
+    <div class="office">
+      <span class="tagline">Regional Office</span>
+      <h4>GLI Vietnam</h4>
+      <address>2nd Floor, Sunshine Building<br>74C Nguyễn Văn Cừ, Cầu Ông Lãnh Ward<br>Ho Chi Minh City, Vietnam</address>
+      <p class="role-note">현지 자산 발굴과 실사를 담당합니다.</p>
+    </div>
+    <div class="office" style="border-color:var(--gold);background:var(--gold-100)">
+      <span class="tagline" style="color:var(--gold)">Technology &amp; IP Partner</span>
+      <h4>㈜솔리드넥스 Solidnex Co., Ltd.</h4>
+      <address>경기도 고양시 덕양구 화신로260번길 58<br>비전프라자 703호<br>CEO Kim Seho · 사업자등록 417-87-03550</address>
+      <p class="role-note" style="border-color:rgba(122,82,20,.28)">플랫폼 개발사이자 검증 기술 특허 보유사입니다.</p>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--forest);color:#fff;margin-top:64px">
+  <div class="wrap ftgrid" style="padding:56px 36px 26px">
+    <div>
+      <img src="public/brand/gli-logo.png" alt="GLI" style="height:38px;width:auto;margin-bottom:16px;filter:brightness(0) invert(1)">
+      <div style="font-size:17px;font-weight:700;margin-bottom:8px">Global Lifestyle Investment</div>
+      <p style="font-size:15px;color:rgba(255,255,255,.7);line-height:1.7">해외 투자 자산과 GLI 직접 발굴 프로젝트를 AI로 탐색하고 검증 정보를 확인하는 플랫폼입니다.</p>
+    </div>
+    <div class="ftcol">
+      <div class="kicker" style="color:var(--green-300);margin-bottom:8px">탐색</div>
+      <a onClick="{{ goHome }}">자산 탐색</a><a onClick="{{ goSoonMembership }}">멤버십</a>
+    </div>
+    <div class="ftcol">
+      <div class="kicker" style="color:var(--green-300);margin-bottom:8px">문의와 안내</div>
+      <a onClick="{{ goSoonContact }}">고객문의</a><a onClick="{{ goSoonNotice }}">공지</a><a onClick="{{ goNews }}">뉴스</a><a onClick="{{ goPaper }}">GLI 백서</a>
+    </div>
+    <div class="ftcol">
+      <div class="kicker" style="color:var(--green-300);margin-bottom:8px">내 계정</div>
+      <a onClick="{{ goSoonMy }}">MY GLI</a>
+    </div>
+  </div>
+  <div class="wrap" style="padding:20px 36px 40px;border-top:1px solid rgba(255,255,255,.16);display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;font-size:14px;color:rgba(255,255,255,.66)">
+    <span>© 2026 GLI Gateway Holdings Pte. Ltd. 본 서비스는 GLI 싱가포르 본사가 운영하며, 플랫폼과 검증 기술은 ㈜솔리드넥스가 개발·공급하고 관련 특허를 보유합니다. 게재 정보는 참고용이며 투자 판단의 최종 책임은 이용자에게 있습니다.</span>
+    <span>개인정보처리방침 · 이용약관</span>
+  </div>
+</footer>
+
+<sc-if value="{{ buyOpen }}">
+  <div class="dlg-back">
+    <div class="dlg" role="dialog" aria-modal="true">
+      <span class="kicker" style="color:var(--green)">Asset Access</span>
+      <h3 style="font-size:24px;margin:6px 0 8px">{{ tier.name }} 이용 확인</h3>
+      <p style="font-size:15px;color:var(--ink-2)">이 등급과 모든 하위 등급의 이용 내용을 확인합니다.</p>
+      <dl>
+        <div><dt>대상 자산</dt><dd>{{ d.title }}</dd></div>
+        <div><dt>이용 방식</dt><dd>{{ tier.purchase }}</dd></div>
+      </dl>
+      <div style="display:flex;gap:12px">
+        <button class="btn btn-o" style="flex:1" onClick="{{ closeBuy }}">취소</button>
+        <button class="btn btn-p" style="flex:1" onClick="{{ confirmBuy }}">이용 확정</button>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:1700}}">
+const TIERS = [
+  { id:"free", name:"FREE", level:1, eyebrow:"공개 정보", color:"#4C5652", title:"누구나 확인하는 기본 자산 정보" },
+  { id:"basic", name:"BASIC", level:2, eyebrow:"AI 분석", color:"#1B6B58", title:"AI가 정리한 핵심 위험 신호" },
+  { id:"standard", name:"STANDARD", level:3, eyebrow:"상세 리포트", color:"#0F3D33", title:"비교와 판단을 위한 상세 분석" },
+  { id:"premium", name:"PREMIUM", level:4, eyebrow:"현지 검증", color:"#7A5214", title:"자산별 현지 검증과 비공개 자료" },
+  { id:"business", name:"BUSINESS", level:5, eyebrow:"실행 지원", color:"#5B3C0F", title:"거래 추진을 위한 GLI 실행 서비스" },
+];
+const CASH_COST = { premium:1200, business:3500 };
+
+const SOON = {
+  contact:{ title:"고객문의", desc:"상담 신청과 문의 채널을 한곳에서 처리할 수 있도록 준비하고 있습니다. 준비되는 즉시 안내센터에서 바로 이용하실 수 있습니다." },
+  guide:{ title:"가이드 & FAQ", desc:"자산 탐색, 멤버십, GLI Cash 이용 방법을 더 쉽게 확인할 수 있도록 준비하고 있습니다." },
+  partners:{ title:"파트너스", desc:"GLI의 글로벌 파트너 네트워크와 협력 프로그램을 정리하고 있습니다." },
+  notice:{ title:"공지", desc:"이 데모에는 홈과 자산 상세 화면의 디자인만 포함되어 있습니다. 공지 화면은 다음 단계에서 적용합니다." },
+  news:{ title:"뉴스", desc:"이 데모에는 홈과 자산 상세 화면의 디자인만 포함되어 있습니다. 뉴스 화면은 다음 단계에서 적용합니다." },
+  paper:{ title:"GLI 백서", desc:"이 데모에는 홈과 자산 상세 화면의 디자인만 포함되어 있습니다. 백서는 별도 문서로 제공됩니다." },
+  membership:{ title:"멤버십", desc:"Explorer · Investor · Private 요금과 열람 권한 비교 화면은 다음 단계에서 적용합니다." },
+  my:{ title:"MY GLI", desc:"관심 자산과 상담 내역 화면은 다음 단계에서 적용합니다." },
+  consult:{ title:"전문가 상담 신청", desc:"상담 신청 화면은 고객문의와 함께 준비하고 있습니다. 준비되는 즉시 자산 상세에서 바로 신청하실 수 있습니다." },
+};
+
+const M = [
+  { txn:"임대", cc:"KH", beds:2, area:74, monthly:690000, tags:["강전망","리버뷰","고층","메콩"] },
+  { txn:"임대", cc:"KH", beds:1, area:56, monthly:970000, tags:["BKK1","고층","도심"] },
+  { txn:"임대", cc:"KH", beds:1, area:54, monthly:690000, tags:["복합단지","커뮤니티","고층"] },
+  { txn:"임대", cc:"KH", beds:1, area:50, monthly:520000, tags:["저예산","고층","도심"] },
+  { txn:"매매", cc:"KH", beds:1, area:47, krw:104000000, tags:["도심","임대수익"] },
+  { txn:"매매", cc:"KH", beds:0, area:32, krw:67500000, tags:["소형","저예산","임대수익"] },
+  { txn:"매매", cc:"KH", beds:1, area:38, krw:118700000, tags:["강변","리버뷰","휴가","소형"] },
+  { txn:"매매", cc:"KH", beds:1, area:47, krw:104000000, tags:["선분양","신축"] },
+  { txn:"프로젝트", cc:"VN", beds:2, area:75, tags:["대형개발","분양","신축"] },
+  { txn:"프로젝트", cc:"VN", tags:["투티엠","분양","신축","복합"] },
+  { txn:"프로젝트", cc:"PH", krw:96000000, krwMax:1370000000, tags:["포트폴리오","분양"] },
+  { txn:"프로젝트", cc:"PH", tags:["복합","신축","분양"] },
+  { txn:"프로젝트", cc:"MY", area:76, krw:420000000, krwMax:980000000, tags:["KL","복합","호텔","분양"] },
+  { txn:"프로젝트", cc:"MY", tags:["KL","쇼핑연결","복합","분양"] },
+  { txn:"프로젝트", cc:"MY", krw:610000000, krwMax:2490000000, tags:["KLCC","호텔","복합","분양"] },
+  { txn:"프로젝트", cc:"MY", tags:["도심","수영장","복합","분양"] },
+];
+const CC = { KH:"캄보디아", VN:"베트남", PH:"필리핀", MY:"말레이시아" };
+const CC_ALIAS = { 캄보디아:"KH", 프놈펜:"KH", 베트남:"VN", 호치민:"VN", 하노이:"VN", 필리핀:"PH", 마닐라:"PH", 세부:"PH", 말레이시아:"MY", 쿠알라룸푸르:"MY", 쿠알라:"MY", KL:"MY" };
+
+const won = (n) => n >= 100000000
+  ? `${(n / 100000000).toFixed(n % 100000000 === 0 ? 0 : 1)}억원`
+  : `${Math.round(n / 10000).toLocaleString("ko-KR")}만원`;
+
+// "월세가 잘 나오는 투자"는 세입자가 아니라 임대수익용 매수다.
+// 임대 예산이 월세 범위를 크게 벗어나면 총 투자금으로 되돌린다.
+function normalize(f) {
+  // 파서가 통화 단위를 놓친 경우 달러로 보고 원화로 환산한다
+  if (f.budget && f.budget < 100000) f.budget = Math.round(f.budget * 1385);
+  if (f.txn === "임대" && f.budget && f.budget > 8000000) {
+    f.txn = "매매";
+    if (!f.keywords.includes("임대수익")) f.keywords.push("임대수익");
+  }
+  return f;
+}
+
+function localParse(q) {
+  const t = q.replace(/,/g, "");
+  const f = { keywords: [] };
+  for (const [k, v] of Object.entries(CC_ALIAS)) if (t.includes(k)) { f.cc = v; break; }
+  const yieldPlay = /월세가 잘|수익이 잘|임대수익|수익형|세를 놓|월세 받|임대를 놓/.test(t);
+  if (yieldPlay || /매매|구입|구매|분양|사고|살 ?수/.test(t)) f.txn = "매매";
+  else if (/월세|임대|렌트|세를|월 ?\d|rent/i.test(t)) f.txn = "임대";
+  if (yieldPlay) f.keywords.push("임대수익");
+  const eok = t.match(/(\d+(?:\.\d+)?)\s*억/);
+  const man = t.match(/(\d{3,5})\s*만/);
+  const usd = t.match(/(?:\$|달러\s*)(\d{3,6})|(\d{3,4})\s*달러/);
+  if (eok) f.budget = Math.round(parseFloat(eok[1]) * 100000000);
+  else if (man) f.budget = parseInt(man[1], 10) * 10000;
+  else if (usd) { f.budget = parseInt(usd[1] ?? usd[2], 10) * 1385; f.txn = f.txn ?? "임대"; }
+  const bed = t.match(/(\d)\s*(?:베드|bed|br|룸|개의 방)/i);
+  if (bed) f.beds = parseInt(bed[1], 10);
+  if (/스튜디오|원룸/i.test(t)) f.beds = 0;
+  for (const w of ["강전망","리버뷰","강변","고층","도심","소형","신축","선분양","휴가","수영장","호텔","복합","저예산","임대수익","BKK1","KLCC","KL","분양"])
+    if (t.toUpperCase().includes(w.toUpperCase())) f.keywords.push(w);
+  if (/전망|뷰|view/i.test(t) && !f.keywords.includes("강전망")) f.keywords.push("강전망");
+  if (/수익|현금흐름|yield/i.test(t) && !f.keywords.includes("임대수익")) f.keywords.push("임대수익");
+  if (/쉬|체류|거주|겨울|여름/.test(t)) f.keywords.push("휴가");
+  return normalize(f);
+}
+
+function rank(f, assets) {
+  const out = [];
+  for (const a of assets) {
+    const m = M[a.i];
+    let sc = m.txn === "프로젝트" ? 4 : 8;
+    const why = [];
+    if (f.cc) {
+      if (m.cc !== f.cc) continue;
+      sc += 40; why.push(`${CC[m.cc]} 소재`);
+    }
+    if (f.txn) {
+      const buyable = m.txn === "매매" || m.txn === "프로젝트";
+      if (f.txn === "임대" && m.txn !== "임대") continue;
+      if (f.txn === "매매" && !buyable) continue;
+      sc += 30;
+      why.push(m.txn === "프로젝트" ? "분양 프로젝트" : m.txn === "임대" ? "임대 물건" : "매매 물건");
+    }
+    if (f.budget) {
+      // 월세 예산은 월세와, 총 투자금은 매매가와만 비교한다
+      const price = f.txn === "임대" ? m.monthly : m.txn === "임대" ? null : m.krw;
+      if (price) {
+        const ratio = price / f.budget;
+        if (ratio <= 1.02) { sc += 30; why.push(m.txn === "임대" ? `월 ${won(price)} · 예산 이내` : `${won(price)} · 예산 이내`); }
+        else if (ratio <= 1.25) { sc += 10; why.push(`예산보다 ${Math.round((ratio - 1) * 100)}% 높음`); }
+        else sc -= 22;
+      } else sc += 2;
+    }
+    if (f.beds != null && m.beds != null) {
+      if (m.beds === f.beds) { sc += 16; why.push(f.beds === 0 ? "스튜디오" : `${f.beds}베드룸`); }
+      else if (Math.abs(m.beds - f.beds) === 1) sc += 5;
+      else sc -= 10;
+    }
+    const hit = (f.keywords || []).filter(k => m.tags.some(t => t.toUpperCase() === k.toUpperCase()));
+    if (hit.length) { sc += hit.length * 9; why.push(hit.slice(0, 2).join(" · ")); }
+    sc += a.trust * 0.14;
+    if (a.origin === "GLI 추천") { sc += 6; why.push("GLI 추천"); }
+    out.push({ i: a.i, sc, reason: why.slice(0, 3).join(" · ") || `Trust ${a.trust} 검증 자산` });
+  }
+  return out.sort((x, y) => y.sc - x.sc).slice(0, 6);
+}
+
+const NEWS = [
+  { cat:"보도자료", date:"2025. 12. 12.",
+    title:"RWA 디지털자산화 플랫폼 GLI, 투자 컨설팅 전문기업 'DealFlow'와 전략적 MOU 맺어",
+    excerpt:"DealFlow의 동남아 M&A 전문성과 GLI의 RWA 기술을 결합해 베트남 자산 소싱과 파일럿 프로젝트를 공동 추진합니다.",
+    body:["GLI는 투자 컨설팅 전문기업 DealFlow와 전략적 업무협약을 체결했다고 밝혔습니다. 이번 협약으로 양사는 베트남을 중심으로 한 동남아 실물 자산의 발굴과 디지털자산화 파일럿 프로젝트를 공동 추진합니다.",
+      "DealFlow는 동남아 지역 M&A와 투자 자문에서 축적한 네트워크를 보유하고 있으며, GLI는 실물 자산의 정보 검증과 토큰화 인프라를 담당합니다. 양사는 리조트와 상업용 부동산을 우선 검토 대상으로 삼기로 했습니다.",
+      "GLI 관계자는 자산 발굴 단계부터 검증 기준을 함께 적용해, 투자자에게 제공되는 정보의 신뢰도를 높이는 것이 이번 협약의 핵심이라고 설명했습니다."] },
+  { cat:"보도자료", date:"2025. 12. 11.",
+    title:"GLI Gateway, 태국 레저 대표 브랜드 Seafood Club과 MOU 체결",
+    excerpt:"태국의 프리미엄 레저 콘텐츠와 GLI의 글로벌 플랫폼을 연결하는 전략적 업무협약을 체결했습니다.",
+    body:["GLI Gateway가 태국 레저 산업의 대표 브랜드 Seafood Club과 업무협약을 체결했습니다. 태국 현지의 프리미엄 레저 콘텐츠를 GLI 플랫폼의 글로벌 이용자에게 연결하는 것이 목표입니다.",
+      "이번 협약은 부동산 중심이던 GLI의 자산 범위를 레저 운영 자산으로 확장하는 첫 사례입니다. 양사는 멤버십 연동과 이용 권한 설계를 우선 과제로 논의하고 있습니다."] },
+  { cat:"보도자료", date:"2025. 11. 26.",
+    title:"GLI 베트남과 ERA 베트남, Web3 기반 실물 자산 생태계 구축 협력",
+    excerpt:"GLI의 기술 인프라와 ERA 베트남의 부동산 네트워크를 결합해 새로운 자산 연결 모델을 추진합니다.",
+    body:["GLI 베트남 법인이 ERA 베트남과 Web3 기반 실물 자산 생태계 구축에 협력하기로 했습니다. ERA 베트남은 현지 부동산 중개 네트워크를 보유하고 있습니다.",
+      "양사는 매물 정보의 표준화와 검증 절차를 공동 설계해, 외국인 투자자가 베트남 자산 정보를 일관된 기준으로 비교할 수 있는 환경을 만드는 데 초점을 맞춥니다."] },
+  { cat:"보도자료", date:"2025. 11. 20.",
+    title:"싱가포르 GLI, 필리핀 RLC와 PropTech MOU 체결… 동남아 자산 연결 생태계 확장",
+    excerpt:"필리핀 RLC 레지던스의 검증된 주거 자산과 GLI의 글로벌 탐색 플랫폼을 연결하는 협력입니다.",
+    body:["싱가포르에 본사를 둔 GLI가 필리핀의 부동산 개발사 RLC와 PropTech 분야 업무협약을 체결했습니다. RLC의 주거 프로젝트 포트폴리오가 GLI 플랫폼에 연결됩니다.",
+      "이번 협약으로 Galleria, Brighton, McKinley 등 RLC의 주요 프로젝트 정보가 GLI의 검증 절차를 거쳐 게시될 예정입니다."] },
+  { cat:"보도자료", date:"2025. 11. 06.",
+    title:"Nền tảng số hóa tài sản thực GLI ký kết MOU chiến lược với DealFlow",
+    excerpt:"GLI와 DealFlow가 베트남 리조트·부동산 분야의 프리미엄 자산 발굴과 RWA 파일럿 협력을 추진합니다.",
+    body:["GLI와 DealFlow의 전략적 업무협약이 베트남 현지 언론을 통해 보도되었습니다. 양사는 베트남 리조트와 부동산 분야에서 프리미엄 자산을 함께 발굴합니다.",
+      "현지 보도는 외국인 투자자의 베트남 부동산 접근성이 개선될 것으로 전망했습니다."] },
+  { cat:"인사이트", date:"2025. 08. 28.",
+    title:"GLI: 베트남 부동산 및 고급 리조트 투자에 새로운 선두주자",
+    excerpt:"GLI가 베트남 부동산과 고급 리조트 시장에 제시하는 투자 솔루션과 글로벌 자산 생태계의 확장 방향을 살펴봅니다.",
+    body:["베트남 부동산 시장은 외국인 투자자에게 높은 성장 잠재력을 보여왔지만, 정보의 비대칭과 권리 확인의 어려움이 진입 장벽으로 작용해 왔습니다.",
+      "GLI는 이 문제를 정보 검증의 문제로 정의합니다. 공개 자료와 시행사 문서를 AI로 수집·정규화한 뒤, 전문가가 원본과 현장을 확인하는 이중 절차를 통해 투자자가 무엇을 알고 무엇을 모르는지 명확히 구분할 수 있게 합니다.",
+      "특히 투티엠과 빈즈엉 등 개발이 활발한 지역의 프로젝트를 중심으로 검증된 정보를 축적하고 있습니다."] },
+].map((n, i) => ({ ...n, i, cls:`n${i}`, stock:[2, 4, 5].includes(i) }));
+
+const DOCS = [
+  { id:"intro", grp:"Overview", label:"소개", crumb:"Overview › Introduction", title:"플랫폼 소개",
+    lead:"GLI는 블록체인과 글로벌 부동산·카지노·레저 자산을 결합한 차세대 RWA 플랫폼입니다." },
+  { id:"about", label:"회사 구조", crumb:"Overview › About Us", title:"회사 구조",
+    lead:"사업 주체와 기술 주체를 분리해 운영하며, 각자의 책임 범위를 명확히 공개합니다." },
+  { id:"token", grp:"Project Details", label:"토크노믹스", crumb:"Project Details › Tokenomics", title:"토크노믹스",
+    lead:"GLIB 토큰의 경제 모델은 지속 가능성과 생태계 성장에 맞춰 설계되었습니다." },
+  { id:"audit", label:"보안 · 감사", crumb:"Project Details › Security & Audit", title:"보안과 감사",
+    lead:"다층 감사와 규제 준수를 통해 생태계의 구조적 안정성을 확보합니다." },
+  { id:"road", label:"로드맵", crumb:"Project Details › Roadmap", title:"프로젝트 로드맵",
+    lead:"설립부터 생태계 완성까지의 단계별 추진 계획입니다." },
+];
+
+const PHASES = [
+  { when:"Phase 1 · 2024 Q3-Q4", title:"기반 구축과 파트너십",
+    items:["글로벌 IP 라이선스 및 싱가포르 법인 설립","핵심 팀 구성, 서울·베트남 사무소 개설","전략적 파트너십 체결 (Vista Land, TA Global)","플랫폼 베타 개발"] },
+  { when:"Phase 2 · 2025 Q1-Q2", title:"플랫폼 출시와 TGE",
+    items:["GLIB 토큰 생성 이벤트","글로벌 거래소 상장","첫 RWA 상품 출시","스테이킹 및 멤버십 서비스 개시"] },
+  { when:"Phase 3 · 2025 Q3-Q4", title:"글로벌 확장",
+    items:["베트남·말레이시아·필리핀 시장 확대","모바일 앱 출시","2차 자산 포트폴리오 업데이트","크로스체인 브리지 구현"] },
+  { when:"Phase 4 · 2026 이후", title:"생태계 완성",
+    items:["완전 탈중앙 DAO 거버넌스 활성화","글로벌 결제 게이트웨이 연동","골프·호텔 체인 등 레저 자산 확대"] },
+];
+
+class Component extends DCLogic {
+  state = { view:"home", asset:12, favs:{}, gal:0, tier:0, unlocked:1, cash:5000, buyOpen:false, dFav:false,
+    query:"", chat:[{ role:"ai", text:"찾으시는 목적과 예산을 편하게 말씀해 주세요. 조건을 정리해 검토할 후보와 확인할 위험을 함께 보여드립니다." }],
+    busy:false, hits:null, cc:"ALL", txn:"ALL", mode:null,
+    newsCat:"전체보기", article:0, doc:"intro" };
+
+  async search(q) {
+    const text = (q ?? this.state.query).trim();
+    if (!text || this.state.busy) return;
+    this.setState(p => ({ chat:[...p.chat, { role:"me", text }], query:"", busy:true, hits:null }));
+
+    let f = null, reply = null, mode = "local";
+    if (window.claude?.complete) {
+      try {
+        const raw = await window.claude.complete({
+          max_tokens: 700,
+          system: `너는 동남아 부동산 투자 자문 GLI의 검색 파서다. 사용자 문장에서 조건을 뽑아 JSON만 출력한다.
+{"cc":"KH|VN|PH|MY|null","txn":"임대|매매|null","budget":<원 단위 정수 또는 null>,"beds":<정수 또는 null. 스튜디오는 0>,"keywords":[가능한 값: 강전망,리버뷰,강변,고층,도심,소형,신축,선분양,휴가,수영장,호텔,복합,저예산,임대수익,BKK1,KLCC,KL,분양],"reply":"<사용자에게 할 2~3문장 한국어 답변. 이해한 조건을 요약하고 확인이 필요한 점 하나를 덧붙인다. 수익률이나 가격을 단정하지 말 것>"}
+
+txn 판단이 가장 중요하다.
+- "월세가 잘 나오는 투자", "임대수익", "세를 놓고 싶다", "수익형" → 사용자는 집주인이 되려는 것이다. txn="매매", budget=총 매수 예산, keywords에 "임대수익" 포함.
+- "월세 500달러 이하로 살 곳", "3개월 머물 집" → 사용자가 세입자다. txn="임대", budget=월 예산.
+- 임대인데 budget이 800만원을 넘으면 월 예산일 수 없다. 그런 경우는 txn="매매"로 판단하라.
+KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부, MY=말레이시아/쿠알라룸푸르. JSON 외 텍스트 금지.`,
+          messages: [{ role:"user", content: text }],
+        });
+        const j = JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1));
+        f = { cc:j.cc || undefined, txn:j.txn || undefined, budget:j.budget || undefined,
+              beds:j.beds ?? undefined, keywords:Array.isArray(j.keywords) ? j.keywords : [] };
+        normalize(f);
+        reply = j.reply;
+        mode = "ai";
+      } catch (e) { f = null; }
+    }
+    if (!f) f = localParse(text);
+
+    const hits = rank(f, this.assets());
+    const chips = [];
+    if (f.cc) chips.push(CC[f.cc]);
+    if (f.txn) chips.push(f.txn);
+    if (f.budget) chips.push(f.txn === "임대" ? `월 예산 ${won(f.budget)}` : `투자금 ${won(f.budget)}`);
+    if (f.beds != null) chips.push(f.beds === 0 ? "스튜디오" : `${f.beds}베드`);
+    (f.keywords || []).slice(0, 3).forEach(k => chips.push(k));
+
+    const fallback = hits.length
+      ? `조건에 맞는 후보 ${hits.length}건을 정리했습니다. 아래 목록에서 자료 신뢰도와 확인이 필요한 항목을 함께 확인해 주세요.`
+      : "조건에 맞는 자산을 찾지 못했습니다. 예산이나 지역을 넓혀 다시 말씀해 주세요.";
+    this.setState(p => ({
+      busy:false, hits, mode,
+      chat:[...p.chat, { role:"ai", text: reply || fallback, chips }],
+    }));
+    const el = document.querySelector("[data-results]");
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior:"smooth" });
+  }
+
+  nav(view, soon) {
+    this.setState({ view, soon: soon ?? this.state.soon, buyOpen:false });
+    window.scrollTo(0, 0);
+  }
+
+  assets() { return this._assets || []; }
+
+  renderVals() {
+    const s = this.state;
+    const grade = (n) => n >= 80 ? "A" : n >= 65 ? "B" : "C";
+    const REC = "background:var(--forest)";
+    const VER = "background:var(--green)";
+    const STOCK = "참고 이미지", DEV = "시행사 제공";
+
+    const F = (label, value) => ({ label, value });
+    const mkt = (area, br, ba) => [F("면적", `${area}㎡`), F("침실", br), F("욕실", String(ba)), F("마지막 자료 갱신", "2026. 7. 24.")];
+
+    const raw = [
+      { origin:"GLI 추천", bstyle:REC, loc:"Chrouy Changva, Phnom Penh", country:"Cambodia",
+        title:"메콩강 조망 고층 2베드", titleEn:"High-floor 2BR with Mekong River view",
+        img:"https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"74㎡ · 2BR · 2Bath", priceLabel:"월 임대료", price:"$500", krw:"약 69만원/월", trust:81,
+        facts:mkt(74,"2",2),
+        summary:"메콩강 전망의 2베드룸 임대 후보입니다. 월 $500 예산과 장기 체류 조건에 잘 맞으며 관리비와 가구 포함 범위를 확인 중입니다.",
+        strengths:["메콩강 전망","2베드룸","월 $500"], checks:["관리비","가구 인벤토리","임대인 신원"] },
+      { origin:"", bstyle:VER, loc:"BKK1, Phnom Penh", country:"Cambodia",
+        title:"BKK1 고층 1베드 콘도", titleEn:"BKK1 high-floor 1BR condo",
+        img:"https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"56㎡ · 1BR · 1Bath", priceLabel:"월 임대료", price:"$700", krw:"약 97만원/월", trust:82,
+        facts:mkt(56,"1",1),
+        summary:"BKK1 중심 생활권의 고층 1베드룸 임대 후보입니다. 3개월 체류에는 편리하지만 최소 계약 기간과 단기 전대 허용 여부를 확인해야 합니다.",
+        strengths:["BKK1 생활 편의","고층 전망","가구 포함 후보"], checks:["최소 계약 기간","단기 전대 조항","공과금"] },
+      { origin:"GLI 추천", bstyle:REC, loc:"Meanchey, Phnom Penh", country:"Cambodia",
+        title:"어반빌리지 고층 1베드", titleEn:"Urban Village high-floor 1BR condo",
+        img:"https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"54㎡ · 1BR · 1Bath", priceLabel:"월 임대료", price:"$500", krw:"약 69만원/월", trust:80,
+        facts:mkt(54,"1",1),
+        summary:"복합단지 내 고층 1베드룸입니다. 생활 편의와 커뮤니티 시설을 갖춘 장기 거주 후보로 GLI 현지 확인 프로그램을 준비 중입니다.",
+        strengths:["복합단지 편의시설","월 $500","GLI 현지 확인 후보"], checks:["관리비","가구 목록","현장 호실 확인"] },
+      { origin:"GLI 추천", bstyle:REC, loc:"Boeng Trabek, Phnom Penh", country:"Cambodia",
+        title:"벙트라벡 15층 1베드", titleEn:"15th-floor 1BR condo in Boeng Trabek",
+        img:"https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"50㎡ · 1BR · 1Bath", priceLabel:"월 임대료", price:"$380", krw:"약 52만원/월", trust:83,
+        facts:mkt(50,"1",1),
+        summary:"Boeng Trabek의 15층 1베드룸으로 예산 효율과 중심 생활권 접근성이 좋습니다. GLI 현지 확인 후보로 관리비를 검토 중입니다.",
+        strengths:["월 $380","50㎡","도심 접근성"], checks:["관리비","인터넷 포함 여부","호실 상태"] },
+      { origin:"", bstyle:VER, loc:"Boeng Reang, Phnom Penh", country:"Cambodia",
+        title:"프놈펜 중심 1베드 레지던스", titleEn:"Central Phnom Penh 1BR residence",
+        img:"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"47㎡ · 1BR · 1Bath", priceLabel:"매매가", price:"$75,360", krw:"약 1억 400만원", trust:74,
+        facts:mkt(47,"1",1),
+        summary:"도심 생활권의 1베드룸 매매 후보입니다. 장기 임대와 계절 체류를 함께 검토할 수 있지만 운영 규정과 순수익 검증이 필요합니다.",
+        strengths:["1인·커플 임대 수요","중심지 접근성","47㎡ 실용 평면"], checks:["소유권 자료","예상 임대료","운영 규정"] },
+      { origin:"", bstyle:VER, loc:"Boeng Reang, Phnom Penh", country:"Cambodia",
+        title:"프놈펜 중심 스튜디오", titleEn:"Central Phnom Penh studio residence",
+        img:"https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"32㎡ · Studio · 1Bath", priceLabel:"매매가", price:"$48,888", krw:"약 6,750만원", trust:72,
+        facts:mkt(32,"Studio",1),
+        summary:"프놈펜 중심 생활권의 소형 스튜디오 매매 후보입니다. 예산 진입성이 좋지만 실제 임대료와 준공·소유권 자료 확인이 필요합니다.",
+        strengths:["도심 생활권","소형 임대 수요 후보","초기 예산 진입성"], checks:["외국인 소유 가능 층","실제 임대료","관리비와 공실률"] },
+      { origin:"", bstyle:VER, loc:"Chak Angrae Leu, Phnom Penh", country:"Cambodia",
+        title:"리버사이드 콤팩트 콘도", titleEn:"Riverside compact condo residence",
+        img:"https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"38㎡ · 1BR · 1Bath", priceLabel:"매매가", price:"$86,013", krw:"약 1억 1,870만원", trust:69,
+        facts:mkt(38,"1",1),
+        summary:"강변 접근성이 있는 소형 콘도 매매 후보입니다. 휴가용 거점과 임대 운영을 함께 검토할 수 있지만 관리 계약과 운영 수수료 확인이 필요합니다.",
+        strengths:["강변 접근성","소형 관리","휴가용 거점 후보"], checks:["소유권 자료","관리 계약","단기 임대 허용"] },
+      { origin:"", bstyle:VER, loc:"BKK3, Phnom Penh", country:"Cambodia",
+        title:"BKK3 선분양 1베드", titleEn:"BKK3 future-completion 1BR condo",
+        img:"https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"47㎡ · 1BR · 1Bath", priceLabel:"매매가", price:"$75,375", krw:"약 1억 400만원", trust:61,
+        facts:mkt(47,"1",1),
+        summary:"BKK3의 향후 준공 예정 1베드룸입니다. 입지는 매력적이지만 공정률, 대금 일정과 개발사 이력을 먼저 검증해야 합니다.",
+        strengths:["BKK3 입지","신축 설계","준공 후 임대 후보"], checks:["공정률","개발 인허가","에스크로와 환불 조항"] },
+
+      { origin:"GLI 검증", bstyle:VER, loc:"Binh Duong Ward, Ho Chi Minh City", country:"Vietnam",
+        title:"오차드 그랜드 앳 시카모어", titleEn:"Orchard Grand at Sycamore",
+        img:"public/partner-assets/orchard-grand.jpg", imgnote:DEV,
+        spec:"2개 동 · 517세대 · 2027년 4분기 인도 예정", priceLabel:"프로젝트 안내", price:"자료상 가격 미기재", krw:"조사 예정", trust:84,
+        facts:[F("프로젝트 규모","2개 동 · 517세대"),F("대표 타입","2BR 약 75㎡부터"),F("소유권 안내","외국인 50년 표기"),F("자료 기준","발행일 미표기")],
+        summary:"CapitaLand Development Vietnam과 UOA Group이 조성하는 Sycamore 마스터 개발의 주거 프로젝트입니다. 2개 동, 517세대와 약 99개의 편의시설이 계획되어 있습니다.",
+        basis:"Sycamore Orchard Grand 프로젝트 브로슈어", docDate:"자료 기준일 미표기",
+        strengths:["대형 마스터 개발","다양한 주거 타입","예정 인도일 표기"], checks:["현재 가격","잔여 물량","외국인 배정 가능 수량"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"Thu Thiem, Ho Chi Minh City", country:"Vietnam",
+        title:"투티엠 자이트 리버", titleEn:"Thu Thiem Zeit River",
+        img:"public/partner-assets/thu-thiem-zeit-river.jpg", imgnote:DEV,
+        spec:"2개 동 · 300세대 · 상가·타운하우스 포함", priceLabel:"분양 기준가격", price:"USD 7,000/㎡", krw:"약 966만원/㎡", trust:74,
+        facts:[F("대지면적","9,125.8㎡"),F("구성","25층·32층, 300세대"),F("가격 기준","USD 7,000/㎡, VAT 제외"),F("자료 기준","과거 분양자료")],
+        summary:"Thu Thiem New Urban Area Lot 3-11의 주거·상업 복합 프로젝트입니다. 2개 동과 약 300세대, 상가·타운하우스를 포함하는 복합 주거 환경으로 구성됩니다.",
+        basis:"Thu Thiem GS 사업계획 자료", docDate:"자료 내 2024년 인도 계획 기준",
+        strengths:["Thu Thiem 핵심 입지","다양한 타입 구성","프로젝트 자료 확보"], checks:["현재 준공·인도 상태","현재 가격·재고","외국인 쿼터"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"Multiple Locations, Metro Manila & Cebu", country:"Philippines",
+        title:"RLC 필리핀 주거 포트폴리오", titleEn:"RLC Philippines Residential Portfolio",
+        img:"public/partner-assets/rlc-portfolio.jpg", imgnote:DEV,
+        spec:"Galleria·Brighton·McKinley 주거 포트폴리오", priceLabel:"문서상 프로젝트 가격 범위", price:"₱ 4M~57M", krw:"약 9,600만~13.7억원", trust:70,
+        facts:[F("대표 프로젝트","Galleria · Brighton · McKinley"),F("문서상 가격 범위","PHP 4M~57M"),F("대상 지역","Metro Manila · Cebu 등"),F("자료 기준","발행일 미표기")],
+        summary:"Galleria·Brighton·McKinley를 포함한 필리핀 주요 주거 프로젝트 포트폴리오입니다. 도시형 레지던스부터 복합단지 주거 상품까지 함께 살펴볼 수 있습니다.",
+        basis:"RLC projects and details 포트폴리오", docDate:"자료 기준일 미표기",
+        strengths:["다지역 프로젝트 구성","다양한 가격 범위","파트너 포트폴리오 자료"], checks:["프로젝트별 현재 재고","가격-프로젝트 대응","판매완료 항목 구분"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"Ouano Avenue, Mandaue City", country:"Philippines",
+        title:"만타위 레지던스 1차", titleEn:"Mantawi Residences Tower 1",
+        img:"public/partner-assets/mantawi-residences.jpg", imgnote:DEV,
+        spec:"1BR·2BR·3BR·Penthouse · 주거·상업 복합", priceLabel:"프로젝트 안내", price:"자료상 가격 미기재", krw:"조사 예정", trust:81,
+        facts:[F("프로젝트 유형","주거·상업 복합"),F("유닛 구성","1BR~Penthouse"),F("공용시설","수영장·업무라운지·피트니스"),F("자료 기준","2025년 4월 8일")],
+        summary:"Mandaue City의 주거·상업 복합 프로젝트입니다. 제공된 Fact Sheet와 eBook을 기준으로 유닛 마감재, 설비, 공용시설과 주거 편의 정보를 구성했습니다.",
+        basis:"Mantawi Tower 1 Fact Sheet 및 eBook", docDate:"2025년 4월 8일 자료 기준",
+        strengths:["상세 Fact Sheet","다양한 공용시설","실내 마감자료 확보"], checks:["현재 가격·재고","전체 세대·면적","인도 예정일"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"Jalan Tun Razak, Kuala Lumpur", country:"Malaysia",
+        title:"골든 크라운 레지던스", titleEn:"Golden Crown Residence",
+        img:"public/partner-assets/golden-crown/facade.jpg", imgnote:DEV,
+        images:["public/partner-assets/golden-crown/facade.jpg","public/partner-assets/golden-crown/exterior.jpg","public/partner-assets/golden-crown/lobby.jpg","public/partner-assets/golden-crown/bedroom.jpg","public/partner-assets/golden-crown/pool.jpg","public/partner-assets/golden-crown/gym.jpg","public/partner-assets/golden-crown/bbq.jpg","public/partner-assets/golden-crown/pavilion.jpg"],
+        spec:"Leasehold 99년 · 490세대 · 2028년 8월 완공 예정", priceLabel:"문서상 분양가격", price:"RM 1,352,000~3,174,000", krw:"약 4.2억~9.8억원", trust:88,
+        facts:[F("권리","99년 Leasehold"),F("레지던스","490세대 · 58~95㎡"),F("예상 완공","2028년 8월"),F("자료 기준","제공 브로슈어")],
+        summary:"Jalan Tun Razak의 호텔·오피스·레지던스 복합 프로젝트입니다. 제공 브로슈어에 개발면허, 광고허가, 권리기간, 가격 범위와 예상 완공일이 함께 기재되어 있습니다.",
+        basis:"Golden Crown Residence 영문 브로슈어", docDate:"제공 브로슈어·허가 정보 기준",
+        resourceUrl:"https://gsklproperty.com/portfolio/golden-crown-residence/",
+        strengths:["가격·허가 정보 표기","KL 중심 입지","복합시설 구성"], checks:["현재 가격·재고","외국인 구매 기준","관리비·납부 일정"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"Golden Triangle, Kuala Lumpur", country:"Malaysia",
+        title:"파빌리온 스퀘어", titleEn:"Pavilion Square",
+        img:"public/partner-assets/pavilion-square.jpg", imgnote:DEV,
+        spec:"Pavilion KL 연결 · Studio~3BR", priceLabel:"프로젝트 안내", price:"자료상 가격 미기재", krw:"조사 예정", trust:80,
+        facts:[F("입지","Kuala Lumpur Golden Triangle"),F("대표 타입","Studio 504 sqft부터"),F("연결 시설","Pavilion KL"),F("자료 기준","제공 프로젝트 브리프")],
+        summary:"Kuala Lumpur Golden Triangle에서 Pavilion KL과 연결되는 주거 프로젝트입니다. 도심 핵심 상권과 직접 연결되는 입지와 다양한 주거 타입을 제공합니다.",
+        basis:"Pavilion Square 프로젝트 브리프·GLI 게시 승인", docDate:"제공 프로젝트 브리프 기준",
+        strengths:["Pavilion KL 연결","도심 핵심 입지","다양한 주거 타입"], checks:["현재 가격·재고","공식 외부용 자료","권리·완공 일정"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"KLCC, Kuala Lumpur", country:"Malaysia",
+        title:"클라우트하우스 KLCC", titleEn:"CloutHaus KLCC",
+        img:"public/partner-assets/clouthaus.jpg", imgnote:DEV,
+        spec:"Freehold · Residence·Hotel · 2029년 1월 완공 예정", priceLabel:"문서상 분양가격", price:"RM 1,976,400~8,020,800", krw:"약 6.1억~24.9억원", trust:79,
+        facts:[F("권리","Freehold"),F("문서상 규모","Tower 2 615실 · Menara 1 242실"),F("예상 완공","2029년 1월"),F("자료 기준","2025년 7월 허가 표기")],
+        summary:"Petronas Towers 조망을 강조한 KLCC 레지던스·호텔 프로젝트입니다. 도심 생활 편의와 호텔형 서비스가 결합된 복합 주거 상품입니다.",
+        basis:"TA Global CloutHaus 영문 브로슈어", docDate:"광고허가 2025년 7월 30일까지 표기",
+        strengths:["KLCC 핵심 입지","Freehold 표기","가격·타입 자료 확보"], checks:["갱신된 광고허가","현재 가격·재고","서비스 브랜드 확정"] },
+      { origin:"GLI 검증", bstyle:VER, loc:"Bukit Bintang, Kuala Lumpur", country:"Malaysia",
+        title:"타임스스퀘어 2 쿠알라룸푸르", titleEn:"Times Square 2 Kuala Lumpur",
+        img:"public/partner-assets/times-square-2.jpg", imgnote:DEV,
+        spec:"도심 레지던스 · 시설층·옥상 수영장 자료", priceLabel:"프로젝트 안내", price:"자료상 가격 미기재", krw:"조사 예정", trust:65,
+        facts:[F("프로젝트 유형","도심 레지던스"),F("확인 시설","시설층 · 옥상 수영장"),F("상세 규모","조사 예정"),F("자료 기준","2025년 11월 26일")],
+        summary:"Kuala Lumpur 도심의 Times Square 2 레지던스 프로젝트입니다. 제공된 2025년 축약 브로슈어에서 확인되는 프로젝트 이미지와 시설계획을 기준으로 게시합니다.",
+        basis:"Times Square 2 축약 브로슈어", docDate:"2025년 11월 26일 자료 기준",
+        strengths:["도심 입지","시설층 자료","프로젝트 렌더링 확보"], checks:["개발사·권리","전체 규모·타입","현재 가격·완공일"] },
+    ];
+
+    const assets = raw.map((r, i) => ({
+      ...r, i, category:"주거용", grade:grade(r.trust),
+      favCls: s.favs[i] ? "fav on" : "fav",
+      imgCls: `c${i}`,
+      imgAlt: `${r.title} 내부 또는 건물 이미지`,
+    }));
+
+    this._assets = assets;
+
+    const isAiResult = !!s.hits;
+    let shown;
+    if (isAiResult) {
+      const byI = new Map(assets.map(x => [x.i, x]));
+      shown = s.hits.map((h, n) => ({ ...byI.get(h.i), rank:`추천 ${n + 1}위`, reason:h.reason }));
+    } else {
+      shown = assets.filter(x => {
+        const m = M[x.i];
+        if (s.cc !== "ALL" && m.cc !== s.cc) return false;
+        if (s.txn === "REC") return x.origin === "GLI 추천";
+        if (s.txn !== "ALL" && m.txn !== s.txn) return false;
+        return true;
+      });
+    }
+
+    const a = assets[s.asset] ?? assets[0];
+    const hasGallery = !!a.images;
+    const images = a.images ?? [a.img];
+    const gal = ((s.gal % images.length) + images.length) % images.length;
+    const galCls = hasGallery ? `g${gal}` : a.imgCls;
+
+    const d = {
+      title:a.title, origin:a.origin, category:a.category, trust:a.trust, stock:!!a.stock,
+      fullLoc:`${a.loc}, ${a.country}`,
+      priceLabel:a.priceLabel, price:a.price, krw:a.krw,
+      summary:a.summary, facts:a.facts, strengths:a.strengths, checks:a.checks,
+      basis:a.basis ?? "", hasBasis:!!a.basis, resourceUrl:a.resourceUrl ?? "",
+      docDate:`${a.docDate ?? "공개 자료 기준"} · 출처에서 제공하지 않은 항목은 조사 예정으로 표시합니다.`,
+      imgAlt:`${a.title} 사진 ${gal + 1}`,
+    };
+
+    const t = TIERS[s.tier];
+    const hasAccess = t.level <= s.unlocked;
+    const cost = CASH_COST[t.id];
+    const purchase = t.id === "basic" ? "Basic 월 정기구독 · $1.99"
+      : t.id === "standard" ? (s.unlocked >= 2 ? "Basic에서 Standard 차액 결제 · $1.00" : "Standard 월 정기구독 · $2.99")
+      : `${(cost ?? 0).toLocaleString("en-US")} GLI Cash · 자산별 이용권`;
+
+    const tier = {
+      ...t, hasAccess, purchase,
+      state: hasAccess ? "열람 가능" : "잠김",
+      stateStyle: hasAccess ? "background:var(--green-100);color:var(--green-700)" : "background:#EFEDE7;color:var(--ink-2)",
+      locked: !hasAccess,
+      lockCopy: `${t.name}을 열면 LV.1부터 LV.${t.level}까지 모두 이용할 수 있습니다.`,
+      isFree:t.id==="free", isBasic:t.id==="basic", isStandard:t.id==="standard",
+      isPremium:t.id==="premium", isBusiness:t.id==="business",
+    };
+
+    const activeTier = TIERS.filter(x => x.level <= s.unlocked).at(-1) ?? TIERS[0];
+    const buyLabel = hasAccess ? "현재 열람 가능"
+      : cost ? `${cost.toLocaleString("en-US")} GLI Cash로 열기`
+      : t.id === "basic" ? "Explorer 월 $1.99로 시작"
+      : `$${(s.unlocked >= 2 ? 1 : 2.99).toFixed(2)}로 업그레이드`;
+
+    const ccCount = (id) => id === "ALL" ? assets.length : assets.filter(x => M[x.i].cc === id).length;
+
+    return {
+      assets, shown, d, tier,
+      query: s.query, busy: s.busy,
+      searchLabel: s.busy ? "분석 중" : "탐색",
+      busyLabel: s.mode === "ai" || window.claude?.complete ? "조건을 이해하고 후보를 찾고 있습니다" : "조건을 분석하고 있습니다",
+      engineNote: window.claude?.complete
+        ? "질문은 Claude가 해석해 검색 조건으로 바꾸고, 후보 순위는 GLI 자산 데이터로 계산합니다."
+        : "이 파일은 오프라인 모드로 실행 중입니다. 조건 해석을 기기 안에서 처리하며 후보 순위는 동일한 GLI 자산 데이터로 계산합니다.",
+      chat: s.chat.map(m => ({
+        who: m.role === "me" ? "고객" : "GLI AI",
+        whoStyle: m.role === "me" ? "color:var(--ink-2)" : "color:var(--green-700)",
+        style: m.role === "me" ? "font-weight:600" : "color:var(--ink-2)",
+        text: m.text, chips: m.chips || [], hasChips: !!(m.chips && m.chips.length),
+      })),
+      isAiResult, isBrowse: !isAiResult,
+      resultKicker: isAiResult ? "AI Matched Results" : `${s.cc === "ALL" ? "Global" : CC[s.cc]} · 주거용`,
+      resultTitle: isAiResult ? "요청에 맞춘 추천 자산" : "주거용 추천 자산",
+      resultCount: isAiResult
+        ? `${shown.length}건을 요청 조건 기준으로 정렬했습니다.`
+        : `${shown.length}개 후보를 비교 중입니다.`,
+      countryTabs: [["ALL","전체 국가"],["KH","캄보디아"],["VN","베트남"],["PH","필리핀"],["MY","말레이시아"]]
+        .map(([id, label]) => ({ id, label: `${label} ${ccCount(id)}`, cls: s.cc === id ? "ctab on" : "ctab" })),
+      txnTabs: [["ALL","전체"],["매매","매매"],["임대","임대"],["REC","GLI 추천"]]
+        .map(([id, label]) => ({ id, label, cls: s.txn === id ? "on" : "" })),
+      onQuery: (e) => this.setState({ query: e.target.value }),
+      onQueryKey: (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); this.search(); } },
+      runSearch: () => this.search(),
+      pickPrompt: (e) => this.search(e.currentTarget.dataset.q),
+      resetSearch: () => this.setState({ hits:null }),
+      pickCountry: (e) => this.setState({ cc: e.currentTarget.dataset.v, hits:null }),
+      pickTxn: (e) => this.setState({ txn: e.currentTarget.dataset.v, hits:null }),
+      prompts:[
+        "프놈펜에 5,000만원으로 월세가 잘 나오는 투자가 가능할까?",
+        "겨울마다 3개월 쉬고 부재 중 임대할 곳을 찾아줘",
+        "월 500달러 이하 2베드 강 전망 임대 콘도",
+      ],
+      homeCls: s.view === "home" ? "" : "hide",
+      detailCls: s.view === "detail" ? "" : "hide",
+      soonCls: s.view === "soon" ? "" : "hide",
+      newsCls: s.view === "news" ? "" : "hide",
+      articleCls: s.view === "article" ? "" : "hide",
+      paperCls: s.view === "paper" ? "" : "hide",
+      soon: SOON[s.soon] ?? SOON.contact,
+
+      newsTabs: ["전체보기","공지사항","보도자료","인사이트","이벤트"]
+        .map(id => ({ id, label:id, cls: s.newsCat === id ? "ctab on" : "ctab" })),
+      newsList: s.newsCat === "전체보기" ? NEWS : NEWS.filter(n => n.cat === s.newsCat),
+      art: NEWS[s.article] ?? NEWS[0],
+      docNav: DOCS.map(d => ({ id:d.id, label:d.label, grp:d.grp || "", cls: s.doc === d.id ? "on" : "" })),
+      doc: (() => {
+        const d = DOCS.find(x => x.id === s.doc) ?? DOCS[0];
+        return { ...d, isIntro:d.id==="intro", isAbout:d.id==="about", isToken:d.id==="token",
+                 isAudit:d.id==="audit", isRoad:d.id==="road" };
+      })(),
+      phases: PHASES,
+      goNews: (e) => { e?.preventDefault?.(); this.nav("news"); },
+      goPaper: (e) => { e?.preventDefault?.(); this.nav("paper"); },
+      openNews: (e) => { this.setState({ article: Number(e.currentTarget.dataset.i) }); this.nav("article"); },
+      pickNewsCat: (e) => this.setState({ newsCat: e.currentTarget.dataset.v }),
+      pickDoc: (e) => { this.setState({ doc: e.currentTarget.dataset.v }); window.scrollTo(0, 0); },
+
+      galCls, galLabel: `${gal + 1} / ${images.length}`,
+      galMulti: images.length > 1,
+      galThumbs: images.map((_, i) => ({ i, cls: i === gal ? `g${i} on` : `g${i}` })),
+
+      tiers: TIERS.map((x, i) => ({
+        i, name:x.name, lv:`(LV.${x.level})`, sel: i === s.tier,
+        cls: i === s.tier ? "on" : "", style:`--tc:${x.color}`,
+      })),
+      risks: [["시장성",76],["변동성",48],["유동성",61],["규제",57],["운영",72]]
+        .map(([label, v]) => ({ label, v, w:`width:${v}%` })),
+      docs: ["GLI Trust Report 요약","권리·계약 검토 체크리스트","운영비 및 현금흐름 시나리오","비교 자산 분석 리포트"],
+      services: [
+        { t:"현지 영상 브리핑", d:"담당자 촬영 및 현장 상태 기록" },
+        { t:"전문가 검토 의견", d:"권리·세무·운영 확인 항목 정리" },
+        { t:"방문 지원 패키지", d:"일정과 비용은 자산별 별도 안내" },
+      ],
+      accessLabel: activeTier.name,
+      cashLabel: s.cash.toLocaleString("en-US"),
+      buyLabel, buyCls: hasAccess ? "btn btn-o" : "btn btn-p",
+      buyOpen: s.buyOpen,
+      dFav: s.dFav, dFavCls: s.dFav ? "btn btn-o" : "btn btn-o",
+      dFavLabel: s.dFav ? "관심 자산에 저장됨" : "관심 자산에 추가",
+
+      goHome: (e) => { e.preventDefault(); this.nav("home"); },
+      goSoonContact: (e) => { e.preventDefault(); this.nav("soon","contact"); },
+      goSoonGuide: (e) => { e.preventDefault(); this.nav("soon","guide"); },
+      goSoonPartners: (e) => { e.preventDefault(); this.nav("soon","partners"); },
+      goSoonNotice: (e) => { e.preventDefault(); this.nav("soon","notice"); },
+      goSoonNews: (e) => { e.preventDefault(); this.nav("soon","news"); },
+      goSoonPaper: (e) => { e.preventDefault(); this.nav("soon","paper"); },
+      goSoonMembership: (e) => { e.preventDefault(); this.nav("soon","membership"); },
+      goSoonMy: (e) => { e.preventDefault(); this.nav("soon","my"); },
+      goSoonConsult: (e) => { e.preventDefault(); this.nav("soon","consult"); },
+      openDetail: (e) => {
+        const i = Number(e.currentTarget.dataset.i);
+        this.setState({ asset:i, gal:0, tier:0, dFav: !!s.favs[i] });
+        this.nav("detail");
+      },
+      toggleFav: (e) => {
+        const i = Number(e.currentTarget.dataset.i);
+        this.setState(p => ({ favs: { ...p.favs, [i]: !p.favs[i] } }));
+      },
+      toggleDetailFav: () => this.setState(p => ({ dFav: !p.dFav, favs: { ...p.favs, [p.asset]: !p.dFav } })),
+      galPrev: () => this.setState(p => ({ gal: p.gal - 1 })),
+      galNext: () => this.setState(p => ({ gal: p.gal + 1 })),
+      galPick: (e) => this.setState({ gal: Number(e.currentTarget.dataset.i) }),
+      pickTier: (e) => this.setState({ tier: Number(e.currentTarget.dataset.i) }),
+      openBuy: () => { if (!hasAccess) this.setState({ buyOpen:true }); },
+      closeBuy: () => this.setState({ buyOpen:false }),
+      confirmBuy: () => this.setState(p => {
+        const tt = TIERS[p.tier]; const c = CASH_COST[tt.id] ?? 0;
+        if (c > p.cash) return { buyOpen:false };
+        return { cash: p.cash - c, unlocked: Math.max(p.unlocked, tt.level), buyOpen:false };
+      }),
+    };
+  }
+}
+</script>
+</body>
+</html>
