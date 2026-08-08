@@ -632,7 +632,13 @@ export function ExploreClient({
           {visibleAssets.length ? (
             <div className="asset-grid">
               {visibleAssets.map((asset) => (
-                <article className="asset-card" key={asset.id}>
+                <article className="asset-card asset-card-v2" key={asset.id}>
+                  <Link
+                    className="asset-card-click"
+                    href={`/assets/${asset.id}`}
+                    onClick={() => rememberExploreResult(asset.id)}
+                    aria-label={`${asset.title} 상세 정보 확인`}
+                  >
                   <div className="asset-photo">
                     {/* External listing imagery is temporary licensed demo media. */}
                     <Image
@@ -684,14 +690,8 @@ export function ExploreClient({
                         </span>
                       </div>
                     </div>
-                    <Link
-                      className="asset-link"
-                      href={`/assets/${asset.id}`}
-                      onClick={() => rememberExploreResult(asset.id)}
-                    >
-                      상세 정보 확인 <ArrowRight size={17} />
-                    </Link>
                   </div>
+                  </Link>
                 </article>
               ))}
             </div>

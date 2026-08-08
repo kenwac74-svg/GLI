@@ -27,7 +27,7 @@ export function BackToResultsButton({ assetId }: { assetId: string }) {
       }
     }
     window.sessionStorage.removeItem(EXPLORE_RETURN_KEY);
-    router.push("/");
+    router.push("/explore");
   }
 
   return (

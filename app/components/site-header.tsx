@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, Menu, Search, UserRound } from "lucide-react";
+import { ChevronDown, Heart, LogOut, Menu, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { DEMO_ADMIN_EMAIL, getCurrentUser, signOutPath } from "../auth";
 
@@ -22,20 +22,19 @@ export async function SiteHeader() {
           </span>
         </Link>
         <nav className="desktop-nav" aria-label="주요 메뉴">
-          <Link href="/">
+          <Link href="/explore">
             <Search size={16} /> 자산 탐색
           </Link>
+          <Link href="/#trust-system">검증 체계</Link>
           <Link href="/membership">멤버십</Link>
-          <Link href="/my">MY GLI</Link>
           <details className="center-menu">
             <summary>
-              안내센터 <ChevronDown size={15} />
+              GLI 소개 <ChevronDown size={15} />
             </summary>
             <div className="center-menu-panel">
+              <Link href="/#about">회사 소개</Link>
               <Link href="/notices">공지</Link>
-              <Link href="/coming-soon?section=guide">가이드 &amp; FAQ</Link>
               <Link href="/news">뉴스</Link>
-              <Link href="/coming-soon?section=partners">파트너스</Link>
               <a href="/whitepaper/gli-whitepaper.html">GLI 백서</a>
             </div>
           </details>
@@ -43,6 +42,9 @@ export async function SiteHeader() {
             <Link href="/admin">운영</Link>
           ) : null}
         </nav>
+        <Link className="header-favorite" href="/my" aria-label="관심자산">
+          <Heart size={19} />
+        </Link>
         {user ? (
           <Link
             className="account-button"
@@ -63,10 +65,12 @@ export async function SiteHeader() {
             <Menu size={21} />
           </summary>
           <nav aria-label="모바일 메뉴">
-            <Link href="/">자산 탐색</Link>
+            <Link href="/explore">자산 탐색</Link>
+            <Link href="/#trust-system">검증 체계</Link>
             <Link href="/membership">멤버십</Link>
-            <Link href="/my">MY GLI</Link>
-            <span className="mobile-menu-label">안내센터</span>
+            <Link href="/my">관심자산 · MY GLI</Link>
+            <span className="mobile-menu-label">GLI 소개</span>
+            <Link href="/#about">회사 소개</Link>
             <Link href="/notices">공지</Link>
             <Link href="/coming-soon?section=guide">가이드 &amp; FAQ</Link>
             <Link href="/news">뉴스</Link>

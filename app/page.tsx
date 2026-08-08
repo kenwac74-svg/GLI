@@ -1,4 +1,4 @@
-import { ExploreClient } from "./components/explore-client";
+import { LandingPage } from "./components/landing-page";
 import { SiteHeader } from "./components/site-header";
 import { listAssets } from "../lib/assets-data";
 import { listCuratedOpportunities } from "../lib/curated-opportunities";
@@ -6,12 +6,13 @@ import { listCuratedOpportunities } from "../lib/curated-opportunities";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const result = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
-  const curatedAssets = listCuratedOpportunities();
+  const result = await listAssets({ limit: 100 });
+  const allAssets = [...result.assets, ...listCuratedOpportunities()];
+
   return (
     <>
       <SiteHeader />
-      <ExploreClient initialAssets={result.assets} curatedAssets={curatedAssets} />
+      <LandingPage assets={allAssets} />
     </>
   );
 }

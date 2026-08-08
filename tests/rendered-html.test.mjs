@@ -29,13 +29,12 @@ test("server-renders the GLI application shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GLI \| AI Verified Assets<\/title>/i);
-  assert.match(html, /국가와 자산의 경계를 넘어,/);
-  assert.match(html, /검증된 투자 기회를 탐색하세요/);
-  assert.match(html, /후보와 자료 신뢰도,/);
-  assert.match(html, /다음 확인 단계를 한 번에 정리합니다/);
-  assert.match(html, /GLI AI INVESTMENT ADVISOR/);
-  assert.match(html, /AI가 탐색하고, 전문가가 직접 검증합니다/);
-  assert.match(html, /AI와 사람의 상호보완/);
+  assert.match(html, /더 넓게 발견하고,/);
+  assert.match(html, /더 깊게 검증하는 투자/);
+  assert.match(html, /GLI AI가 투자 후보를 탐색하고/);
+  assert.match(html, /AI가 넓게 찾고, 전문가가 깊게 확인합니다/);
+  assert.match(html, /GLI TRUST STANDARD/);
+  assert.match(html, /자산 탐색 시작/);
   assert.doesNotMatch(html, /점수보다 근거를 먼저 봅니다/);
   assert.match(html, /\/brand\/gli-logo\.png/);
   assert.doesNotMatch(html, /gli-ai-prototype\.html|<iframe/i);
@@ -169,17 +168,18 @@ test("distinguishes reference fixtures from attributed market data and renders t
   assert.match(html, /detail-favorite-action/);
 });
 
-test("uses a direct asset-card label for opening detailed information", async () => {
-  const response = await render("/");
+test("uses the whole asset card to open detailed information", async () => {
+  const response = await render("/explore");
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /상세 정보 확인/);
+  assert.match(html, /class="asset-card-click"/);
+  assert.match(html, /aria-label="[^"]+ 상세 정보 확인"/);
   assert.doesNotMatch(html, /검증 요약 보기/);
 });
 
 test("renders global country controls and the four investment asset categories", async () => {
-  const response = await render("/");
+  const response = await render("/explore");
   assert.equal(response.status, 200);
 
   const html = await response.text();
@@ -208,7 +208,7 @@ test("publishes partner assets at their stated document reference point", async 
 });
 
 test("lists document-dated partner opportunities across the requested categories", async () => {
-  const response = await render("/");
+  const response = await render("/explore");
   assert.equal(response.status, 200);
 
   const html = await response.text();
@@ -259,7 +259,8 @@ test("renders the information center navigation and GLI whitepaper link", async 
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /안내센터/);
+  assert.match(html, /GLI 소개/);
+  assert.match(html, /검증 체계/);
   assert.match(html, /href="\/notices"/);
   assert.match(html, /href="\/news"/);
   assert.match(html, /가이드 &amp; FAQ/);
