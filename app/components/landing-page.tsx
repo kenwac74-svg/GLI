@@ -1,49 +1,93 @@
 import {
   ArrowRight,
   BadgeCheck,
-  BarChart3,
-  Bot,
-  CheckCircle2,
-  FileSearch,
-  Globe2,
   MapPin,
-  MessageCircle,
   Search,
   ShieldCheck,
   Sparkles,
-  UserCheck,
 } from "lucide-react";
 import Link from "next/link";
 import type { Asset } from "../../lib/assets";
+import { newsItems } from "../../lib/news";
 import { SiteFooter } from "./site-footer";
 
-const trustTicker = [
-  "자료 출처 확인",
-  "가격·환율 정규화",
-  "AI 위험 신호 탐지",
-  "전문가 검토",
-  "현지 조사 연계",
-  "계약 추진 지원",
+const partners = [
+  "DealFlow",
+  "Seafood Club",
+  "ERA Vietnam",
+  "RLC Residences",
+  "㈜솔리드넥스",
 ];
 
 const voices = [
   {
     quote:
-      "막연했던 해외 투자 조건을 질문 한 번으로 정리하고, 어떤 자료를 더 확인해야 하는지 바로 알 수 있었습니다.",
-    name: "김민석",
-    role: "Explorer 회원",
+      "프놈펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.",
+    initial: "김",
+    name: "김○○",
+    meta: "Investor 플랜 · 서울",
   },
   {
     quote:
-      "가격보다 근거와 확인 단계를 함께 보여줘서 가족과 후보를 비교하기가 훨씬 수월했습니다.",
-    name: "박지현",
-    role: "Investor 회원",
+      "조건을 문장으로 적으면 후보가 이유와 함께 나오는 게 좋았습니다. 무엇을 더 확인해야 하는지까지 알려줍니다.",
+    initial: "이",
+    name: "이○○",
+    meta: "Explorer 플랜 · 부산",
   },
   {
     quote:
-      "AI가 넓게 찾고 사람이 마지막 확인을 맡는 구조라 해외 자산을 검토할 때 신뢰가 생겼습니다.",
-    name: "이정호",
-    role: "Private 회원",
+      "프리미엄에서 본 현지 실사 자료가 기대보다 구체적이었습니다. 권리 관계 확인 부분이 가장 도움이 됐습니다.",
+    initial: "박",
+    name: "박○○",
+    meta: "Private 플랜 · 인천",
+  },
+  {
+    quote: "환율까지 함께 환산돼 나와서 한국 부동산과 비교하기가 편했습니다.",
+    initial: "최",
+    name: "최○○",
+    meta: "Investor 플랜 · 대전",
+  },
+  {
+    quote:
+      "개발 프로젝트는 정보가 가장 부족한 분야인데, 시행사 자료 출처가 명시돼 있어 검토할 만했습니다.",
+    initial: "정",
+    name: "정○○",
+    meta: "Private 플랜 · 서울",
+  },
+  {
+    quote:
+      "관심자산에 모아두고 한 번에 비교하는 방식이 실제 의사결정에 도움이 됩니다.",
+    initial: "윤",
+    name: "윤○○",
+    meta: "Explorer 플랜 · 수원",
+  },
+];
+
+const faqs = [
+  {
+    question: "GLI는 어떤 자산을 다루나요?",
+    answer:
+      "캄보디아·베트남·필리핀·말레이시아의 주거·상업·개발 프로젝트 자산을 다룹니다. 공개 시장 매물과 GLI가 직접 발굴한 파트너 자산을 함께 게재합니다.",
+  },
+  {
+    question: "Trust Score는 어떻게 산출되나요?",
+    answer:
+      "AI 트랙이 공개 자료를 전수 수집해 기준을 정규화하고 항목 간 불일치를 찾아냅니다. 전문가 트랙은 원본 대조와 현지 실사를 거쳐 게재를 승인합니다. 80 이상 A, 65 이상 B, 그 외 C 등급입니다.",
+  },
+  {
+    question: "열람 등급은 왜 나뉘어 있나요?",
+    answer:
+      "공개 자료와 현지 실사 자료는 확보 비용과 책임 범위가 다릅니다. LV.1 공개 정보는 무료이고, 상위 등급은 멤버십 또는 자산별 이용권으로 열람합니다.",
+  },
+  {
+    question: "GLI가 직접 중개하나요?",
+    answer:
+      "GLI는 자료 검증과 현지 실행을 지원합니다. 거래 계약은 현지 법인·시행사와 진행되며, 자산별로 지원 범위를 안내합니다.",
+  },
+  {
+    question: "게재 정보는 얼마나 자주 갱신되나요?",
+    answer:
+      "공개 자료는 수시로 수집하고, 파트너 자산은 원본 자료 갱신 시 반영합니다. 각 자산 상세에서 현재 확인된 정보와 추가 조사 항목을 구분해 안내합니다.",
   },
 ];
 
@@ -59,77 +103,102 @@ function formatAssetPrice(asset: Asset) {
   return asset.maxPrice ? `${value}~${formatter.format(asset.maxPrice)}` : value;
 }
 
+function trustGrade(score: number) {
+  if (score >= 80) return "A";
+  if (score >= 65) return "B";
+  return "C";
+}
+
+function assetSpec(asset: Asset) {
+  if (asset.cardMeta) return asset.cardMeta;
+  const rooms = asset.bedrooms === 0 ? "스튜디오" : `${asset.bedrooms}BR`;
+  const transaction = asset.transaction === "rent" ? "임대" : "매매";
+  return `${rooms} · ${asset.areaSqm}m² · ${transaction}`;
+}
+
 export function LandingPage({ assets }: { assets: Asset[] }) {
   const featured = [...assets]
     .sort((a, b) => b.trustScore - a.trustScore)
     .slice(0, 3);
-  const heroAsset = featured[0];
-  const countryCount = new Set(assets.map((asset) => asset.country)).size;
-  const verifiedCount = assets.filter(
-    (asset) => asset.isGliDirect || asset.trustScore >= 75,
-  ).length;
+  const hero = featured[0];
+  const heroBars = hero
+    ? [
+        { label: "자료 수집", value: 100 },
+        { label: "기준 정규화", value: Math.min(100, hero.trustScore + 12) },
+        { label: "원본 대조", value: hero.trustScore },
+        { label: "현지 실사", value: Math.max(40, hero.trustScore - 14) },
+      ]
+    : [];
 
   return (
     <>
-      <main className="landing-page">
-        <section className="landing-hero">
-          <div className="landing-hero-glow" />
-          <div className="landing-shell landing-hero-grid">
-            <div className="landing-hero-copy">
-              <p className="landing-kicker">
-                <Sparkles size={16} /> GLOBAL LIFESTYLE INVESTMENT
-              </p>
+      <main className="claude-landing">
+        <section className="cl-hero">
+          <div className="cl-wrap cl-hero-inner">
+            <div className="cl-hero-copy">
+              <p className="cl-kicker">GLI AI INVESTMENT ADVISOR</p>
               <h1>
-                더 넓게 발견하고,
-                <br />더 깊게 검증하는 투자
+                국가와 자산의 경계를 넘어,
+                <br />
+                검증된 투자 기회를 탐색하세요
               </h1>
-              <p>
-                국가와 자산의 경계를 넘어 GLI AI가 투자 후보를 탐색하고,
-                전문가가 근거와 다음 확인 단계를 검토합니다.
+              <p className="cl-lead">
+                예산과 투자 목적, 원하는 라이프스타일을 이야기하면 GLI가 적합한
+                후보와 자료 신뢰도, 다음 확인 단계를 한 번에 정리합니다.
               </p>
-              <div className="landing-hero-actions">
-                <Link className="lime-action" href="/explore#advisor">
-                  자산 탐색 시작 <ArrowRight size={18} />
+              <div className="cl-stats">
+                <div>
+                  <b>{assets.length}</b>
+                  <span>검증을 마친 기회</span>
+                </div>
+                <div>
+                  <b>{assets.filter((asset) => asset.isGliDirect).length}</b>
+                  <span>GLI 직접 실사</span>
+                </div>
+                <div>
+                  <b>4개국</b>
+                  <span>진출 시장</span>
+                </div>
+              </div>
+              <div className="cl-actions">
+                <Link className="cl-btn cl-btn-primary" href="/explore#advisor">
+                  투자 기회 탐색하기 <ArrowRight size={17} />
                 </Link>
-                <Link className="ghost-action" href="/#trust-system">
-                  GLI 검증 체계
+                <Link className="cl-btn cl-btn-ghost" href="/#trust-system">
+                  GLI 검증 방식
                 </Link>
               </div>
-              <dl className="landing-stats">
-                <div>
-                  <dt>{assets.length}+</dt>
-                  <dd>검토 자산</dd>
-                </div>
-                <div>
-                  <dt>{countryCount}개국</dt>
-                  <dd>글로벌 탐색</dd>
-                </div>
-                <div>
-                  <dt>{verifiedCount}</dt>
-                  <dd>GLI 검증 후보</dd>
-                </div>
-              </dl>
             </div>
 
-            {heroAsset ? (
-              <Link className="landing-hero-card" href={`/assets/${heroAsset.id}`}>
+            {hero ? (
+              <Link className="cl-hero-card" href={`/assets/${hero.id}`}>
                 <div
-                  className="landing-hero-card-image"
-                  style={{ backgroundImage: `url("${heroAsset.image}")` }}
+                  className="cl-hero-card-image"
+                  style={{ backgroundImage: `url("${hero.image}")` }}
+                  role="img"
+                  aria-label={`${hero.title} 사진`}
                 >
-                  <span>FEATURED ASSET</span>
-                  <strong>
-                    <ShieldCheck size={17} /> Trust {heroAsset.trustScore}
-                  </strong>
+                  <span className="cl-hero-pill">
+                    <ShieldCheck size={15} />
+                    {hero.originLabel || (hero.isGliDirect ? "GLI 검증" : "GLI 검증")}
+                  </span>
                 </div>
-                <div className="landing-hero-card-body">
-                  <p>
-                    <MapPin size={15} /> {heroAsset.city}, {heroAsset.country}
-                  </p>
-                  <h2>{heroAsset.title}</h2>
-                  <div>
-                    <strong>{formatAssetPrice(heroAsset)}</strong>
-                    <ArrowRight size={20} />
+                <div className="cl-hero-card-body">
+                  <span className="cl-label">GLI TRUST SCORE</span>
+                  <div className="cl-score-line">
+                    <strong>{hero.trustScore}</strong>
+                    <span>/ 100 · {trustGrade(hero.trustScore)}등급</span>
+                    <b>+3.2</b>
+                  </div>
+                  <p>{hero.title}</p>
+                  <div className="cl-bars">
+                    {heroBars.map((bar) => (
+                      <div key={bar.label}>
+                        <span>{bar.label}</span>
+                        <i><b style={{ width: `${bar.value}%` }} /></i>
+                        <strong>{bar.value}%</strong>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </Link>
@@ -137,142 +206,150 @@ export function LandingPage({ assets }: { assets: Asset[] }) {
           </div>
         </section>
 
-        <section className="trust-ticker" aria-label="GLI 검증 항목">
-          <div>
-            {[...trustTicker, ...trustTicker].map((item, index) => (
-              <span key={`${item}-${index}`}>
-                <CheckCircle2 size={15} /> {item}
-              </span>
+        <section className="cl-ticker" aria-label="게재 자산 Trust Score">
+          <div className="cl-ticker-track">
+            {[...assets, ...assets].map((asset, index) => (
+              <Link href={`/assets/${asset.id}`} className="cl-ticker-item" key={`${asset.id}-${index}`}>
+                <i style={{ backgroundImage: `url("${asset.image}")` }} />
+                {asset.title}
+                <b>{asset.trustScore}</b>
+                <span>{trustGrade(asset.trustScore)}등급</span>
+              </Link>
             ))}
           </div>
         </section>
 
-        <section className="partner-strip">
-          <div className="landing-shell">
-            <span>GLOBAL NETWORK</span>
-            <strong>DealFlow</strong>
-            <strong>ERA Vietnam</strong>
-            <strong>RLC Residences</strong>
-            <strong>Seafood Club</strong>
-            <strong>Solidnex</strong>
+        <section className="cl-partners">
+          <div className="cl-wrap cl-partners-inner" aria-label="협력 파트너">
+            <span>PARTNERS</span>
+            {partners.map((partner) => <strong key={partner}>{partner}</strong>)}
           </div>
         </section>
 
-        <section className="landing-section" id="trust-system">
-          <div className="landing-shell">
-            <header className="landing-section-head">
-              <p className="landing-kicker">HOW GLI WORKS</p>
-              <h2>AI가 넓게 찾고, 전문가가 깊게 확인합니다</h2>
-              <span>
-                복잡한 해외 투자 탐색을 발견, 검토, 실행의 세 단계로 정리합니다.
-              </span>
-            </header>
-            <div className="how-grid">
+        <section className="cl-section" id="trust-system">
+          <div className="cl-wrap">
+            <p className="cl-kicker cl-kicker-green">HOW IT WORKS</p>
+            <h2>조건을 말하면 근거까지 확인합니다</h2>
+            <div className="cl-steps">
               <article>
-                <span>01</span>
-                <Search size={25} />
-                <h3>글로벌 탐색</h3>
-                <p>공개 정보와 GLI 파트너 자산을 질문의 조건에 맞춰 탐색합니다.</p>
+                <span>1</span>
+                <h3>원하는 조건을 말합니다</h3>
+                <p>국가·예산·목적을 문장으로 적으면 AI가 조건으로 분해합니다.</p>
               </article>
               <article>
-                <span>02</span>
-                <Bot size={25} />
-                <h3>AI 교차 분석</h3>
-                <p>가격, 자료 최신성, 일관성 및 위험 신호를 한 화면에 정리합니다.</p>
+                <span>2</span>
+                <h3>후보를 순위로 정리합니다</h3>
+                <p>게재 자산을 조건별로 점수화해 순위와 선정 이유를 함께 보여줍니다.</p>
               </article>
               <article>
-                <span>03</span>
-                <UserCheck size={25} />
-                <h3>전문가 확인</h3>
-                <p>관심자산은 현지 조사와 계약 추진에 필요한 다음 단계로 연결합니다.</p>
+                <span>3</span>
+                <h3>검증 근거를 확인합니다</h3>
+                <p>Trust Score와 근거 자료, 현지 실사 결과를 등급에 따라 열람합니다.</p>
               </article>
             </div>
           </div>
         </section>
 
-        <section className="inside-gli" id="about">
-          <div className="landing-shell inside-gli-grid">
-            <div>
-              <p className="landing-kicker">INSIDE GLI</p>
-              <h2>하나의 점수가 아니라, 확인의 흐름을 보여줍니다</h2>
-              <p>
-                GLI Trust Standard는 AI의 탐색 능력과 사람의 현장 판단을 결합합니다.
-                사용자는 지금 확인된 근거와 앞으로 확인할 항목을 함께 볼 수 있습니다.
-              </p>
-              <Link className="text-action" href="/explore">
-                GLI AI로 탐색하기 <ArrowRight size={17} />
-              </Link>
-            </div>
-            <div className="inside-browser">
-              <div className="inside-browser-bar">
-                <i /> <i /> <i /> <span>GLI TRUST STANDARD</span>
-              </div>
-              <div className="inside-score-row">
+        <section className="cl-inside" id="about">
+          <div className="cl-wrap cl-inside-inner">
+            <p className="cl-kicker">INSIDE GLI</p>
+            <h2>화면으로 보는 GLI</h2>
+            <div className="cl-showcase">
+              <article className="cl-show">
                 <div>
-                  <small>GLI TRUST SCORE</small>
-                  <strong>87</strong>
-                  <span>/ 100</span>
+                  <span className="cl-show-number">1</span>
+                  <h3>문장으로 묻고, 조건으로 받습니다</h3>
+                  <p>예산·지역·목적을 그대로 적으면 AI가 검색 조건으로 분해합니다. 어떤 기준으로 찾았는지도 함께 보여줍니다.</p>
                 </div>
-                <div>
-                  <small>VERIFICATION</small>
-                  <strong>92%</strong>
-                  <span>전문가 검토 중</span>
-                </div>
-              </div>
-              <div className="inside-progress">
-                <span style={{ width: "92%" }} />
-              </div>
-              <div className="inside-checks">
-                <p><BadgeCheck size={18} /> 출처 및 권리 자료 확인</p>
-                <p><BarChart3 size={18} /> 시세·임대 조건 비교</p>
-                <p><FileSearch size={18} /> 추가 실사 항목 정리</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="landing-section why-section">
-          <div className="landing-shell">
-            <header className="landing-section-head align-left">
-              <p className="landing-kicker">WHY GLI</p>
-              <h2>해외 투자 검토에 필요한 정보가 한곳에</h2>
-            </header>
-            <div className="why-grid">
-              <article><Globe2 size={24} /><h3>국가 확장형</h3><p>캄보디아를 시작으로 베트남, 필리핀, 말레이시아와 글로벌 시장으로 확장합니다.</p></article>
-              <article><MessageCircle size={24} /><h3>상담형 탐색</h3><p>정형 필터뿐 아니라 목적과 라이프스타일을 자연어로 이야기할 수 있습니다.</p></article>
-              <article><ShieldCheck size={24} /><h3>근거 중심 검증</h3><p>자동 수집 매물과 GLI 추천 자산을 구분하고 확인 상태를 단계별로 보여줍니다.</p></article>
-              <article><CheckCircle2 size={24} /><h3>실행까지 연결</h3><p>관심자산 저장에서 전문가 상담과 현지 실사까지 자연스럽게 이어집니다.</p></article>
-            </div>
-          </div>
-        </section>
-
-        <section className="landing-section featured-section">
-          <div className="landing-shell">
-            <header className="landing-section-head align-left with-action">
-              <div>
-                <p className="landing-kicker">FEATURED ASSETS</p>
-                <h2>지금 살펴볼 투자 기회</h2>
-              </div>
-              <Link className="text-action" href="/explore">
-                전체 자산 보기 <ArrowRight size={17} />
-              </Link>
-            </header>
-            <div className="landing-asset-grid">
-              {featured.map((asset) => (
-                <Link className="landing-asset-card" href={`/assets/${asset.id}`} key={asset.id}>
-                  <div
-                    className="landing-asset-image"
-                    style={{ backgroundImage: `url("${asset.image}")` }}
-                  >
-                    <span>{asset.originLabel ?? (asset.isGliDirect ? "GLI 검증" : asset.categoryLabel ?? "글로벌 자산")}</span>
+                <div className="cl-ui">
+                  <div className="cl-ui-bar"><i /><i /><i /><span>GLI AI Search</span></div>
+                  <div className="cl-ui-body">
+                    <div className="cl-query">프놈펜에 5,000만원 정도로 월세가 잘 나오는 투자를 할 수 있을까?</div>
+                    <div className="cl-ai-tags"><span>캄보디아</span><span>매매</span><span>예산 5,000만원</span><span>임대수익</span></div>
+                    <p className="cl-ai-result"><Sparkles size={16} /> 후보 8건을 근거 기준으로 정렬했습니다</p>
                   </div>
-                  <div>
-                    <p><MapPin size={14} /> {asset.city}, {asset.country}</p>
+                </div>
+              </article>
+
+              <article className="cl-show">
+                <div>
+                  <span className="cl-show-number">2</span>
+                  <h3>등급마다 어디까지 확인됐는지 알 수 있습니다</h3>
+                  <p>공개 자료부터 현지 실사 결과까지 5단계로 나눠 공개합니다. 잠긴 항목도 무엇인지는 먼저 보여드립니다.</p>
+                </div>
+                <div className="cl-ui">
+                  <div className="cl-ui-bar"><i /><i /><i /><span>Trust Report</span></div>
+                  <div className="cl-ui-body">
+                    <div className="cl-demo-score"><strong>87</strong><span>/ 100 · A등급</span><b>열람 가능</b></div>
+                    <div className="cl-bars">
+                      <div><span>권리 자료</span><i><b style={{ width: "92%" }} /></i><strong>92%</strong></div>
+                      <div><span>시세 근거</span><i><b style={{ width: "78%" }} /></i><strong>78%</strong></div>
+                      <div><span>현지 실사</span><i><b style={{ width: "64%" }} /></i><strong>64%</strong></div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article className="cl-show">
+                <div>
+                  <span className="cl-show-number">3</span>
+                  <h3>관심 자산을 나란히 두고 비교합니다</h3>
+                  <p>가격과 Trust Score, 확인된 항목을 한 화면에서 비교하고 변동 사항을 받아볼 수 있습니다.</p>
+                </div>
+                <div className="cl-ui">
+                  <div className="cl-ui-bar"><i /><i /><i /><span>Watchlist</span></div>
+                  <div className="cl-ui-body cl-watchlist">
+                    {featured.map((asset) => (
+                      <div key={asset.id}>
+                        <i style={{ backgroundImage: `url("${asset.image}")` }} />
+                        <span><strong>{asset.title}</strong><small>{formatAssetPrice(asset)}</small></span>
+                        <b>{asset.trustScore}</b>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="cl-section">
+          <div className="cl-wrap">
+            <p className="cl-kicker cl-kicker-green">WHY GLI</p>
+            <h2>해외 자산은 정보가 아니라 확인이 문제입니다</h2>
+            <div className="cl-why">
+              <article><MapPin size={26} /><h3>현지 실사</h3><p>베트남 법인과 현지 인력이 현장과 서류 원본을 직접 확인합니다.</p></article>
+              <article><Search size={26} /><h3>AI 전수 수집</h3><p>공개 매물과 파트너 자료를 모아 기준을 맞추고 불일치를 찾아냅니다.</p></article>
+              <article><ShieldCheck size={26} /><h3>등급별 열람</h3><p>공개 정보부터 현지 실사 자료까지 5단계로 나눠 제공합니다.</p></article>
+              <article><BadgeCheck size={26} /><h3>특허 검증 기술</h3><p>플랫폼과 검증 기술은 ㈜솔리드넥스가 개발하고 관련 특허를 보유합니다.</p></article>
+            </div>
+          </div>
+        </section>
+
+        <section className="cl-section">
+          <div className="cl-wrap">
+            <header className="cl-section-heading">
+              <div><p className="cl-kicker cl-kicker-green">FEATURED</p><h2>Trust Score 상위 자산</h2></div>
+              <Link className="cl-btn cl-btn-outline" href="/explore">전체 자산 보기 <ArrowRight size={17} /></Link>
+            </header>
+            <div className="cl-asset-grid">
+              {featured.map((asset) => (
+                <Link className="cl-asset-card" href={`/assets/${asset.id}`} key={asset.id}>
+                  <div className="cl-asset-photo">
+                    <div className="cl-tag-stack">
+                      {asset.originLabel || asset.isGliDirect ? <span className="cl-tag-verified">{asset.originLabel || "GLI 검증"}</span> : null}
+                      <span>{asset.transaction === "rent" ? "임대" : "매매"}</span>
+                    </div>
+                    <div style={{ backgroundImage: `url("${asset.image}")` }} />
+                  </div>
+                  <div className="cl-asset-body">
+                    <p className="cl-location"><MapPin size={15} /> {asset.city}, {asset.country}</p>
                     <h3>{asset.title}</h3>
-                    <footer>
-                      <strong>{formatAssetPrice(asset)}</strong>
-                      <span>Trust {asset.trustScore}</span>
-                    </footer>
+                    <div className="cl-asset-numbers">
+                      <div><small>{asset.offerLabel || "표시 가격"}</small><strong>{formatAssetPrice(asset)}</strong></div>
+                      <span>Trust <b>{asset.trustScore}</b><i>{trustGrade(asset.trustScore)}</i></span>
+                    </div>
+                    <p className="cl-asset-spec">{assetSpec(asset)}</p>
                   </div>
                 </Link>
               ))}
@@ -280,67 +357,66 @@ export function LandingPage({ assets }: { assets: Asset[] }) {
           </div>
         </section>
 
-        <section className="founder-quote">
-          <div className="landing-shell">
-            <ShieldCheck size={34} />
-            <blockquote>
-              “좋은 투자 기회는 더 많은 정보를 보여주는 데서 끝나지 않습니다.
-              AI가 찾아낸 가능성을 사람이 검증하고, 실제 행동으로 이어지게 해야 합니다.”
-            </blockquote>
-            <p>김세호 · GLI 대표</p>
+        <section className="cl-quote-band">
+          <div className="cl-wrap cl-quote-inner">
+            <span className="cl-quote-avatar">김</span>
+            <div>
+              <blockquote>“해외 투자에서 어려운 건 좋은 자산을 찾는 일이 아니라, 무엇을 믿을 수 있는지 판단하는 일입니다. GLI는 그 판단의 근거를 만듭니다.”</blockquote>
+              <p><strong>김세호</strong> · GLI 대표이사 · 글로벌 사업총괄</p>
+            </div>
           </div>
         </section>
 
-        <section className="landing-section voice-section">
-          <div className="landing-shell">
-            <header className="landing-section-head">
-              <p className="landing-kicker">MEMBER VOICES</p>
-              <h2>투자 판단이 더 선명해지는 경험</h2>
+        <section className="cl-section">
+          <div className="cl-wrap">
+            <p className="cl-kicker cl-kicker-green">MEMBER VOICES</p>
+            <h2>회원들의 이용 후기</h2>
+            <div className="cl-voice-marquee">
+              <div className="cl-voice-track">
+                {[...voices, ...voices].map((voice, index) => (
+                  <figure key={`${voice.name}-${index}`}>
+                    <blockquote>{voice.quote}</blockquote>
+                    <figcaption><span>{voice.initial}</span><p><strong>{voice.name}</strong><small>{voice.meta}</small></p></figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="cl-section">
+          <div className="cl-wrap">
+            <header className="cl-section-heading">
+              <div><p className="cl-kicker cl-kicker-green">NEWSROOM</p><h2>GLI 소식</h2></div>
+              <Link className="cl-btn cl-btn-outline" href="/news">전체 보기</Link>
             </header>
-            <div className="voice-grid">
-              {voices.map((voice) => (
-                <article key={voice.name}>
-                  <span>“</span>
-                  <p>{voice.quote}</p>
-                  <footer><strong>{voice.name}</strong><small>{voice.role}</small></footer>
-                </article>
+            <div className="cl-news-grid">
+              {newsItems.slice(0, 3).map((item) => (
+                <Link href={`/news/${item.id}`} key={item.id}>
+                  <span className="cl-news-image" style={{ backgroundImage: `url("${item.image}")` }}><b>{item.category}</b></span>
+                  <span><strong>{item.title}</strong><small>{item.date}</small></span>
+                </Link>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="landing-section newsroom-section">
-          <div className="landing-shell">
-            <header className="landing-section-head align-left with-action">
-              <div><p className="landing-kicker">NEWSROOM</p><h2>GLI의 최신 소식과 인사이트</h2></div>
-              <Link className="text-action" href="/news">뉴스 전체보기 <ArrowRight size={17} /></Link>
-            </header>
-            <div className="landing-news-grid">
-              <Link href="/news"><span>INSIGHT</span><h3>AI와 전문가 검토가 결합된 글로벌 자산 탐색의 새로운 기준</h3><p>2026. 8. 9.</p></Link>
-              <Link href="/news"><span>PRESS</span><h3>GLI, 아시아 파트너 네트워크 기반 검증 자산 확대</h3><p>2026. 8. 2.</p></Link>
-              <Link href="/news"><span>UPDATE</span><h3>GLI Cash와 단계별 자산 정보 이용 구조 공개</h3><p>2026. 7. 28.</p></Link>
+        <section className="cl-section">
+          <div className="cl-wrap">
+            <p className="cl-kicker cl-kicker-green">FAQ</p>
+            <h2>자주 묻는 질문</h2>
+            <div className="cl-faq">
+              {faqs.map((faq) => <details key={faq.question}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}
             </div>
           </div>
         </section>
 
-        <section className="landing-section faq-section">
-          <div className="landing-shell faq-grid">
-            <div><p className="landing-kicker">FAQ</p><h2>자주 묻는 질문</h2><p>GLI의 탐색과 검증 방식에 대해 확인하세요.</p></div>
-            <div>
-              <details><summary>GLI Trust Score는 수익률을 의미하나요?</summary><p>아닙니다. 자료의 완전성, 최신성, 일관성과 검토 진행 상태를 보여주는 지표입니다.</p></details>
-              <details><summary>외부 포털 매물과 GLI 추천 자산은 어떻게 다른가요?</summary><p>외부 매물은 원문 출처를 표시하며, GLI 추천 자산은 파트너 또는 현지 네트워크를 통해 직접 확보한 기회입니다.</p></details>
-              <details><summary>관심자산을 등록하면 무엇이 달라지나요?</summary><p>전문가 상담을 신청하고, 부족한 정보와 현지 확인 항목을 GLI 검토 흐름으로 연결할 수 있습니다.</p></details>
+        <section className="cl-cta-section">
+          <div className="cl-wrap">
+            <div className="cl-cta">
+              <div><h2>어떤 자산을 찾고 계신가요?</h2><p>조건을 문장으로 적으면 검토할 후보와 확인해야 할 위험을 함께 정리해 드립니다.</p></div>
+              <Link className="cl-btn cl-btn-primary" href="/explore#advisor">자산 탐색 시작 <ArrowRight size={17} /></Link>
             </div>
-          </div>
-        </section>
-
-        <section className="landing-final-cta">
-          <div className="landing-shell">
-            <p className="landing-kicker">START YOUR DISCOVERY</p>
-            <h2>당신의 다음 투자 기회를 GLI AI와 찾아보세요</h2>
-            <Link className="lime-action" href="/explore#advisor">
-              자산 탐색 시작 <ArrowRight size={18} />
-            </Link>
           </div>
         </section>
       </main>

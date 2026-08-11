@@ -29,11 +29,11 @@ test("server-renders the GLI application shell", async () => {
 
   const html = await response.text();
   assert.match(html, /<title>GLI \| AI Verified Assets<\/title>/i);
-  assert.match(html, /더 넓게 발견하고,/);
-  assert.match(html, /더 깊게 검증하는 투자/);
-  assert.match(html, /GLI AI가 투자 후보를 탐색하고/);
-  assert.match(html, /AI가 넓게 찾고, 전문가가 깊게 확인합니다/);
-  assert.match(html, /GLI TRUST STANDARD/);
+  assert.match(html, /국가와 자산의 경계를 넘어,/);
+  assert.match(html, /검증된 투자 기회를 탐색하세요/);
+  assert.match(html, /조건을 말하면 근거까지 확인합니다/);
+  assert.match(html, /화면으로 보는 GLI/);
+  assert.match(html, /GLI TRUST SCORE/);
   assert.match(html, /자산 탐색 시작/);
   assert.doesNotMatch(html, /점수보다 근거를 먼저 봅니다/);
   assert.match(html, /\/brand\/gli-logo\.png/);
