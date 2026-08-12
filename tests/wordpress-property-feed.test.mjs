@@ -93,6 +93,70 @@ test("rejects ambiguous values, unsupported records, and non-English links", () 
   );
 });
 
+test("normalizes Sihanoukville projects that use lot size and taxonomy classes", () => {
+  const value = toWordPressNormalizationInput(
+    property({
+      link: "https://property.example/en/property/time-square-10-sihanoukville/",
+      title: { rendered: "Time Square 10 - Otres Beach" },
+      class_list: [
+        "property-type-project-condominium",
+        "property-city-sihanoukville",
+        "property-status-for-sale",
+      ],
+      property_meta: {
+        REAL_HOMES_property_price: "37000",
+        REAL_HOMES_property_lot_size: "36",
+        REAL_HOMES_property_bedrooms: "1",
+        REAL_HOMES_property_bathrooms: "1",
+        REAL_HOMES_property_address:
+          "Sangkat Bei, Krong Preah Sihanouk, Phnom Penh, Cambodia",
+        REAL_HOMES_property_price_postfix: "up per Unit",
+      },
+    }),
+    ["property.example"],
+    NOW,
+    "/en/",
+  );
+
+  assert.equal(value?.city, "Sihanoukville");
+  assert.equal(value?.district, "Bei");
+  assert.equal(value?.transaction, "sale");
+  assert.equal(value?.propertyType, "condo");
+  assert.equal(value?.areaSqm, 36);
+});
+
+test("accepts a canonical www source link from an approved bare host", () => {
+  const value = toWordPressNormalizationInput(
+    property({
+      link: "https://www.property.example/property/phnom-penh-condo-for-rent/",
+    }),
+    ["property.example"],
+    NOW,
+  );
+
+  assert.equal(
+    value?.sourceUrl,
+    "https://www.property.example/property/phnom-penh-condo-for-rent/",
+  );
+});
+
+test("converts a per-square-meter asking price to the listing total", () => {
+  const value = toWordPressNormalizationInput(
+    property({
+      property_meta: {
+        ...property().property_meta,
+        REAL_HOMES_property_price: "2400",
+        REAL_HOMES_property_price_postfix: "/m²",
+        REAL_HOMES_property_size: "47.07",
+      },
+    }),
+    ["property.example"],
+    NOW,
+  );
+
+  assert.equal(value?.price, 112_968);
+});
+
 test("honors robots policy for the configured WordPress API path", () => {
   assert.doesNotThrow(() =>
     assertRobotsPathAllowed(ROBOTS, "/wp-json/wp/v2/property"),

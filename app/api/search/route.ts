@@ -10,12 +10,16 @@ import {
   createSafetyIdentifier,
   runAdvisorSearch,
 } from "../../../lib/ai-search";
-import { extractCriteria, parseSearchContext } from "../../../lib/search";
+import {
+  extractCriteria,
+  parseSearchContext,
+} from "../../../lib/search";
 import { getCurrentUser } from "../../auth";
 import { ensureMemberContext } from "../../../lib/member-data";
 import { listCuratedOpportunities } from "../../../lib/curated-opportunities";
 import { discoverCambodiaAssets } from "../../../lib/cambodia-live-discovery";
 import { planGliAiRequest } from "../../../lib/gli-ai-orchestration";
+import { discoverWithGemini } from "../../../lib/gemini-discovery";
 
 export async function POST(request: Request) {
   let body: unknown;
@@ -67,17 +71,39 @@ export async function POST(request: Request) {
     process.env.LIVE_CAMBODIA_DISCOVERY === "enabled" ||
     (process.env.LIVE_CAMBODIA_DISCOVERY !== "disabled" &&
       process.env.NODE_ENV !== "production");
+  const geminiDiscoveryEnabled =
+    Boolean(process.env.GEMINI_API_KEY) &&
+    process.env.GEMINI_DISCOVERY !== "disabled";
   const liveDiscovery =
-    requestedCriteria.country === "Cambodia" &&
-    liveDiscoveryEnabled
+    requestedCriteria.country === "Cambodia" && liveDiscoveryEnabled
       ? await discoverCambodiaAssets({ city: requestedCriteria.city })
       : null;
-  const advisorAssets = [
+  const curatedAssets = listCuratedOpportunities().filter(
+    (asset) => !source.assets.some((candidate) => candidate.id === asset.id),
+  );
+  const sourceBackedAssets = [
     ...(liveDiscovery?.assets ?? []),
     ...source.assets,
-    ...listCuratedOpportunities().filter(
-      (asset) => !source.assets.some((candidate) => candidate.id === asset.id),
-    ),
+    ...curatedAssets,
+  ];
+  const sourceBackedMatchCount = countStrictMatches(
+    sourceBackedAssets,
+    requestedCriteria,
+  );
+  const webDiscovery =
+    requestedCriteria.country === "Cambodia" &&
+    geminiDiscoveryEnabled &&
+    sourceBackedMatchCount < 6
+      ? await discoverWithGemini(query, requestedCriteria)
+      : null;
+  const discoveredAssets = mergeExternalAssets(
+    webDiscovery?.assets ?? [],
+    liveDiscovery?.assets ?? [],
+  );
+  const advisorAssets = [
+    ...discoveredAssets,
+    ...source.assets,
+    ...curatedAssets,
   ];
   const currentUser = await getCurrentUser();
   const memberContext = currentUser
@@ -121,7 +147,7 @@ export async function POST(request: Request) {
   const orchestration = planGliAiRequest(query, {
     hasConversationContext: context !== null,
   });
-  const liveAssetIds = new Set(liveDiscovery?.assets.map((asset) => asset.id) ?? []);
+  const liveAssetIds = new Set(discoveredAssets.map((asset) => asset.id));
   const displayedExternalCount = result.matches.filter((asset) =>
     liveAssetIds.has(asset.id),
   ).length;
@@ -165,14 +191,62 @@ export async function POST(request: Request) {
       remaining: access ? access.aiRemaining : 0,
       deliveredMode: result.advisor.mode,
     },
-    discovery: liveDiscovery
+    discovery: liveDiscovery || webDiscovery
       ? {
-          checkedAt: liveDiscovery.checkedAt,
-          cached: liveDiscovery.cached,
-          collectedCount: liveDiscovery.assets.length,
+          checkedAt:
+            webDiscovery?.checkedAt ?? liveDiscovery?.checkedAt ?? new Date().toISOString(),
+          cached: Boolean(liveDiscovery?.cached && webDiscovery?.cached),
+          collectedCount: discoveredAssets.length,
           displayedCount: displayedExternalCount,
-          sources: liveDiscovery.sources,
+          sources: liveDiscovery?.sources ?? [],
+          webSearchCount: webDiscovery?.groundedQueryCount ?? 0,
         }
       : null,
   });
+}
+
+function mergeExternalAssets<T extends { sourceUrl?: string; id: string }>(
+  preferred: T[],
+  fallback: T[],
+): T[] {
+  const seen = new Set<string>();
+  return [...preferred, ...fallback].filter((asset) => {
+    const key = asset.sourceUrl?.trim().toLocaleLowerCase("en-US") || asset.id;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function countStrictMatches<
+  T extends {
+    country: string;
+    city: string;
+    district: string;
+    transaction: string;
+    propertyType: string;
+    bedrooms: number;
+    price: number;
+    title: string;
+    summary: string;
+  },
+>(assets: T[], criteria: ReturnType<typeof extractCriteria>): number {
+  const location = (value: string) =>
+    value.trim().toLocaleLowerCase("en-US");
+  return assets.filter((asset) => {
+    if (asset.country !== criteria.country) return false;
+    if (criteria.city && location(asset.city) !== location(criteria.city)) return false;
+    if (criteria.district && asset.district !== criteria.district) return false;
+    if (criteria.transaction && asset.transaction !== criteria.transaction) return false;
+    if (criteria.propertyType && asset.propertyType !== criteria.propertyType) return false;
+    if (criteria.bedrooms !== null && asset.bedrooms !== criteria.bedrooms) return false;
+    if (criteria.maxPriceUsd !== null && asset.price > criteria.maxPriceUsd) return false;
+    if (
+      criteria.wantsRiver &&
+      !/river|mekong|riverside|강|메콩/i.test(`${asset.title} ${asset.summary}`)
+    ) {
+      return false;
+    }
+    return true;
+  }).length;
 }

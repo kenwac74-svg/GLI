@@ -3,6 +3,7 @@ import { assets, type Asset } from "./assets.ts";
 import { findCuratedOpportunity } from "./curated-opportunities.ts";
 import type { PublicAssetsFilters } from "../db/assets-repository.ts";
 import { findLiveCambodiaAsset } from "./cambodia-live-discovery.ts";
+import { findGeminiDiscoveredAsset } from "./gemini-discovery.ts";
 
 export type AssetDataMode = "approved-fixture" | "d1";
 
@@ -48,7 +49,8 @@ export async function getAsset(publicId: string): Promise<{
   asset: Asset | null;
   mode: AssetDataMode;
 }> {
-  const liveAsset = findLiveCambodiaAsset(publicId);
+  const liveAsset =
+    findLiveCambodiaAsset(publicId) ?? findGeminiDiscoveredAsset(publicId);
   if (liveAsset) {
     return { asset: liveAsset, mode: getAssetDataMode() };
   }

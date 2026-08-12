@@ -64,7 +64,9 @@ export async function discoverCambodiaAssets(
   }
 
   const fetchImpl = options.fetchImpl ?? fetch;
-  const timeoutMs = options.timeoutMs ?? 3_500;
+  // The two public WordPress responses can each exceed 2 MB. A 3.5 second
+  // timeout caused valid responses to be discarded before parsing completed.
+  const timeoutMs = options.timeoutMs ?? 12_000;
   const maxRecords = options.maxRecordsPerSource ?? 20;
   const professional = await Promise.all(
     PROFESSIONAL_SOURCES.map(async (source) => {
@@ -160,7 +162,12 @@ async function collectSource(
     if (batch.candidates.length > 0) {
       return { slug, name, status: "collected", candidates: batch.candidates };
     }
-  } catch {
+  } catch (error) {
+    console.warn(
+      `[cambodia-discovery] ${slug} live collection failed: ${
+        error instanceof Error ? error.message : "unknown error"
+      }`,
+    );
     // Fall through to the last successful snapshot. This keeps source-backed
     // results available during a temporary upstream outage.
   }

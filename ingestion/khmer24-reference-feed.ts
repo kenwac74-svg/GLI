@@ -77,7 +77,7 @@ export function createKhmer24ReferenceConnector(
       const robotsUrl = new URL("/robots.txt", endpoint);
       const robotsResponse = await fetchImpl(robotsUrl, {
         headers: { accept: "text/plain", "user-agent": USER_AGENT },
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (!robotsResponse.ok) {
@@ -88,7 +88,7 @@ export function createKhmer24ReferenceConnector(
 
       const response = await fetchImpl(endpoint, {
         headers: { accept: "text/html", "user-agent": USER_AGENT },
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (response.status === 403 || response.status === 429) {

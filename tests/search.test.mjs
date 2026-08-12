@@ -122,11 +122,41 @@ test("recognizes Cambodia cities and never substitutes Phnom Penh", () => {
   assert.ok(result.matches.every((asset) => asset.city === "Sihanoukville"));
 });
 
+test("understands a conversational Korean budget without the word won", () => {
+  const criteria = extractCriteria(
+    "시하누크빌에 1억 정도 투자해서 월세 잘 받을만한 물건이 있어?",
+  );
+
+  assert.equal(criteria.city, "Sihanoukville");
+  assert.equal(criteria.transaction, "sale");
+  assert.equal(criteria.purpose, "income");
+  assert.equal(criteria.budgetKrw, 100_000_000);
+  assert.equal(criteria.maxPriceUsd, Math.round(100_000_000 / 1380));
+});
+
+test("treats rent-income investment language as a purchase search", () => {
+  const criteria = extractCriteria(
+    "캄보디아 시하누크빌에서 1억원 정도로 월세가 잘 나올 만한 콘도 매매를 찾아줘",
+  );
+
+  assert.equal(criteria.country, "Cambodia");
+  assert.equal(criteria.city, "Sihanoukville");
+  assert.equal(criteria.transaction, "sale");
+  assert.equal(criteria.propertyType, "condo");
+  assert.equal(criteria.purpose, "income");
+  assert.equal(criteria.budgetKrw, 100_000_000);
+});
+
 test("infers a country from an explicitly named city", () => {
   assert.deepEqual(
     [extractCriteria("다낭에서 콘도를 찾아줘").country, extractCriteria("세부에서 콘도를 찾아줘").country],
     ["Vietnam", "Philippines"],
   );
+});
+
+test("recognizes common Korean spellings for Kampot", () => {
+  assert.equal(extractCriteria("캄폿에서 콘도를 찾아줘").city, "Kampot");
+  assert.equal(extractCriteria("캠폿에서 콘도를 찾아줘").city, "Kampot");
 });
 
 test("does not broaden a city-specific search when that city has no result", () => {

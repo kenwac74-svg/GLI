@@ -14,6 +14,11 @@ interface Env {
   LLM_PROVIDER?: "openai" | "disabled";
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
+  GEMINI_API_KEY?: string;
+  GEMINI_MODEL?: string;
+  GEMINI_THINKING_LEVEL?: "minimal" | "low" | "medium" | "high";
+  GEMINI_DISCOVERY?: "enabled" | "disabled";
+  LIVE_CAMBODIA_DISCOVERY?: "enabled" | "disabled";
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {

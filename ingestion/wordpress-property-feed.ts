@@ -28,6 +28,7 @@ type WordPressProperty = {
   modified_gmt?: unknown;
   link?: unknown;
   title?: { rendered?: unknown };
+  class_list?: unknown;
   property_meta?: Record<string, unknown>;
   _embedded?: Record<string, Array<Record<string, unknown>>>;
 };
@@ -86,7 +87,7 @@ export function createWordPressPropertyConnector(
       const robotsUrl = new URL("/robots.txt", endpoint);
       const robotsResponse = await fetchImpl(robotsUrl, {
         headers: { accept: "text/plain", "user-agent": USER_AGENT },
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (!robotsResponse.ok) {
@@ -96,7 +97,7 @@ export function createWordPressPropertyConnector(
 
       const response = await fetchImpl(endpoint, {
         headers: { accept: "application/json", "user-agent": USER_AGENT },
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(timeoutMs),
       });
       if (response.status === 403 || response.status === 429) {
@@ -199,16 +200,23 @@ export function toWordPressNormalizationInput(
   if (!meta || typeof meta !== "object" || Array.isArray(meta)) return null;
 
   const title = htmlText(record.title?.rendered);
-  const price = exactPositiveDecimal(meta.REAL_HOMES_property_price);
-  const areaSqm = exactPositiveDecimal(meta.REAL_HOMES_property_size);
+  const areaSqm =
+    exactPositiveDecimal(meta.REAL_HOMES_property_size) ??
+    exactPositiveDecimal(meta.REAL_HOMES_property_lot_size);
+  const rawPrice = exactPositiveDecimal(meta.REAL_HOMES_property_price);
+  const pricePostfix = stringValue(meta.REAL_HOMES_property_price_postfix) ?? "";
+  const price =
+    rawPrice && areaSqm && /(?:\/\s*)?m(?:²|2)|per\s+sqm/i.test(pricePostfix)
+      ? Math.round(rawPrice * areaSqm * 100) / 100
+      : rawPrice;
   const bedrooms = exactNonNegativeInteger(meta.REAL_HOMES_property_bedrooms);
   const bathrooms = exactNonNegativeInteger(meta.REAL_HOMES_property_bathrooms);
   const address = stringValue(meta.REAL_HOMES_property_address);
   const propertyType = propertyTypeFrom(
-    `${stringValue(meta.REAL_HOMES_property_type) ?? ""} ${title}`,
+    `${stringValue(meta.REAL_HOMES_property_type) ?? ""} ${title} ${classListText(record.class_list)}`,
   );
   const transaction = transactionFrom(
-    `${sourceUrl.pathname} ${title} ${stringValue(meta.REAL_HOMES_property_price_postfix) ?? ""}`,
+    `${sourceUrl.pathname} ${title} ${pricePostfix} ${classListText(record.class_list)}`,
   );
   const place = address ? placeFrom(address) : null;
   const imageUrl = firstImageUrl(record, meta);
@@ -291,7 +299,12 @@ function safeSourceUrl(
 ): URL | null {
   if (typeof value !== "string") return null;
   try {
-    return validateApprovedPartnerUrl(value, allowedHosts, "sourceUrl");
+    const parsed = new URL(value);
+    const normalizedHosts = new Set(allowedHosts);
+    if (parsed.hostname === `www.${allowedHosts[0]}`) {
+      normalizedHosts.add(parsed.hostname);
+    }
+    return validateApprovedPartnerUrl(value, [...normalizedHosts], "sourceUrl");
   } catch {
     return null;
   }
@@ -314,11 +327,14 @@ function firstImageUrl(
 
 function placeFrom(address: string): { city: string; district: string } | null {
   const parts = address.split(",").map((part) => part.trim()).filter(Boolean);
-  const city = ["Phnom Penh", "Siem Reap", "Preah Sihanouk", "Kampot", "Kep", "Kandal"]
-    .find((candidate) => parts.some((part) => part.includes(candidate)));
+  const normalizedAddress = parts.join(", ");
+  const city = /Sihanoukville|Preah Sihanouk|Kampong Saom/i.test(normalizedAddress)
+    ? "Sihanoukville"
+    : ["Phnom Penh", "Siem Reap", "Kampot", "Kep", "Kandal"]
+      .find((candidate) => parts.some((part) => part.includes(candidate)));
   if (!city) return null;
-  const districtPart = parts.find((part) => /^(?:Khan|Sangkat)\s+/i.test(part));
-  const district = districtPart?.replace(/^(?:Khan|Sangkat)\s+/i, "") ?? parts[0];
+  const districtPart = parts.find((part) => /^(?:Khan|Sangkat|Quarter)\s+/i.test(part));
+  const district = districtPart?.replace(/^(?:Khan|Sangkat|Quarter)\s+/i, "") ?? parts[0];
   return district && district !== "Cambodia" ? { city, district } : null;
 }
 
@@ -329,10 +345,19 @@ function transactionFrom(value: string): "sale" | "rent" | null {
 }
 
 function propertyTypeFrom(value: string): "condo" | "house" | "villa" | null {
-  if (/condo|apartment|serviced/i.test(value)) return "condo";
+  if (/\bland\b|property-type-land/i.test(value)) return null;
   if (/villa/i.test(value)) return "villa";
   if (/house|townhouse|home|borey/i.test(value)) return "house";
+  if (/condo|condominium|apartment|serviced|residence|new-development/i.test(value)) {
+    return "condo";
+  }
   return null;
+}
+
+function classListText(value: unknown): string {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string").join(" ")
+    : "";
 }
 
 function htmlText(value: unknown): string {

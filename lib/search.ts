@@ -63,7 +63,7 @@ const CITY_PATTERNS: ReadonlyArray<{
   { country: "Cambodia", city: "Phnom Penh", pattern: /phnom penh|\uD504\uB188\uD39C/i },
   { country: "Cambodia", city: "Sihanoukville", pattern: /sihanoukville|preah sihanouk|\uC2DC\uD558\uB204\uD06C\uBE4C|\uC2DC\uC544\uB204\uD06C\uBE4C/i },
   { country: "Cambodia", city: "Siem Reap", pattern: /siem reap|\uC2DC\uC5E0\uB9BD|\uC528\uC5E0\uB9BD/i },
-  { country: "Cambodia", city: "Kampot", pattern: /\bkampot\b|\uCEA0\uD3FF/i },
+  { country: "Cambodia", city: "Kampot", pattern: /\bkampot\b|캠폿|캄폿/i },
   { country: "Cambodia", city: "Kep", pattern: /\bkep\b|\uCF00\uD504/i },
   { country: "Cambodia", city: "Battambang", pattern: /battambang|\uBC14\uD0D0\uBC29/i },
   { country: "Vietnam", city: "Ho Chi Minh City", pattern: /ho chi minh|hcmc|saigon|\uD638\uCE58\uBBFC|\uC0AC\uC774\uACF5/i },
@@ -187,7 +187,8 @@ export function extractCriteria(
     DISTRICT_ALIASES.find(({ patterns }) =>
       patterns.some((pattern) => text.includes(pattern)),
     )?.district ?? null;
-  const income = /투자|수익|월세 잘|임대수익|yield/.test(text);
+  const income =
+    /투자|수익|월세(?:가|를|로)?\s*(?:잘|수익)|임대\s*(?:수익|료)|yield|income/i.test(text);
   const seasonal =
     /별장|세컨드\s*하우스|겨울마다|개월.*(?:쉬|놀|체류)|내가 없을 때/.test(text);
   const explicitRent = /임대|월세|렌트|rent/.test(text);
@@ -201,7 +202,8 @@ export function extractCriteria(
         : null;
   const bedroomMatch = text.match(/(\d+)\s*(?:베드|침실|br)/);
   const usdMatch = text.match(/\$?\s*([\d,.]+)\s*(?:달러|불|usd|\$)/);
-  const krwMatch = text.match(/([\d,.]+)\s*(억|천만|만)\s*원/);
+  // Conversational budgets commonly omit "원" (for example, "1억 정도").
+  const krwMatch = text.match(/([\d,.]+)\s*(억|천만|만)(?:\s*원)?/);
   let budgetKrw: number | null = null;
   let maxPriceUsd: number | null = null;
 

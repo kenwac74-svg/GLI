@@ -21,8 +21,12 @@ const localBindingConfig = {
     DEMO_ADMIN_ENABLED: process.env.DEMO_ADMIN_ENABLED ?? "false",
     DEMO_AUTH_HOSTS: process.env.DEMO_AUTH_HOSTS ?? "",
     LLM_PROVIDER: process.env.LLM_PROVIDER ?? "disabled",
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
     OPENAI_MODEL: process.env.OPENAI_MODEL ?? "gpt-5.6-sol",
+    GEMINI_MODEL: process.env.GEMINI_MODEL ?? "gemini-3.6-flash",
+    GEMINI_THINKING_LEVEL: process.env.GEMINI_THINKING_LEVEL ?? "medium",
+    GEMINI_DISCOVERY: process.env.GEMINI_DISCOVERY ?? "enabled",
+    LIVE_CAMBODIA_DISCOVERY:
+      process.env.LIVE_CAMBODIA_DISCOVERY ?? "enabled",
   },
   d1_databases: d1
     ? [
