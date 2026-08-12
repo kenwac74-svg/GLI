@@ -18,6 +18,8 @@ import { getMembershipEntitlements } from "../../../lib/membership-plans.ts";
 import { AssetActions } from "./asset-actions";
 import { AssetAccessDemo } from "./asset-access-demo";
 import { BackToResultsButton } from "./back-to-results-button";
+import { ClaudeDesignShell } from "../../components/claude-design-shell";
+import { CLAUDE_ASSET_IDS } from "../../generated/claude-static";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +29,9 @@ export default async function AssetPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  if ((CLAUDE_ASSET_IDS as readonly string[]).includes(id)) {
+    return <ClaudeDesignShell view="detail" assetId={id} />;
+  }
   const { asset } = await getAsset(id);
   if (!asset) notFound();
   const currentUser = await getCurrentUser();

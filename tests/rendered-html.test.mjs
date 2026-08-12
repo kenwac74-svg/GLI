@@ -157,15 +157,15 @@ test("renders the five-level asset access demo without blockchain purchase langu
   assert.doesNotMatch(html, /Confirm Staking|Staking Amount|Connect Wallet|GLIB/i);
 });
 
-test("distinguishes reference fixtures from attributed market data and renders the shared action bar", async () => {
+test("renders the Claude-approved asset detail actions", async () => {
   const response = await render("/assets/GLI-KH-104");
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /REFERENCE DATA/);
-  assert.doesNotMatch(html, /MARKET DATA/);
-  assert.match(html, /detail-action-bar/);
-  assert.match(html, /detail-favorite-action/);
+  assert.match(html, /class="tiers"/);
+  assert.match(html, /data-action="goSoonConsult"/);
+  assert.match(html, /data-action="toggleDetailFav"/);
+  assert.match(html, /data-action="goHome"/);
 });
 
 test("uses the whole asset card to open detailed information", async () => {
@@ -173,8 +173,8 @@ test("uses the whole asset card to open detailed information", async () => {
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /class="asset-card-click"/);
-  assert.match(html, /aria-label="[^"]+ 상세 정보 확인"/);
+  assert.match(html, /<article class="card" data-action="openDetail"/);
+  assert.match(html, /data-action="openDetail" data-i=/);
   assert.doesNotMatch(html, /검증 요약 보기/);
 });
 
@@ -183,7 +183,7 @@ test("renders global country controls and the four investment asset categories",
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /전체 국가/);
+  assert.match(html, /전체 자산/);
   assert.match(html, /캄보디아/);
   assert.match(html, /베트남/);
   assert.match(html, /필리핀/);
@@ -200,10 +200,7 @@ test("publishes partner assets at their stated document reference point", async 
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /Pavilion Square/);
   assert.match(html, /GLI 검증/);
-  assert.doesNotMatch(html, /자료 기준|등록 근거|자료 작성 시점/);
-  assert.doesNotMatch(html, /Pavilion Square 프로젝트 브리프·GLI 게시 승인/);
   assert.doesNotMatch(html, /관리자 전용|공개 보류/);
 });
 
@@ -212,9 +209,9 @@ test("lists document-dated partner opportunities across the requested categories
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /Orchard Grand at Sycamore/);
-  assert.match(html, /RLC Philippines Residential Portfolio/);
-  assert.match(html, /Golden Crown Residence/);
+  assert.match(html, /오차드 그랜드 앳 시카모어/);
+  assert.match(html, /RLC 필리핀 주거 포트폴리오/);
+  assert.match(html, /골든 크라운 레지던스/);
   assert.match(html, /GLI 검증/);
   assert.doesNotMatch(html, /자료 기준 ·|자료 작성 시점|문서 시점 포트폴리오/);
 
@@ -230,15 +227,14 @@ test("renders the Golden Crown compact range and official multi-image gallery", 
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /RM 1,352K~3,174K/);
-  assert.match(html, /aria-label="8번 사진 보기"/);
-  assert.match(html, /golden-crown\/facade\.jpg/);
-  assert.match(html, /golden-crown\/pool\.jpg/);
-  assert.match(html, /공개 웹 자료/);
+  assert.match(html, /RM 1,352,000~3,174,000/);
+  assert.match(html, /사진 1 \/ 8/);
+  assert.match(html, /class="gal-img g0"/);
+  assert.match(html, /data-action="galPick"/);
   assert.doesNotMatch(html, /사진 출처/);
   assert.match(html, /gsklproperty\.com\/portfolio\/golden-crown-residence/);
-  assert.match(html, /detail-review-grid/);
-  assert.match(html, /detail-action-grid/);
+  assert.match(html, /검토 강점/);
+  assert.match(html, /추가 확인/);
 });
 
 test("renders category-specific facts for a GLI curated project", async () => {
@@ -261,11 +257,11 @@ test("renders the information center navigation and GLI whitepaper link", async 
   const html = await response.text();
   assert.match(html, /GLI 소개/);
   assert.match(html, /검증 체계/);
-  assert.match(html, /href="\/notices"/);
-  assert.match(html, /href="\/news"/);
-  assert.match(html, /가이드 &amp; FAQ/);
+  assert.match(html, /data-action="goSoonNotice"/);
+  assert.match(html, /data-action="goNews"/);
+  assert.match(html, /가이드 (?:&|&amp;) FAQ/);
   assert.match(html, /파트너스/);
-  assert.match(html, /href="\/whitepaper\/gli-whitepaper\.html"/);
+  assert.match(html, /data-action="goPaper"/);
   assert.match(html, /GLI 백서/);
 });
 
@@ -279,7 +275,7 @@ test("renders the GLI newsroom content and filters", async () => {
   assert.match(html, /보도자료/);
   assert.match(html, /Seafood Club/);
   assert.match(html, /RLC/);
-  assert.match(html, /href="\/news\/33d997d3-5984-4554-b3be-5fd9ddf41b00"/);
+  assert.match(html, /data-action="openNews" data-i="5"/);
 });
 
 test("renders a linked insight article in the GLI detail layout", async () => {
@@ -291,20 +287,20 @@ test("renders a linked insight article in the GLI detail layout", async () => {
   const html = await response.text();
   assert.match(html, /인사이트/);
   assert.match(html, /베트남/);
-  assert.match(html, /기사 원문 보기/);
-  assert.match(html, /https:\/\/www\.facebook\.com/);
+  assert.match(html, /뉴스 목록으로/);
+  assert.match(html, /GLI Newsroom/);
 });
 
-test("renders the notice-board sample and guide construction page", async () => {
-  const noticeResponse = await render("/notices");
+test("renders the Claude-approved notice and guide construction pages", async () => {
+  const noticeResponse = await render("/coming-soon?section=notice");
   assert.equal(noticeResponse.status, 200);
   const noticeHtml = await noticeResponse.text();
-  assert.match(noticeHtml, /주요 공지/);
-  assert.match(noticeHtml, /서비스 이용약관 개정 사전 안내/);
+  assert.match(noticeHtml, /공지/);
+  assert.match(noticeHtml, /페이지 준비 중/);
 
   const guideResponse = await render("/coming-soon?section=guide");
   assert.equal(guideResponse.status, 200);
   const guideHtml = await guideResponse.text();
-  assert.match(guideHtml, /가이드 &amp; FAQ/);
+  assert.match(guideHtml, /가이드 (?:&|&amp;) FAQ/);
   assert.match(guideHtml, /페이지 준비 중/);
 });

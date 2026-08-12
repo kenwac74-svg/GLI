@@ -1,20 +1,5 @@
-import { ExploreClient } from "../components/explore-client";
-import { SiteHeader } from "../components/site-header";
-import { listAssets } from "../../lib/assets-data";
-import { listCuratedOpportunities } from "../../lib/curated-opportunities";
+import { ClaudeDesignShell } from "../components/claude-design-shell";
 
-export const dynamic = "force-dynamic";
-
-export default async function ExplorePage() {
-  const result = await listAssets({ country: "Cambodia", city: "Phnom Penh", limit: 100 });
-
-  return (
-    <>
-      <SiteHeader />
-      <ExploreClient
-        initialAssets={result.assets}
-        curatedAssets={listCuratedOpportunities()}
-      />
-    </>
-  );
+export default function ExplorePage() {
+  return <ClaudeDesignShell view="home" />;
 }

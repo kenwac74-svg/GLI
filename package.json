@@ -6,12 +6,14 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "design:generate": "node scripts/render-claude-handoff.mjs",
+    "prebuild": "npm run design:generate",
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "vinext start",
     "test": "npm run build && node --import ./tests/support/register-cloudflare-loader.mjs --test tests/*.test.mjs",
     "check": "npm run lint && npm run db:validate && npm test",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern work",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern work --ignore-pattern design-handoff",
     "db:generate": "drizzle-kit generate",
     "db:validate": "node scripts/validate-migrations.mjs",
     "db:local": "wrangler d1 migrations apply site-creator-d1 --local --config wrangler.local.jsonc --persist-to .wrangler/state"
