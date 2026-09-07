@@ -113,6 +113,98 @@ test("grounds OpenAI advice in server-selected assets without changing Trust Sco
   assert.doesNotMatch(requestBody.input, /example\.test|sourceUrl|contact/i);
 });
 
+test("uses Gemini 3.7 Flash for grounded conversational advice", async () => {
+  let requestUrl;
+  let requestBody;
+  let requestHeaders;
+  const result = await runAdvisorSearch("월 500달러 이하 2베드 임대", assets, {
+    provider: "gemini",
+    apiKey: "gemini-test-key",
+    model: "models/gemini-3.7-flash",
+    conversation: [
+      { role: "user", text: "프놈펜 임대 매물을 찾고 있어." },
+      { role: "assistant", text: "예산을 알려주시겠어요?" },
+    ],
+    fetch: async (url, init) => {
+      requestUrl = String(url);
+      requestHeaders = init.headers;
+      requestBody = JSON.parse(String(init.body));
+      return Response.json({
+        status: "completed",
+        steps: [
+          {
+            type: "model_output",
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({
+                  answer: "두 후보 모두 월 예산 안에 있습니다. 강변 생활권을 우선하면 Tonle Bassac 후보부터 실제 관리비를 확인하는 편이 좋습니다.",
+                  clarification: "BKK1 중심 입지와 강변 생활권 중 어느 쪽을 더 선호하시나요?",
+                  selectedAssetIds: ["GLI-KH-B", "GLI-KH-A"],
+                  reasons: [
+                    { assetId: "GLI-KH-B", items: ["예산 범위", "강변 생활권"] },
+                    { assetId: "GLI-KH-A", items: ["예산 범위", "중심 입지"] },
+                  ],
+                }),
+              },
+            ],
+          },
+        ],
+      });
+    },
+  });
+
+  assert.equal(result.advisor.mode, "gemini");
+  assert.equal(result.advisor.model, "models/gemini-3.7-flash");
+  assert.deepEqual(result.matches.map((asset) => asset.id), ["GLI-KH-B", "GLI-KH-A"]);
+  assert.equal(requestUrl, "https://generativelanguage.googleapis.com/v1beta/interactions");
+  assert.equal(requestHeaders["x-goog-api-key"], "gemini-test-key");
+  assert.equal(requestBody.model, "models/gemini-3.7-flash");
+  assert.equal(requestBody.store, false);
+  assert.equal(requestBody.generation_config.thinking_level, "medium");
+  assert.equal(requestBody.generation_config.max_output_tokens, 1400);
+  assert.equal(requestBody.response_format.mime_type, "application/json");
+  assert.doesNotMatch(requestBody.input, /example\.test|sourceUrl|contact/i);
+  assert.equal(JSON.parse(requestBody.input).recentConversation.length, 2);
+});
+
+test("lets Gemini answer naturally when the current GLI data has no matches", async () => {
+  let called = false;
+  const result = await runAdvisorSearch("시아누크빌 2베드 매매", [], {
+    provider: "gemini",
+    apiKey: "gemini-test-key",
+    fetch: async (_url, init) => {
+      called = true;
+      const body = JSON.parse(String(init.body));
+      assert.deepEqual(JSON.parse(body.input).candidates, []);
+      assert.equal(body.response_format.schema.properties.selectedAssetIds.maxItems, 0);
+      return Response.json({
+        status: "completed",
+        steps: [
+          {
+            type: "model_output",
+            content: [
+              {
+                type: "text",
+                text: JSON.stringify({
+                  answer: "현재 GLI가 확인한 시아누크빌 후보 중에는 요청 조건에 맞는 매물이 없습니다. 국가와 도시는 그대로 유지했습니다.",
+                  clarification: "예산이나 침실 수 중 어느 조건을 먼저 조정해 볼까요?",
+                  selectedAssetIds: [],
+                  reasons: [],
+                }),
+              },
+            ],
+          },
+        ],
+      });
+    },
+  });
+
+  assert.equal(called, true);
+  assert.equal(result.advisor.mode, "gemini");
+  assert.deepEqual(result.matches, []);
+});
+
 test("rejects unknown asset IDs and falls back to grounded rules", async () => {
   const result = await runAdvisorSearch("월 500달러 이하 2베드 임대", assets, {
     provider: "openai",

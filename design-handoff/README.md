@@ -1,8 +1,27 @@
-# GLI 디자인 핸드오프 — 최종 (FINAL)
+# GLI 디자인 핸드오프
 
-`kenwac74-svg/GLI` · 작업 브랜치 `design/claude-ui-refresh` · **2026-08-11 최종본**
+> ## ⚠ 이 문서는 2026-08-12 시안 기준이다
+>
+> 이후 화면 구조가 크게 바뀌었다 — 상세 페이지가 5탭에서 접힌 줄 방식으로, 등급이 5단에서 8단으로, 최상단 메뉴가 4개로, 자산 유형이 4분류로 재편되었고 프로젝트 템플릿이 추가되었다.
+>
+> **기능 구현은 아래 문서를 먼저 읽을 것.**
+>
+> | 문서 | 내용 |
+> |---|---|
+> | `HANDOFF-2026-08-26.md` | **시작점.** 범위·역할·라우트 맵·금지 사항 |
+> | `DATA-MODEL.md` | 자산·지역·기록·프로젝트 스키마, 등급 산정 |
+> | `AI-SPEC.md` | AI 검색 계약, 프롬프트, 순위 산식, 파이프라인 |
+> | `CRAWLER-SPEC.md` | 수집 대상·주기·출처 기록·수집 금지 항목 |
+>
+> 이 문서와 `IMPLEMENTATION-NOTES.md` · `CHANGELOG-2026-08-12.md` · `DEMO-DATA.md`는 참고용으로 남긴다. rev.2의 이벤트·CSS 클래스 계약은 지금도 유효하다.
+
+---
+
+`kenwac74-svg/GLI` · 작업 브랜치 `design/claude-ui-refresh` · **2026-08-12 (rev.2)**
 
 > **이 버전이 구현 기준 최종본이다.** `source/gli-demo.dc.html`은 Claude Artifact로 퍼블리싱된 것과 동일한 파일이며, 이후 디자인 변경은 없다. 이전 시안(v1 딥그린 단일 팔레트 / 6px 라운드)은 폐기됐다. 구현은 이 폴더만 참조하면 된다.
+>
+> **rev.2 (2026-08-12)**: 지시서 `CLAUDE-UI-REVISION-BRIEF.md` 대상 수정 반영. 변경 내역은 `CHANGELOG-2026-08-12.md`, 이벤트·상태 계약과 지시서와 다른 부분은 `IMPLEMENTATION-NOTES.md`에 있다. **구현 착수 전에 이 두 문서를 먼저 읽을 것.**
 
 이 폴더는 **디자인 시안과 그 규칙**이다. 개발 코드는 포함하지 않는다. Next.js 구현 시 이 시안의 구조·토큰·카피를 옮기면 된다.
 
@@ -12,10 +31,11 @@
 
 | 파일 | 내용 |
 |---|---|
-| `source/gli-demo.dc.html` | **전체 시안 원본 (최종).** 11개 화면 · HTML·CSS·JS 전부가 이 한 파일에 있다 |
-| `source/public/` | 시안이 참조하는 이미지 20장 (자산 15 · 인물 5) + 로고 |
+| `source/gli-demo.dc.html` | **전체 시안 원본 (최종).** 11개 화면 · HTML·CSS·JS 전부가 이 한 파일에 있다 || `source/public/` | 시안이 참조하는 이미지 20장 (자산 15 · 인물 5) + 로고 |
 | `source/support.js` | 시안 실행 런타임. **구현에는 옮기지 않는다** |
 | `ASSETS.md` | **사용 자산 목록.** 이미지·폰트·아이콘 출처와 CSS 클래스 매핑 |
+| `CHANGELOG-2026-08-12.md` | **rev.2 변경 목록.** 구역별 변경 내역과 새 클래스·이벤트 |
+| `IMPLEMENTATION-NOTES.md` | **이벤트·상태 계약과 지시서와 달라진 부분.** 구현 착수 전 필독 |
 | `DEMO-DATA.md` | **가상 데이터 목록.** 실개발 전 반드시 확인 |
 | `DESIGN-RULES.md` | 타이포·색상·형태·레이아웃 규정 (v2) |
 | `index.html` | 핸드오프 개요 페이지 |
@@ -75,6 +95,8 @@
 ```
 design-handoff/
 ├── README.md              ← 이 문서
+├── CHANGELOG-2026-08-12.md  ← rev.2 변경 목록
+├── IMPLEMENTATION-NOTES.md  ← 이벤트·상태 계약 (필독)
 ├── ASSETS.md              ← 자산 목록
 ├── DEMO-DATA.md           ← 가상 데이터 목록
 ├── DESIGN-RULES.md        ← 디자인 규정 v2

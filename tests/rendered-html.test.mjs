@@ -33,7 +33,7 @@ test("server-renders the GLI application shell", async () => {
   assert.match(html, /검증된 투자 기회를 탐색하세요/);
   assert.match(html, /조건을 말하면 근거까지 확인합니다/);
   assert.match(html, /화면으로 보는 GLI/);
-  assert.match(html, /GLI TRUST SCORE/);
+  assert.match(html, /GLI TRUST GRADE/);
   assert.match(html, /자산 탐색 시작/);
   assert.doesNotMatch(html, /점수보다 근거를 먼저 봅니다/);
   assert.match(html, /\/brand\/gli-logo\.png/);
@@ -64,7 +64,7 @@ test("returns grounded Cambodia results from the search API", async () => {
   assert.equal(result.criteria.bedrooms, 2);
   assert.equal(result.dataMode, "approved-fixture");
   assert.equal(result.advisor.mode, "rules");
-  assert.equal(result.advisor.model, null);
+  assert.equal("model" in result.advisor, false);
   assert.ok(result.matches.length >= 1);
   assert.equal(result.matches[0].id, "GLI-KH-004");
   assert.deepEqual(
@@ -162,7 +162,7 @@ test("renders the Claude-approved asset detail actions", async () => {
   assert.equal(response.status, 200);
 
   const html = await response.text();
-  assert.match(html, /class="tiers"/);
+  assert.match(html, /거래 실행 단계/);
   assert.match(html, /data-action="goSoonConsult"/);
   assert.match(html, /data-action="toggleDetailFav"/);
   assert.match(html, /data-action="goHome"/);
@@ -192,7 +192,7 @@ test("renders global country controls and the four investment asset categories",
   assert.match(html, /상업용/);
   assert.match(html, /레저/);
   assert.match(html, /프로젝트/);
-  assert.match(html, /GLI 직접 발굴 사업 기회/);
+  assert.match(html, /GLI 직접 발굴 프로젝트/);
 });
 
 test("publishes partner assets at their stated document reference point", async () => {
@@ -233,8 +233,9 @@ test("renders the Golden Crown compact range and official multi-image gallery", 
   assert.match(html, /data-action="galPick"/);
   assert.doesNotMatch(html, /사진 출처/);
   assert.match(html, /gsklproperty\.com\/portfolio\/golden-crown-residence/);
-  assert.match(html, /검토 강점/);
-  assert.match(html, /추가 확인/);
+  assert.match(html, /먼저 확인할 것/);
+  assert.match(html, /감점 요소/);
+  assert.match(html, /가점 요소/);
 });
 
 test("renders category-specific facts for a GLI curated project", async () => {
@@ -273,9 +274,28 @@ test("renders the GLI newsroom content and filters", async () => {
   assert.match(html, /GLI NEWSROOM/);
   assert.match(html, /전체보기/);
   assert.match(html, /보도자료/);
+  assert.match(html, /IQI Vietnam/);
+  assert.match(html, /Deemples/);
+  assert.match(html, /글로벌 확장 추진/);
   assert.match(html, /Seafood Club/);
   assert.match(html, /RLC/);
-  assert.match(html, /data-action="openNews" data-i="5"/);
+  assert.match(html, /data-action="openNews" data-i="8"/);
+});
+
+test("renders every newly approved newsroom article route", async () => {
+  const articles = [
+    ["gli-news-iqi-vietnam-mou-2025-12-12", /IQI Vietnam/],
+    ["gli-news-deemples-mou-2025-12-03", /Deemples/],
+    ["gli-news-global-expansion-2025-10-15", /글로벌 확장 추진/],
+  ];
+
+  for (const [id, title] of articles) {
+    const response = await render(`/news/${id}`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, title);
+    assert.match(html, /뉴스 목록으로/);
+  }
 });
 
 test("renders a linked insight article in the GLI detail layout", async () => {

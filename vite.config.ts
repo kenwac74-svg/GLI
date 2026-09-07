@@ -25,6 +25,11 @@ const localBindingConfig = {
     GEMINI_MODEL: process.env.GEMINI_MODEL ?? "gemini-3.6-flash",
     GEMINI_THINKING_LEVEL: process.env.GEMINI_THINKING_LEVEL ?? "medium",
     GEMINI_DISCOVERY: process.env.GEMINI_DISCOVERY ?? "enabled",
+    GEMINI_ADVISOR: process.env.GEMINI_ADVISOR ?? "enabled",
+    GEMINI_ADVISOR_MODEL:
+      process.env.GEMINI_ADVISOR_MODEL ?? "models/gemini-3.7-flash",
+    GEMINI_ADVISOR_THINKING_LEVEL:
+      process.env.GEMINI_ADVISOR_THINKING_LEVEL ?? "medium",
     LIVE_CAMBODIA_DISCOVERY:
       process.env.LIVE_CAMBODIA_DISCOVERY ?? "enabled",
   },
@@ -58,9 +63,15 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
-    server: isCodexSeatbeltSandbox
-      ? { watch: { useFsEvents: false, usePolling: true } }
-      : undefined,
+    server: {
+      watch: isCodexSeatbeltSandbox
+        ? {
+            useFsEvents: false,
+            usePolling: true,
+            ignored: ["**/.runtime-*/**"],
+          }
+        : { ignored: ["**/.runtime-*/**"] },
+    },
     plugins: [
       vinext(),
       sites(),

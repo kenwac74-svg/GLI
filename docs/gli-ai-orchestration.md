@@ -11,9 +11,15 @@ provider names. The search API returns a public four-stage plan:
 4. Answer synthesis
 
 The current prototype uses deterministic planning, existing GLI search rules,
-Cambodia source discovery and the optional single OpenAI advisor already
-supported by the application. The progress UI must not be interpreted as proof
-that three external model APIs were called.
+Cambodia source discovery and a Gemini 3.7 Flash conversational synthesis step.
+The previous OpenAI advisor remains available only when explicitly selected by
+server configuration. The progress UI must not be interpreted as proof that
+three external model APIs were called.
+
+Gemini web discovery and Gemini conversational synthesis are separate calls.
+Discovery may use Google Search to find direct source pages. Synthesis receives
+only the resulting server-approved candidates and bounded conversation context;
+it has no search tool and cannot publish or verify an asset.
 
 ## Live implementation boundary
 

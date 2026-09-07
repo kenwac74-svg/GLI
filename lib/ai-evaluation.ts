@@ -1,5 +1,8 @@
 import type { Asset } from "./assets.ts";
-import { runAdvisorSearch } from "./ai-search.ts";
+import {
+  runAdvisorSearch,
+  type AdvisorSearchResult,
+} from "./ai-search.ts";
 import type { SearchCriteria } from "./search.ts";
 
 export const AI_EVALUATION_SUITE_VERSION = "gli.ai-search.eval.v1";
@@ -11,7 +14,7 @@ export type AiEvaluationCaseResult = {
   id: string;
   label: string;
   status: "PASS" | "FAIL";
-  advisorMode: AiEvaluationMode;
+  advisorMode: AdvisorSearchResult["advisor"]["mode"];
   matchCount: number;
   checks: Array<{
     id: "criteria" | "matches" | "grounding" | "trust" | "provider";

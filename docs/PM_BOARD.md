@@ -1,6 +1,6 @@
 # GLI Web2 MVP Delivery Board
 
-Updated: 2026-08-01
+Updated: 2026-09-02
 
 ## Delivery policy
 
@@ -76,6 +76,8 @@ Updated: 2026-08-01
 | GLI-045 | Codex | GLI Product Owner | COMPLETE | four-category Residential/Commercial/Leisure/Project navigation, representative UI inventory and category-aware detail forms |
 | GLI-046 | GLI Product Owner | Product/Operations review | BACKLOG | provide the existing administrator-tool sample and identify the required navigation, roles and highest-priority operating workflows |
 | GLI-047 | Codex | Product/Security/Operations review | BACKLOG | build a sample-aligned administrator console for source configuration, collection status, asset review/publish, favorite-triggered research, GLI-curated inventory, member/membership/GLI Cash, consultation, audit and operational monitoring |
+| GLI-048 | Claude Design/Codex | GLI Product Owner | COMPLETE | follow-up composer with preserved context, inline loading/error states and mobile behavior; changed-result notice uses the currently displayed server result count and an accessible `변경된 탐색 결과 보기` action, while QA state controls remain excluded from the public UI |
+| GLI-049 | Claude Design/Codex | GLI Product Owner | COMPLETE | add the three approved newsroom items and article routes for the demo; production news must be managed through an administrator CMS with create, edit, delete, schedule, publish and unpublish controls |
 
 ## Decisions
 
@@ -115,6 +117,8 @@ Updated: 2026-08-01
 | DEC-032 | Exclude social and community channels from automated discovery; GLI staff may research them manually | ACCEPTED |
 | DEC-033 | Organize the global platform into Residential, Commercial, Leisure and Project; treat country as a separate filter and curate Project inventory through GLI | ACCEPTED |
 | DEC-034 | Keep the administrator console visually separate from the end-user site but connect both to the same asset lifecycle, entitlement, consultation, audit and role-based service boundaries; finalize its information architecture from the GLI-provided sample before implementation | ACCEPTED |
+| DEC-035 | Keep newsroom records hard-coded only for the prototype; the live platform must read administrator-authored and administrator-published news from the shared backend rather than from the public client bundle | ACCEPTED |
+| DEC-036 | For follow-up searches, show a result-update notice only when candidate IDs or order actually change; call the returned card count `현재 확인 가능한 후보`, never present it as the source-wide inventory, and expose no QA state controls in the public UI | ACCEPTED |
 
 ## Human gates
 

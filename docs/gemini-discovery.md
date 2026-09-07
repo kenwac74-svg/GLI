@@ -13,6 +13,9 @@ GEMINI_API_KEY=<server-secret>
 GEMINI_MODEL=gemini-3.6-flash
 GEMINI_THINKING_LEVEL=medium
 GEMINI_DISCOVERY=enabled
+GEMINI_ADVISOR=enabled
+GEMINI_ADVISOR_MODEL=models/gemini-3.7-flash
+GEMINI_ADVISOR_THINKING_LEVEL=medium
 LIVE_CAMBODIA_DISCOVERY=enabled
 ```
 
@@ -42,6 +45,20 @@ Accepted web candidates are `PRELIMINARY` and retain the original source link.
 If Gemini times out, returns invalid JSON, or finds nothing, the existing source
 collectors and snapshots remain available.
 
+## Conversational advisor
+
+Gemini 3.7 Flash receives only the server-parsed criteria, the bounded recent
+conversation, the current exchange-rate record and the server-selected asset
+candidates. It returns a structured answer, one optional clarification, selected
+candidate IDs and grounded reasons. Candidate IDs, prices and Trust data remain
+server-owned and cannot be replaced by the model.
+
+The advisor uses the Interactions API with medium thinking, no external tools,
+no stored interaction and a 1,400-token output cap. The browser never receives
+the provider name, API key, system instruction or raw provider response. A
+timeout, invalid schema, unknown asset ID or unsupported assurance falls back to
+the deterministic GLI response.
+
 ## Cost and latency controls
 
 - Identical query and criteria combinations are cached for ten minutes.
@@ -54,6 +71,9 @@ collectors and snapshots remain available.
 - Search grounding uses Gemini 3.6 Flash with medium thinking by default.
 - Google Search grounding can issue multiple billable searches in one model
   request, so production should add per-member quotas and daily budget alerts.
+- Conversational synthesis uses Gemini 3.7 Flash only after server-side
+  filtering. Local development permits anonymous preview; production keeps the
+  existing membership entitlement and usage-claim checks.
 
 ## Live implementation note
 

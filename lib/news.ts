@@ -10,7 +10,7 @@ export type NewsItem = {
   summary: string;
   lead?: string;
   body: readonly string[];
-  sourceUrl: string;
+  sourceUrl?: string;
 };
 
 // DEMO CONTENT ONLY:
@@ -18,6 +18,22 @@ export type NewsItem = {
 // TODO(live/admin): replace this array with admin-managed news storage supporting
 // create, edit, delete, publish/unpublish, category assignment, scheduling, and updates.
 export const newsItems: readonly NewsItem[] = [
+  {
+    id: "gli-news-iqi-vietnam-mou-2025-12-12",
+    category: "보도자료",
+    date: "2025. 12. 12.",
+    dateTime: "2025-12-12",
+    image: "/partner-assets/golden-crown/facade.jpg",
+    title: "GLI Vietnam, 글로벌 프롭테크 'Juwai IQI' 산하 'IQI Vietnam'과 전략적 MOU 체결",
+    summary:
+      "이상호 공동대표 등이 '더 글로벌 시티' 현장을 실사하고 하이엔드 RWA 자산 파이프라인을 정밀 검증했습니다.",
+    body: [
+      "웹3 기반 실물자산 플랫폼 기업 GLI Vietnam이 아시아 최대 글로벌 부동산 기술 그룹 'Juwai IQI'의 베트남 법인 IQI Vietnam과 전략적 업무협약을 체결하고, 베트남 내 우량 부동산 자산 확보를 위한 협력에 나섰습니다.",
+      "IQI 베트남은 홍콩과 말레이시아에 본사를 둔 프롭테크 그룹 Juwai IQI의 베트남 거점입니다. 그룹은 20개국 이상에 진출해 5만 명 이상의 에이전트 네트워크를 보유하고 있으며, IQI 베트남은 현지 럭셔리 개발사 Masterise Homes의 상위 파트너입니다.",
+      "협약식 직후 GLI 서포트팀은 IQI 베트남 관계자와 함께 호치민의 '더 글로벌 시티'와 Masterise Homes 세일즈 갤러리를 방문해 입지적 가치와 시공 품질, 법적 안정성을 검토했습니다.",
+      "이상호 GLI 베트남 대표는 서류 검토를 넘어 현장 실사로 자산의 내재 가치를 검증하는 절차를 확립했다며, 이번 파트너십이 신뢰할 수 있는 생태계 확장의 이정표가 될 것이라고 밝혔습니다.",
+    ],
+  },
   {
     id: "47935be4-bc05-4fe0-9cdd-2f1d8b1cb19c",
     category: "보도자료",
@@ -54,6 +70,21 @@ export const newsItems: readonly NewsItem[] = [
       "양사는 태국의 경쟁력 있는 레저 콘텐츠를 GLI 플랫폼과 연결하고, 이용자가 현지 상품과 서비스를 발견하고 이용할 수 있는 협력 모델을 단계적으로 구체화할 예정입니다.",
     ],
     sourceUrl: "https://m.beyondpost.co.kr/view.php?ud=2025121116372338289aeda69934_30",
+  },
+  {
+    id: "gli-news-deemples-mou-2025-12-03",
+    category: "보도자료",
+    date: "2025. 12. 03.",
+    dateTime: "2025-12-03",
+    image: "/partner-assets/mantawi-residences.jpg",
+    title: "GLI, 말레이시아 골프 플랫폼 'Deemples'와 레저·멤버십 협력 MOU",
+    summary:
+      "쿠알라룸푸르 골프 앤 컨트리 클럽에서 체결해, GLI 회원이 동남아 주요 국가의 골프 서비스를 이용할 수 있게 됩니다.",
+    body: [
+      "GLI가 말레이시아 Kuala Lumpur에서 동남아시아 골프 커뮤니티·부킹 플랫폼 Deemples와 레저 및 멤버십 협력을 위한 전략적 업무협약을 체결했습니다. 체결식은 Kuala Lumpur Golf & Country Club에서 진행됐습니다.",
+      "Deemples는 말레이시아에 본사를 둔 동남아 골프 서비스 기업으로, 골프장 예약과 동반자 매칭을 함께 제공하는 플랫폼입니다. 협약에 따라 GLI 회원은 말레이시아와 동남아 주요 국가의 골프장 부킹과 프로모션, 커뮤니티 매칭을 이용할 수 있게 됩니다.",
+      "GLI는 이번 MOU를 시작으로 말레이시아 법인을 거점 삼아 동남아 레저 시장을 넓혀가고, 회원에게 실질적인 가치를 제공하는 라이프스타일 플랫폼으로 나아갈 계획입니다.",
+    ],
   },
   {
     id: "ec77ba82-7abb-44cc-9328-486e1bac695d",
@@ -110,6 +141,22 @@ export const newsItems: readonly NewsItem[] = [
     ],
     sourceUrl:
       "https://baodoanhnhanonline.net/nen-tang-so-hoa-tai-san-thuc-rwa-gli-ky-ket-bien-ban-ghi-nho-chien-luoc-mou-voi-cong-ty-tu-van-dau-tu-dealflow.html",
+  },
+  {
+    id: "gli-news-global-expansion-2025-10-15",
+    category: "보도자료",
+    date: "2025. 10. 15.",
+    dateTime: "2025-10-15",
+    image: "/partner-assets/golden-crown/pavilion.jpg",
+    title: "싱가포르 기반 RWA 디지털자산 플랫폼 'GLI', 글로벌 확장 추진",
+    summary:
+      "동남아 실물 자산을 디지털화하는 프로젝트를 동북아·유럽으로 넓혀가며, 베트남 법인 설립을 마쳤습니다.",
+    body: [
+      "GLI 싱가포르는 동남아시아 실물 자산을 디지털화하는 블록체인 프로젝트를 글로벌 사업화하고 있다고 밝혔습니다. GLI는 Game·Leisure·Investment를 핵심 축으로 하는 RWA 기반 프로젝트입니다.",
+      "싱가포르를 거점으로 동남아시아와 동북아시아, 유럽으로 사업 범위를 넓혀가고 있습니다. 베트남 호치민에서는 오피스 계약과 법인 설립이 마무리되었으며, 해당 지역 리조트·부동산 자산을 디지털 자산화하는 파일럿 프로젝트가 진행되고 있습니다.",
+      "플랫폼은 실물자산 가치와 연동된 GLIB, 운영과 거버넌스 참여를 위한 GLID, 게임·레저 분야에서 쓰이는 GLIL 세 가지 토큰 구조를 적용합니다. 금융·게임·관광 산업을 서로 잇는 것이 목표입니다.",
+      "한국의 솔리드넥스는 GLI 싱가포르와 용역계약을 체결하고 플랫폼 기술 개발과 전략 기획을 맡고 있습니다. 1단계로 RWA 기반 플랫폼 인프라 구축이 진행 중이며, 이후 게임 서비스 개발로 확장됩니다.",
+    ],
   },
   {
     id: "33d997d3-5984-4554-b3be-5fd9ddf41b00",

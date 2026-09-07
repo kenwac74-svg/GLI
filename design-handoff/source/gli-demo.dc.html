@@ -32,6 +32,10 @@
 <meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
 <meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
 <meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1596838132731-3301c3fd4317?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
+<meta name="ext-resource-dependency" content="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&amp;fit=crop&amp;w=900&amp;q=80">
 <meta name="ext-resource-dependency" content="public/team/ceo.jpg" data-resource-id="teamCeo" />
 <meta name="ext-resource-dependency" content="public/team/coo.jpg" data-resource-id="teamCoo" />
 <meta name="ext-resource-dependency" content="public/team/cbo.jpg" data-resource-id="teamCbo" />
@@ -124,9 +128,25 @@
   .composer textarea{flex:1;min-width:260px;min-height:88px;padding:14px 16px;font-family:var(--f);font-size:17px;line-height:1.6;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);outline:none;resize:vertical}
   .composer textarea:focus{border-color:var(--green)}
   .pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--green-100);border-top:1px solid #D3E3DD;padding:13px 22px}
-  .pipe-step{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--forest);white-space:nowrap}
-  .pipe-n{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;background:var(--forest);color:#fff;font-size:11px;font-weight:700}
-  .pipe-arrow{color:#7FA79B}
+  .pipe-step{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+  .pipe-n{width:20px;height:20px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#B9C6C1;color:#fff;font-size:11px;font-weight:700}
+  .pipe-step.is-active{color:var(--forest)}
+  .pipe-step.is-active .pipe-n{background:var(--lime);color:var(--forest);animation:pulse 1.1s ease-in-out infinite}
+  .pipe-step.is-done{color:var(--green-700)}
+  .pipe-step.is-done .pipe-n{background:var(--green);color:#fff}
+  .pipe-step.is-error{color:var(--red)}
+  .pipe-step.is-error .pipe-n{background:var(--red);color:#fff;animation:none}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(200,240,74,.85)}50%{box-shadow:0 0 0 6px rgba(200,240,74,0)}}
+  @media(prefers-reduced-motion:reduce){.pipe-step.is-active .pipe-n{animation:none}}
+  .pipe-mob{display:none;align-items:center;gap:9px;font-size:14px;font-weight:600;color:var(--forest)}
+  .pipe-mob .cnt{font-family:var(--fn);font-variant-numeric:tabular-nums;color:var(--green-700)}
+  .pipe-mob.is-error{color:var(--red)}
+  .pipe-err{font-size:14px;color:var(--red);margin-left:auto}
+  .statedemo{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-top:1px dashed #C9C6BD;padding:11px 22px;background:#FBFAF7}
+  .statedemo>span{font-size:13px;font-weight:700;letter-spacing:.06em;color:#8E8A80;margin-right:4px}
+  .statedemo button{min-height:32px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-family:var(--f);font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer}
+  .statedemo button.on{background:var(--forest);border-color:var(--forest);color:var(--lime)}
+  .pipe-arrow{color:#7FA79B;flex:none}
   .pipe-note{font-size:14px;color:var(--green-700);margin-left:auto;white-space:nowrap}
   .prompt-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
   .chip{min-height:48px;display:inline-flex;align-items:center;font-family:var(--f);font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 20px;cursor:pointer;transition:.15s;text-align:left}
@@ -135,6 +155,10 @@
   .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:28px}
   .turn{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;padding:18px 0;border-top:1px solid var(--line)}
   .turn-who{font-size:14px;font-weight:700;color:var(--green-700);white-space:nowrap;padding-top:2px}
+  .turn-note{font-size:14px;color:var(--green-700);margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .turn-note button{min-height:44px;display:inline-flex;align-items:center;font-family:var(--f);font-size:14px;font-weight:700;color:var(--green-700);background:none;border:0;border-bottom:1px solid currentColor;padding:2px 0;cursor:pointer}
+  .turn-note button:hover{color:var(--forest)}
+  [data-results]{scroll-margin-top:96px}
 
   .ctabs{display:flex;gap:9px;flex-wrap:wrap}
   .ctab{min-height:48px;display:inline-flex;align-items:center;font-family:var(--f);font-size:15px;font-weight:600;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);cursor:pointer;transition:.15s;white-space:nowrap}
@@ -183,6 +207,10 @@
   .g5{background-image:url(public/partner-assets/golden-crown/gym.jpg)}
   .g6{background-image:url(public/partner-assets/golden-crown/bbq.jpg)}
   .g7{background-image:url(public/partner-assets/golden-crown/pavilion.jpg)}
+  .c16{background-image:url(https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80)}
+  .c17{background-image:url(https://images.unsplash.com/photo-1596838132731-3301c3fd4317?auto=format&fit=crop&w=900&q=80)}
+  .c18{background-image:url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80)}
+  .c19{background-image:url(https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=80)}
   .card:hover .photo-img{transform:scale(1.04)}
   .origin{position:absolute;top:12px;left:12px;z-index:2;font-size:14px;font-weight:700;padding:6px 12px;border-radius:var(--r);background:var(--forest);color:#fff}
   .imgcap{position:absolute;left:12px;bottom:11px;z-index:2;font-size:14px;color:#fff;background:rgba(15,32,29,.72);padding:4px 9px;border-radius:4px}
@@ -192,6 +220,10 @@
   .fav.on svg{fill:currentColor}
   .type{font-size:14px;font-weight:600;color:var(--ink-2);letter-spacing:.02em}
   .loc{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:var(--green-700);margin:4px 0 5px}
+  summary{list-style:none;cursor:pointer}
+  summary::-webkit-details-marker{display:none}
+  .chv{flex:none;color:var(--ink-2);transition:transform .18s ease;margin-left:auto}
+  details[open]>summary .chv{transform:rotate(180deg)}
   .trust{display:inline-flex;align-items:center;gap:7px;background:var(--gold-100);color:var(--gold);border-radius:var(--r);padding:8px 12px;font-size:15px;font-weight:600;flex:none}
   .trust b{font-size:19px;font-weight:700}
   .trust .g{font-size:14px;font-weight:700;padding-left:7px;border-left:1px solid rgba(122,82,20,.3)}
@@ -231,6 +263,21 @@
   .ctrust{flex:none;display:inline-flex;align-items:baseline;gap:5px;padding:6px 11px;border-radius:999px;background:var(--green-100);color:var(--green-700);font-size:13px;font-weight:700}
   .ctrust b{font-family:var(--fn);font-size:17px;font-variant-numeric:tabular-nums}
   .cspec{font-size:14px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:12px;margin-top:auto;overflow-wrap:anywhere}
+  .cmet{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;border-top:1px solid var(--line);padding-top:12px;margin-top:auto}
+  .cmet div{min-width:0}
+  .cmet small{display:block;font-size:13px;color:var(--ink-2);margin-bottom:1px}
+  .cmet span{font-size:14px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+  .cprog{margin-top:12px}
+  .cprog-top{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+  .cprog-top small{font-size:13px;color:var(--ink-2)}
+  .cprog-top b{margin-left:auto;font-family:var(--fn);font-size:14px;color:var(--green-700);font-variant-numeric:tabular-nums}
+  .cprog-track{height:5px;border-radius:3px;background:var(--line);overflow:hidden}
+  .cprog-track i{display:block;height:100%;border-radius:3px;background:var(--green)}
+  .ctpl{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--green-700);background:var(--green-100);border-radius:4px;padding:3px 8px;margin-bottom:8px}
+  .cats .cat{position:relative}
+  .cat .n{position:absolute;top:15px;right:15px;font-family:var(--fn);font-size:14px;font-weight:700;color:var(--green-700);font-variant-numeric:tabular-nums}
+  .cat.off{opacity:.55}
+  .cat.off .n{color:var(--ink-2)}
   .grid3.list{grid-template-columns:1fr;gap:16px}
   .grid3.list .card{flex-direction:row}
   .grid3.list .photo{flex:none;width:300px;aspect-ratio:4/3}
@@ -265,9 +312,9 @@
   .tcard .ph{background-color:var(--green-100);color:var(--green-700);display:flex;align-items:center;justify-content:center;font-family:var(--fn);font-size:28px;font-weight:700;background-size:cover;background-position:center 22%}
   .vmarquee{overflow:hidden;margin-top:26px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
   .vtrack{display:flex;gap:20px;width:max-content;animation:vmove 64s linear infinite}
-  .vmarquee:hover .vtrack{animation-play-state:paused}
+  .vmarquee:hover .vtrack,.vmarquee:focus-within .vtrack{animation-play-state:paused}
   @keyframes vmove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  @media(prefers-reduced-motion:reduce){.vtrack{animation:none}}
+  @media(prefers-reduced-motion:reduce){.vtrack{animation:none;transform:none}}
   .vcard{flex:none;width:380px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--sh);padding:26px;display:flex;flex-direction:column;gap:16px}
   @media(max-width:560px){.vcard{width:300px}}
   .ftlinks{display:flex;gap:10px;flex-wrap:wrap;padding:22px 36px 0}
@@ -294,16 +341,22 @@
   .hbars i{display:block;height:8px;border-radius:999px;background:#EEECE5;overflow:hidden}
   .hbars i b{display:block;height:100%;border-radius:999px;background:var(--lime-600)}
   .hbars strong{font-family:var(--fn);font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink-2)}
-  @media(max-width:520px){.lstats{grid-template-columns:1fr}}
+  @media(max-width:520px){
+    .lstats{grid-template-columns:repeat(3,1fr);gap:8px}
+    .lstats>div{padding:11px 10px}
+    .lstats b{font-size:21px}
+    .lstats span{font-size:13px;line-height:1.35}
+  }
   .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.42)}
   .btn-ghost:hover{background:rgba(255,255,255,.12);color:#fff;border-color:#fff}
   .tick{overflow:hidden;border-bottom:1px solid var(--line);background:var(--surface)}
   .tick-in{display:flex;width:max-content;animation:tickmove 80s linear infinite}
+  .tick:hover .tick-in,.tick:focus-within .tick-in{animation-play-state:paused}
   .tick-item{display:flex;align-items:center;gap:11px;padding:13px 22px;border-right:1px solid var(--line);white-space:nowrap;font-size:15px}
   .tick-item i{width:34px;height:34px;border-radius:8px;background-size:cover;background-position:center;flex:none}
   .tick-item b{font-family:var(--fn);font-weight:700;font-variant-numeric:tabular-nums;color:var(--green-700)}
   @keyframes tickmove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  @media(prefers-reduced-motion:reduce){.tick-in{animation:none}}
+  @media(prefers-reduced-motion:reduce){.tick-in{animation:none;transform:none}}
   .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:34px}
   .step-n{width:38px;height:38px;border-radius:999px;background:var(--lime);color:var(--forest);display:flex;align-items:center;justify-content:center;font-family:var(--fn);font-weight:700;margin-bottom:14px}
   .why{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:34px}
@@ -326,6 +379,15 @@
   .lcta{background:var(--forest);color:#fff;border-radius:var(--r);padding:52px 44px;display:flex;align-items:center;gap:30px;flex-wrap:wrap}
   @media(max-width:1000px){.lhero-in{grid-template-columns:1fr;gap:36px;padding:52px 36px 60px}.lhero h1{font-size:42px}.steps,.why{grid-template-columns:1fr 1fr}.presslots{grid-template-columns:repeat(3,1fr)}.quoteslots{grid-template-columns:1fr}}
   @media(max-width:640px){.steps,.why{grid-template-columns:1fr}}
+
+  .hookrow{display:flex;gap:10px;margin:28px 0 14px;max-width:560px}
+  .hookrow input{flex:1;min-width:0;height:56px;padding:0 18px;font-family:var(--f);font-size:16px;color:var(--ink);background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.3);border-radius:var(--r);outline:none}
+  .hookrow input::placeholder{color:#7C837F}
+  .hookrow input:focus{border-color:var(--lime);box-shadow:0 0 0 3px rgba(200,240,74,.3)}
+  .cta-main{min-height:56px;font-size:17px;padding:0 26px}
+  .cta-sub{font-size:15px;color:rgba(255,255,255,.66);margin-bottom:22px;max-width:520px}
+  .btn-ghost-sm{min-height:44px;font-size:15px;padding:0 18px;background:transparent;color:rgba(255,255,255,.82);border-color:rgba(255,255,255,.3)}
+  .btn-ghost-sm:hover{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.5)}
 
   .specstrip{display:flex;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
   .specstrip>div{flex:1;padding:14px 16px;min-width:0}
@@ -366,6 +428,9 @@
   .n3{background-image:url(public/partner-assets/mantawi-residences.jpg)}
   .n4{background-image:url(public/partner-assets/orchard-grand.jpg)}
   .n5{background-image:url(public/partner-assets/pavilion-square.jpg)}
+  .n6{background-image:url(public/partner-assets/times-square-2.jpg)}
+  .n7{background-image:url(public/partner-assets/golden-crown/pavilion.jpg)}
+  .n8{background-image:url(public/partner-assets/rlc-portfolio.jpg)}
 
   .doclayout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:44px;align-items:start}
   .docnav{position:sticky;top:92px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:10px}
@@ -489,12 +554,29 @@
     .grid3{grid-template-columns:1fr}
     .newsgrid{grid-template-columns:1fr} .doccards{grid-template-columns:1fr}
     h1{font-size:30px} h2{font-size:25px} h3{font-size:20px} h4{font-size:18px}
-    .wrap{padding:0 20px} .chip{width:100%} .seg{width:100%} .seg button{flex:1;padding:0 10px}
+    .wrap{padding:0 20px} .seg{width:100%} .seg button{flex:1;padding:0 10px}
     .pipe-note{margin-left:0;white-space:normal}
     .plans{grid-template-columns:1fr} .plan,.co-sum,.co-pay{padding:22px}
     .hero .in .wrap{padding:44px 20px 48px}
     .thumbs{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
     .thumbs button{flex:none}
+    .lhero h1 br,.hero h1 br,.hero p br{display:none}
+    .composer-row{flex-direction:column}
+    .composer textarea{width:100%;min-width:0;min-height:104px;font-size:16px}
+    .composer-row .btn{width:100%;min-height:54px}
+    .prompt-row{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;scrollbar-width:none}
+    .prompt-row::-webkit-scrollbar{display:none}
+    .chip{flex:none;width:auto;max-width:78%;scroll-snap-align:start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pipe{gap:8px}
+    .pipe .pipe-step,.pipe .pipe-arrow,.pipe .pipe-note{display:none}
+    .pipe-mob{display:flex}
+    .pipe-err{margin-left:0;flex-basis:100%}
+    .tiers{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+    .tiers::-webkit-scrollbar{display:none}
+    .tiers button{flex:none;scroll-snap-align:center}
+    .mobile-menu{max-height:calc(100vh - 76px);overflow-y:auto;overscroll-behavior:contain}
+    .hookrow input{font-size:16px}
+    .cta-main{width:100%;justify-content:center}
   }
   @media(max-width:480px){
     .cats{grid-template-columns:1fr} .ftgrid{grid-template-columns:1fr;gap:26px}
@@ -517,6 +599,7 @@
       <summary>GLI 소개<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></summary>
       <div class="center-menu-panel">
         <a href="#" onClick="{{ goAbout }}">소개</a>
+        <a href="#" onClick="{{ goTrust }}">검증 체계</a>
         <a href="#" onClick="{{ goNews }}">뉴스</a>
         <a href="#" onClick="{{ goSoonPartners }}">파트너스</a>
         <a href="#" onClick="{{ goPaper }}">GLI 백서</a>
@@ -525,29 +608,42 @@
     <details class="center-menu">
       <summary><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>자산 탐색<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></summary>
       <div class="center-menu-panel">
-        <a href="#" onClick="{{ goCountry }}" data-v="ALL">전체 자산</a>
+        <a href="#" onClick="{{ goCat }}" data-v="ALL">전체 자산</a>
         <span class="menu-label">국가별</span>
         <a href="#" onClick="{{ goCountry }}" data-v="KH">캄보디아</a>
         <a href="#" onClick="{{ goCountry }}" data-v="VN">베트남</a>
         <a href="#" onClick="{{ goCountry }}" data-v="PH">필리핀</a>
         <a href="#" onClick="{{ goCountry }}" data-v="MY">말레이시아</a>
+        <span class="menu-label">자산 유형</span>
+        <a href="#" onClick="{{ goCat }}" data-v="주거용">주거용</a>
+        <a href="#" onClick="{{ goCat }}" data-v="상업용">상업용</a>
+        <a href="#" onClick="{{ goCat }}" data-v="레저">레저</a>
+        <a href="#" onClick="{{ goCat }}" data-v="프로젝트">프로젝트</a>
         <span class="menu-label">거래 유형</span>
         <a href="#" onClick="{{ goTxn }}" data-v="매매">매매</a>
         <a href="#" onClick="{{ goTxn }}" data-v="임대">임대</a>
         <a href="#" onClick="{{ goTxn }}" data-v="REC">GLI 추천 자산</a>
       </div>
     </details>
-    <a href="#" onClick="{{ goTrust }}">검증 체계</a>
     <a href="#" onClick="{{ goPlan }}">멤버십</a>
+    <details class="center-menu">
+      <summary>커뮤니티<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+      <div class="center-menu-panel">
+        <a href="#" onClick="{{ goSoonCommunity }}">커뮤니티</a>
+        <a href="#" onClick="{{ goSoonGame }}">소셜게임</a>
+      </div>
+    </details>
   </div>
   <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
     <a class="btn btn-o" href="#" onClick="{{ goFav }}" aria-label="관심자산"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.3 3-5.5A5.5 5.5 0 0 0 12 5.4 5.5 5.5 0 0 0 2 8.5c0 2.2 1.5 4 3 5.5l7 7Z"/></svg><span class="fav-label">관심자산</span><sc-if value="{{ favCount }}"><span class="fav-count">{{ favCount }}</span></sc-if></a>
     <a class="btn btn-o" href="#" onClick="{{ goSoonMy }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>로그인</a>
+    <a class="btn btn-o" href="#" onClick="{{ goSoonLang }}" aria-label="언어 전환"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>KO</a>
     <details class="mobile-menu">
       <summary aria-label="메뉴 열기"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></summary>
       <nav aria-label="모바일 메뉴">
         <span class="mobile-menu-label" style="margin-top:0;border-top:0;padding-top:6px">GLI 소개</span>
         <a onClick="{{ goAbout }}">소개</a>
+        <a onClick="{{ goTrust }}">검증 체계</a>
         <a onClick="{{ goNews }}">뉴스</a>
         <a onClick="{{ goSoonPartners }}">파트너스</a>
         <a onClick="{{ goPaper }}">GLI 백서</a>
@@ -557,11 +653,19 @@
         <a onClick="{{ goCountry }}" data-v="VN">베트남</a>
         <a onClick="{{ goCountry }}" data-v="PH">필리핀</a>
         <a onClick="{{ goCountry }}" data-v="MY">말레이시아</a>
-        <span class="mobile-menu-label">서비스</span>
-        <a onClick="{{ goTrust }}">검증 체계</a>
+        <a onClick="{{ goCat }}" data-v="주거용">주거용</a>
+        <a onClick="{{ goCat }}" data-v="상업용">상업용</a>
+        <a onClick="{{ goCat }}" data-v="레저">레저</a>
+        <a onClick="{{ goCat }}" data-v="프로젝트">프로젝트</a>
+        <span class="mobile-menu-label">멤버십</span>
         <a onClick="{{ goPlan }}">멤버십</a>
+        <span class="mobile-menu-label">커뮤니티</span>
+        <a onClick="{{ goSoonCommunity }}">커뮤니티</a>
+        <a onClick="{{ goSoonGame }}">소셜게임</a>
+        <span class="mobile-menu-label">내 계정</span>
         <a onClick="{{ goFav }}">관심자산</a>
-        <a onClick="{{ goSoonMy }}">MY GLI</a>
+        <a onClick="{{ goSoonMy }}">마이페이지</a>
+        <a onClick="{{ goSoonLang }}">언어 전환</a>
         <span class="mobile-menu-label">고객지원</span>
         <a onClick="{{ goSoonNotice }}">공지</a>
         <a onClick="{{ goSoonContact }}">고객문의</a>
@@ -570,8 +674,6 @@
     </details>
   </div>
 </div></div></nav>
-
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0F3D33"/><text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-family="sans-serif" font-size="26" font-weight="700" fill="#C8F04A">GLI</text></svg></template>
 
 <div class="{{ aboutCls }}">
 <div class="dark">
@@ -670,9 +772,15 @@
           <div><b>{{ ls.v }}</b><span>{{ ls.l }}</span></div>
         </sc-for>
       </div>
+      <div class="hookrow">
+        <input type="text" aria-label="찾으시는 투자 조건" placeholder="예: 프놈펜 월세 수익 자산" value="{{ hook }}" onChange="{{ onHook }}" onKeyDown="{{ onHookKey }}" />
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <a class="btn btn-p cta-main" href="#" onClick="{{ startExplore }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>GLI AI와 투자 탐색 시작</a>
+      </div>
+      <p class="cta-sub" style="margin-top:12px">예산·국가·목적을 대화로 입력하면 AI가 조건을 정리합니다.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <a class="btn btn-p" href="#" onClick="{{ goHome }}">투자 기회 탐색하기<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn-ghost" href="#" onClick="{{ goTrust }}">GLI 검증 방식</a>
+        <a class="btn btn-ghost-sm" href="#" onClick="{{ goTrust }}">GLI 검증 방식</a>
       </div>
     </div>
     <div class="hcard">
@@ -682,8 +790,8 @@
       <div class="hcard-body">
         <span class="lbl">GLI TRUST SCORE</span>
         <div style="display:flex;align-items:baseline;gap:10px;margin-top:2px">
-          <strong style="font-family:var(--fn);font-size:38px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1">{{ hero.trust }}</strong>
-          <span style="font-size:15px;color:var(--ink-2)">/ 100 · {{ hero.grade }}등급</span>
+          <strong style="font-family:var(--fn);font-size:38px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1">{{ hero.grade }}</strong>
+          <span style="font-size:15px;color:var(--ink-2)">Trust 등급</span>
           <span style="margin-left:auto;font-family:var(--fn);font-size:15px;font-weight:700;color:var(--lime-700)">{{ hero.delta }}</span>
         </div>
         <p style="font-size:15px;color:var(--ink-2);margin-top:6px">{{ hero.name }}</p>
@@ -700,7 +808,7 @@
 <div class="tick" aria-label="게재 자산 Trust Score">
   <div class="tick-in">
     <sc-for list="{{ tickList }}" as="tk" hint-placeholder-count="8">
-      <div class="tick-item"><i class="{{ tk.imgCls }}"></i>{{ tk.name }}<b>{{ tk.trust }}</b><span style="color:var(--ink-2);font-size:14px">{{ tk.grade }}</span></div>
+      <div class="tick-item"><i class="{{ tk.imgCls }}"></i>{{ tk.name }}<b>{{ tk.grade }}</b></div>
     </sc-for>
   </div>
 </div>
@@ -748,7 +856,7 @@
           <div class="ui">
             <div class="ui-bar"><i></i><i></i><i></i><span>GLI AI Search</span></div>
             <div class="ui-body">
-              <div style="border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:15px;color:var(--ink)">프놌펜에 5,000만원 정도로 월세가 잘 나오는 투자를 할 수 있을까?</div>
+              <div style="border:1px solid var(--line);border-radius:10px;padding:13px 15px;font-size:15px;color:var(--ink)">프놈펜에 5,000만원 정도로 월세가 잘 나오는 투자를 할 수 있을까?</div>
               <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:12px">
                 <span class="aitag">캄보디아</span><span class="aitag">매매</span><span class="aitag">예산 5,000만원</span><span class="aitag">임대수익</span>
               </div>
@@ -797,7 +905,7 @@
                 <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)">
                   <span style="width:40px;height:40px;border-radius:8px;background-size:cover;background-position:center;flex:none" class="{{ wd.imgCls }}"></span>
                   <span style="min-width:0;flex:1"><strong style="display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ wd.name }}</strong><span style="font-size:13px;color:var(--ink-2)">{{ wd.price }}</span></span>
-                  <span style="font-family:var(--fn);font-size:15px;font-weight:700;color:var(--green-700)">{{ wd.trust }}</span>
+                  <span style="font-family:var(--fn);font-size:15px;font-weight:700;color:var(--green-700)">{{ wd.grade }}</span>
                 </div>
               </sc-for>
             </div>
@@ -861,13 +969,27 @@
           </div>
           <div class="cnums">
             <div style="min-width:0">
-              <small style="display:block;font-size:13px;color:var(--ink-2)">{{ a.priceLabel }}</small>
-              <strong class="cprice">{{ a.price }}</strong>
-              <span style="font-size:14px;color:var(--ink-2);overflow-wrap:anywhere">{{ a.krw }}</span>
+              <small style="display:block;font-size:13px;color:var(--ink-2)">{{ a.headLabel }}</small>
+              <strong class="cprice">{{ a.headValue }}</strong>
+              <span style="font-size:14px;color:var(--ink-2);overflow-wrap:anywhere">{{ a.headSub }}</span>
             </div>
-            <div class="ctrust">Trust <b>{{ a.trust }}</b><span>{{ a.grade }}</span></div>
+            <div class="ctrust">Trust <b>{{ a.grade }}</b></div>
           </div>
-          <p class="cspec">{{ a.spec }}</p>
+          <sc-if value="{{ a.tpl }}"><span class="ctpl">{{ a.tpl }}</span></sc-if>
+          <sc-if value="{{ a.isProj }}">
+            <div class="cprog">
+              <div class="cprog-top"><small>모금 진행률</small><b>{{ a.pctLabel }}</b></div>
+              <div class="cprog-track"><i style="{{ a.barStyle }}"></i></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ a.isProject }}">
+            <div class="cmet">
+              <sc-for list="{{ a.metrics }}" as="mt" hint-placeholder-count="4">
+                <div><small>{{ mt.l }}</small><span>{{ mt.v }}</span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ a.isPlain }}"><p class="cspec">{{ a.spec }}</p></sc-if>
         </div>
       </article>
     </sc-for>
@@ -900,7 +1022,7 @@
       </sc-for>
     </div>
   </div>
-  <p class="min" style="color:var(--ink-2);margin-top:14px">데모용 예시 후기입니다. 서비스 공개 후 실제 회원 후기로 교체됩니다.</p>
+  <p class="min" style="color:var(--ink-2);margin-top:14px">이용 후기는 회원 동의 후 익명으로 공개됩니다.</p>
 </section>
 
 <section class="wrap" style="padding:64px 36px 0">
@@ -963,15 +1085,20 @@
           <button class="btn btn-p" aria-label="AI 검색 실행" onClick="{{ runSearch }}" style="min-height:88px;padding:0 30px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>{{ searchLabel }}</button>
         </div>
       </div>
-      <div class="pipe" aria-label="GLI AI 탐색 단계">
-        <span class="pipe-step"><span class="pipe-n">1</span>요청 이해</span>
+      <div class="pipe" aria-label="GLI AI 탐색 단계" aria-live="polite">
+        <span class="{{ pipe.s1 }}"><span class="pipe-n">{{ pipe.i1 }}</span>요청 이해</span>
         <svg class="pipe-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        <span class="pipe-step"><span class="pipe-n">2</span>후보 탐색</span>
+        <span class="{{ pipe.s2 }}"><span class="pipe-n">{{ pipe.i2 }}</span>후보 탐색</span>
         <svg class="pipe-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        <span class="pipe-step"><span class="pipe-n">3</span>근거 검토</span>
+        <span class="{{ pipe.s3 }}"><span class="pipe-n">{{ pipe.i3 }}</span>근거 검토</span>
         <svg class="pipe-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        <span class="pipe-step"><span class="pipe-n">4</span>답변 구성</span>
-        <span class="pipe-note">공개 정보 사이트와 GLI 보유 자산을 교차 확인합니다</span>
+        <span class="{{ pipe.s4 }}"><span class="pipe-n">{{ pipe.i4 }}</span>답변 구성</span>
+        <span class="{{ pipe.mobCls }}"><span class="cnt">{{ pipe.mobCount }}</span>{{ pipe.mobLabel }}</span>
+        <sc-if value="{{ pipe.errMsg }}"><span class="pipe-err">{{ pipe.errMsg }}</span></sc-if>
+        <sc-if value="{{ pipe.showNote }}"><span class="pipe-note">공개 정보 사이트와 GLI 보유 자산을 교차 확인합니다</span></sc-if>
+      </div>
+      <div class="statedemo" aria-label="진행 상태 전환">
+        <sc-for list="{{ stateChips }}" as="sc" hint-placeholder-count="7"><button class="{{ sc.cls }}" onClick="{{ pickPipeState }}" data-v="{{ sc.id }}">{{ sc.label }}</button></sc-for>
       </div>
       <div style="padding:0 22px 20px">
         <div class="prompt-row" aria-label="예시 질문">
@@ -1002,6 +1129,9 @@
               <sc-for list="{{ m.chips }}" as="c" hint-placeholder-count="3"><span class="aitag">{{ c }}</span></sc-for>
             </div>
           </sc-if>
+          <sc-if value="{{ m.hasNote }}">
+            <p class="turn-note">{{ m.note }}<button type="button" onClick="{{ goResults }}">변경된 탐색 결과 보기</button></p>
+          </sc-if>
         </div>
       </div>
     </sc-for>
@@ -1011,19 +1141,30 @@
         <p class="dots" style="color:var(--ink-2)"><span></span><span></span><span></span>{{ busyLabel }}</p>
       </div>
     </sc-if>
+    <form class="fw" data-followup-composer aria-busy="false" hidden>
+      <label class="fw-label" for="fq">후속 질문</label>
+      <div class="fw-row">
+        <textarea id="fq" data-followup-input aria-label="후속 질문" placeholder="이어서 궁금한 점을 물어보세요"></textarea>
+        <button type="submit" class="btn btn-p fw-send" data-action="runFollowUp" aria-label="후속 질문 보내기">보내기</button>
+      </div>
+      <p class="fw-status" data-followup-status role="status" aria-live="polite"></p>
+    </form>
     <p class="min" style="color:var(--ink-2);margin-top:16px">{{ engineNote }}</p>
   </div>
 </section>
 
-<section class="wrap" style="padding:52px 36px 0">
-  <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:8px">
+<section class="wrap" style="padding:52px 36px 0;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:8px;order:1">
     <div>
       <p class="kicker" style="color:var(--green);margin-bottom:8px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>Global Asset Discovery</p>
       <h2>투자 자산 탐색</h2>
     </div>
+    <sc-if value="{{ catActive }}">
+      <button class="btn btn-o" onClick="{{ resetCat }}" style="margin-left:auto">전체 유형 보기</button>
+    </sc-if>
   </div>
 
-  <div class="filterbar">
+  <div class="filterbar" style="order:3">
     <div class="frail" aria-label="자산 필터">
       <sc-for list="{{ countryTabs }}" as="c" hint-placeholder-count="5"><button class="{{ c.fcls }}" onClick="{{ pickCountry }}" data-v="{{ c.id }}">{{ c.label }}<span class="fnum">{{ c.n }}</span></button></sc-for>
       <i class="fdiv"></i>
@@ -1033,28 +1174,28 @@
     </div>
   </div>
 
-  <div class="stats" aria-label="플랫폼 지표">
+  <div class="stats" aria-label="플랫폼 지표" style="order:4">
     <sc-for list="{{ statRows }}" as="st" hint-placeholder-count="4">
       <div><b>{{ st.v }}</b><span>{{ st.l }}</span></div>
     </sc-for>
   </div>
 
-  <div class="cats hide" aria-label="자산 카테고리">
-    <button class="cat on" aria-pressed="true">
+  <div class="cats" aria-label="자산 유형" style="order:2">
+    <button class="{{ catHome.cls }}" aria-pressed="{{ catHome.on }}" onClick="{{ pickCat }}" data-v="주거용">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-      <span class="l">주거용</span><span class="c">주택·콘도·빌라</span>
+      <span class="l">주거용</span><span class="c">주택·콘도·빌라</span><span class="n">{{ catHome.n }}</span>
     </button>
-    <button class="cat" aria-pressed="false">
+    <button class="{{ catBiz.cls }}" aria-pressed="{{ catBiz.on }}" onClick="{{ pickCat }}" data-v="상업용">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg>
-      <span class="l">상업용</span><span class="c">오피스·리테일·운영 자산</span>
+      <span class="l">상업용</span><span class="c">오피스·리테일·운영 자산</span><span class="n">{{ catBiz.n }}</span>
     </button>
-    <button class="cat" aria-pressed="false">
+    <button class="{{ catLeisure.cls }}" aria-pressed="{{ catLeisure.on }}" onClick="{{ pickCat }}" data-v="레저">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg>
-      <span class="l">레저</span><span class="c">리조트·관광·라이프스타일</span>
+      <span class="l">레저</span><span class="c">회원권·호텔 객실·방갈로·마리나</span><span class="n">{{ catLeisure.n }}</span>
     </button>
-    <button class="cat" aria-pressed="false">
+    <button class="{{ catProj.cls }}" aria-pressed="{{ catProj.on }}" onClick="{{ pickCat }}" data-v="프로젝트">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09"/><path d="M9 12a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.4 22.4 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 .05 5 .05"/></svg>
-      <span class="l">프로젝트</span><span class="c">GLI 직접 발굴 사업 기회</span>
+      <span class="l">프로젝트</span><span class="c">파이낸싱·지분·토지·그 밖의 사업 기회</span><span class="n">{{ catProj.n }}</span>
     </button>
   </div>
 </section>
@@ -1080,8 +1221,9 @@
     </div>
   </div>
 
-  <p class="sub" style="margin-bottom:24px"><strong style="color:var(--ink)">GLI 추천</strong>은 투자 매력도까지 검토한 자산, <strong style="color:var(--ink)">GLI 검증</strong>은 자료의 진위와 출처를 확인한 자산입니다. Trust Score는 80 이상 A, 65 이상 B, 그 외 C 등급입니다.</p>
+  <p class="sub" style="margin-bottom:24px"><strong style="color:var(--ink)">GLI 추천</strong>은 투자 매력도까지 검토한 자산, <strong style="color:var(--ink)">GLI 검증</strong>은 자료의 진위와 출처를 확인한 자산입니다. Trust 등급은 확인된 항목과 자료 일치도를 기준으로 S부터 D까지 매깁니다.</p>
 
+  <sc-if value="{{ hasShown }}" hint-placeholder-val="{{ true }}">
   <div class="{{ gridCls }}">
     <sc-for list="{{ shown }}" as="a" hint-placeholder-count="16">
       <article class="card" onClick="{{ openDetail }}" data-i="{{ a.i }}">
@@ -1103,20 +1245,44 @@
           </div>
           <div class="cnums">
             <div style="min-width:0">
-              <small style="display:block;font-size:13px;color:var(--ink-2)">{{ a.priceLabel }}</small>
-              <strong class="cprice">{{ a.price }}</strong>
-              <span style="font-size:14px;color:var(--ink-2);overflow-wrap:anywhere">{{ a.krw }}</span>
+              <small style="display:block;font-size:13px;color:var(--ink-2)">{{ a.headLabel }}</small>
+              <strong class="cprice">{{ a.headValue }}</strong>
+              <span style="font-size:14px;color:var(--ink-2);overflow-wrap:anywhere">{{ a.headSub }}</span>
             </div>
-            <div class="ctrust">Trust <b>{{ a.trust }}</b><span>{{ a.grade }}</span></div>
+            <div class="ctrust">Trust <b>{{ a.grade }}</b></div>
           </div>
           <sc-if value="{{ a.reason }}">
             <p class="reason"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin-top:3px;flex:none"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>{{ a.reason }}</p>
           </sc-if>
-          <p class="cspec">{{ a.spec }}</p>
+          <sc-if value="{{ a.tpl }}"><span class="ctpl">{{ a.tpl }}</span></sc-if>
+          <sc-if value="{{ a.isProj }}">
+            <div class="cprog">
+              <div class="cprog-top"><small>모금 진행률</small><b>{{ a.pctLabel }}</b></div>
+              <div class="cprog-track"><i style="{{ a.barStyle }}"></i></div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ a.isProject }}">
+            <div class="cmet">
+              <sc-for list="{{ a.metrics }}" as="mt" hint-placeholder-count="4">
+                <div><small>{{ mt.l }}</small><span>{{ mt.v }}</span></div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ a.isPlain }}"><p class="cspec">{{ a.spec }}</p></sc-if>
+          <sc-if value="{{ a.apySource }}"><p class="cspec" style="font-size:13px">{{ a.apySource }}</p></sc-if>
         </div>
       </article>
     </sc-for>
   </div>
+  </sc-if>
+
+  <sc-if value="{{ noneShown }}">
+    <div style="border:1px solid var(--line);border-radius:var(--r);padding:56px 28px;text-align:center;background:#fff">
+      <h3 style="font-size:20px;margin-bottom:8px">{{ emptyTitle }}</h3>
+      <p style="font-size:15px;color:var(--ink-2);max-width:460px;margin:0 auto 20px">{{ emptyLead }}</p>
+      <button class="btn btn-p" onClick="{{ resetCat }}">전체 유형 보기</button>
+    </div>
+  </sc-if>
 
   <p style="text-align:center;margin-top:26px"><a class="min" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" style="color:var(--ink-2)">환산 가격은 참고용입니다 · Rates by Exchange Rate API</a></p>
 </section>
@@ -1183,202 +1349,444 @@
       </sc-if>
 
       <div style="margin-top:28px">
-        <p class="loc" style="font-size:16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>{{ d.fullLoc }}</p>
-        <h1 style="font-size:38px;margin-bottom:16px">{{ d.title }}</h1>
-        <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px">
+        <p class="loc" style="font-size:16px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>{{ d.country }}</p>
+        <h1 style="font-size:32px;margin-bottom:8px">{{ d.addr }}</h1>
+        <p style="font-size:17px;color:var(--ink-2);margin-bottom:14px">{{ d.title }} · {{ d.titleEn }}</p>
+        <div style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;font-size:15px;color:var(--ink-2)">
+          <span style="display:inline-flex;align-items:center;gap:7px;font-weight:700;color:var(--green-700)"><i style="width:7px;height:7px;border-radius:999px;background:var(--green)"></i>{{ d.postState }}</span>
+          <span>{{ d.postedOn }}</span>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;margin-top:16px">
           <div>
             <small style="display:block;font-size:15px;color:var(--ink-2)">{{ d.priceLabel }}</small>
-            <strong style="display:block;font-size:30px;font-weight:700;line-height:1.3;overflow-wrap:anywhere">{{ d.price }}</strong>
+            <strong style="display:block;font-size:29px;font-weight:700;line-height:1.3;overflow-wrap:anywhere">{{ d.price }}</strong>
             <span style="font-size:16px;color:var(--ink-2)">{{ d.krw }}</span>
+          </div>
+          <div style="padding-left:24px;border-left:1px solid var(--line)">
+            <small style="display:block;font-size:15px;color:var(--ink-2)">핵심 제원</small>
+            <strong style="display:block;font-size:18px;font-weight:700;line-height:1.5;overflow-wrap:anywhere">{{ d.keySpec }}</strong>
           </div>
           <a class="min" href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" style="color:var(--ink-2);margin-left:auto">참고 환율 · 2026. 8. 2.</a>
         </div>
-      </div>
-
-      <div class="facts">
-        <sc-for list="{{ d.facts }}" as="f" hint-placeholder-count="4">
-          <div><span>{{ f.label }}</span><strong>{{ f.value }}</strong></div>
-        </sc-for>
-      </div>
-
-      <sc-if value="{{ d.hasBasis }}">
-        <section style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-top:20px" aria-label="자료 근거">
-          <div>
-            <span style="display:block;font-size:14px;color:var(--ink-2)">게시 근거 자료</span>
-            <strong style="font-size:16px">{{ d.basis }}</strong>
-          </div>
-          <sc-if value="{{ d.resourceUrl }}">
-            <a href="{{ d.resourceUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-o" style="margin-left:auto">공식 홈페이지 보기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
-          </sc-if>
-        </section>
-      </sc-if>
-
-      <section style="margin-top:32px">
-        <h2 style="font-size:26px;margin-bottom:12px">자산 요약</h2>
-        <p style="color:var(--ink-2)">{{ d.summary }}</p>
-        <p class="min" style="color:var(--ink-2);margin-top:12px">{{ d.docDate }}</p>
-      </section>
-    </section>
-
-    <aside class="aside" aria-label="자산 등급별 정보">
-      <div class="metrics">
-        <div><span>GLI TRUST SCORE</span><strong>{{ d.trust }}</strong><small>/ 100</small></div>
-        <div><span>VERIFICATION</span><strong>64</strong><small>%</small></div>
-      </div>
-      <div class="specstrip" aria-label="자산 기본 제원">
-        <sc-for list="{{ specRows }}" as="sp" hint-placeholder-count="3">
-          <div><span>{{ sp.l }}</span><strong>{{ sp.v }}</strong></div>
-        </sc-for>
-      </div>
-      <div class="trend" aria-label="Trust Score 추이">
-        <div class="trend-head">
-          <div>
-            <span style="display:block;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--ink-2)">TRUST SCORE 추이</span>
-            <strong style="font-family:var(--fn);font-size:28px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ d.trust }}</strong>
-          </div>
-          <div class="trend-chips">
-            <sc-for list="{{ trendChips }}" as="tc" hint-placeholder-count="3"><button class="{{ tc.cls }}" onClick="{{ pickRange }}" data-v="{{ tc.id }}">{{ tc.label }}</button></sc-for>
-          </div>
-        </div>
-        <svg viewBox="0 0 300 92" preserveAspectRatio="none" style="width:100%;height:92px;display:block" role="img" aria-label="Trust Score 변화 그래프">
-          <path d="{{ trendArea }}" fill="var(--lime-100)"></path>
-          <path d="{{ trendPath }}" fill="none" stroke="var(--lime-600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-        </svg>
-        <div class="trend-nums">
-          <div><span>구간 변화</span><strong style="{{ trendDeltaStyle }}">{{ trendDelta }}</strong></div>
-          <div><span>구간 최고 / 최저</span><strong>{{ trendRange }}</strong></div>
-        </div>
-        <p class="min" style="color:var(--ink-2);margin-top:10px">데모용 예시 데이터입니다. 실서비스에서는 검증 이력과 시세 기록을 그대로 표시합니다.</p>
-      </div>
-      <div class="tiers" role="tablist" aria-label="정보 등급">
-        <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="5">
-          <button class="{{ t.cls }}" role="tab" aria-selected="{{ t.sel }}" onClick="{{ pickTier }}" data-i="{{ t.i }}" style="{{ t.style }}"><span>{{ t.name }}</span><small>{{ t.lv }}</small></button>
-        </sc-for>
-      </div>
-      <div class="tierbody" role="tabpanel">
-        <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">
-          <div>
-            <span style="display:block;font-size:14px;font-weight:700;letter-spacing:.08em;color:{{ tier.color }}">{{ tier.eyebrow }}</span>
-            <h3 style="font-size:21px">{{ tier.title }}</h3>
-          </div>
-          <span style="margin-left:auto;flex:none;font-size:14px;font-weight:700;padding:6px 12px;border-radius:999px;{{ tier.stateStyle }}">{{ tier.state }}</span>
-        </div>
-
-        <sc-if value="{{ tier.isFree }}">
-          <div>
-            <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px">
-              <h4 style="font-size:17px;margin-bottom:12px">공개 시장 정보</h4>
-              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-                <div><span style="display:block;font-size:14px;color:var(--ink-2)">지역 관심도</span><strong style="font-size:17px">상승</strong></div>
-                <div><span style="display:block;font-size:14px;color:var(--ink-2)">자료 최신성</span><strong style="font-size:17px">7일 이내</strong></div>
-                <div><span style="display:block;font-size:14px;color:var(--ink-2)">비교 후보</span><strong style="font-size:17px">12건</strong></div>
-              </div>
-            </div>
-            <div class="frow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764V20"/><path d="M9 3.236v15"/></svg><div><strong style="display:block;font-size:16px">위치 및 생활권</strong><span style="font-size:15px;color:var(--ink-2)">지도 기반 입지 개요</span></div></div>
-            <div class="frow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M15 18h-5"/><path d="M18 14h-8"/><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/></svg><div><strong style="display:block;font-size:16px">공개 미디어</strong><span style="font-size:15px;color:var(--ink-2)">관련 보도 및 공개 자료</span></div></div>
-            <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-top:14px">
-              <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:9px">
-                <h4 style="font-size:17px">회원 검토 의견</h4>
-                <span style="margin-left:auto;font-family:var(--fn);font-size:15px;font-weight:700;color:var(--ink-2);font-variant-numeric:tabular-nums">{{ reviewScore }}</span>
-              </div>
-              <sc-for list="{{ reviews }}" as="rv" hint-placeholder-count="2">
-                <div style="border-top:1px solid var(--line);padding:13px 0 3px">
-                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-                    <span style="width:30px;height:30px;border-radius:999px;background:var(--green-100);color:var(--green-700);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none">{{ rv.ini }}</span>
-                    <span style="font-size:14px;font-weight:700">{{ rv.who }}</span>
-                    <span style="margin-left:auto;font-size:13px;color:var(--gold)">{{ rv.star }}</span>
-                  </div>
-                  <p style="font-size:15px;color:var(--ink-2);line-height:1.65">{{ rv.q }}</p>
-                  <p style="font-size:13px;color:var(--ink-2);margin-top:4px">{{ rv.meta }}</p>
-                </div>
-              </sc-for>
-            </div>
-          </div>
+        <p style="font-size:16px;color:var(--ink-2);line-height:1.75;margin-top:20px">{{ d.summary }}</p>
+        <sc-if value="{{ d.hasBasis }}">
+          <p class="min" style="color:var(--ink-2);margin-top:10px">{{ d.basisLine }}</p>
         </sc-if>
-
-        <sc-if value="{{ tier.isBasic }}">
-          <div>
-            <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px">
-              <h4 style="font-size:17px;margin-bottom:12px">AI Risk Radar</h4>
-              <div class="bars">
-                <sc-for list="{{ risks }}" as="r" hint-placeholder-count="5">
-                  <div><span>{{ r.label }}</span><i><b style="{{ r.w }}"></b></i><strong>{{ r.v }}</strong></div>
-                </sc-for>
-              </div>
-            </div>
-            <div class="frow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green-700)"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><div><strong style="display:block;font-size:16px">AI 검토 요약</strong><span style="font-size:15px;color:var(--ink-2)">입지와 공개자료는 긍정적이며 권리·운영 조건은 추가 확인이 필요합니다.</span></div></div>
-          </div>
+        <sc-if value="{{ d.resourceUrl }}">
+          <a href="{{ d.resourceUrl }}" target="_blank" rel="noopener noreferrer" class="btn btn-o" style="margin-top:14px">공식 홈페이지 보기<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg></a>
         </sc-if>
+      </div>
 
-        <sc-if value="{{ tier.isStandard }}">
-          <div style="border:1px solid var(--line);border-radius:var(--r);padding:18px">
-            <h4 style="font-size:17px;margin-bottom:12px">상세 분석 자료</h4>
-            <sc-for list="{{ docs }}" as="doc" hint-placeholder-count="4">
-              <div style="display:flex;align-items:center;gap:11px;padding:9px 0;font-size:15px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-2)"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>{{ doc }}</div>
+      <section style="border-top:1px solid var(--line);margin-top:32px;padding-top:28px" aria-label="장단점 정리">
+        <h2 style="font-size:24px;margin-bottom:14px">먼저 확인할 것</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 30px">
+          <div>
+            <h3 style="font-size:17px;display:flex;align-items:center;gap:8px;margin-bottom:4px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--red)"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>감점 요소</h3>
+            <sc-for list="{{ consShown }}" as="c" hint-placeholder-count="3">
+              <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid var(--line)"><span style="flex:none;font-size:13px;font-weight:700;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-top:3px">{{ c.scope }}</span><span style="font-size:16px;line-height:1.6">{{ c.sum }}</span></div>
+            </sc-for>
+          </div>
+          <div>
+            <h3 style="font-size:17px;display:flex;align-items:center;gap:8px;margin-bottom:4px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>가점 요소</h3>
+            <sc-for list="{{ prosShown }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid var(--line)"><span style="flex:none;font-size:13px;font-weight:700;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-top:3px">{{ p.scope }}</span><span style="font-size:16px;line-height:1.6">{{ p.sum }}</span></div>
+            </sc-for>
+          </div>
+        </div>
+        <sc-if value="{{ hasBasicT }}">
+          <div style="margin-top:22px;padding-top:20px;border-top:1px solid var(--line)">
+            <h3 style="font-size:17px;margin-bottom:2px">한국인 생활 인프라 접근성</h3>
+            <p style="font-size:14px;color:var(--ink-2)">선호에 따라 장점과 단점이 갈리므로 사실만 정리합니다.</p>
+            <sc-for list="{{ neuList }}" as="n" hint-placeholder-count="3">
+              <div style="display:flex;gap:11px;padding:12px 0;border-top:1px solid var(--line)"><span style="flex:none;font-size:13px;font-weight:700;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-top:3px">{{ n.scope }}</span><span style="font-size:16px;line-height:1.6">{{ n.sum }}</span></div>
             </sc-for>
           </div>
         </sc-if>
-
-        <sc-if value="{{ tier.isPremium }}">
-          <div>
-            <div style="border:1px solid var(--gold);border-radius:var(--r);padding:18px;background:var(--gold-100)">
-              <h4 style="font-size:17px;margin-bottom:12px;color:var(--gold)">GLI Field Services</h4>
-              <sc-for list="{{ services }}" as="s" hint-placeholder-count="3">
-                <div style="padding:8px 0"><strong style="display:block;font-size:16px">{{ s.t }}</strong><span style="font-size:15px;color:var(--ink-2)">{{ s.d }}</span></div>
-              </sc-for>
-            </div>
-            <p class="min" style="color:var(--ink-2);margin-top:12px">서비스 범위와 이용 조건은 자산별로 안내합니다.</p>
-          </div>
+        <sc-if value="{{ noBasicT }}">
+          <p style="font-size:15px;color:var(--ink-2);margin-top:18px;padding-top:16px;border-top:1px solid var(--line)">{{ prosConsMore }}</p>
         </sc-if>
+      </section>
 
-        <sc-if value="{{ tier.isBusiness }}">
-          <div>
-            <div style="border:1px solid var(--gold);border-radius:var(--r);padding:18px;background:var(--gold-100)">
-              <h4 style="font-size:17px;margin-bottom:8px;color:var(--gold)">GLI Deal Desk</h4>
-              <p style="font-size:15px;color:var(--ink-2);margin-bottom:14px">{{ d.title }}의 사업자 연결과 거래 추진을 위한 전담 실행 창구입니다.</p>
-              <div style="display:flex;gap:10px;flex-wrap:wrap">
-                <button class="btn btn-o">사업자 미팅 요청</button><button class="btn btn-o">협상 지원 요청</button>
+      <sc-if value="{{ isProjD }}">
+      <section style="border-top:1px solid var(--line);margin-top:32px;padding-top:28px" aria-label="사업 정보">
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+          <h2 style="font-size:24px">사업 정보</h2>
+          <span class="ctpl" style="margin-bottom:0">{{ tplD }}</span>
+        </div>
+        <div style="border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:22px">
+          <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+            <span style="font-size:15px;color:var(--ink-2)">목표 금액</span>
+            <strong style="font-family:var(--fn);font-size:30px;font-weight:700;letter-spacing:-.01em">{{ pjGoal }}</strong>
+            <span style="font-size:15px;color:var(--ink-2)">{{ pjGoalKrw }}</span>
+            <b style="margin-left:auto;font-family:var(--fn);font-size:16px;font-weight:700;color:var(--green-700)">{{ pjPct }}</b>
+          </div>
+          <div class="cprog-track" style="margin-top:12px"><i style="{{ pjBar }}"></i></div>
+          <div class="facts" style="border-top:1px solid var(--line);margin-top:20px;padding-top:18px">
+            <sc-for list="{{ pjRows }}" as="pr" hint-placeholder-count="7">
+              <div><span>{{ pr.l }}</span><strong>{{ pr.v }}</strong></div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ apyNote }}">
+            <p style="font-size:15px;color:var(--ink-2);margin-top:16px;padding-top:14px;border-top:1px solid var(--line);line-height:1.6">{{ apyNote }}</p>
+          </sc-if>
+        </div>
+      </section>
+      </sc-if>
+
+      <section style="border-top:1px solid var(--line);margin-top:32px;padding-top:28px" aria-label="위치">
+        <h2 style="font-size:24px;margin-bottom:14px">위치</h2>
+        <div style="position:relative;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--green-100);height:240px;display:flex;align-items:center;justify-content:center">
+          <span class="imgcap">지도 자료</span>
+          <div style="text-align:center;color:var(--green-700);padding:20px">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+            <p style="font-size:16px;font-weight:700;margin-top:8px">{{ d.fullLoc }}</p>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:14px">
+          <sc-for list="{{ cityFacts }}" as="cf" hint-placeholder-count="3">
+            <span style="display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-size:15px;color:var(--ink-2)">{{ cf.l }}<b style="color:var(--ink)">{{ cf.v }}</b></span>
+          </sc-for>
+        </div>
+      </section>
+
+      <div style="margin-top:32px">
+      <details style="border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:12px">
+    <summary style="display:flex;align-items:center;gap:16px;padding:20px 22px">
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="font-size:18px">이 동네</strong>
+          <span style="flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:3px 9px;{{ rowHood.badgeStyle }}">{{ rowHood.tierLabel }}</span>
+        </span>
+        <span style="display:block;font-size:15px;color:var(--ink-2);margin-top:6px;line-height:1.6">{{ rowHood.summary }}</span>
+      </span>
+      <svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+        <div style="padding:2px 22px 26px">
+          <sc-if value="{{ rowHood.open }}">
+            <div>
+              <div style="display:flex;flex-wrap:wrap;gap:9px;border-top:1px solid var(--line);padding-top:18px">
+                <sc-for list="{{ regionGrades }}" as="rg" hint-placeholder-count="5">
+                  <span style="display:inline-flex;align-items:baseline;gap:8px;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;color:var(--ink-2)">{{ rg.l }}<b style="{{ rg.style }}">{{ rg.g }}</b></span>
+                </sc-for>
+              </div>
+              <h3 style="font-size:18px;margin:26px 0 10px">근접 시설</h3>
+              <div class="cmp-scroll">
+                <table class="cmp">
+                  <thead><tr><th scope="col">시설</th><th scope="col">유형</th><th scope="col">거리</th><th scope="col">확인</th></tr></thead>
+                  <tbody>
+                    <sc-for list="{{ facList }}" as="f" hint-placeholder-count="6">
+                      <tr><th scope="row">{{ f.n }}</th><td>{{ f.t }}</td><td>{{ f.d }}</td><td>{{ f.w }}</td></tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <h3 style="font-size:18px;margin:26px 0 4px">현지에서 본 것</h3>
+              <sc-for list="{{ obsList }}" as="o" hint-placeholder-count="5">
+                <div style="border-top:1px solid var(--line);padding:15px 0">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                    <span style="flex:none;font-size:13px;font-weight:700;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:2px 9px;margin-top:3px;margin-top:0">{{ o.scope }}</span>
+                    <strong style="font-size:16px">{{ o.label }}</strong>
+                  </div>
+                  <p style="font-size:16px;color:var(--ink-2);line-height:1.7">{{ o.text }}</p>
+                </div>
+              </sc-for>
+              <details style="border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;margin-top:20px;background:var(--paper)">
+                <summary style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px">수집 시점과 방식<svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+                <div style="margin-top:12px">
+                  <sc-for list="{{ obsList }}" as="o2" hint-placeholder-count="5">
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2)"><strong style="color:var(--ink);min-width:150px">{{ o2.label }}</strong><span>{{ o2.when }}</span><span>{{ o2.how }}</span></div>
+                  </sc-for>
+                </div>
+              </details>
+              <details style="border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;margin-top:12px;background:var(--paper)">
+                <summary style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px">관측 이력<svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+                <div style="margin-top:12px">
+                  <sc-for list="{{ logList }}" as="g" hint-placeholder-count="4">
+                    <div style="display:flex;gap:14px;padding:11px 0;border-top:1px solid var(--line)">
+                      <span style="flex:none;font-family:var(--fn);font-size:15px;font-weight:700;color:var(--ink-2);min-width:96px">{{ g.d }}</span>
+                      <span style="min-width:0"><strong style="display:block;font-size:15px">{{ g.how }} · {{ g.who }}</strong><span style="font-size:15px;color:var(--ink-2)">{{ g.what }}</span></span>
+                    </div>
+                  </sc-for>
+                </div>
+              </details>
+              <h3 style="font-size:18px;margin:26px 0 12px">현지 코멘트</h3>
+              <sc-for list="{{ sayList }}" as="q" hint-placeholder-count="2">
+                <blockquote style="border-left:3px solid var(--green);background:var(--paper);border-radius:0 var(--r) var(--r) 0;padding:16px 20px;margin:0 0 12px">
+                  <p style="font-size:17px;line-height:1.7">{{ q.q }}</p>
+                  <footer style="font-size:14px;color:var(--ink-2);margin-top:8px">{{ q.who }} · {{ q.w }}</footer>
+                </blockquote>
+              </sc-for>
+              <p class="min" style="color:var(--ink-2)">GLI가 수집한 참고 정보이며 진위를 보증하지 않습니다.</p>
+              <div style="border:1px solid var(--green);background:var(--green-100);border-radius:var(--r);padding:24px;margin-top:26px">
+                <h3 style="font-size:20px;margin-bottom:6px">직접 보러 가기</h3>
+                <p style="font-size:16px;color:var(--ink-2);margin-bottom:18px">현지 사정에 밝은 GLI 담당자가 동행합니다.</p>
+                <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                  <button class="btn btn-p" onClick="{{ goSoonConsult }}">현지 임장 신청</button>
+                  <span style="font-size:15px;color:var(--ink-2)">{{ visitCost }}</span>
+                </div>
               </div>
             </div>
-            <p class="min" style="color:var(--ink-2);margin-top:12px">계약·협상·전문가 용역은 추후 별도 범위와 조건으로 확정합니다.</p>
-          </div>
-        </sc-if>
+          </sc-if>
+          <sc-if value="{{ rowHood.empty }}">
+            <div style="border-top:1px solid var(--line);padding-top:18px">
+              <p style="font-size:16px;line-height:1.7">이 자산에는 아직 현지 기록이 없습니다. 구역 단위 정보는 확인되어 있으나 이 건물을 직접 본 기록은 남아 있지 않습니다.</p>
+              <p style="font-size:15px;color:var(--ink-2);margin-top:12px">관심자산으로 담아두면 조사 대상에 오릅니다.</p>
+            </div>
+          </sc-if>
+      <sc-if value="{{ rowHood.locked }}">
+        <div style="border-top:1px solid var(--line);padding-top:18px">
+          <span style="display:block;font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px">여기에 들어 있는 것</span>
+          <sc-for list="{{ rowHood.inside }}" as="ins" hint-placeholder-count="3">
+            <div style="font-size:16px;padding:7px 0;color:var(--ink-2)">{{ ins }}</div>
+          </sc-for>
+          <p style="font-size:15px;color:var(--ink-2);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">{{ rowHood.gateCopy }}</p>
+        </div>
+      </sc-if>
+        </div>
+      </details>
 
-        <sc-if value="{{ tier.locked }}">
-          <div class="lock">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 10 0v3"/></svg>
-            <p>{{ tier.lockCopy }}</p>
+      <sc-if value="{{ showSpec }}">
+      <details style="border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:12px">
+    <summary style="display:flex;align-items:center;gap:16px;padding:20px 22px">
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="font-size:18px">건물 제원</strong>
+          <span style="flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:3px 9px;{{ rowSpec.badgeStyle }}">{{ rowSpec.tierLabel }}</span>
+        </span>
+        <span style="display:block;font-size:15px;color:var(--ink-2);margin-top:6px;line-height:1.6">{{ rowSpec.summary }}</span>
+      </span>
+      <svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+        <div style="padding:2px 22px 26px">
+          <sc-if value="{{ rowSpec.open }}">
+            <div class="facts" style="border-top:1px solid var(--line);padding-top:18px">
+              <sc-for list="{{ specAll }}" as="sp" hint-placeholder-count="8">
+                <div><span>{{ sp.l }}</span><strong>{{ sp.v }}</strong></div>
+              </sc-for>
+            </div>
+          </sc-if>
+      <sc-if value="{{ rowSpec.locked }}">
+        <div style="border-top:1px solid var(--line);padding-top:18px">
+          <span style="display:block;font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px">여기에 들어 있는 것</span>
+          <sc-for list="{{ rowSpec.inside }}" as="ins" hint-placeholder-count="3">
+            <div style="font-size:16px;padding:7px 0;color:var(--ink-2)">{{ ins }}</div>
+          </sc-for>
+          <p style="font-size:15px;color:var(--ink-2);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">{{ rowSpec.gateCopy }}</p>
+        </div>
+      </sc-if>
+        </div>
+      </details>
+      </sc-if>
+
+      <sc-if value="{{ showDeal }}">
+      <details style="border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:12px">
+    <summary style="display:flex;align-items:center;gap:16px;padding:20px 22px">
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="font-size:18px">거래 실행 조건</strong>
+          <span style="flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:3px 9px;{{ rowDeal.badgeStyle }}">{{ rowDeal.tierLabel }}</span>
+        </span>
+        <span style="display:block;font-size:15px;color:var(--ink-2);margin-top:6px;line-height:1.6">{{ rowDeal.summary }}</span>
+      </span>
+      <svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+        <div style="padding:2px 22px 26px">
+          <sc-if value="{{ rowDeal.open }}">
+            <div>
+              <p style="font-size:15px;color:var(--ink-2);border-top:1px solid var(--line);padding-top:16px">{{ dealLead }}</p>
+              <sc-for list="{{ dealTop }}" as="dt" hint-placeholder-count="4">
+                <div style="display:flex;gap:16px;flex-wrap:wrap;padding:13px 0;border-top:1px solid var(--line)"><strong style="flex:none;font-size:15px;min-width:170px;color:var(--ink-2)">{{ dt.l }}</strong><span style="font-size:16px;line-height:1.6">{{ dt.v }}</span></div>
+              </sc-for>
+              <details style="border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;margin-top:18px;background:var(--paper)">
+                <summary style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px">세금과 송금 조건<svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+                <div style="margin-top:12px">
+                  <sc-for list="{{ dealRest }}" as="dr" hint-placeholder-count="4">
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;padding:11px 0;border-top:1px solid var(--line)"><strong style="flex:none;font-size:15px;min-width:170px;color:var(--ink-2)">{{ dr.l }}</strong><span style="font-size:16px;line-height:1.6">{{ dr.v }}</span></div>
+                  </sc-for>
+                </div>
+              </details>
+              <details style="border:1px solid var(--line);border-radius:var(--r);padding:15px 17px;margin-top:12px;background:var(--paper)">
+                <summary style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px">확보된 문서와 전문가 목록<svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></summary>
+                <div style="margin-top:12px">
+                  <sc-for list="{{ docs }}" as="doc" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:11px;padding:9px 0;font-size:15px;border-top:1px solid var(--line)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink-2);flex:none"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>{{ doc }}</div>
+                  </sc-for>
+                </div>
+              </details>
+            </div>
+          </sc-if>
+      <sc-if value="{{ rowDeal.locked }}">
+        <div style="border-top:1px solid var(--line);padding-top:18px">
+          <span style="display:block;font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px">여기에 들어 있는 것</span>
+          <sc-for list="{{ rowDeal.inside }}" as="ins" hint-placeholder-count="3">
+            <div style="font-size:16px;padding:7px 0;color:var(--ink-2)">{{ ins }}</div>
+          </sc-for>
+          <p style="font-size:15px;color:var(--ink-2);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">{{ rowDeal.gateCopy }}</p>
+        </div>
+      </sc-if>
+        </div>
+      </details>
+      </sc-if>
+
+      <sc-if value="{{ showSim }}">
+      <details style="border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:12px">
+    <summary style="display:flex;align-items:center;gap:16px;padding:20px 22px">
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="font-size:18px">비슷한 조건의 자산</strong>
+          <span style="flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:3px 9px;{{ rowSim.badgeStyle }}">{{ rowSim.tierLabel }}</span>
+        </span>
+        <span style="display:block;font-size:15px;color:var(--ink-2);margin-top:6px;line-height:1.6">{{ rowSim.summary }}</span>
+      </span>
+      <svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+        <div style="padding:2px 22px 26px">
+          <sc-if value="{{ rowSim.open }}">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-top:1px solid var(--line);padding-top:18px">
+              <sc-for list="{{ similar }}" as="sm" hint-placeholder-count="3">
+                <article style="border:1px solid var(--line);border-radius:var(--r);background:var(--paper);padding:18px;display:flex;flex-direction:column;gap:10px">
+                  <div>
+                    <p class="loc" style="font-size:14px">{{ sm.loc }}</p>
+                    <h4 style="font-size:17px">{{ sm.title }}</h4>
+                  </div>
+                  <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+                    <strong style="font-size:19px;font-weight:700">{{ sm.price }}</strong>
+                    <span class="ctrust">Trust <b>{{ sm.grade }}</b></span>
+                  </div>
+                  <div style="border-top:1px solid var(--line);padding-top:11px;font-size:15px;color:var(--ink-2);line-height:1.6">
+                    <p style="margin-bottom:5px"><b style="color:var(--green-700)">+</b> {{ sm.pro }}</p>
+                    <p><b style="color:var(--red)">−</b> {{ sm.con }}</p>
+                  </div>
+                  <button class="btn btn-o btn-full" onClick="{{ openDetail }}" data-i="{{ sm.i }}" style="margin-top:auto">이 자산 보기</button>
+                </article>
+              </sc-for>
+            </div>
+          </sc-if>
+      <sc-if value="{{ rowSim.locked }}">
+        <div style="border-top:1px solid var(--line);padding-top:18px">
+          <span style="display:block;font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px">여기에 들어 있는 것</span>
+          <sc-for list="{{ rowSim.inside }}" as="ins" hint-placeholder-count="3">
+            <div style="font-size:16px;padding:7px 0;color:var(--ink-2)">{{ ins }}</div>
+          </sc-for>
+          <p style="font-size:15px;color:var(--ink-2);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">{{ rowSim.gateCopy }}</p>
+        </div>
+      </sc-if>
+        </div>
+      </details>
+      </sc-if>
+
+      <details style="border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:12px;border-top:3px solid var(--forest)">
+    <summary style="display:flex;align-items:center;gap:16px;padding:20px 22px">
+      <span style="min-width:0;flex:1">
+        <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="font-size:18px">거래 실행 단계</strong>
+          <span style="flex:none;font-size:12px;font-weight:700;letter-spacing:.06em;border-radius:999px;padding:3px 9px;{{ rowBiz.badgeStyle }}">{{ rowBiz.tierLabel }}</span>
+        </span>
+        <span style="display:block;font-size:15px;color:var(--ink-2);margin-top:6px;line-height:1.6">{{ rowBiz.summary }}</span>
+      </span>
+      <svg class="chv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+        <div style="padding:2px 22px 26px">
+          <sc-if value="{{ rowBiz.open }}">
+            <div style="border-top:1px solid var(--line);padding-top:18px">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+                <sc-for list="{{ bizList }}" as="b" hint-placeholder-count="3">
+                  <div style="border:1px solid var(--line);border-radius:var(--r);background:var(--paper);padding:18px">
+                    <strong style="display:block;font-size:16px;margin-bottom:5px">{{ b.t }}</strong>
+                    <span style="font-size:15px;color:var(--ink-2);line-height:1.6">{{ b.d }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="border:1px solid var(--gold);border-radius:var(--r);background:var(--gold-100);padding:24px;margin-top:18px">
+                <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+                  <h3 style="font-size:19px;color:var(--gold)">표준견적</h3>
+                  <span style="font-size:15px;color:var(--ink-2)">{{ quote.ref }}</span>
+                  <strong style="margin-left:auto;font-family:var(--fn);font-size:26px;font-weight:700">{{ quote.total }}</strong>
+                </div>
+                <sc-for list="{{ quote.rows }}" as="qr" hint-placeholder-count="4">
+                  <div style="display:flex;gap:14px;padding:10px 0;border-top:1px solid rgba(122,82,20,.22);font-size:15px"><span style="flex:1">{{ qr.l }}</span><span style="color:var(--ink-2)">{{ qr.v }}</span></div>
+                </sc-for>
+                <p style="font-size:15px;font-weight:700;color:var(--gold);margin-top:16px;padding-top:14px;border-top:1px solid rgba(122,82,20,.22)">{{ quote.note }}</p>
+              </div>
+              <div style="display:flex;gap:11px;flex-wrap:wrap;margin-top:18px">
+                <button class="btn btn-p" onClick="{{ goSoonConsult }}">거래 추진 상담</button>
+                <button class="btn btn-o" onClick="{{ goSoonConsult }}">사업 협력 문의</button>
+              </div>
+            </div>
+          </sc-if>
+      <sc-if value="{{ rowBiz.locked }}">
+        <div style="border-top:1px solid var(--line);padding-top:18px">
+          <span style="display:block;font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:10px">여기에 들어 있는 것</span>
+          <sc-for list="{{ rowBiz.inside }}" as="ins" hint-placeholder-count="3">
+            <div style="font-size:16px;padding:7px 0;color:var(--ink-2)">{{ ins }}</div>
+          </sc-for>
+          <p style="font-size:15px;color:var(--ink-2);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">{{ rowBiz.gateCopy }}</p>
+        </div>
+      </sc-if>
+        </div>
+      </details>
+      </div>
+
+      <section style="border-top:1px solid var(--line);margin-top:34px;padding-top:26px" aria-label="다음 질문">
+        <h2 style="font-size:21px;margin-bottom:14px">이어서 물어볼 것</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ followups }}" as="fq" hint-placeholder-count="4">
+            <button class="btn btn-o" onClick="{{ goSoonConsult }}" style="font-size:15px">{{ fq }}</button>
+          </sc-for>
+        </div>
+      </section>
+    </section>
+
+    <aside class="aside" aria-label="자산 판단 요약">
+      <div style="padding:22px 22px 0">
+        <span style="display:block;font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--ink-2)">GLI TRUST</span>
+        <div style="display:flex;align-items:baseline;gap:12px;margin-top:4px">
+          <strong style="font-family:var(--fn);font-size:44px;font-weight:700;letter-spacing:-.03em;line-height:1">{{ d.grade }}</strong>
+          <span style="font-size:15px;color:var(--ink-2)">{{ gradeWord }}</span>
+        </div>
+        <div style="display:flex;gap:18px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)">
+          <div><span style="display:block;font-size:14px;color:var(--ink-2)">확인된 항목</span><strong style="font-size:17px">{{ vfCount }}</strong></div>
+          <div><span style="display:block;font-size:14px;color:var(--ink-2)">확인 예정</span><strong style="font-size:17px">{{ unvCount }}</strong></div>
+        </div>
+      </div>
+
+      <div style="margin:20px 22px;padding:16px 18px;border:1px solid var(--green);background:var(--green-100);border-radius:var(--r)">
+        <span style="display:block;font-size:14px;font-weight:700;color:var(--green-700);margin-bottom:5px">지금 하시면 좋은 것</span>
+        <p style="font-size:16px;line-height:1.6">{{ nextAction }}</p>
+      </div>
+
+      <div style="padding:0 22px 20px">
+        <button class="{{ dFavCls }} btn-full" onClick="{{ toggleDetailFav }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>{{ dFavLabel }}</button>
+        <p class="min" style="color:var(--ink-2);margin-top:10px">관심자산으로 담아두면 가격 변동과 게시 내림을 알려드립니다.</p>
+      </div>
+
+      <div style="padding:18px 22px;border-top:1px solid var(--line);background:var(--paper)">
+        <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+          <span style="font-size:14px;color:var(--ink-2)">현재 이용 등급</span>
+          <strong style="font-size:16px">{{ accessLabel }}</strong>
+          <span style="margin-left:auto;font-size:14px;color:var(--ink-2)">{{ cashLabel }}</span>
+        </div>
+        <sc-if value="{{ hasNextStep }}">
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+            <p style="font-size:15px;color:var(--ink-2);line-height:1.6;margin-bottom:12px">{{ nextStepCopy }}</p>
+            <span style="display:block;font-size:14px;font-weight:700;color:var(--ink-2);margin-bottom:8px">오르는 길은 세 가지입니다</span>
+            <div style="display:grid;gap:8px;margin-bottom:14px">
+              <sc-for list="{{ tierPaths }}" as="tp" hint-placeholder-count="3">
+                <div style="display:flex;gap:10px;align-items:baseline">
+                  <strong style="flex:none;width:52px;font-size:14px">{{ tp.l }}</strong>
+                  <span style="font-size:15px;color:var(--ink-2);line-height:1.5">{{ tp.d }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <button class="btn btn-o btn-full" onClick="{{ openBuy }}" data-t="{{ nextStepId }}">{{ nextStepCta }}</button>
           </div>
         </sc-if>
       </div>
+      <p class="min policy" style="color:var(--ink-2);padding:12px 22px 18px">상위 등급은 모든 하위 등급을 포함합니다. 표시 정보는 검토 단계이며 확정된 수익이나 법률 판단을 의미하지 않습니다.</p>
 
-      <div class="pbar">
-        <div><span>현재 이용 등급</span><strong>{{ accessLabel }}</strong></div>
-        <div><span>GLI Cash</span><strong>{{ cashLabel }}</strong></div>
-        <button class="{{ buyCls }}" onClick="{{ openBuy }}" disabled="{{ tier.hasAccess }}" style="margin-left:auto">{{ buyLabel }}</button>
-      </div>
-      <p class="min policy" style="color:var(--ink-2);padding:12px 22px 18px;border-top:1px solid var(--line)">상위 등급은 모든 하위 등급을 포함합니다. 표시 정보는 검토 단계이며 확정된 수익이나 법률 판단을 의미하지 않습니다.</p>
     </aside>
 
   </div>
-
-  <section style="background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;margin-top:32px" aria-label="자산 검토와 상세 작업">
-      <div class="split" style="gap:44px;grid-template-columns:1fr 1fr">
-        <div>
-          <h2 style="font-size:22px;display:flex;align-items:center;gap:9px;margin-bottom:12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--green)"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>검토 강점</h2>
-          <ul style="color:var(--ink-2)"><sc-for list="{{ d.strengths }}" as="s" hint-placeholder-count="3"><li>{{ s }}</li></sc-for></ul>
-        </div>
-        <div>
-          <h2 style="font-size:22px;display:flex;align-items:center;gap:9px;margin-bottom:12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--red)"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>추가 확인</h2>
-          <ul style="color:var(--ink-2)"><sc-for list="{{ d.checks }}" as="c" hint-placeholder-count="3"><li>{{ c }}</li></sc-for></ul>
-        </div>
-      </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:28px;padding-top:24px;border-top:1px solid var(--line)">
-        <button class="btn btn-p" onClick="{{ goSoonConsult }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>전문가 상담 신청</button>
-        <button class="{{ dFavCls }}" onClick="{{ toggleDetailFav }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>{{ dFavLabel }}</button>
-        <button class="btn btn-o" onClick="{{ goHome }}" style="margin-left:auto"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>탐색 결과로 돌아가기</button>
-      </div>
-  </section>
 </main>
 </div>
 
@@ -1409,10 +1817,10 @@
             <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:14px">
               <div style="min-width:0">
                 <small style="display:block;font-size:14px;color:var(--ink-2)">{{ a.priceLabel }}</small>
-                <strong style="display:block;font-size:23px;font-weight:700;line-height:1.3;overflow-wrap:anywhere">{{ a.price }}</strong>
+                <strong style="display:block;font-size:23px;font-weight:700;line-height:1.3;overflow-wrap:anywhere">{{ a.priceShort }}</strong>
                 <span style="font-size:15px;color:var(--ink-2);overflow-wrap:anywhere">{{ a.krw }}</span>
               </div>
-              <div class="trust"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Trust <b>{{ a.trust }}</b></span><span class="g">{{ a.grade }}</span></div>
+              <div class="trust"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg><span>Trust <b>{{ a.grade }}</b></span></div>
             </div>
             <button class="btn btn-o btn-full" onClick="{{ openDetail }}" data-i="{{ a.i }}">상세 정보 확인<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
           </div>
@@ -1468,8 +1876,8 @@
     <table class="cmp">
       <thead><tr><th scope="col">항목</th><th scope="col">Explorer</th><th scope="col">Investor</th><th scope="col">Private</th></tr></thead>
       <tbody>
-        <sc-for list="{{ cmpRows }}" as="r" hint-placeholder-count="6">
-          <tr><th scope="row">{{ r.k }}</th><td>{{ r.a }}</td><td>{{ r.b }}</td><td>{{ r.c }}</td></tr>
+        <sc-for list="{{ cmpRows }}" as="cr" hint-placeholder-count="6">
+          <tr><th scope="row">{{ cr.k }}</th><td>{{ cr.a }}</td><td>{{ cr.b }}</td><td>{{ cr.c }}</td></tr>
         </sc-for>
       </tbody>
     </table>
@@ -1778,7 +2186,7 @@
 </sc-if>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:1700}}">
+<script type="text/x-dc" data-dc-script>
 const TIERS = [
   { id:"free", name:"FREE", level:1, eyebrow:"공개 정보", color:"#4C5652", title:"누구나 확인하는 기본 자산 정보" },
   { id:"basic", name:"BASIC", level:2, eyebrow:"AI 분석", color:"#1B6B58", title:"AI가 정리한 핵심 위험 신호" },
@@ -1816,12 +2224,15 @@ const SOON = {
   contact:{ title:"고객문의", desc:"상담 신청과 문의 채널을 한곳에서 처리할 수 있도록 준비하고 있습니다. 준비되는 즉시 안내센터에서 바로 이용하실 수 있습니다." },
   guide:{ title:"가이드 & FAQ", desc:"자산 탐색, 멤버십, GLI Cash 이용 방법을 더 쉽게 확인할 수 있도록 준비하고 있습니다." },
   partners:{ title:"파트너스", desc:"GLI의 글로벌 파트너 네트워크와 협력 프로그램을 정리하고 있습니다." },
-  notice:{ title:"공지", desc:"이 데모에는 홈과 자산 상세 화면의 디자인만 포함되어 있습니다. 공지 화면은 다음 단계에서 적용합니다." },
-  news:{ title:"뉴스", desc:"이 데모에는 홈과 자산 상세 화면의 디자인만 포함되어 있습니다. 뉴스 화면은 다음 단계에서 적용합니다." },
-  paper:{ title:"GLI 백서", desc:"이 데모에는 홈과 자산 상세 화면의 디자인만 포함되어 있습니다. 백서는 별도 문서로 제공됩니다." },
+  notice:{ title:"공지", desc:"서비스 공지와 업데이트 이력을 한곳에서 확인하실 수 있도록 준비하고 있습니다." },
+  news:{ title:"뉴스", desc:"GLI 소식과 보도자료를 정리해 제공할 예정입니다." },
+  paper:{ title:"GLI 백서", desc:"백서 전문은 상세 문서 형태로 제공됩니다." },
   membership:{ title:"멤버십", desc:"Explorer · Investor · Private 요금과 열람 권한 비교 화면은 다음 단계에서 적용합니다." },
   my:{ title:"MY GLI", desc:"관심 자산과 상담 내역 화면은 다음 단계에서 적용합니다." },
   consult:{ title:"전문가 상담 신청", desc:"상담 신청 화면은 고객문의와 함께 준비하고 있습니다. 준비되는 즉시 자산 상세에서 바로 신청하실 수 있습니다." },
+  community:{ title:"커뮤니티", desc:"현지 기록을 나누고 먼저 다녀온 사람에게 물을 수 있는 공간을 준비하고 있습니다." },
+  game:{ title:"소셜게임", desc:"플랫폼 활동과 연결되는 소셜 기능을 준비하고 있습니다." },
+  lang:{ title:"언어 전환", desc:"영어·크메르어·베트남어 화면을 준비하고 있습니다." },
 };
 
 const M = [
@@ -1841,7 +2252,47 @@ const M = [
   { txn:"프로젝트", cc:"MY", tags:["KL","쇼핑연결","복합","분양"] },
   { txn:"프로젝트", cc:"MY", krw:610000000, krwMax:2490000000, tags:["KLCC","호텔","복합","분양"] },
   { txn:"프로젝트", cc:"MY", tags:["도심","수영장","복합","분양"] },
+  /* 프로젝트 예시 4건 (2026-08-20). 템플릿 A~D 모양을 보기 위한 가상 자산이며 실제 후보가 아니다.
+     자료 수령 시 이 4건을 실제 건으로 교체한다. */
+  { txn:"프로젝트", cc:"KH", cat:"프로젝트", tags:["파이낸싱","배당","개발"] },
+  { txn:"프로젝트", cc:"PH", cat:"프로젝트", tags:["지분","운영","고위험"] },
+  { txn:"프로젝트", cc:"KH", cat:"프로젝트", tags:["토지","인허가","해안"] },
+  { txn:"프로젝트", cc:"MY", cat:"프로젝트", tags:["플랜테이션","인수","농장"] },
 ];
+/* 자산 분류 (2026-08-15 확정).
+   부동산: 주거용 · 상업용 · 레저 · 개발 프로젝트.
+   레저 = 골프·리조트 회원권, 콘도미니엄·호텔 객실(운영 위탁), 방갈로·빌라(단독 운영), 마리나·선착장, 캠핑장·글램핑.
+   개발 프로젝트 = 분양 전 개발, 완공 임박 재고 물량, 토지 개발·인허가 단계.
+   비부동산 사업 투자(F&B·물류, 지분·조인트벤처, 농장·플랜테이션)는 별도 메뉴로 분리 — 화면 미구현.
+   현재 등록 자산 16건은 전부 주거용이다(임대·매매 8 + 선분양 8). 선분양은 구입 행위가 부동산이므로 프로젝트가 아니다.
+   상업용·레저·프로젝트는 실제 후보 자산 자료 수령 후 등록. */
+const CAT_LABEL = { ALL:"전체 자산", 주거용:"주거용", 상업용:"상업용", 레저:"레저", 프로젝트:"프로젝트" };
+
+/* 프로젝트 표시 템플릿 (2026-08-15 확정). 관리자가 넷 중 하나를 고르고 내용을 채운다.
+   A 사업 참여형 · B 지분 취득형 · C 토지·개발 단계형 · D 자유 서술형.
+   금전 표기 규칙: 목표 금액만 쓰고 모인 금액은 진행률로만 짐작하게 한다. 참여자는 "○○명 이상"으로만.
+   예상 수익률은 사업 주체가 제시한 숫자이며 GLI가 산정하지 않는다. 화면에 출처를 밝힌다.
+   아래 4건은 템플릿 모양을 보기 위한 가상 자산이다 — 실제 후보 자료 수령 시 교체한다. */
+const PROJECT = {
+  16: { tpl:"A 사업 참여형", goal:"$2,400,000", goalKrw:"약 33억원", pct:62, min:"$25,000", apy:"연 14%", term:"약 30개월", backers:"20명 이상" },
+  17: { tpl:"B 지분 취득형", goal:"$1,800,000", goalKrw:"약 24억 8천만원", pct:35, min:"$50,000", apy:"연 26%", term:"기간 미정", backers:"10명 이상" },
+  18: { tpl:"C 토지·개발 단계형", goal:"$3,200,000", goalKrw:"약 44억원", pct:18, min:"$40,000", apy:"연 9%", term:"약 48개월", backers:"5명 이상" },
+  19: { tpl:"D 자유 서술형", goal:"$5,600,000", goalKrw:"약 77억원", pct:8, min:"$100,000", apy:"제시 없음", term:"조사 예정", backers:"모집 준비 중" },
+};
+
+/* 선분양 주거용 필수 필드. 원본 자료에 없는 값은 "조사 예정"으로 남긴다.
+   프로젝트형이 아니다 — 구입 행위가 부동산이므로 주거용으로 분류되고, 카드만 지표 4개를 더 보인다. */
+const PRESALE = {
+  8:  { units:"2개 동 · 517세대", done:"2027년 4분기", dev:"CapitaLand Development · UOA Group", permit:"자료상 미표기" },
+  9:  { units:"2개 동 · 300세대", done:"자료상 2024년 계획", dev:"GS (자료 표기)", permit:"조사 예정" },
+  10: { units:"Galleria · Brighton · McKinley", done:"조사 예정", dev:"RLC Residences", permit:"조사 예정" },
+  11: { units:"1BR~Penthouse · 전체 세대 조사 예정", done:"조사 예정", dev:"조사 예정", permit:"조사 예정" },
+  12: { units:"490세대 · 58~95㎡", done:"2028년 8월", dev:"GSKL Property", permit:"개발면허·광고허가 표기" },
+  13: { units:"Studio~3BR · 세대수 조사 예정", done:"조사 예정", dev:"조사 예정", permit:"조사 예정" },
+  14: { units:"Tower 2 615실 · Menara 1 242실", done:"2029년 1월", dev:"TA Global", permit:"광고허가 2025년 7월 표기" },
+  15: { units:"도심 레지던스 · 규모 조사 예정", done:"조사 예정", dev:"조사 예정", permit:"조사 예정" },
+};
+
 const CC = { KH:"캄보디아", VN:"베트남", PH:"필리핀", MY:"말레이시아" };
 const CC_ALIAS = { 캄보디아:"KH", 프놈펜:"KH", 베트남:"VN", 호치민:"VN", 하노이:"VN", 필리핀:"PH", 마닐라:"PH", 세부:"PH", 말레이시아:"MY", 쿠알라룸푸르:"MY", 쿠알라:"MY", KL:"MY" };
 
@@ -1922,12 +2373,37 @@ function rank(f, assets) {
     if (hit.length) { sc += hit.length * 9; why.push(hit.slice(0, 2).join(" · ")); }
     sc += a.trust * 0.14;
     if (a.origin === "GLI 추천") { sc += 6; why.push("GLI 추천"); }
-    out.push({ i: a.i, sc, reason: why.slice(0, 3).join(" · ") || `Trust ${a.trust} 검증 자산` });
+    out.push({ i: a.i, sc, reason: why.slice(0, 3).join(" · ") || `Trust ${GRADE_OF(a.trust)} 등급 자산` });
   }
   return out.sort((x, y) => y.sc - x.sc).slice(0, 6);
 }
 
+/* DEMO NEWS CONTENT ONLY:
+   These hard-coded records exist only to present the completed newsroom experience.
+   Production must load news created, edited, deleted, scheduled and published by an
+   authorized administrator through the GLI admin tool/CMS. Do not maintain live news
+   by editing this public client bundle. */
 const NEWS = [
+  { cat:"보도자료", date:"2025. 12. 12.",
+    title:"GLI Vietnam, 글로벌 프롭테크 'Juwai IQI' 산하 'IQI Vietnam'과 전략적 MOU 체결",
+    excerpt:"이상호 공동대표 등이 '더 글로벌 시티' 현장을 실사하고 하이엔드 RWA 자산 파이프라인을 정밀 검증했습니다.",
+    body:["웹3 기반 실물자산 플랫폼 기업 GLI Vietnam이 아시아 최대 글로벌 부동산 기술 그룹 'Juwai IQI'의 베트남 법인 IQI Vietnam과 전략적 업무협약을 체결하고, 베트남 내 우량 부동산 자산 확보를 위한 협력에 나섰습니다.",
+      "IQI 베트남은 홍콩과 말레이시아에 본사를 둔 프롭테크 그룹 Juwai IQI의 베트남 거점입니다. 그룹은 20개국 이상에 진출해 5만 명 이상의 에이전트 네트워크를 보유하고 있으며, IQI 베트남은 현지 럭셔리 개발사 Masterise Homes의 상위 파트너입니다.",
+      "협약식 직후 GLI 서포트팀은 IQI 베트남 관계자와 함께 호치민의 '더 글로벌 시티'와 Masterise Homes 세일즈 갤러리를 방문해 입지적 가치와 시공 품질, 법적 안정성을 검토했습니다.",
+      "이상호 GLI 베트남 대표는 서류 검토를 넘어 현장 실사로 자산의 내재 가치를 검증하는 절차를 확립했다며, 이번 파트너십이 신뢰할 수 있는 생태계 확장의 이정표가 될 것이라고 밝혔습니다."] },
+  { cat:"보도자료", date:"2025. 12. 03.",
+    title:"GLI, 말레이시아 골프 플랫폼 'Deemples'와 레저·멤버십 협력 MOU",
+    excerpt:"쿠알라룸푸르 골프 앤 컨트리 클럽에서 체결해, GLI 회원이 동남아 주요 국가의 골프 서비스를 이용할 수 있게 됩니다.",
+    body:["GLI가 말레이시아 Kuala Lumpur에서 동남아시아 골프 커뮤니티·부킹 플랫폼 Deemples와 레저 및 멤버십 협력을 위한 전략적 업무협약을 체결했습니다. 체결식은 Kuala Lumpur Golf & Country Club에서 진행됐습니다.",
+      "Deemples는 말레이시아에 본사를 둔 동남아 골프 서비스 기업으로, 골프장 예약과 동반자 매칭을 함께 제공하는 플랫폼입니다. 협약에 따라 GLI 회원은 말레이시아와 동남아 주요 국가의 골프장 부킹과 프로모션, 커뮤니티 매칭을 이용할 수 있게 됩니다.",
+      "GLI는 이번 MOU를 시작으로 말레이시아 법인을 거점 삼아 동남아 레저 시장을 넓혀가고, 회원에게 실질적인 가치를 제공하는 라이프스타일 플랫폼으로 나아갈 계획입니다."] },
+  { cat:"보도자료", date:"2025. 10. 15.",
+    title:"싱가포르 기반 RWA 디지털자산 플랫폼 'GLI', 글로벌 확장 추진",
+    excerpt:"동남아 실물 자산을 디지털화하는 프로젝트를 동북아·유럽으로 넓혀가며, 베트남 법인 설립을 마쳤습니다.",
+    body:["GLI 싱가포르는 동남아시아 실물 자산을 디지털화하는 블록체인 프로젝트를 글로벌 사업화하고 있다고 밝혔습니다. GLI는 Game·Leisure·Investment를 핵심 축으로 하는 RWA 기반 프로젝트입니다.",
+      "싱가포르를 거점으로 동남아시아와 동북아시아, 유럽으로 사업 범위를 넓혀가고 있습니다. 베트남 호치민에서는 오피스 계약과 법인 설립이 마무리되었으며, 해당 지역 리조트·부동산 자산을 디지털 자산화하는 파일럿 프로젝트가 진행되고 있습니다.",
+      "플랫폼은 실물자산 가치와 연동된 GLIB, 운영과 거버넌스 참여를 위한 GLID, 게임·레저 분야에서 쓰이는 GLIL 세 가지 토큰 구조를 적용합니다. 금융·게임·관광 산업을 서로 잇는 것이 목표입니다.",
+      "한국의 솔리드넥스는 GLI 싱가포르와 용역계약을 체결하고 플랫폼 기술 개발과 전략 기획을 맡고 있습니다. 1단계로 RWA 기반 플랫폼 인프라 구축이 진행 중이며, 이후 게임 서비스 개발로 확장됩니다."] },
   { cat:"보도자료", date:"2025. 12. 12.",
     title:"RWA 디지털자산화 플랫폼 GLI, 투자 컨설팅 전문기업 'DealFlow'와 전략적 MOU 맺어",
     excerpt:"DealFlow의 동남아 M&A 전문성과 GLI의 RWA 기술을 결합해 베트남 자산 소싱과 파일럿 프로젝트를 공동 추진합니다.",
@@ -1960,7 +2436,8 @@ const NEWS = [
     body:["베트남 부동산 시장은 외국인 투자자에게 높은 성장 잠재력을 보여왔지만, 정보의 비대칭과 권리 확인의 어려움이 진입 장벽으로 작용해 왔습니다.",
       "GLI는 이 문제를 정보 검증의 문제로 정의합니다. 공개 자료와 시행사 문서를 AI로 수집·정규화한 뒤, 전문가가 원본과 현장을 확인하는 이중 절차를 통해 투자자가 무엇을 알고 무엇을 모르는지 명확히 구분할 수 있게 합니다.",
       "특히 투티엠과 빈즈엉 등 개발이 활발한 지역의 프로젝트를 중심으로 검증된 정보를 축적하고 있습니다."] },
-].map((n, i) => ({ ...n, i, cls:`n${i}`, stock:[2, 4, 5].includes(i) }));
+].sort((x, y) => Number(y.date.replace(/\D/g, "")) - Number(x.date.replace(/\D/g, "")))
+ .map((n, i) => ({ ...n, i, cls:`n${i}`, stock:[4, 6, 8].includes(i) }));
 
 const DOCS = [
   { id:"intro", grp:"Overview", label:"소개", crumb:"Overview › Introduction", title:"플랫폼 소개",
@@ -1986,11 +2463,263 @@ const PHASES = [
     items:["완전 탈중앙 DAO 거버넌스 활성화","글로벌 결제 게이트웨이 연동","골프·호텔 체인 등 레저 자산 확대"] },
 ];
 
+const NEXT_DESC = {
+  basic:"수집된 장단점 전체와 건물 제원, 비교 자산이 열립니다.",
+  standard:"국가별 취득 조건과 확보된 문서가 열립니다.",
+  premium:"구역 단위 등급과 현지 기록, 임장 신청이 열립니다.",
+  business:"현장 실사와 법률 검토, 협상 지원이 열립니다.",
+};
+/* 카드에서는 자리를 아끼기 위해 K 단위로 축약한다. 상세 페이지는 전체 금액을 쓴다. */
+const shortPrice = (p) => String(p || "").replace(/\d[\d,]*/g, (m) => {
+  const n = Number(m.replace(/,/g, ""));
+  return n >= 100000 ? Math.round(n / 1000).toLocaleString("en-US") + "K" : m;
+});
+/* 등급제 8단 (2026-08-15 확정). 점수를 노출하지 않고 등급만 보인다.
+   부동산은 자료가 얼마나 검증되었는가, 프로젝트는 리스크가 얼마나 낮은가를 재다.
+   배지에 꼬리표를 붙이거나 색을 달리하지 않는다 — 등급과 수익률을 나란히 놓기만 한다. */
+const GRADE_OF = (n) => n >= 90 ? "S" : n >= 85 ? "A+" : n >= 80 ? "A" : n >= 75 ? "B+" : n >= 70 ? "B" : n >= 65 ? "C+" : n >= 60 ? "C" : "D";
+
+/* 지역 단위 아날로그 정보. §4-3에 따라 매물이 아니라 지역에 붙고 같은 구역 자산이 공유한다.
+   미구현: 블록 단위 데이터, 개인화 정렬의 실제 이력 기반 가중치. 데모에서는 purpose 토글로 모사. */
+const REGION = {
+  Cambodia: {
+    scope:"구역 단위까지 조사 · 블록 보완 중",
+    city:[{l:"공항",v:"차량 35분"},{l:"의료",v:"한국인 진료 15분"},{l:"인터넷",v:"100Mbps 이상"}],
+    grades:[{l:"치안",g:"C"},{l:"침수·배수",g:"C"},{l:"위생",g:"B"},{l:"전력",g:"C"},{l:"수질·수압",g:"C"},{l:"의료 접근",g:"B"}],
+    items:[
+      { lay:1, cat:"침수·배수", tone:"neg", scope:"이 지역", sum:"우기에 진입 골목 물 고임",
+        text:"우기(6~10월) 집중호우 시 인근 간선도로 배수가 지연되고, 단지 진입 골목에 20~30cm 고임이 관측되었다. 배수 후 2시간 내 해소.", when:"2026.03", how:"현장 방문" },
+      { lay:1, cat:"치안", tone:"neg", scope:"이 지역", sum:"야간 도보 시 오토바이 절도 사례 보고",
+        text:"야간 도보 통행 중 오토바이가 접근해 소지품을 낚아채는 사례가 현지 커뮤니티에 반복 보고된다. 단지 내부는 24시간 경비가 배치되어 있다.", when:"2026.02", how:"현지 인터뷰" },
+      { lay:1, cat:"위생", tone:"neg", scope:"이 지역", sum:"우기 이후 배수구 냄새, 고층에서도 바퀴벌레 목격",
+        text:"건기에는 하수 냄새가 거의 없으나 우기 이후 배수구 주변에서 냄새가 올라온다. 바퀴벌레는 15층에서도 목격되며 단지는 월 1회 방역을 실시한다.", when:"2026.03", how:"현장 방문" },
+      { lay:1, cat:"전력", tone:"neu", scope:"이 자산", sum:"정전 주 1~2회, 공용부 자가발전기 있음",
+        text:"정전은 주 1~2회, 대부분 30분 이내이며 사전 예고는 없다. 단지에 자가발전기가 있으나 공용부와 엘리베이터에 한정되고 세대 내부는 공급되지 않는다.", when:"2026.03", how:"현장 방문" },
+      { lay:1, cat:"물", tone:"neg", scope:"이 자산", sum:"샤워기 필터 3주면 갈변, 15층 이상 수압 약함",
+        text:"샤워기 필터가 3주 정도면 갈색으로 변한다. 온수는 정상이나 15층 이상에서 수압이 약해진다. 식수는 생수 배달을 이용하는 세대가 대부분이다.", when:"2026.03", how:"현장 방문" },
+      { lay:2, cat:"교통", tone:"pos", scope:"이 지역", sum:"공항 차량 35분, 중심 상업지구 12분",
+        text:"프놈펜 국제공항까지 차량 35분, 중심 상업지구까지 12분. 출퇴근 시간대에는 20분까지 늘어난다.", when:"2026.03", how:"지도 확인" },
+      { lay:2, cat:"의료", tone:"pos", scope:"이 지역", sum:"한국인 진료 가능 병원 차량 15분",
+        text:"한국인 진료가 가능한 병원이 차량 15분 거리에 1곳, 24시간 응급 대응 병원이 차량 20분 거리에 있다.", when:"2026.02", how:"전화 확인" },
+      { lay:2, cat:"인터넷", tone:"neu", scope:"이 지역", sum:"100Mbps 이상 가능, 우기 중 간헐 끊김",
+        text:"광케이블 100Mbps 이상 회선이 공급된다. 우기 중 간헐적 끊김이 보고된다.", when:"2026.02", how:"현지 인터뷰" },
+      { lay:3, cat:"한인 인프라", tone:"neu", scope:"이 지역", sum:"한식당 도보권 3곳, 한인 마트 도보 7분",
+        text:"한식당이 도보권에 3곳, 한인 마트가 도보 7분 거리에 1곳 있다. 주말 오전에는 마트 주차 대기가 생긴다.", when:"2026.03", how:"현장 방문" },
+      { lay:3, cat:"한인 커뮤니티", tone:"neu", scope:"이 지역", sum:"한인 교회 주일 참석 150명 내외",
+        text:"한인 교회 주일 예배 참석 인원이 150명 내외이며 한인회 정기 모임이 월 1회 열린다.", when:"2026.01", how:"현지 인터뷰" },
+      { lay:3, cat:"한국 학교·학원", tone:"neu", scope:"이 지역", sum:"한국 국제학교 차량 25분, 학원 2곳",
+        text:"한국 국제학교가 차량 25분 거리에 있고 한국인이 운영하는 학원이 차량 10분 내 2곳 있다.", when:"2026.02", how:"전화 확인" },
+      { lay:4, cat:"교육", tone:"pos", scope:"이 지역", sum:"국제학교 3곳 차량 20분 내, 통학 버스 있음",
+        text:"국제학교 3곳이 차량 20분 내에 있으며 두 곳은 통학 버스 노선을 운영한다.", when:"2026.02", how:"전화 확인" },
+      { lay:4, cat:"임대 운영", tone:"pos", scope:"이 지역", sum:"동일 평형 실계약 월 $480~560, 공실 3~6주",
+        text:"동일 평형의 실제 계약 임대료는 월 $480~560이며 공실 기간은 통상 3~6주다. 단기 전대는 관리규약상 제한된다.", when:"2026.03", how:"현지 인터뷰" },
+      { lay:4, cat:"건물 관리", tone:"neu", scope:"이 자산", sum:"관리사무소 영어 대응 가능, 처리 2~3일",
+        text:"관리사무소는 영어 대응이 가능하고 요청 처리에 2~3일이 걸린다. 공용부 청소는 매일 이루어진다.", when:"2026.03", how:"현장 방문" },
+      { lay:4, cat:"소음", tone:"neg", scope:"이 지역", sum:"단지 뒤편 도로 야간 트럭 소음",
+        text:"단지 뒤편 도로로 야간에 트럭이 통행해 소음이 있다. 인근에 유흥업소는 없다.", when:"2026.03", how:"현장 방문" },
+      { lay:5, cat:"여가", tone:"pos", scope:"이 지역", sum:"카페 도보권 다수, 단지 내 수영장·헬스장",
+        text:"카페가 도보권에 다수 있고 단지 내에 수영장과 헬스장이 있다. 골프장은 차량 30분 거리다.", when:"2026.03", how:"현장 방문" },
+    ],
+    fac:[
+      { n:"K-Mart 한인 식료품", t:"식료품", d:"도보 7분", w:"2026.03" },
+      { n:"프놈펜 한인 교회", t:"종교", d:"차량 9분", w:"2026.01" },
+      { n:"로얄프놈펜 병원", t:"의료", d:"차량 15분", w:"2026.02" },
+      { n:"국제학교 3곳", t:"교육", d:"차량 12~20분", w:"2026.02" },
+      { n:"이온몰 센속", t:"쇼핑", d:"차량 14분", w:"2026.03" },
+      { n:"프놈펜 국제공항", t:"교통", d:"차량 35분", w:"2026.03" },
+    ],
+    log:[
+      { d:"2026.03.14", how:"현장 방문", who:"현지 조사 2인", what:"우기 배수 상태, 단지 공용부, 야간 통행 확인" },
+      { d:"2026.03.02", how:"현장 방문", who:"현지 조사 1인", what:"세대 내부 수압·온수, 샤워기 필터 상태 기록" },
+      { d:"2026.02.18", how:"현지 인터뷰", who:"거주자 3인", what:"치안 체감, 임대료 실계약 수준, 관리사무소 대응" },
+      { d:"2026.01.27", how:"전화 확인", who:"관리사무소", what:"방역 주기, 자가발전기 공급 범위" },
+    ],
+    say:[
+      { q:"밤에는 걸어다니지 않아요. 낮에는 아무 문제 없는데 해 지면 툭툭을 부릅니다.", who:"익명 · 거주 3년 학부모", w:"2026.02" },
+      { q:"정전은 익숙해지는데 물이 문제예요. 필터를 자주 갈아야 합니다.", who:"익명 · 거주 5년 자영업", w:"2026.02" },
+      { q:"마트가 가까워서 편해요. 주말 오전만 피하면 됩니다.", who:"익명 · 거주 1년 직장인", w:"2026.03" },
+    ],
+  },
+  Malaysia: {
+    scope:"도시·구역 단위 조사 완료",
+    city:[{l:"공항",v:"차량 55분"},{l:"MRT",v:"도보 6분"},{l:"의료",v:"종합병원 10분"}],
+    grades:[{l:"치안",g:"B"},{l:"침수·배수",g:"B"},{l:"위생",g:"A"},{l:"전력",g:"A"},{l:"수질·수압",g:"A"},{l:"의료 접근",g:"A"}],
+    items:[
+      { lay:1, cat:"치안", tone:"pos", scope:"이 지역", sum:"단지 출입 통제, 야간 도보 통행 무리 없음",
+        text:"단지 출입은 카드 통제로 운영되며 야간 도보 통행에 특별한 제약이 보고되지 않았다.", when:"2026.02", how:"현장 방문" },
+      { lay:1, cat:"침수·배수", tone:"neu", scope:"이 지역", sum:"우기 단시간 도로 정체, 침수 이력 없음",
+        text:"우기 집중호우 시 인근 도로 정체가 발생하나 단지 침수 이력은 확인되지 않았다.", when:"2026.02", how:"현지 인터뷰" },
+      { lay:1, cat:"전력", tone:"pos", scope:"이 지역", sum:"정전 사례 확인되지 않음",
+        text:"최근 1년간 계획 정전 외 정전 사례가 확인되지 않았다.", when:"2026.02", how:"전화 확인" },
+      { lay:1, cat:"물", tone:"pos", scope:"이 자산", sum:"수압·온수 정상, 물탱크 분기 청소",
+        text:"고층 수압과 온수 모두 정상이며 물탱크는 분기마다 청소된다.", when:"2026.02", how:"현장 방문" },
+      { lay:2, cat:"교통", tone:"pos", scope:"이 지역", sum:"MRT 도보 6분, KLIA 차량 55분",
+        text:"MRT 역까지 도보 6분, 쿠알라룸푸르 국제공항까지 차량 55분이다.", when:"2026.02", how:"지도 확인" },
+      { lay:2, cat:"의료", tone:"pos", scope:"이 지역", sum:"종합병원 차량 10분, 영어 진료",
+        text:"종합병원이 차량 10분 거리에 있고 영어 진료가 가능하다.", when:"2026.02", how:"전화 확인" },
+      { lay:3, cat:"한인 인프라", tone:"neu", scope:"이 지역", sum:"한식당 차량 10분 내 5곳, 한인 마트 2곳",
+        text:"한식당이 차량 10분 내 5곳, 한인 마트가 2곳 있다.", when:"2026.02", how:"현장 방문" },
+      { lay:3, cat:"한국 학교·학원", tone:"neu", scope:"이 지역", sum:"한국 국제학교 차량 30분",
+        text:"한국 국제학교가 차량 30분 거리에 있다.", when:"2026.02", how:"전화 확인" },
+      { lay:4, cat:"임대 운영", tone:"neu", scope:"이 지역", sum:"동일 평형 실계약 월 RM 3,200~4,000",
+        text:"동일 평형 실제 계약 임대료는 월 RM 3,200~4,000이며 단기임대는 관리규약에 따라 제한된다.", when:"2026.02", how:"현지 인터뷰" },
+      { lay:4, cat:"소음", tone:"neg", scope:"이 지역", sum:"인접 부지 공사 진행 중",
+        text:"단지 인접 부지에서 공사가 진행 중이며 주간 소음이 있다. 완료 시점은 조사 예정이다.", when:"2026.02", how:"현장 방문" },
+      { lay:5, cat:"여가", tone:"pos", scope:"이 지역", sum:"쇼핑몰 도보권, 단지 내 편의시설",
+        text:"대형 쇼핑몰이 도보권에 있고 단지 내 수영장·헬스장·라운지가 있다.", when:"2026.02", how:"현장 방문" },
+    ],
+    fac:[
+      { n:"코리아타운 상가", t:"식료품·식당", d:"차량 10분", w:"2026.02" },
+      { n:"종합병원", t:"의료", d:"차량 10분", w:"2026.02" },
+      { n:"MRT 역", t:"교통", d:"도보 6분", w:"2026.02" },
+      { n:"대형 쇼핑몰", t:"쇼핑", d:"도보 8분", w:"2026.02" },
+      { n:"한국 국제학교", t:"교육", d:"차량 30분", w:"2026.02" },
+      { n:"쿠알라룸푸르 국제공항", t:"교통", d:"차량 55분", w:"2026.02" },
+    ],
+    log:[
+      { d:"2026.02.21", how:"현장 방문", who:"현지 조사 1인", what:"단지 공용부, 수압·온수, 인접 공사 현황 확인" },
+      { d:"2026.02.09", how:"현지 인터뷰", who:"거주자 2인", what:"임대료 실계약 수준, 관리 상태" },
+      { d:"2026.01.30", how:"전화 확인", who:"관리사무소", what:"물탱크 청소 주기, 출입 통제 방식" },
+    ],
+    say:[
+      { q:"생활은 한국과 크게 다르지 않아요. 공사 소음만 아쉽습니다.", who:"익명 · 거주 2년 직장인", w:"2026.02" },
+      { q:"MRT가 가까워서 차 없이도 지낼 수 있습니다.", who:"익명 · 거주 4년 자영업", w:"2026.02" },
+    ],
+  },
+  Vietnam: {
+    scope:"도시 단위 조사 · 구역 보완 중",
+    city:[{l:"공항",v:"차량 30분"},{l:"중심가",v:"차량 15분"},{l:"의료",v:"국제병원 18분"}],
+    grades:[{l:"치안",g:"B"},{l:"침수·배수",g:"C"},{l:"위생",g:"B"},{l:"전력",g:"B"},{l:"수질·수압",g:"B"},{l:"의료 접근",g:"B"}],
+    items:[
+      { lay:1, cat:"침수·배수", tone:"neg", scope:"이 지역", sum:"우기 간선도로 침수 반복",
+        text:"우기에 인근 간선도로 침수가 반복 보고된다. 단지 내부 배수 상태는 조사 예정이다.", when:"2026.02", how:"현지 인터뷰" },
+      { lay:1, cat:"치안", tone:"neu", scope:"이 지역", sum:"단지 경비 상주, 오토바이 절도 주의 안내",
+        text:"단지에 경비가 상주하며 관리사무소가 오토바이 절도 주의를 안내한다.", when:"2026.02", how:"전화 확인" },
+      { lay:1, cat:"전력", tone:"neu", scope:"이 지역", sum:"계획 정전 월 1회 수준, 예고 있음",
+        text:"계획 정전이 월 1회 수준으로 사전 예고된다. 자가발전기 유무는 조사 예정이다.", when:"2026.02", how:"전화 확인" },
+      { lay:2, cat:"교통", tone:"pos", scope:"이 지역", sum:"중심가 차량 15분, 공항 차량 30분",
+        text:"중심가까지 차량 15분, 국제공항까지 차량 30분이다.", when:"2026.02", how:"지도 확인" },
+      { lay:3, cat:"한인 인프라", tone:"neu", scope:"이 지역", sum:"한인 밀집 상권 차량 12분",
+        text:"한인 밀집 상권이 차량 12분 거리에 있으며 한식당과 마트가 모여 있다.", when:"2026.02", how:"현장 방문" },
+      { lay:4, cat:"임대 운영", tone:"neu", scope:"이 지역", sum:"실계약 임대료 조사 예정",
+        text:"동일 평형 실제 계약 임대료는 조사 예정이다. 외국인 소유 쿼터 잔여분 확인이 선행된다.", when:"", how:"" },
+    ],
+    fac:[
+      { n:"한인 밀집 상권", t:"식료품·식당", d:"차량 12분", w:"2026.02" },
+      { n:"국제병원", t:"의료", d:"차량 18분", w:"2026.02" },
+      { n:"국제학교", t:"교육", d:"차량 20분", w:"2026.02" },
+      { n:"국제공항", t:"교통", d:"차량 30분", w:"2026.02" },
+      { n:"대형 쇼핑몰", t:"쇼핑", d:"차량 10분", w:"2026.02" },
+      { n:"단지 인접 공원", t:"여가", d:"조사 예정", w:"" },
+    ],
+    log:[
+      { d:"2026.02.16", how:"현지 인터뷰", who:"거주자 2인", what:"우기 침수, 치안 체감 확인" },
+      { d:"2026.02.04", how:"전화 확인", who:"관리사무소", what:"정전 예고 방식, 경비 운영" },
+    ],
+    say:[
+      { q:"비 오는 날은 차가 아예 안 움직여요. 그것만 감안하면 괜찮습니다.", who:"익명 · 거주 2년 직장인", w:"2026.02" },
+    ],
+  },
+  Philippines: {
+    scope:"도시 단위 조사 · 구역 보완 중",
+    city:[{l:"공항",v:"차량 40분"},{l:"의료",v:"대형병원 12분"},{l:"교통",v:"출퇴근 정체"}],
+    grades:[{l:"치안",g:"C"},{l:"침수·배수",g:"C"},{l:"위생",g:"C"},{l:"전력",g:"C"},{l:"수질·수압",g:"C"},{l:"의료 접근",g:"B"}],
+    items:[
+      { lay:1, cat:"치안", tone:"neg", scope:"이 지역", sum:"야간 단독 통행 자제 권고",
+        text:"현지 거주자들이 야간 단독 통행을 자제한다. 단지 내부는 경비가 상주한다.", when:"2026.01", how:"현지 인터뷰" },
+      { lay:1, cat:"전력", tone:"neg", scope:"이 지역", sum:"정전 주 2~3회, 자가발전기 유무 조사 예정",
+        text:"정전이 주 2~3회 발생하며 예고가 없는 경우가 많다. 단지 자가발전기 유무는 조사 예정이다.", when:"2026.01", how:"현지 인터뷰" },
+      { lay:1, cat:"물", tone:"neg", scope:"이 지역", sum:"수질 체감 낮음, 생수 사용 일반적",
+        text:"수돗물을 식수로 쓰지 않고 생수를 사용하는 것이 일반적이다. 층별 수압 편차는 조사 예정이다.", when:"2026.01", how:"현지 인터뷰" },
+      { lay:2, cat:"교통", tone:"neg", scope:"이 지역", sum:"출퇴근 정체 심함",
+        text:"출퇴근 시간대 정체가 심해 차량 이동 시간이 두 배 이상 늘어난다.", when:"2026.01", how:"지도 확인" },
+      { lay:2, cat:"의료", tone:"pos", scope:"이 지역", sum:"대형 병원 차량 12분",
+        text:"대형 병원이 차량 12분 거리에 있고 영어 진료가 가능하다.", when:"2026.01", how:"전화 확인" },
+      { lay:3, cat:"한인 인프라", tone:"neu", scope:"이 지역", sum:"한인 상권 차량 15분",
+        text:"한인 상권이 차량 15분 거리에 있다. 한인 교회 규모는 조사 예정이다.", when:"2026.01", how:"현장 방문" },
+    ],
+    fac:[
+      { n:"한인 상권", t:"식료품·식당", d:"차량 15분", w:"2026.01" },
+      { n:"대형 병원", t:"의료", d:"차량 12분", w:"2026.01" },
+      { n:"국제학교", t:"교육", d:"조사 예정", w:"" },
+      { n:"국제공항", t:"교통", d:"차량 40분", w:"2026.01" },
+      { n:"쇼핑몰", t:"쇼핑", d:"차량 8분", w:"2026.01" },
+      { n:"공원", t:"여가", d:"조사 예정", w:"" },
+    ],
+    log:[
+      { d:"2026.01.22", how:"현지 인터뷰", who:"거주자 2인", what:"정전 빈도, 수질 체감, 야간 통행 확인" },
+    ],
+    say:[
+      { q:"정전은 그냥 일상이에요. 발전기 있는 건물인지가 제일 중요합니다.", who:"익명 · 거주 6년 자영업", w:"2026.01" },
+    ],
+  },
+};
+
+/* 거래 실행 조건. §2에 따라 국가별로 항목 자체가 다르므로 갈아끼우는 모듈로 둔다.
+   미구현: 각 항목의 실제 법령 확인. 조사 필요. */
+const DEAL = {
+  Cambodia: { sum:"외국인 취득 가능 (2층 이상) · 타이틀 종류 확인 필요", lead:"캄보디아는 타이틀 종류와 층수 규정이 취득 가능 여부를 가른다.", rows:[
+    { l:"외국인 취득", v:"콘도 2층 이상 전유부만 가능. 1층과 토지는 취득 불가" },
+    { l:"소유 형태", v:"하드 타이틀 여부 확인 필요. 소프트 타이틀은 등기 효력이 약하다" },
+    { l:"계약~등기", v:"통상 8~12주. 하드 타이틀 전환이 필요한 경우 더 걸린다" },
+    { l:"본인 방문", v:"계약 시 1회 방문 권장. 위임장으로 대체 가능하나 공증 필요" },
+    { l:"취득세", v:"거래가의 4%" },
+    { l:"보유세", v:"평가액 기준 0.1%. 기준 미달 시 면제" },
+    { l:"양도·임대소득세", v:"양도 20%, 임대소득 10% 표기. 실제 적용 조사 예정" },
+    { l:"자금 송금", v:"USD 계좌 송금 일반적. 취득 목적 증빙 요구" },
+  ]},
+  Malaysia: { sum:"외국인 취득 가능 · 주별 최저 취득가 기준 충족 시", lead:"말레이시아는 문서화 수준이 가장 높아 항목 대부분이 채워진다.", rows:[
+    { l:"외국인 취득", v:"주별 최저 취득가 기준 충족 시 가능" },
+    { l:"소유 형태", v:"Freehold 또는 Leasehold. 리스홀드는 잔여 기한 확인" },
+    { l:"계약~등기", v:"통상 3~6개월. 주 정부 승인 기간 포함" },
+    { l:"본인 방문", v:"위임장으로 대체 가능. 계좌 개설 시 방문 필요" },
+    { l:"취득세", v:"인지세 1~4% 누진" },
+    { l:"보유세", v:"지방세 및 토지세 연 단위 부과" },
+    { l:"양도소득세", v:"보유 기간별 5~30% 차등" },
+    { l:"자금 송금", v:"제한 없음. 신고 기준 초과 시 보고" },
+  ]},
+  Vietnam: { sum:"프로젝트별 외국인 쿼터 내 가능 · 잔여 쿼터 조사 예정", lead:"베트남은 외국인 소유 기한과 프로젝트별 쿼터가 핵심이다.", rows:[
+    { l:"외국인 취득", v:"프로젝트별 외국인 쿼터 내에서만 가능. 잔여 쿼터 조사 예정" },
+    { l:"소유 형태", v:"외국인 소유 50년, 연장 신청 가능" },
+    { l:"계약~등기", v:"통상 4~8주. 프로젝트 인허가 단계에 따라 변동" },
+    { l:"본인 방문", v:"계약 시 방문 필요. 위임 절차 조사 예정" },
+    { l:"취득세", v:"등록세 0.5%" },
+    { l:"보유세", v:"조사 예정" },
+    { l:"양도·임대소득세", v:"양도 2%, 임대소득 10% 표기" },
+    { l:"자금 송금", v:"취득 자금 및 매각 대금 송금 절차 조사 예정" },
+  ]},
+  Philippines: { sum:"콘도 외국인 지분 40% 한도 내 가능", lead:"필리핀은 콘도 단위 외국인 지분 한도가 취득 가능 여부를 가른다.", rows:[
+    { l:"외국인 취득", v:"콘도 단위 외국인 지분 40% 한도 내 가능. 토지 취득 불가" },
+    { l:"소유 형태", v:"콘도 소유권 등기. 잔여 지분 조사 예정" },
+    { l:"계약~등기", v:"통상 6~10주" },
+    { l:"본인 방문", v:"계약 시 방문 권장" },
+    { l:"취득세", v:"인지세 1.5%, 이전세 0.5~0.75%" },
+    { l:"보유세", v:"평가액 기준 연 1~2%" },
+    { l:"양도소득세", v:"6% 표기" },
+    { l:"자금 송금", v:"조사 예정" },
+  ]},
+};
+
+/* 표준견적 데모 샘플. 실제 금액 체계는 현장 경험 축적 후 설계한다. 미구현. */
+const QUOTE = {
+  ref:"거래 실행 표준견적 · 콘도 1건 기준",
+  total:"$4,800",
+  rows:[
+    { l:"권리 검토 및 타이틀 확인", v:"포함" },
+    { l:"계약서 검토와 협상 지원", v:"포함" },
+    { l:"등기 대행 및 관청 절차", v:"포함" },
+    { l:"현지 세무 신고 지원", v:"포함" },
+    { l:"항공·숙박 등 고객 실비", v:"별도" },
+  ],
+  note:"견적 범위를 넘는 돌발 비용은 GLI가 부담합니다.",
+};
+
 class Component extends DCLogic {
-  state = { view:"land", asset:12, favs:{}, gal:0, tier:0, unlocked:1, cash:5000, buyOpen:false, dFav:false,
+  state = { view:"land", asset:12, favs:{}, gal:0, tier:0, unlocked:1, purpose:"live", cash:5000, buyOpen:false, dFav:false,
     cycle:"monthly", plan:"investor", paid:false,
     query:"", chat:[{ role:"ai", text:"찾으시는 목적과 예산을 편하게 말씀해 주세요. 조건을 정리해 검토할 후보와 확인할 위험을 함께 보여드립니다." }],
-    busy:false, hits:null, cc:"ALL", txn:"ALL", mode:null, sortKey:"rec", vmode:"grid", favOnly:false, trange:"6M",
+    busy:false, hits:null, cc:"ALL", cat:"ALL", txn:"ALL", mode:null, sortKey:"rec", vmode:"grid", favOnly:false, trange:"6M",
+    hook:"", pipeState:null,
     newsCat:"전체보기", article:0, doc:"intro" };
 
   async search(q) {
@@ -2070,6 +2799,13 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
     document.removeEventListener("keydown", this._onKey);
   }
 
+  handoff() {
+    const t = this.state.hook.trim();
+    this.setState({ query: t || this.state.query, pipeState:null });
+    this.nav("home");
+    if (t) setTimeout(() => this.search(t), 60);
+  }
+
   nav(view, soon) {
     this.setState({ view, soon: soon ?? this.state.soon, buyOpen:false });
     window.scrollTo(0, 0);
@@ -2100,9 +2836,39 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
     };
   }
 
+  pipeVals(s) {
+    const ORDER = ["idle","understanding","searching","reviewing","composing","complete","error"];
+    const LABELS = ["요청 이해","후보 탐색","근거 검토","답변 구성"];
+    let st = s.pipeState;
+    if (!st) st = s.busy ? "searching" : (s.hits ? "complete" : "idle");
+    const activeAt = { understanding:1, searching:2, reviewing:3, composing:4 }[st] || 0;
+    const isErr = st === "error";
+    const errAt = 2;
+    const out = { showNote: st === "idle", errMsg: isErr ? "자료 수집을 마치지 못했습니다. 다시 시도해 주세요." : null };
+    for (let n = 1; n <= 4; n++) {
+      let cls = "pipe-step is-idle", icon = String(n);
+      if (st === "complete") { cls = "pipe-step is-done"; icon = "✓"; }
+      else if (isErr) {
+        if (n < errAt) { cls = "pipe-step is-done"; icon = "✓"; }
+        else if (n === errAt) { cls = "pipe-step is-error"; icon = "!"; }
+      } else if (activeAt) {
+        if (n < activeAt) { cls = "pipe-step is-done"; icon = "✓"; }
+        else if (n === activeAt) cls = "pipe-step is-active";
+      }
+      out[`s${n}`] = cls; out[`i${n}`] = icon;
+    }
+    out.mobCls = "pipe-mob" + (isErr ? " is-error" : "");
+    if (isErr) { out.mobCount = `${errAt}/4`; out.mobLabel = `${LABELS[errAt-1]} 오류`; }
+    else if (st === "complete") { out.mobCount = "4/4"; out.mobLabel = "탐색 완료"; }
+    else if (activeAt) { out.mobCount = `${activeAt}/4`; out.mobLabel = `${LABELS[activeAt-1]} 중`; }
+    else { out.mobCount = ""; out.mobLabel = "질문을 입력하면 단계가 표시됩니다"; }
+    out.stateChips = ORDER.map(id => ({ id, label:id, cls: st === id ? "on" : "" }));
+    return out;
+  }
+
   renderVals() {
     const s = this.state;
-    const grade = (n) => n >= 80 ? "A" : n >= 65 ? "B" : "C";
+    const grade = GRADE_OF;
     const REC = "background:var(--forest)";
     const VER = "background:var(--green)";
     const STOCK = "참고 이미지", DEV = "시행사 제공";
@@ -2234,19 +3000,80 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
         summary:"Kuala Lumpur 도심의 Times Square 2 레지던스 프로젝트입니다. 제공된 2025년 축약 브로슈어에서 확인되는 프로젝트 이미지와 시설계획을 기준으로 게시합니다.",
         basis:"Times Square 2 축약 브로슈어", docDate:"2025년 11월 26일 자료 기준",
         strengths:["도심 입지","시설층 자료","프로젝트 렌더링 확보"], checks:["개발사·권리","전체 규모·타입","현재 가격·완공일"] },
+
+      /* --- 프로젝트 예시 4건 (가상 자산) --- */
+      { origin:"GLI 발굴", bstyle:REC, loc:"BKK1, Phnom Penh", country:"Cambodia",
+        title:"BKK1 레지던스 개발 파이낸싱", titleEn:"BKK1 residence development financing",
+        img:"https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"개발 파이낸싱 · 분기 배당 · 약 30개월", priceLabel:"목표 금액", price:"$2,400,000", krw:"약 33억원", trust:76,
+        facts:[F("참여 방식","개발 파이낸싱 · 지분 아님"),F("배분 구조","분기 배당 · 준공 후 정산"),F("회수 방식","준공 후 분양 대금에서 상환"),F("사업 주체","현지 개발사 (파트너 계약 체결)"),F("발굴 경로","2026년 3월 프놈펜 방문 중")],
+        summary:"BKK1 소형 레지던스 개발에 참여하는 파이낸싱 건입니다. 부동산을 사는 것이 아니라 개발 자금에 참여하고 이익금을 나눕니다. 사업 주체는 GLI가 현지에서 두 차례 만나 계약 이력을 확인했습니다.",
+        basis:"사업 주체 제공 사업계획서 · GLI 현지 확인 기록", docDate:"2026년 3월 현지 방문 기준",
+        strengths:["사업 주체 계약 이력 확인","분기 배당 구조","프놈펜 중심 입지"], checks:["인허가 진행 상황","에스크로 조건","준공 지연 시 처리"] },
+
+      { origin:"GLI 발굴", bstyle:REC, loc:"Entertainment City, Manila", country:"Philippines",
+        title:"마닐라 카지노 테이블 지분", titleEn:"Manila casino table equity",
+        img:"https://images.unsplash.com/photo-1596838132731-3301c3fd4317?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"운영 지분 취득 · 월 정산", priceLabel:"목표 금액", price:"$1,800,000", krw:"약 24억 8천만원", trust:52,
+        facts:[F("취득 대상","테이블 운영 지분"),F("지분 범위","건당 2~8%"),F("정산 주기","월 정산"),F("운영 주체","현지 운영사 (실적 자료 일부만 확인)"),F("발굴 경로","관리자 지정 · 비공개")],
+        summary:"마닐라 엔터테인먼트 시티의 테이블 운영 지분을 취득하는 건입니다. 공식 계약 절차가 투명하지 않고 운영사 실적 자료도 일부만 확인되었습니다. 수익 구조는 월 단위로 정산됩니다.",
+        basis:"운영사 제공 정산 내역 3개월치", docDate:"2026년 6월 자료 기준",
+        strengths:["월 단위 정산","소액 분할 가능","기존 운영 중인 테이블"], checks:["계약 구조의 법적 지위","운영사 재무 자료","지분 이전 절차"] },
+
+      { origin:"GLI 발굴", bstyle:REC, loc:"Otres, Sihanoukville", country:"Cambodia",
+        title:"오트레스 해안 토지 개발", titleEn:"Otres coastal land development",
+        img:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"3.2ha · 인허가 단계 · 약 48개월", priceLabel:"목표 금액", price:"$3,200,000", krw:"약 44억원", trust:81,
+        facts:[F("면적","3.2ha"),F("지목·용도","관광·숙박 용도 신청 중"),F("인허가 단계","용도 변경 접수 완료"),F("개발 계획","숙박시설 · 단계별 분양"),F("발굴 경로","2025년 11월 시아누크빌 방문 중")],
+        summary:"오트레스 해안의 3.2ha 토지를 확보해 관광·숙박 용도로 개발하는 건입니다. 용도 변경 신청이 접수된 단계이며 인허가 완료 전까지는 토지 보유가 주된 상태입니다.",
+        basis:"토지 등기 사본 · 용도 변경 접수증", docDate:"2026년 1월 확인",
+        strengths:["등기 사본 확인","해안 접근성","단계별 개발 가능"], checks:["용도 변경 승인 시점","주변 개발 계획","인허가 지연 위험"] },
+
+      { origin:"GLI 발굴", bstyle:REC, loc:"Sandakan, Sabah", country:"Malaysia",
+        title:"사바 팜 플랜테이션 인수", titleEn:"Sabah palm plantation acquisition",
+        img:"https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=900&q=80", imgnote:STOCK, stock:true,
+        spec:"운영 중인 플랜테이션 인수 검토", priceLabel:"목표 금액", price:"$5,600,000", krw:"약 77억원", trust:64,
+        facts:[F("대상","운영 중인 팜 플랜테이션"),F("현황","자료 검토 단계"),F("수익 구조","조사 예정"),F("발굴 경로","현지 파트너사 소개")],
+        summary:"사바주 산다칸의 운영 중인 팜 플랜테이션을 인수하는 건으로, 현지 파트너사가 소개했습니다. 아직 자료 검토 단계라 참여 구조와 수익 방식이 정해지지 않았습니다. 정해지는 대로 이 화면을 갱신합니다.",
+        basis:"파트너사 제공 개요 자료", docDate:"2026년 7월 접수",
+        strengths:["운영 중인 자산","현지 파트너 소개 건"], checks:["참여 구조","수익 방식","재무 자료 확보"] },
     ];
 
-    const assets = raw.map((r, i) => ({
-      ...r, i, category:"주거용", grade:grade(r.trust),
+    const assets = raw.map((r, i) => {
+      const cat = M[i].cat || "주거용";
+      /* 등록 자산 16건은 전부 부동산 구매 행위다 — 선분양 8건도 구조가 부동산 구입이므로
+         2026-08-15 분류 기준(소재가 아니라 행위)에 따라 주거용이다. 프로젝트 칸은 비어 둔다. */
+      const p = PRESALE[i] || null;
+      const pj = PROJECT[i] || null;
+      const priced = !!p && !/미기재/.test(r.price);
+      const head = pj ? { l:"목표 금액", v:shortPrice(pj.goal), s:pj.goalKrw }
+        : (!p || priced) ? { l:r.priceLabel, v:shortPrice(r.price), s:r.krw }
+                                  : { l:"프로젝트 규모", v:p.units, s:"" };
+      const metrics = pj ? [{ l:"최소 참여 금액", v:pj.min }, { l:"예상 수익률", v:pj.apy }, { l:"참여자", v:pj.backers }, { l:"예상 기간", v:pj.term }]
+        : !p ? []
+        : priced ? [{ l:"총 세대수", v:p.units }, { l:"완공 예정", v:p.done }, { l:"개발사", v:p.dev }, { l:"인허가 단계", v:p.permit }]
+                 : [{ l:"분양가", v:"조사 예정" }, { l:"완공 예정", v:p.done }, { l:"개발사", v:p.dev }, { l:"인허가 단계", v:p.permit }];
+      return {
+      ...r, i, cat, category:CAT_LABEL[cat], grade:grade(r.trust), priceShort:shortPrice(r.price),
+      isProject:!!p || !!pj, isPlain:!p && !pj, headLabel:head.l, headValue:head.v, headSub:head.s, metrics,
+      isProj:!!pj, tpl:pj ? pj.tpl : "", pctLabel:pj ? pj.pct + "%" : "",
+      barStyle:pj ? { width:pj.pct + "%" } : null,
+      /* 예상 수익률은 사업 주체가 제시한 숫자다. GLI 산정이 아니라는 것을 카드에서 밝힌다. */
+      apySource:pj && pj.apy !== "제시 없음" ? "예상 수익률은 사업 주체가 제시한 수치입니다" : "",
       favCls: s.favs[i] ? "fav on" : "fav",
       imgCls: `c${i}`,
       imgAlt: `${r.title} 내부 또는 건물 이미지`,
       txnLabel: M[i].txn,
       tagCls: r.origin === "GLI 추천" ? "tag rec" : "tag ver",
       photoCount: r.images ? `사진 ${r.images.length}장` : null,
-    }));
+    };});
 
     this._assets = assets;
+
+    const catChip = (id) => {
+      const n = assets.filter(x => x.cat === id && (s.cc === "ALL" || M[x.i].cc === s.cc)).length;
+      return { n: n + "건", on: s.cat === id, cls: s.cat === id ? "cat on" : (n ? "cat" : "cat off") };
+    };
 
     const isAiResult = !!s.hits;
     let shown;
@@ -2257,6 +3084,7 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       shown = assets.filter(x => {
         const m = M[x.i];
         if (s.cc !== "ALL" && m.cc !== s.cc) return false;
+        if (s.cat !== "ALL" && x.cat !== s.cat) return false;
         if (s.txn === "REC") return x.origin === "GLI 추천";
         if (s.txn !== "ALL" && m.txn !== s.txn) return false;
         return true;
@@ -2270,6 +3098,9 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
     const favList = assets.filter(x => s.favs[x.i]);
 
     const a = assets[s.asset] ?? assets[0];
+    /* 프로젝트 상세 — 공통 골격을 쓰되 유형 전용 섹션을 더하고 부동산 전용 줄은 뺀다.
+       사업 정보는 잠금 없이 열린 본문에 둔다 — 발굴 경로가 프로젝트의 고유 가치라 가려놓으면 의미가 없다. */
+    const pjD = PROJECT[a.i] || null;
     const hasGallery = !!a.images;
     const images = a.images ?? [a.img];
     const gal = ((s.gal % images.length) + images.length) % images.length;
@@ -2289,10 +3120,88 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       fullLoc:`${a.loc}, ${a.country}`,
       priceLabel:a.priceLabel, price:a.price, krw:a.krw,
       summary:a.summary, facts:a.facts, strengths:a.strengths, checks:a.checks,
-      basis:a.basis ?? "", hasBasis:!!a.basis, resourceUrl:a.resourceUrl ?? "",
+      basis:a.basis ?? "", hasBasis:!!a.basis,
+      basisLine:`${a.basis ?? ""} · ${a.docDate ?? "공개 자료 기준"}`, resourceUrl:a.resourceUrl ?? "",
       docDate:`${a.docDate ?? "공개 자료 기준"} · 출처에서 제공하지 않은 항목은 조사 예정으로 표시합니다.`,
       imgAlt:`${a.title} 사진 ${gal + 1}`,
+      addr:a.loc, country:a.country, titleEn:a.titleEn, grade:a.grade,
+      postState:"게시중",
+      postedOn:(() => {
+        const days = 6 + (a.i * 3) % 40;
+        const dt = new Date(2026, 7, 14 - days);
+        return `${dt.getMonth() + 1}월 ${dt.getDate()}일 게시 · ${days}일 경과`;
+      })(),
+      keySpec:(() => {
+        const hit = /(\d+)\s*(?:㎡|m²)/.exec(a.spec || "");
+        if (!hit) return a.spec || "조사 예정";
+        const py = Math.round(Number(hit[1]) / 3.3058 * 10) / 10;
+        return `${a.spec} · 약 ${py}평`;
+      })(),
     };
+
+    /* ── 아날로그 정보와 등급별 열람 (§4-2 / §6-1)
+       개인화 정렬: 실제로는 고객 이력 기반. 데모에서는 purpose 토글로 모사한다. 미구현. */
+    const region = REGION[a.country] ?? REGION.Cambodia;
+    const layOf = (it) => {
+      if (it.lay !== 4) return it.lay;
+      if (s.purpose === "yield" && it.cat === "임대 운영") return 1.6;
+      if (s.purpose === "live" && it.cat === "교육") return 1.6;
+      return 4;
+    };
+    const sortedItems = region.items.map(it => ({ ...it, label:it.cat, k:layOf(it) })).sort((x, y) => x.k - y.k);
+    const consAll = sortedItems.filter(x => x.tone === "neg" && x.lay !== 3);
+    const prosAll = sortedItems.filter(x => x.tone === "pos" && x.lay !== 3);
+    const neusAll = sortedItems.filter(x => x.lay === 3);
+    const hasBasicT = s.unlocked >= 2, hasStd = s.unlocked >= 3, hasPrem = s.unlocked >= 4, hasBiz = s.unlocked >= 5;
+    const hiddenCount = Math.max(0, consAll.length - 2) + Math.max(0, prosAll.length - 2) + neusAll.length;
+    const gradeStyle = (g) => g === "S" || g === "A" ? "font-family:var(--fn);font-size:17px;color:var(--green-700)"
+      : g === "B" ? "font-family:var(--fn);font-size:17px;color:var(--ink)"
+      : "font-family:var(--fn);font-size:17px;color:var(--red)";
+    const dealMod = DEAL[a.country] ?? DEAL.Cambodia;
+    const simPool = assets.filter(x => x.i !== a.i && x.country === a.country);
+    const simList = (simPool.length >= 3 ? simPool : assets.filter(x => x.i !== a.i)).slice(0, 3);
+    /* 현지 기록은 자산 단위다. 외부 수집 매물은 사람이 간 기록이 없어 0으로 표시된다.
+       0을 숨기지 않는다 — 고객에게는 정직한 정보이고, 조회수가 쌓이면 GLI의 조사 우선순위 신호가 된다. */
+    const recCount = a.origin ? region.items.length + region.say.length : 0;
+    const TIER_NAME = { free:"FREE", basic:"BASIC", standard:"STANDARD", premium:"PREMIUM", business:"BUSINESS" };
+    const mkRow = (tierId, lvl, summary, inside) => {
+      const ok = s.unlocked >= lvl;
+      return {
+        tierLabel: TIER_NAME[tierId], locked: !ok, open: ok, inside,
+        badgeStyle: ok ? "background:var(--green-100);color:var(--green-700)" : "background:#EFEDE7;color:var(--ink-2)",
+        summary,
+        gateCopy: TIER_NAME[tierId] + " 열람 범위입니다. 우측 이용 등급에서 열 수 있습니다.",
+      };
+    };
+    const rowHood = mkRow("premium", 4,
+      recCount > 0
+        ? `치안·전력·수질 등급 · 근접 시설 ${region.fac.length}곳 · 현지 기록 ${recCount}건`
+        : "구역 정보 확인 · 이 자산 현지 기록 없음",
+      ["구역 단위 치안·침수·위생·전력·수질 등급", "근접 시설 표 (거리와 확인 시점)", `현지 관측 기록 ${recCount}건`, "현지 코멘트", "임장 신청"]);
+    rowHood.empty = rowHood.open && recCount === 0;
+    rowHood.open = rowHood.open && recCount > 0;
+    const specAll = [...specRows, ...(a.facts || []).map(f => ({ l:f.label, v:f.value }))];
+    const rowSpec = mkRow("basic", 2, `자료로 확인된 제원 ${specAll.length}항목`,
+      ["자료로 확인된 전체 제원 항목"]);
+    const rowDeal = mkRow("standard", 3, dealMod.sum,
+      ["외국인 취득 가능 여부와 방식", "소유 형태와 기한", "계약부터 등기까지 걸리는 기간", "세금과 자금 송금 조건", "확보된 문서와 전문가 목록"]);
+    const rowSim = mkRow("basic", 2, `같은 가격대 ${simList.length}건`,
+      ["가격대가 비슷한 자산", "각 자산의 장단점 한 줄", "Trust 등급"]);
+    const rowBiz = mkRow("business", 5,
+      pjD ? "주체 실사 · 계약 구조 검토 · 참여 지원" : "현장 실사 · 법률·세무 검토 · 협상 지원 · 표준견적",
+      pjD ? ["사업 주체 실사", "계약 구조·법률 검토", "참여 절차 지원", "정산 조건 확인"] :
+      ["신규 현장 실사", "법률·세무·기술 검토", "협상·계약 지원", "표준견적 샘플"]);
+
+    const nextTier = TIERS.find(x => x.level === s.unlocked + 1);
+
+    const nextLine = pjD ? (!s.dFav ? "관심자산에 담아두고 모금 진행을 지켜보기"
+        : !hasStd ? "사업 주체의 이력부터 확인하기"
+        : !hasPrem ? "현지에서 확인한 기록부터 살펴보기"
+        : "다른 프로젝트의 위험·수익 위치와 비교하기")
+      : !s.dFav ? "관심자산에 담아두고 한 달 뒤 가격 변동 확인하기"
+      : !hasStd ? "이 나라의 외국인 소유 규정을 먼저 읽어보기"
+      : !hasPrem ? "현지에서 확인한 기록부터 살펴보기"
+      : "같은 가격대 자산과 나란히 놓고 비교하기";
 
     const t = TIERS[s.tier];
     const hasAccess = t.level <= s.unlocked;
@@ -2332,30 +3241,129 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
         whoStyle: m.role === "me" ? "color:var(--ink-2)" : "color:var(--green-700)",
         style: m.role === "me" ? "font-weight:600" : "color:var(--ink-2)",
         text: m.text, chips: m.chips || [], hasChips: !!(m.chips && m.chips.length),
+        note: m.note || "", hasNote: !!m.note,
       })),
+      goResults: () => {
+        const el = document.querySelector("[data-results]");
+        const heading = el?.querySelector("h2");
+        if (!el || !heading) return;
+        heading.tabIndex = -1;
+        heading.focus({ preventScroll:true });
+        el.scrollIntoView({ behavior:"smooth", block:"start" });
+      },
       isAiResult, isBrowse: !isAiResult,
-      resultKicker: isAiResult ? "AI Matched Results" : `${s.cc === "ALL" ? "Global" : CC[s.cc]} · 주거용`,
-      resultTitle: isAiResult ? "요청에 맞춘 추천 자산" : "주거용 추천 자산",
+      resultKicker: isAiResult ? "AI Matched Results" : `${s.cc === "ALL" ? "Global" : CC[s.cc]} · ${CAT_LABEL[s.cat]}`,
+      resultTitle: isAiResult ? "요청에 맞춘 추천 자산" : (s.cat === "ALL" ? "등록된 전체 자산" : `${CAT_LABEL[s.cat]} 자산`),
+      hasShown: shown.length > 0,
+      noneShown: shown.length === 0,
+      emptyTitle: s.cat === "ALL" ? "조건에 맞는 자산이 없습니다" : `아직 등록된 ${CAT_LABEL[s.cat]} 자산이 없습니다`,
+      emptyLead: s.cat === "ALL"
+        ? "국가나 거래 유형을 넓힐수록 다른 자산이 나옵니다."
+        : "현지에서 확인한 후보를 자료 검토 후 등록합니다. 다른 유형은 지금 볼 수 있습니다.",
+      catActive: s.cat !== "ALL",
+      catHome: catChip("주거용"), catBiz: catChip("상업용"), catLeisure: catChip("레저"), catProj: catChip("프로젝트"),
+      pickCat: (e) => { const v = e.currentTarget.dataset.v; this.setState({ cat: s.cat === v ? "ALL" : v, hits:null }); },
+      resetCat: () => this.setState({ cat:"ALL", hits:null }),
       resultCount: isAiResult
         ? `${shown.length}건을 요청 조건 기준으로 정렬했습니다.`
         : `${shown.length}개 후보를 비교 중입니다.`,
-      specRows,
+      specRows, specAll,
+      hasBasicT, noBasicT:!hasBasicT, hasStd, noStd:!hasStd, hasPrem, noPrem:!hasPrem, hasBiz, noBiz:!hasBiz,
+      rowHood, rowSpec, rowDeal, rowSim, rowBiz,
+      cityFacts: region.city || [],
+      prosConsMore: `수집된 항목 ${hiddenCount}건이 더 있습니다.`,
+      hasNextStep: !!nextTier,
+      nextStepId: nextTier ? nextTier.id : "",
+      nextStepCta: nextTier ? nextTier.name + " 들여다보기" : "",
+      /* 등급 도달 경로 3종 (2026-08-15 확정). 결제만이 아니라는 것이 화면에 드러나야 한다.
+         활동의 구산 기준(점수 발생량·등급별 목표)은 미정이므로 수치를 넣지 않는다. */
+      tierPaths: [
+        { l:"활동", d:"현지 기록 기여 · 자산 추천 · 재방문" },
+        { l:"멤버십", d:"플랫폼 전체의 열람 범위가 같이 오릅니다" },
+        { l:"이용권", d:"이 자산 하나만 여는 방법입니다" },
+      ],
+      nextStepCopy: nextTier ? "다음 단계는 " + nextTier.name + "입니다. " + (NEXT_DESC[nextTier.id] || "") : "",
+      consShown: hasBasicT ? consAll : consAll.slice(0, 2),
+      prosShown: hasBasicT ? prosAll : prosAll.slice(0, 2),
+      neuList: neusAll,
+      lockBasicT: { title:"남은 항목 " + hiddenCount + "건", copy:"BASIC을 열면 수집된 장단점과 중립 정보를 모두 볼 수 있습니다.", cta:"BASIC 열기" },
+      lockStd: { title:"국가별 취득 조건", copy:"STANDARD를 열면 외국인 취득 방식과 세금, 확보된 문서를 볼 수 있습니다.", cta:"STANDARD 열기" },
+      lockSpec: { title:"전체 제원", copy:"BASIC을 열면 자료로 확인된 제원 항목을 모두 볼 수 있습니다.", cta:"BASIC 열기" },
+      lockSim: { title:"비교 후보", copy:"BASIC을 열면 가격대가 비슷한 자산을 나란히 볼 수 있습니다.", cta:"BASIC 열기" },
+      lockPrem: { title:"현지에서 확인한 기록", copy:"PREMIUM을 열면 근접 시설, 관측 기록, 현지 코멘트와 임장 신청이 열립니다.", cta:"PREMIUM 열기" },
+      lockBiz: { title:"거래 실행 단계", copy:"임장을 마친 뒤 진행하는 단계입니다. 실사와 계약 지원, 표준견적이 포함됩니다.", cta:"BUSINESS 열기" },
+      regionScope: region.scope,
+      regionGrades: region.grades.map(g => ({ ...g, style:gradeStyle(g.g) })),
+      facList: region.fac,
+      obsList: sortedItems,
+      logList: region.log,
+      sayList: region.say,
+      visitCost: "표준견적 1인 $180 · 항공·숙박 별도",
+      dealLead: dealMod.lead,
+      dealTop: dealMod.rows.slice(0, 4),
+      dealRest: dealMod.rows.slice(4),
+      followups: pjD
+        ? ["사업 주체를 어떻게 확인했나요", "돈이 어떤 순서로 돌아오나요", "사업이 멈추면 어떻게 되나요", "전문가와 1:1 상담하기"]
+        : ["이 나라에서 외국인이 살 수 있나요", "실제로 월세가 얼마나 나오나요", "계약까지 몇 번 가야 하나요", "전문가와 1:1 상담하기"],
+      isProjD: !!pjD,
+      tplD: pjD ? pjD.tpl : "",
+      pjGoal: pjD ? pjD.goal : "",
+      pjGoalKrw: pjD ? pjD.goalKrw : "",
+      pjPct: pjD ? pjD.pct + "%" : "",
+      pjBar: pjD ? { width: pjD.pct + "%" } : null,
+      /* 목표 금액만 쓰고 모인 금액은 진행률로만 짐작하게 한다. 참여자는 "○○명 이상". */
+      pjRows: pjD
+        ? [{ l:"최소 참여 금액", v:pjD.min }, { l:"예상 수익률", v:pjD.apy }, { l:"참여자", v:pjD.backers }, { l:"예상 기간", v:pjD.term },
+           ...(a.facts || []).map(f => ({ l:f.label, v:f.value }))]
+        : [],
+      apyNote: pjD && pjD.apy !== "제시 없음"
+        ? "예상 수익률은 사업 주체가 제시한 수치입니다. GLI는 수익률을 산정하지 않으며, 사업 주체의 신뢰도를 등급에 반영합니다." : "",
+      showSpec: !pjD,
+      showDeal: !pjD,
+      showSim: !pjD,
+      similar: simList.map(x => ({ i:x.i, title:x.title, loc:x.loc, price:x.price, grade:x.grade,
+        pro:(x.strengths || [])[0] ?? "조사 예정", con:(x.checks || [])[0] ?? "조사 예정" })),
+      bizList: [
+        { t:"신규 현장 실사", d:"확인이 덜 된 항목을 현지에서 다시 확인합니다" },
+        { t:"법률·세무·기술 검토", d:"권리 관계와 세금, 건물 상태를 전문가가 봅니다" },
+        { t:"협상·계약 지원", d:"가격 협상과 계약, 등기 절차를 대행합니다" },
+      ],
+      quote: QUOTE,
+      /* 등급이 재는 대상이 유형마다 다르다 (2026-08-15 확정).
+         부동산 = 객관적 자료가 얼마나 검증되었는가. 프로젝트 = 리스크가 얼마나 낮은가.
+         프로젝트의 낮은 등급은 결함이 아니라 위험·수익 위치다. 별도 해설은 붙이지 않는다. */
+      gradeWord: (pjD
+        ? { S:"대형 주체 · 위험 낮음", "A+":"주체·절차 확인됨", A:"주체·절차 확인됨", "B+":"확인된 주체 · 일부 위험", B:"확인된 주체 · 일부 위험", "C+":"자료가 제한적 · 위험 높음", C:"자료가 제한적 · 위험 높음", D:"절차가 불투명 · 위험 매우 높음" }
+        : { S:"확인 항목이 대부분 채워짐", "A+":"확인 항목이 대부분 채워짐", "B+":"확인할 항목이 남아 있음", "C+":"확인이 덜 된 항목이 많음", A:"확인 항목이 대체로 채워짐", B:"확인할 항목이 남아 있음", C:"확인이 덜 된 항목이 많음", D:"확인이 거의 되지 않음" }
+      )[a.grade] ?? "",
+      gradeNote: pjD ? "등급은 사업 주체와 계약 구조의 위험도를 재집니다." : "확인되지 않은 항목은 조사 예정으로 표시합니다.",
+      vfCount: `${(a.strengths || []).length}항목`,
+      unvCount: `${(a.checks || []).length}항목`,
+      nextAction: nextLine,
+      demoTiers: [1,2,3,4,5].map(v => ({ v, l:"LV." + v, cls: s.unlocked === v ? "btn btn-p" : "btn btn-o" })),
+      demoPurpose: [{ v:"live", l:"실거주" }, { v:"yield", l:"임대수익" }].map(p => ({ ...p, cls: s.purpose === p.v ? "btn btn-p" : "btn btn-o" })),
       reviewScore: "4.6 / 5 (12건)",
       reviews: [
         { ini:"김", who:"김○○", meta:"Private 플랜 · 2026.07", star:"★★★★★", q:"현지 실사 자료에 권리 관계가 정리돼 있어 검토 시간을 크게 줄였습니다." },
         { ini:"이", who:"이○○", meta:"Investor 플랜 · 2026.06", star:"★★★★☆", q:"사진과 실제 동선이 조금 달랐습니다. 자료 자체는 정확했습니다." },
       ],
+      ...(() => { const p = this.pipeVals(s); return { pipe:p, stateChips:p.stateChips }; })(),
+      pickPipeState: (e) => this.setState({ pipeState: e.currentTarget.dataset.v }),
+      hook: s.hook,
+      onHook: (e) => this.setState({ hook: e.target.value }),
+      onHookKey: (e) => { if (e.key === "Enter") { e.preventDefault(); this.handoff(); } },
+      startExplore: (e) => { e.preventDefault(); this.handoff(); },
       landCls: s.view === "land" ? "" : "hide",
       aboutCls: s.view === "about" ? "" : "hide",
       goAbout: (e) => { e.preventDefault(); this.nav("about"); },
       voicesLoop: [
-        { q:"프놌펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.", ini:"김", who:"김○○", meta:"Investor 플랜 · 서울" },
+        { q:"프놈펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.", ini:"김", who:"김○○", meta:"Investor 플랜 · 서울" },
         { q:"조건을 문장으로 적으면 후보가 이유와 함께 나오는 게 좋았습니다. 무엇을 더 확인해야 하는지까지 알려줍니다.", ini:"이", who:"이○○", meta:"Explorer 플랜 · 부산" },
         { q:"프리미엄에서 본 현지 실사 자료가 기대보다 구체적이었습니다. 권리 관계 확인 부분이 가장 도움이 됐습니다.", ini:"박", who:"박○○", meta:"Private 플랜 · 인천" },
         { q:"환율까지 함께 환산돼 나와서 한국 부동산과 비교하기가 편했습니다.", ini:"최", who:"최○○", meta:"Investor 플랜 · 대전" },
         { q:"개발 프로젝트는 정보가 가장 부족한 분야인데, 시행사 자료 출처가 명시돼 있어 검토할 만했습니다.", ini:"정", who:"정○○", meta:"Private 플랜 · 서울" },
         { q:"관심자산에 모아두고 한 번에 비교하는 방식이 실제 의사결정에 도움이 됩니다.", ini:"윤", who:"윤○○", meta:"Explorer 플랜 · 수원" },
-        { q:"프놌펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.", ini:"김", who:"김○○", meta:"Investor 플랜 · 서울" },
+        { q:"프놈펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.", ini:"김", who:"김○○", meta:"Investor 플랜 · 서울" },
         { q:"조건을 문장으로 적으면 후보가 이유와 함께 나오는 게 좋았습니다. 무엇을 더 확인해야 하는지까지 알려줍니다.", ini:"이", who:"이○○", meta:"Explorer 플랜 · 부산" },
         { q:"프리미엄에서 본 현지 실사 자료가 기대보다 구체적이었습니다. 권리 관계 확인 부분이 가장 도움이 됐습니다.", ini:"박", who:"박○○", meta:"Private 플랜 · 인천" },
         { q:"환율까지 함께 환산돼 나와서 한국 부동산과 비교하기가 편했습니다.", ini:"최", who:"최○○", meta:"Investor 플랜 · 대전" },
@@ -2364,9 +3372,9 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       ],
       goLand: (e) => { e.preventDefault(); this.nav("land"); },
       landStats: [
-        { v: String(assets.length), l:"검증을 마친 기회" },
-        { v: String(assets.filter(x => x.origin).length), l:"GLI 직접 실사" },
-        { v: "4개국", l:"진출 시장" },
+        { v: String(assets.length), l:"등록 자산" },
+        { v: String(Object.values(REGION).reduce((t, r) => t + r.log.length, 0)), l:"현지 방문" },
+        { v: String(assets.filter(x => x.basis).length), l:"상세 자료 확보" },
       ],
       tickList: [...assets, ...assets].map((x, k) => ({ k, name:x.title, trust:x.trust, grade:x.grade, imgCls:x.imgCls })),
       featured: [...assets].sort((p, q) => q.trust - p.trust).slice(0, 3),
@@ -2383,7 +3391,7 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       })(),
       landNews: NEWS.map((n, k) => ({ ...n, i:k })).slice(0, 3),
       voices: [
-        { q:"프놌펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.", ini:"김", who:"김○○", meta:"Investor 플랜 · 서울" },
+        { q:"프놈펜 매물을 직접 보러 가기 전에 서류가 어디까지 확인됐는지 알 수 있어서 출장 일정을 줄였습니다.", ini:"김", who:"김○○", meta:"Investor 플랜 · 서울" },
         { q:"조건을 문장으로 적으면 후보가 이유와 함께 나오는 게 좋았습니다. 무엇을 더 확인해야 하는지까지 알려줍니다.", ini:"이", who:"이○○", meta:"Explorer 플랜 · 부산" },
         { q:"프리미엄에서 본 현지 실사 자료가 기대보다 구체적이었습니다. 권리 관계 확인 부분이 가장 도움이 됐습니다.", ini:"박", who:"박○○", meta:"Private 플랜 · 인천" },
         { q:"환율까지 함께 환산돼 나와서 한국 부동산과 비교하기가 편했습니다.", ini:"최", who:"최○○", meta:"Investor 플랜 · 대전" },
@@ -2392,7 +3400,7 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       ],
       partners: ["DealFlow", "Seafood Club", "ERA Vietnam", "RLC Residences", "㈜솔리드넥스"],
       watchDemo: [...assets].sort((p, q) => q.trust - p.trust).slice(0, 3)
-        .map(x => ({ imgCls:x.imgCls, name:x.title, price:x.price, trust:x.trust })),
+        .map(x => ({ imgCls:x.imgCls, name:x.title, price:x.price, trust:x.trust, grade:x.grade })),
       team: (() => {
         const R = (typeof window !== "undefined" && window.__resources) || {};
         const bg = (id, path) => `background-image:url(${R[id] || path})`;
@@ -2417,7 +3425,7 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       countryTabs: [["ALL","전체 국가"],["KH","캄보디아"],["VN","베트남"],["PH","필리핀"],["MY","말레이시아"]]
         .map(([id, label]) => ({ id, label, n: ccCount(id), cls: s.cc === id ? "ctab on" : "ctab",
           fcls: s.cc === id ? "fchip on" : "fchip" })),
-      txnTabs: [["ALL","전체"],["매매","매매"],["임대","임대"],["프로젝트","프로젝트"],["REC","GLI 추천"]]
+      txnTabs: [["ALL","전체"],["매매","매매"],["임대","임대"],["REC","GLI 추천"]]
         .map(([id, label]) => ({ id, label, cls: s.txn === id ? "on" : "",
           fcls: (id === "REC" ? "fchip lime" : "fchip") + (s.txn === id ? " on" : "") })),
       favChipCls: s.favOnly ? "fchip lime on" : "fchip",
@@ -2427,7 +3435,7 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
         { v: String(assets.length), l: "게재 자산" },
         { v: "4개국", l: "등록 국가" },
         { v: String(assets.filter(x => x.origin).length), l: "GLI 검증 완료" },
-        { v: String(Math.round(assets.reduce((t, x) => t + x.trust, 0) / assets.length)), l: "평균 Trust Score" },
+        { v: grade(Math.round(assets.reduce((t, x) => t + x.trust, 0) / assets.length)), l: "평균 Trust 등급" },
       ],
       sortKey: s.sortKey,
       sortOpts: [{ id:"rec", label:"기본 순서" }, { id:"trust", label:"Trust 높은순" }, { id:"new", label:"최근 등록순" }],
@@ -2524,7 +3532,7 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
         { t:"방문 지원 패키지", d:"일정과 비용은 자산별 별도 안내" },
       ],
       accessLabel: activeTier.name,
-      cashLabel: s.cash.toLocaleString("en-US"),
+      cashLabel: `GLI Cash ${s.cash.toLocaleString("en-US")}`,
       buyLabel, buyCls: hasAccess ? "btn btn-o" : "btn btn-p",
       buyOpen: s.buyOpen,
       dFav: s.dFav, dFavCls: s.dFav ? "btn btn-o" : "btn btn-o",
@@ -2533,6 +3541,11 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       goHome: (e) => { e.preventDefault(); this.nav("home"); },
       goSoonAbout: (e) => { e.preventDefault(); this.nav("soon","about"); },
       goFav: (e) => { e.preventDefault(); this.nav("fav"); },
+      goCat: (e) => {
+        e.preventDefault();
+        this.setState({ cat: e.currentTarget.dataset.v, hits:null });
+        this.nav("home");
+      },
       goCountry: (e) => {
         e.preventDefault();
         this.setState({ cc: e.currentTarget.dataset.v, hits:null });
@@ -2568,6 +3581,9 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       activate: () => this.setState({ paid:true }),
       goSoonMy: (e) => { e.preventDefault(); this.nav("soon","my"); },
       goSoonConsult: (e) => { e.preventDefault(); this.nav("soon","consult"); },
+      goSoonCommunity: (e) => { e.preventDefault(); this.nav("soon","community"); },
+      goSoonGame: (e) => { e.preventDefault(); this.nav("soon","game"); },
+      goSoonLang: (e) => { e.preventDefault(); this.nav("soon","lang"); },
       openDetail: (e) => {
         const i = Number(e.currentTarget.dataset.i);
         this.setState({ asset:i, gal:0, tier:0, dFav: !!s.favs[i] });
@@ -2583,7 +3599,16 @@ KH=캄보디아/프놈펜, VN=베트남/호치민, PH=필리핀/마닐라/세부
       galNext: () => this.setState(p => ({ gal: p.gal + 1 })),
       galPick: (e) => this.setState({ gal: Number(e.currentTarget.dataset.i) }),
       pickTier: (e) => this.setState({ tier: Number(e.currentTarget.dataset.i) }),
-      openBuy: () => { if (!hasAccess) this.setState({ buyOpen:true }); },
+      openBuy: (e) => {
+        const want = e?.currentTarget?.dataset?.t;
+        if (want) {
+          const idx = TIERS.findIndex(x => x.id === want);
+          if (idx >= 0) { this.setState({ tier:idx, buyOpen:true }); return; }
+        }
+        if (!hasAccess) this.setState({ buyOpen:true });
+      },
+      setUnlocked: (e) => this.setState({ unlocked: Number(e.currentTarget.dataset.v) }),
+      setPurpose: (e) => this.setState({ purpose: e.currentTarget.dataset.v }),
       closeBuy: () => this.setState({ buyOpen:false }),
       confirmBuy: () => this.setState(p => {
         const tt = TIERS[p.tier]; const c = CASH_COST[tt.id] ?? 0;

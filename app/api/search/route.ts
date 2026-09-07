@@ -9,6 +9,7 @@ import { listAssets } from "../../../lib/assets-data";
 import {
   createSafetyIdentifier,
   runAdvisorSearch,
+  type AdvisorConversationTurn,
 } from "../../../lib/ai-search";
 import {
   extractCriteria,
@@ -59,6 +60,23 @@ export async function POST(request: Request) {
         error: {
           code: "INVALID_SEARCH_CONTEXT",
           message: "이전 검색 조건을 확인해 주세요.",
+        },
+      },
+      { status: 400 },
+    );
+  }
+
+  const conversation = parseConversation(
+    typeof body === "object" && body !== null && "conversation" in body
+      ? body.conversation
+      : undefined,
+  );
+  if (conversation === null) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "INVALID_CONVERSATION",
+          message: "이전 대화 내용을 확인해 주세요.",
         },
       },
       { status: 400 },
@@ -117,12 +135,15 @@ export async function POST(request: Request) {
         now,
       )
     : null;
-  const runtimeAvailable =
-    process.env.LLM_PROVIDER === "openai" && Boolean(process.env.OPENAI_API_KEY);
+  const advisorProvider = selectAdvisorProvider();
+  const runtimeAvailable = advisorProvider !== "disabled";
+  const localAdvisorPreview =
+    process.env.NODE_ENV !== "production" && advisorProvider === "gemini";
   const canUseDeepSearch =
-    access !== null &&
-    access.aiMonthlyLimit !== 0 &&
-    (access.aiRemaining === null || access.aiRemaining > 0);
+    localAdvisorPreview ||
+    (access !== null &&
+      access.aiMonthlyLimit !== 0 &&
+      (access.aiRemaining === null || access.aiRemaining > 0));
   let usageClaimed = false;
 
   if (runtimeAvailable && canUseDeepSearch && memberContext) {
@@ -141,8 +162,10 @@ export async function POST(request: Request) {
   const result = await runAdvisorSearch(query, advisorAssets, {
       safetyIdentifier,
       context,
-      provider:
-        runtimeAvailable && canUseDeepSearch ? "openai" : "disabled",
+      conversation,
+      provider: runtimeAvailable && canUseDeepSearch
+        ? advisorProvider
+        : "disabled",
     });
   const orchestration = planGliAiRequest(query, {
     hasConversationContext: context !== null,
@@ -154,7 +177,7 @@ export async function POST(request: Request) {
 
   if (
     usageClaimed &&
-    result.advisor.mode !== "openai" &&
+    result.advisor.mode === "rules" &&
     memberContext &&
     access
   ) {
@@ -177,8 +200,14 @@ export async function POST(request: Request) {
     };
   }
 
+  const publicAdvisorMode = result.advisor.mode === "rules" ? "rules" : "ai";
+
   return NextResponse.json({
     ...result,
+    advisor: {
+      mode: publicAdvisorMode,
+      groundedAssetIds: result.advisor.groundedAssetIds,
+    },
     orchestration,
     dataMode: source.mode,
     membershipAccess: {
@@ -189,7 +218,7 @@ export async function POST(request: Request) {
       monthlyLimit: access ? access.aiMonthlyLimit : 0,
       used: access?.aiUsed ?? 0,
       remaining: access ? access.aiRemaining : 0,
-      deliveredMode: result.advisor.mode,
+      deliveredMode: publicAdvisorMode,
     },
     discovery: liveDiscovery || webDiscovery
       ? {
@@ -203,6 +232,45 @@ export async function POST(request: Request) {
         }
       : null,
   });
+}
+
+function selectAdvisorProvider(): "gemini" | "openai" | "disabled" {
+  if (
+    process.env.LLM_PROVIDER === "openai" &&
+    Boolean(process.env.OPENAI_API_KEY)
+  ) {
+    return "openai";
+  }
+  if (
+    Boolean(process.env.GEMINI_API_KEY) &&
+    process.env.GEMINI_ADVISOR !== "disabled"
+  ) {
+    return "gemini";
+  }
+  return "disabled";
+}
+
+function parseConversation(value: unknown): AdvisorConversationTurn[] | null {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.length > 8) return null;
+
+  const turns: AdvisorConversationTurn[] = [];
+  for (const turn of value) {
+    if (
+      typeof turn !== "object" ||
+      turn === null ||
+      !("role" in turn) ||
+      (turn.role !== "user" && turn.role !== "assistant") ||
+      !("text" in turn) ||
+      typeof turn.text !== "string"
+    ) {
+      return null;
+    }
+    const text = turn.text.trim();
+    if (!text || text.length > 1_200) return null;
+    turns.push({ role: turn.role, text });
+  }
+  return turns;
 }
 
 function mergeExternalAssets<T extends { sourceUrl?: string; id: string }>(

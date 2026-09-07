@@ -225,7 +225,36 @@ const assetIds = [
   "GLI-PT-MY-510",
   "GLI-PT-MY-511",
   "GLI-PT-MY-512",
+  "GLI-PJ-KH-901",
+  "GLI-PJ-PH-902",
+  "GLI-PJ-KH-903",
+  "GLI-PJ-MY-904",
 ];
+
+const approvedVisibleOverrides = [
+  ["GLI TRUST SCORE", "GLI TRUST GRADE"],
+  ["Trust Score 상위 자산", "검증 등급 상위 자산"],
+  ["게재 자산 Trust Score", "게재 자산 Trust 등급"],
+  ["Trust Score는 어떻게 산출되나요?", "Trust 등급은 어떻게 산정되나요?"],
+  ["Trust Score와", "Trust 등급과"],
+  ["가격과 Trust Score,", "가격과 Trust 등급,"],
+  ["Trust Score는", "Trust 등급은"],
+  ["Trust Score에", "Trust 등급에"],
+  ["Trust Score를", "Trust 등급을"],
+  ["Trust 높은순", "Trust 등급 높은순"],
+  [">Trust <b>", ">Trust 등급 <b>"],
+  ["80 이상 A, 65 이상 B, 그 외 C 등급입니다.", "확인 범위와 자료 일치도를 기준으로 S부터 D까지 8단계로 표시합니다."],
+  ["점수로 환산한 값입니다.", "등급으로 정리한 결과입니다."],
+  ["확인되지 않은 항목은 점수를 깎는 대신", "확인되지 않은 항목은"],
+  ["질문은 Claude가 해석해", "질문은 GLI AI가 해석해"],
+];
+
+function applyApprovedVisibleOverrides(html) {
+  return approvedVisibleOverrides.reduce(
+    (output, [before, after]) => output.replaceAll(before, after),
+    html,
+  );
+}
 
 function viewExpression(node) {
   if (!node?.tagName) return null;
@@ -252,7 +281,7 @@ if (!headerNode || !footerNode || viewNodes.size < 11) {
 function renderWithState(node, patch = {}) {
   component.state = { ...structuredClone(initialState), ...patch };
   values = component.renderVals();
-  return renderNode(node, {});
+  return applyApprovedVisibleOverrides(renderNode(node, {}));
 }
 
 const headerHtml = renderWithState(headerNode);
@@ -275,7 +304,7 @@ const detailViews = Object.fromEntries(
 );
 
 const articleViews = Object.fromEntries(
-  Array.from({ length: 6 }, (_, article) => [
+  Array.from({ length: 9 }, (_, article) => [
     String(article),
     renderWithState(viewNodes.get("article"), { view: "article", article }),
   ]),
@@ -316,14 +345,55 @@ const checkoutViews = Object.fromEntries(
 );
 
 const soonViews = Object.fromEntries(
-  ["fav", "about", "contact", "guide", "partners", "notice", "news", "paper", "membership", "my", "consult"].map((soon) => [
+  ["fav", "about", "contact", "guide", "partners", "notice", "news", "paper", "membership", "my", "consult", "community", "game", "lang"].map((soon) => [
     soon,
     renderWithState(viewNodes.get("soon"), { view: "soon", soon }),
   ]),
 );
 
+const reactFidelityCss = `
+/* Neutralize legacy React globals so the frozen HTML keeps browser-native control metrics. */
+.hookrow input{line-height:normal}
+.ncard{font-size:13.3333px;line-height:normal;word-break:normal;overflow-wrap:normal}
+.nav img{max-width:none}
+footer img{display:inline}
+[data-view="home"] main .panel>.min{display:none}
+.statedemo{display:none!important}
+.btn.is-searching svg{animation:gli-search-spin 1s linear infinite}
+@keyframes gli-search-spin{to{transform:rotate(360deg)}}
+.search-loading{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:18px}
+.search-skeleton{display:flex;flex-direction:column;gap:13px;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.search-skeleton-photo,.search-skeleton-line{display:block;background:linear-gradient(90deg,#E8ECE9 25%,#F5F7F5 50%,#E8ECE9 75%);background-size:200% 100%;animation:gli-search-shimmer 1.4s ease-in-out infinite}
+.search-skeleton-photo{height:190px;margin:-14px -14px 4px}
+.search-skeleton-line{height:16px;border-radius:4px;width:68%}
+.search-skeleton-line.wide{width:92%;height:20px}
+.search-skeleton-line.short{width:44%}
+@keyframes gli-search-shimmer{to{background-position:-200% 0}}
+.fw{display:flex;flex-direction:column;gap:11px;margin-top:0;padding:20px 0 0;border-top:1px solid var(--line)}
+.fw-label{font-size:14px;font-weight:700;color:var(--ink-2)}
+.fw-row{display:flex;align-items:stretch;gap:12px}
+.fw-row textarea{flex:1;min-width:0;min-height:56px;max-height:168px;padding:15px 16px;font-family:var(--f);font-size:17px;line-height:1.55;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:var(--r);resize:none;overflow-y:auto;overflow-wrap:anywhere;outline:none}
+.fw-row textarea::placeholder{color:#9A968C}
+.fw-row textarea:focus{border-color:var(--green);background:var(--surface);box-shadow:0 0 0 3px rgba(31,106,86,.16)}
+.fw-row textarea:disabled{background:#F3F1EB;color:var(--ink-2);cursor:default}
+.fw-send{flex:none;min-height:56px;padding:0 24px}
+.fw-send:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+.fw-send[disabled]{opacity:.45;cursor:default;background:var(--lime);border-color:var(--lime)}
+.fw-status{font-size:14px;color:var(--ink-2);display:flex;align-items:center;gap:9px;margin:0}
+.fw:not(.is-loading):not(.is-error) .fw-status{display:none}
+.fw.is-error .fw-status{color:var(--red)}
+.fw.is-error .fw-row textarea{border-color:var(--red)}
+.fw-dots{display:inline-flex;gap:4px}
+.fw-dots i{width:6px;height:6px;border-radius:999px;background:var(--green);animation:bl 1s infinite}
+.fw-dots i:nth-child(2){animation-delay:.15s}
+.fw-dots i:nth-child(3){animation-delay:.3s}
+@media(prefers-reduced-motion:reduce){.btn.is-searching svg,.search-skeleton-photo,.search-skeleton-line,.fw-dots i{animation:none}}
+@media(max-width:768px){.search-loading{grid-template-columns:1fr}.search-skeleton:nth-child(n+2){display:none}}
+@media(max-width:560px){.fw{padding-bottom:env(safe-area-inset-bottom)}.fw-row{flex-direction:column}.fw-row textarea{font-size:16px;min-height:62px}.fw-send{width:100%;min-height:52px}}
+`;
+
 fs.mkdirSync(outputDir, { recursive: true });
-fs.writeFileSync(cssPath, `${css}\n`, "utf8");
+fs.writeFileSync(cssPath, `${css}\n${reactFidelityCss}`, "utf8");
 fs.writeFileSync(
   outputPath,
   [

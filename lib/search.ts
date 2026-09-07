@@ -408,7 +408,7 @@ function buildAnswer(
       ? `${budget}3개월 체류와 부재 중 운영을 함께 고려한 후보 ${shownCount}개를 정리했습니다. 단기 임대 가능 여부는 건물 규정, 현지 규제와 운영대행 수수료를 별도로 확인해야 합니다.`
       : `${budget}요청 조건과 정확히 일치하는 매매 후보가 없어 가까운 대안 ${shownCount}개를 보여드립니다. 침실 수와 가격 차이를 확인한 뒤, 단기 임대 가능 여부와 운영대행 수수료를 별도로 검토해야 합니다.`;
   }
-  return `${budget}${location} 조건에서 ${shownCount}개 후보를 찾았습니다. Trust Score는 자료 신뢰도를 뜻하며 투자 수익을 보장하지 않습니다.`;
+  return `${budget}${location} 조건에서 ${shownCount}개 후보를 찾았습니다. Trust 등급은 자료 신뢰도를 뜻하며 투자 수익을 보장하지 않습니다.`;
 }
 
 function extractCity(text: string, country: SearchCountry): string | null {
