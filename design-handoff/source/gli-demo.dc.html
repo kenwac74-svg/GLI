@@ -77,7 +77,7 @@
   .hide,.cats.hide{display:none}
 
   .nav{position:sticky;top:0;z-index:40;background:var(--surface);border-bottom:1px solid var(--line)}
-  .nav-in{display:flex;align-items:center;gap:30px;min-height:76px}
+  .nav-in{display:flex;align-items:center;gap:30px;min-height:76px;min-width:0}
   .nav-links{display:flex;gap:6px;align-items:center}
   .nav-links a,.nav-links summary{display:flex;align-items:center;gap:7px;min-height:48px;padding:0 14px;border-radius:var(--r);font-size:16px;font-weight:600;color:var(--ink);white-space:nowrap;cursor:pointer;list-style:none}
   .nav-links summary::-webkit-details-marker{display:none}
@@ -345,7 +345,7 @@
     .lstats{grid-template-columns:repeat(3,1fr);gap:8px}
     .lstats>div{padding:11px 10px}
     .lstats b{font-size:21px}
-    .lstats span{font-size:13px;line-height:1.35}
+    .lstats span{font-size:14px;line-height:1.35}
   }
   .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.42)}
   .btn-ghost:hover{background:rgba(255,255,255,.12);color:#fff;border-color:#fff}
@@ -377,6 +377,7 @@
   .faq details[open] summary::after{content:"−"}
   .faq p{padding:0 2px 22px;color:var(--ink-2);max-width:820px}
   .lcta{background:var(--forest);color:#fff;border-radius:var(--r);padding:52px 44px;display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+  .lcta-sec{padding:64px 36px 72px}
   @media(max-width:1000px){.lhero-in{grid-template-columns:1fr;gap:36px;padding:52px 36px 60px}.lhero h1{font-size:42px}.steps,.why{grid-template-columns:1fr 1fr}.presslots{grid-template-columns:repeat(3,1fr)}.quoteslots{grid-template-columns:1fr}}
   @media(max-width:640px){.steps,.why{grid-template-columns:1fr}}
 
@@ -551,6 +552,11 @@
   }
   @media(max-width:680px){ .brand-copy{display:none} }
   @media(max-width:768px){
+    .nav-login,.nav-lang{display:none}
+    .nav-in{gap:12px}
+    .lhero-in{padding:52px 20px 60px}
+    .lcta{padding:34px 24px;gap:22px}
+    .lcta-sec{padding:48px 20px 56px}
     .grid3{grid-template-columns:1fr}
     .newsgrid{grid-template-columns:1fr} .doccards{grid-template-columns:1fr}
     h1{font-size:30px} h2{font-size:25px} h3{font-size:20px} h4{font-size:18px}
@@ -574,16 +580,23 @@
     .tiers{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
     .tiers::-webkit-scrollbar{display:none}
     .tiers button{flex:none;scroll-snap-align:center}
-    .mobile-menu{max-height:calc(100vh - 76px);overflow-y:auto;overscroll-behavior:contain}
+    .mobile-menu nav{max-height:calc(100dvh - 96px);overflow-y:auto;overscroll-behavior:contain}
     .hookrow input{font-size:16px}
     .cta-main{width:100%;justify-content:center}
   }
   @media(max-width:480px){
     .cats{grid-template-columns:1fr} .ftgrid{grid-template-columns:1fr;gap:26px}
-    .nav-in{gap:10px} .btn{padding:0 16px} .facts{grid-template-columns:1fr}
+    .nav-in{gap:8px} .btn{padding:0 16px} .facts{grid-template-columns:1fr}
+    .lhero h1{font-size:36px;line-height:1.18}
     .pprice strong{font-size:30px} .pname{padding-right:44px}
     .metrics strong{font-size:28px} .tiers button{min-width:76px}
     .cmp th,.cmp td{padding:12px 14px}
+  }
+  @media(max-width:360px){
+    .lstats{gap:8px}
+    .lstats>div{padding:12px 10px}
+    .lstats b{font-size:24px}
+    .lstats span{font-size:14px}
   }
 </style>
 </helmet>
@@ -636,8 +649,8 @@
   </div>
   <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
     <a class="btn btn-o" href="#" onClick="{{ goFav }}" aria-label="관심자산"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.5-1.5 3-3.3 3-5.5A5.5 5.5 0 0 0 12 5.4 5.5 5.5 0 0 0 2 8.5c0 2.2 1.5 4 3 5.5l7 7Z"/></svg><span class="fav-label">관심자산</span><sc-if value="{{ favCount }}"><span class="fav-count">{{ favCount }}</span></sc-if></a>
-    <a class="btn btn-o" href="#" onClick="{{ goSoonMy }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>로그인</a>
-    <a class="btn btn-o" href="#" onClick="{{ goSoonLang }}" aria-label="언어 전환"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>KO</a>
+    <a class="btn btn-o nav-login" href="#" onClick="{{ goSoonMy }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>로그인</a>
+    <a class="btn btn-o nav-lang" href="#" onClick="{{ goSoonLang }}" aria-label="언어 전환"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>KO</a>
     <details class="mobile-menu">
       <summary aria-label="메뉴 열기"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></summary>
       <nav aria-label="모바일 메뉴">
@@ -749,9 +762,9 @@
   </div>
 </section>
 
-<section class="wrap" style="padding:64px 36px 72px">
+<section class="wrap lcta-sec">
   <div class="lcta">
-    <div style="min-width:280px;flex:1">
+    <div style="min-width:min(280px,100%);flex:1">
       <h2 style="font-size:30px;color:#fff;margin-bottom:10px">검증 방식을 더 자세히 보시려면</h2>
       <p style="color:rgba(255,255,255,.74);font-size:17px">GLI 백서에서 플랫폼 구조와 검증 절차, 로드맵을 확인하실 수 있습니다.</p>
     </div>
@@ -1056,9 +1069,9 @@
   </div>
 </section>
 
-<section class="wrap" style="padding:64px 36px 72px">
+<section class="wrap lcta-sec">
   <div class="lcta">
-    <div style="min-width:280px;flex:1">
+    <div style="min-width:min(280px,100%);flex:1">
       <h2 style="font-size:32px;color:#fff;margin-bottom:10px">어떤 자산을 찾고 계신가요?</h2>
       <p style="color:rgba(255,255,255,.74);font-size:17px">조건을 문장으로 적으면 검토할 후보와 확인해야 할 위험을 함께 정리해 드립니다.</p>
     </div>

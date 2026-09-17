@@ -29,6 +29,9 @@ type DiscoveryOptions = {
   city?: string | null;
 };
 
+// GLI-SPEC: GS-002 GS-003 GS-004 GS-009; docs/implementation/COUNTRY-SOURCES.md.
+// Map/no-op storage is a demo boundary. Persist source evidence and recheck
+// original post timestamps before treating this as production discovery.
 const CACHE_KEY = "cambodia-public-property-sources-v1";
 const cache = new Map<string, { expiresAt: number; result: CambodiaDiscoveryResult }>();
 const liveAssets = new Map<string, Asset>();

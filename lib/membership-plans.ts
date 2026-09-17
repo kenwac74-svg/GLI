@@ -1,3 +1,5 @@
+// GLI-SPEC: GS-017 GS-018; docs/implementation/PRODUCT-DATA.md.
+// Approved prices/access tiers are distinct from actual PG/Cash integration.
 export type MembershipPlanId = "explore" | "investor" | "private";
 export type BillingCycle = "monthly" | "yearly";
 export type IncludedAssetTier = "free" | "basic" | "standard" | "premium";

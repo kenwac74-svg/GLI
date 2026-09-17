@@ -1,0 +1,510 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "GLI current exploration API (partial inventory)",
+    "version": "2026-09-08",
+    "description": "Code-inspected contract for search/assets only. Other routes are inventoried in ROUTES.md. Planned AWS/job/CMS endpoints are not implemented by this document. Trim occurs before query/turn length validation."
+  },
+  "paths": {
+    "/api/search": {
+      "post": {
+        "x-code-path": "app/api/search/route.ts",
+        "summary": "Current synchronous search and advisory response",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Result sample, not source-wide inventory count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_JSON, INVALID_QUERY, INVALID_SEARCH_CONTEXT or INVALID_CONVERSATION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assets": {
+      "get": {
+        "x-code-path": "app/api/assets/route.ts",
+        "summary": "Current fixture/D1 list, capped at 100",
+        "parameters": [
+          {
+            "name": "transaction",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "sale",
+                "rent"
+              ]
+            }
+          },
+          {
+            "name": "direct",
+            "in": "query",
+            "description": "Only the literal true enables direct-only filtering.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Visible asset sample",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "INVALID_TRANSACTION",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SearchCriteria": {
+        "type": "object",
+        "required": [
+          "country",
+          "city",
+          "district",
+          "transaction",
+          "propertyType",
+          "maxPriceUsd",
+          "budgetKrw",
+          "bedrooms",
+          "purpose",
+          "wantsShortStay",
+          "wantsRiver"
+        ],
+        "properties": {
+          "country": {
+            "type": "string",
+            "enum": [
+              "Cambodia",
+              "Vietnam",
+              "Philippines",
+              "Malaysia"
+            ]
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "district": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "transaction": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "sale",
+                  "rent"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "propertyType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "condo",
+                  "house",
+                  "villa",
+                  "land",
+                  "commercial"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "maxPriceUsd": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 100000000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "budgetKrw": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 100000000000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bedrooms": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "income",
+              "seasonal",
+              "residence",
+              "general"
+            ]
+          },
+          "wantsShortStay": {
+            "type": "boolean"
+          },
+          "wantsRiver": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SearchRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          },
+          "context": {
+            "$ref": "#/components/schemas/SearchCriteria"
+          },
+          "conversation": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "text"
+              ],
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "assistant"
+                  ]
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1200
+                }
+              }
+            }
+          }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "description": "Partial public asset shape. Full current model: lib/assets.ts. Future nullable fields and project subtypes are not yet this contract.",
+        "required": [
+          "id",
+          "title",
+          "country",
+          "city",
+          "price",
+          "currency"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "maxPrice": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "USD",
+              "KHR",
+              "VND",
+              "PHP",
+              "THB",
+              "IDR",
+              "MYR",
+              "SGD",
+              "KRW"
+            ]
+          },
+          "sourceName": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string"
+          },
+          "trustScore": {
+            "type": "number",
+            "description": "Legacy/internal transport field; approved public UI renders a grade."
+          }
+        }
+      },
+      "SearchResponse": {
+        "type": "object",
+        "required": [
+          "criteria",
+          "answer",
+          "clarification",
+          "matches",
+          "rate",
+          "advisor",
+          "orchestration",
+          "dataMode",
+          "membershipAccess",
+          "discovery"
+        ],
+        "properties": {
+          "criteria": {
+            "$ref": "#/components/schemas/SearchCriteria"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "clarification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "rate": {
+            "type": "object",
+            "required": [
+              "krwPerUsd",
+              "asOf"
+            ],
+            "properties": {
+              "krwPerUsd": {
+                "type": "number"
+              },
+              "asOf": {
+                "type": "string"
+              }
+            }
+          },
+          "advisor": {
+            "type": "object",
+            "required": [
+              "mode",
+              "groundedAssetIds"
+            ],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "ai",
+                  "rules"
+                ]
+              },
+              "groundedAssetIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "orchestration": {
+            "type": "object",
+            "description": "Public plan metadata; not proof of multi-provider execution."
+          },
+          "dataMode": {
+            "type": "string",
+            "enum": [
+              "approved-fixture",
+              "d1"
+            ]
+          },
+          "membershipAccess": {
+            "type": "object"
+          },
+          "discovery": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "checkedAt": {
+                    "type": "string"
+                  },
+                  "cached": {
+                    "type": "boolean"
+                  },
+                  "collectedCount": {
+                    "type": "integer"
+                  },
+                  "displayedCount": {
+                    "type": "integer"
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "webSearchCount": {
+                    "type": "integer"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "AssetsResponse": {
+        "type": "object",
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Asset"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "count",
+              "dataMode"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "dataMode": {
+                "type": "string",
+                "enum": [
+                  "approved-fixture",
+                  "d1"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

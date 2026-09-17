@@ -1,3 +1,5 @@
+// GLI-SPEC: GS-004 GS-008 GS-018 GS-019 GS-025 GS-027.
+// docs/implementation/PRODUCT-DATA.md separates this SQLite schema from target models.
 import {
   index,
   integer,

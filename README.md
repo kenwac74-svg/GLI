@@ -1,5 +1,20 @@
 # GLI Web2 MVP
 
+## 개발 인계 시작점
+
+현재 상태와 앞으로의 작업은 [실행형 개발기획서](docs/implementation/README.md)를
+먼저 읽습니다. 구현 사실, 데모 임시 처리, 국가별 미연결 출처, 확정 정책,
+관리툴/AWS 후속 작업과 코드 근거를 연결했습니다.
+
+아래 실행 안내와 과거 기능 설명은 도입 당시 기록을 포함합니다. 특히 공개
+Trust는 등급이며, 현재 Gemini 경로와 최신 UI의 연결 범위는
+[현재 상태](docs/implementation/CURRENT-STATE.md)를 기준으로 확인합니다.
+과거 테스트 개수나 VERIFIED를 현재 운영 검증으로 해석하지 않습니다.
+
+```sh
+npm run spec:check
+```
+
 GLI의 동남아 부동산 AI 탐색, Trust Score, 관심 자산, 상담 신청, 현금
 멤버십을 검증하는 Web2 MVP입니다. [vinext](https://github.com/cloudflare/vinext),
 Cloudflare D1, Drizzle 기반으로 실행됩니다.

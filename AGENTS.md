@@ -1,5 +1,33 @@
 # GLI Engineering Guide
 
+## Start here: executable development specification
+
+- Read `docs/implementation/README.md`, `CURRENT-STATE.md`, and `DECISIONS.md`
+  before interpreting historical completion claims. `registry.json` connects
+  current behavior, unfinished work, code evidence, dependencies and acceptance.
+- Update the affected GS feature and evidence when behavior changes. Preserve
+  historical GLI task IDs and ADRs; a past COMPLETE is not proof of live readiness.
+- Every development task must update the relevant specification and append an
+  entry to `docs/implementation/HISTORY.md` in the same delivery. This includes
+  fixes, UI integrations, data/source changes, configuration, deployments and
+  documentation work. Record before/after behavior, reason/approval basis,
+  affected GS/GLI IDs, files, verification, remaining work and deployment state.
+- If a task has no product/API/data contract impact, explicitly record that
+  finding in history; do not churn unrelated specifications. Preserve old
+  decisions and history entries, adding superseding/correction entries instead
+  of erasing them. Never record an unmade commit or deployment as completed.
+- Claude owns approved design. Apply only user-approved improvements; keep
+  copy, fonts, colors, spacing, DOM and responsive behavior faithful. The later
+  selective-adoption decision supersedes blindly copying an entire new handoff.
+- Distinguish public fixture/Map discovery from durable D1/R2 ingestion. Only
+  Cambodia has external discovery adapters; other-country partner cards are not
+  evidence of connected crawlers. AWS migration remains a separately tracked plan.
+- Run `npm run spec:check` for documentation/link verification. Use
+  `npm run spec:refresh` after changing the registry or route inventory.
+- For documentation and comment-only work, use the spec check and diff review;
+  do not regenerate visual artifacts unnecessarily. Runtime changes still require
+  the existing build/lint/relevant-test checks below.
+
 ## Product boundary
 
 - Build the blockchain-free Web2 MVP first.
@@ -22,7 +50,9 @@
 - Preserve the existing vinext, Next.js App Router, Cloudflare Sites, npm, and lockfile setup.
 - Use D1 for structured product data and R2 for raw snapshots, evidence, and reports.
 - Keep crawling and normalization isolated from public request handlers.
-- Keep Trust Score calculation deterministic and server-side. AI may explain a stored result but may not create or modify it.
+- Keep internal Trust calculation deterministic and server-side. The public UI
+  uses Trust Grade (8 grades), distinct from 5 asset-access tiers. AI may explain
+  stored evidence but may not invent verification or modify a stored grade.
 - Preserve source provenance internally and show the approved public source name
   with a direct original-listing link for externally collected assets. Never
   invent attribution for fixtures or GLI-curated assets.
@@ -39,6 +69,10 @@
 
 ## Definition of done
 
+- Relevant specifications and registry evidence are current, an append-only
+  history entry exists, and `npm run spec:check` passes. Code changes alone do
+  not complete a task. When committing, include its code and documentation
+  together; preserve the user's separate publication approval requirements.
 - The acceptance criteria in the task card are met.
 - Build, lint, and relevant tests pass.
 - Mobile and desktop behavior is considered.

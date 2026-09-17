@@ -5,6 +5,8 @@ import type { PublicAssetsFilters } from "../db/assets-repository.ts";
 import { findLiveCambodiaAsset } from "./cambodia-live-discovery.ts";
 import { findGeminiDiscoveredAsset } from "./gemini-discovery.ts";
 
+// GLI-SPEC: GS-004 GS-005 GS-015; docs/implementation/CURRENT-STATE.md.
+// A D1 mode label does not prove live Map/curated results were persisted to D1.
 export type AssetDataMode = "approved-fixture" | "d1";
 
 export type AssetDataResult = {

@@ -1,5 +1,10 @@
 # GLI Web2 MVP Completion Matrix
 
+> Historical snapshot. For the 2026-09-08 current-state audit and remaining
+> implementation work, start with [the development specification](implementation/README.md).
+> VERIFIED and the test count below refer to this document's original scope;
+> they do not certify the current public UI, live sources or AWS production.
+
 Updated: 2026-07-31
 
 ## Status definitions

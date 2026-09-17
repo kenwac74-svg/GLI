@@ -14,6 +14,7 @@ export type NewsItem = {
 };
 
 // DEMO CONTENT ONLY:
+// GLI-SPEC: GS-023; docs/implementation/ADMIN.md defines the production CMS handoff.
 // The public demo keeps these records in source control so every news route is stable.
 // TODO(live/admin): replace this array with admin-managed news storage supporting
 // create, edit, delete, publish/unpublish, category assignment, scheduling, and updates.

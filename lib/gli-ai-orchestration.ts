@@ -1,3 +1,5 @@
+// GLI-SPEC: GS-011; docs/implementation/API-CONTRACTS.md.
+// Public stage metadata is not evidence of actual multi-provider delegation.
 export type GliAiDepth = "quick" | "guided" | "deep";
 
 export type GliAiPublicStage = {

@@ -38,6 +38,9 @@ type GeminiPayload = {
   }>;
 };
 
+// GLI-SPEC: GS-002 GS-004 GS-005 GS-009 GS-012; docs/implementation/CURRENT-STATE.md.
+// Cambodia-only scout with process-local results. Model availability, durable
+// evidence, missing post dates and all-call cost limits need separate verification.
 const DEFAULT_MODEL = "gemini-3.6-flash";
 const ALLOWED_SOURCE_HOSTS = new Set([
   "khmer24.com",

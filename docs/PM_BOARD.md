@@ -1,6 +1,12 @@
 # GLI Web2 MVP Delivery Board
 
-Updated: 2026-09-02
+Updated: 2026-09-13
+
+> Current handoff: [Executable development specification](implementation/README.md).
+> Historical milestone/task completion below is preserved, not a production
+> readiness claim. Use the GS registry for current implementation gaps and
+> verification scope. The inspected branch is `agent/gli-ai-orchestration-demo`;
+> branch names in the historical delivery policy are not deployment instructions.
 
 ## Delivery policy
 
@@ -78,6 +84,8 @@ Updated: 2026-09-02
 | GLI-047 | Codex | Product/Security/Operations review | BACKLOG | build a sample-aligned administrator console for source configuration, collection status, asset review/publish, favorite-triggered research, GLI-curated inventory, member/membership/GLI Cash, consultation, audit and operational monitoring |
 | GLI-048 | Claude Design/Codex | GLI Product Owner | COMPLETE | follow-up composer with preserved context, inline loading/error states and mobile behavior; changed-result notice uses the currently displayed server result count and an accessible `변경된 탐색 결과 보기` action, while QA state controls remain excluded from the public UI |
 | GLI-049 | Claude Design/Codex | GLI Product Owner | COMPLETE | add the three approved newsroom items and article routes for the demo; production news must be managed through an administrator CMS with create, edit, delete, schedule, publish and unpublish controls |
+| GLI-050 | Codex | GLI Product Owner | COMPLETE | executable development specification: 32 features, 46 route files, history/next work, source annotations and partial OpenAPI; spec checker/self-tests, script lint, four visual hashes and ten comment-only application diffs verified; no runtime/UI deployment |
+| GLI-051 | Claude Design/Codex | GLI Product Owner | IN PROGRESS | 2026-09-16: mobile-only patch applied; landing/explore width checks passed at 320/360/390/412/768/1440px; clipped menu scrolling repaired. Existing copy/data/events preserved. Awaiting user visual acceptance and real-device checks before public deployment; see HIST-20260916-001 |
 
 ## Decisions
 

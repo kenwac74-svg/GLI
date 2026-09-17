@@ -1,0 +1,1439 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-09-17",
+  "baselineCommit": "f1bfb7ce979b3bfc3ff3276f35ef31344f4da2d5",
+  "auditScope": "저장소 코드/기존 문서/제공된 사용자 이력의 정적 점검. 공개 환경과 외부 API 실동작은 미검증.",
+  "statusLegend": {
+    "implemented": "해당 좁은 코드 범위 구현",
+    "partial": "일부 연결 또는 구현",
+    "demo": "데모/시안 또는 임시 데이터",
+    "planned": "목표 확정 또는 제안이나 구현 전",
+    "deferred": "후속 범위/의도적 보류"
+  },
+  "protectedVisualFiles": [
+    {
+      "path": "design-handoff/source/gli-demo.dc.html",
+      "sha256": "0601B4F07CBC4F9E202E3D62D410A64D2B17EF74EF59959B778181B1DAA8DF5C"
+    },
+    {
+      "path": "app/claude-design.css",
+      "sha256": "571AD78C463BD641505FE99B7E275C4AC9390F9A5D20969FEC12249E53CE5828"
+    },
+    {
+      "path": "app/generated/claude-static.ts",
+      "sha256": "DFDDF9679BB8CF5DBDED46CCEA57C5F3F4A0365E19BFAF5386ACDA5A73A70614"
+    },
+    {
+      "path": "app/globals.css",
+      "sha256": "4EEE8CBC9400502A79F3DA2DEF86D13056B5E10B73AF1232C1A350632F588FAA"
+    }
+  ],
+  "features": [
+    {
+      "id": "GS-001",
+      "title": "승인 디자인과 React 통합",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-042",
+        "GLI-048",
+        "GLI-051"
+      ],
+      "decision": "approved",
+      "current": "Claude 생성 shell 및 0907 후속 상담 개선이 존재한다. 원본 상세와 동적 상세는 별도 구현이며, 공통 헤더가 360/390/412px에서 문서 폭을 434px까지 늘리는 모바일 가로 넘침이 확인되었다.",
+      "target": "승인된 디자인과 기능이 동적 데이터에서도 동일하게 작동하고 320/360/390/412/768px에서 페이지 전체 가로 넘침이 없다.",
+      "next": "Claude가 GLI-051 지시서에 따라 모바일 헤더와 랜딩 반응형 시안을 만들고, 사용자 승인 후 Codex가 변경분만 React에 통합한다. 이후 정적/동적 상세와 2뎁스 경로의 시각 차이도 같은 승인 절차로 처리한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/components/claude-design-shell.tsx",
+          "anchor": "ClaudeDesignShell"
+        },
+        {
+          "path": "scripts/render-claude-handoff.mjs",
+          "anchor": "reactFidelityCss"
+        }
+      ],
+      "tests": [
+        "tests/followup-composer.test.mjs",
+        "tests/rendered-html.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "320/360/390/412/768/1440px에서 긴 제목·가격 겹침과 페이지 전체 가로 넘침 없음",
+        "승인되지 않은 문구·타이포·DOM 변경 없음",
+        "QA 상태 버튼이 공개 UI에 나오지 않음"
+      ],
+      "routes": [
+        "/",
+        "/about",
+        "/explore"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-002",
+      "title": "캄보디아 3개 출처 연결",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-035",
+        "GLI-037",
+        "GLI-040"
+      ],
+      "decision": "approved",
+      "current": "WordPress 전문 출처 2개와 Khmer24 reference connector, 동일 도메인 Gemini scout가 있다. live 성공은 미검증이다.",
+      "target": "각 출처의 원문 매물이 조건에 맞게 수집되고 출처명·링크와 함께 표시된다.",
+      "next": "출처별 실제 수집 실행 기록과 파싱 누락을 점검하고 국가/거래유형별 수집면을 보완한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/cambodia-live-discovery.ts",
+          "anchor": "PROFESSIONAL_SOURCES"
+        },
+        {
+          "path": "lib/gemini-discovery.ts",
+          "anchor": "ALLOWED_SOURCE_HOSTS"
+        }
+      ],
+      "tests": [
+        "tests/cambodia-live-discovery.test.mjs",
+        "tests/khmer24-reference-feed.test.mjs",
+        "tests/wordpress-property-feed.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "3개 출처를 각각 live/snapshot/unavailable로 내부 판별",
+        "원문 링크와 source external key 보존",
+        "내장 snapshot을 현재 수집 성공으로 기록하지 않음"
+      ],
+      "routes": [
+        "/api/search"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-003",
+      "title": "도시·거래유형·페이지 수집 범위",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-043"
+      ],
+      "decision": "approved",
+      "current": "도시 search 파라미터는 있으나 Khmer24 기본 URL은 rentals이고 전문 API/결과 수가 제한된다.",
+      "target": "시하누크빌을 포함한 요청 도시·매매/임대별 적합한 출처 검색면을 사용한다.",
+      "next": "source별 지원 필터/페이지/거래유형 표를 만들고 제한된 페이지 확장을 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/cambodia-live-discovery.ts",
+          "anchor": "c-property-housing-rentals"
+        },
+        {
+          "path": "lib/search.ts",
+          "anchor": "CITY_PATTERNS"
+        }
+      ],
+      "tests": [
+        "tests/cambodia-live-discovery.test.mjs",
+        "tests/search.test.mjs"
+      ],
+      "dependencies": [
+        "GS-002"
+      ],
+      "acceptance": [
+        "시하누크빌 매매 요청에 프놈펜 임대 후보를 대체하지 않음",
+        "source 제한과 시장 전체 부재를 구별",
+        "현재 표본 수를 전체 물건 수라고 표현하지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-004",
+      "title": "검색 후보 영구 저장과 재확인",
+      "status": "planned",
+      "legacyTasks": [
+        "GLI-043"
+      ],
+      "decision": "approved",
+      "current": "public live/scout 후보는 Map, public rawStore는 no-op이다. 별도 승인형 ingestion의 D1/R2 경로는 존재한다.",
+      "target": "검색으로 찾은 원문 게시물은 영구 저장되고 재검색 시 원문 현재 상태만 재확인한다.",
+      "next": "공개 discovery 결과를 저장소/큐와 연결하고 동일 ID로 상세를 모든 인스턴스에서 읽도록 한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/cambodia-live-discovery.ts",
+          "anchor": "const rawStore"
+        },
+        {
+          "path": "lib/gemini-discovery.ts",
+          "anchor": "const discoveredAssets"
+        },
+        {
+          "path": "lib/assets-data.ts",
+          "anchor": "getAsset"
+        },
+        {
+          "path": "workers/ingestion/index.ts",
+          "anchor": "import"
+        }
+      ],
+      "tests": [
+        "tests/assets-repository.test.mjs",
+        "tests/ingestion-worker.test.mjs"
+      ],
+      "dependencies": [
+        "GS-002",
+        "GS-007"
+      ],
+      "acceptance": [
+        "프로세스 재시작 후 기존 후보 상세 조회 성공",
+        "다른 서버 인스턴스에서도 동일 ID 조회 성공",
+        "원문 미확인과 정상 0건을 구별",
+        "재검색 시 변경 비교 UI 없이 현재 상태 보존"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-005",
+      "title": "캄보디아 외 국가 출처 확대",
+      "status": "planned",
+      "legacyTasks": [],
+      "decision": "approved",
+      "current": "Vietnam/Philippines/Malaysia 파트너 정적 자산이 있으며 외부 크롤러는 연결되어 있지 않다.",
+      "target": "국가별로 선정된 출처와 파트너 제공 채널을 독립 연결한다.",
+      "next": "국가별 출처 선정·스키마 매핑·연결 방식·담당자를 확정하고 한 국가씩 추가한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/partner-assets.ts",
+          "anchor": "partnerAssets"
+        },
+        {
+          "path": "lib/gemini-discovery.ts",
+          "anchor": "criteria.country !== \"Cambodia\""
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-004",
+        "GS-008"
+      ],
+      "acceptance": [
+        "파트너 문서와 외부 수집을 별도 표시/관리",
+        "연결 전 해당 국가 실시간 검색 완료를 주장하지 않음",
+        "추가 국가는 기존 3개 캄보디아 출처 allowlist를 임의 확장해 구현하지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-006",
+      "title": "단계별 탐색과 상태 표시",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-043",
+        "GLI-048"
+      ],
+      "decision": "approved",
+      "current": "클라이언트 로딩 단계와 단일 JSON 응답이 있다. 서버 단계별 스트리밍·작업 취소는 없다.",
+      "target": "빠른 출처 우선 표시, 추가 탐색으로 느린 출처 확장, 실패/진행 상태를 구별한다.",
+      "next": "동일 화면 계약을 유지할 검색 job API와 서버 진행 이벤트를 설계하고 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/components/claude-design-shell.tsx",
+          "anchor": "SearchStage"
+        },
+        {
+          "path": "app/api/search/route.ts",
+          "anchor": "POST"
+        }
+      ],
+      "tests": [
+        "tests/followup-composer.test.mjs"
+      ],
+      "dependencies": [
+        "GS-003",
+        "GS-004"
+      ],
+      "acceptance": [
+        "충분한 초기 후보 후 넓은 출처 탐색은 사용자 동작과 연결",
+        "새 요청 이후 이전 요청 결과가 덮어쓰지 않음",
+        "서버 완료 없이 UI 타이머가 완료를 확정하지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-007",
+      "title": "동일 원문 재수집과 포털 간 유사 매물",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-006"
+      ],
+      "decision": "approved",
+      "current": "source+externalKey 유일성과 external URL 병합이 존재한다. public 병합은 URL 전체를 소문자로 바꾼다.",
+      "target": "정확히 같은 게시물 재수집만 갱신하고 다른 원문은 모두 유지한다.",
+      "next": "원문 ID 중심으로 식별하고 URL 정규화에서 의미 있는 경로/쿼리를 보존한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "db/schema.ts",
+          "anchor": "listing_sources_external_uidx"
+        },
+        {
+          "path": "app/api/search/route.ts",
+          "anchor": "mergeExternalAssets"
+        }
+      ],
+      "tests": [
+        "tests/ingestion-normalize.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "같은 source/externalKey 반복 시 1건 갱신",
+        "주소/사진이 같아도 서로 다른 URL 게시물 유지",
+        "case-sensitive URL 두 개가 합쳐지지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-008",
+      "title": "출처별 누락 필드와 GLI 폼",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-044"
+      ],
+      "decision": "approved",
+      "current": "일부 화면에 조사 예정이 있다. Asset 가격/방 수 필드는 필수이며 일부 parser가 누락 후보를 배제한다.",
+      "target": "source에 없는 항목을 null+상태로 저장하고 GLI 폼에 조사 예정으로 표시한다.",
+      "next": "필수 식별 필드와 보완 가능 필드를 분리하고 출처별 매핑 및 데이터 타입을 이관한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/assets.ts",
+          "anchor": "export type Asset ="
+        },
+        {
+          "path": "ingestion/normalize.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "ingestion/wordpress-property-feed.ts",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/ingestion-normalize.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "원래 없는 값과 수집 실패를 내부 구분",
+        "미확인 가격/방 수를 0으로 만들지 않음",
+        "nullable 필드 때문에 유효한 원문 매물을 모두 탈락시키지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-009",
+      "title": "원문 시점과 신선도",
+      "status": "partial",
+      "legacyTasks": [],
+      "decision": "approved",
+      "current": "updatedAt에 observedAt을 넣으며 Gemini 날짜 미확인 시 now로 대체한다.",
+      "target": "posted/modified/collected/checked/GLI verified/document date를 분리한다.",
+      "next": "원문 날짜 미확인 fallback을 nullable로 전환하고 배지 기준과 재확인을 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/gemini-discovery.ts",
+          "anchor": "parsePublishedAt"
+        },
+        {
+          "path": "lib/cambodia-live-discovery.ts",
+          "anchor": "updatedAt: candidate.observedAt"
+        },
+        {
+          "path": "docs/adr/0021-demand-driven-discovery-and-manual-research.md",
+          "anchor": "Source-age"
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-008"
+      ],
+      "acceptance": [
+        "원문 날짜가 없으면 신규 배지를 만들지 않음",
+        "7일/3개월/1년 경계 검증",
+        "자료작성일은 관리자 데이터로 유지"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-010",
+      "title": "자연어 조건 이해와 대화 복원",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-009",
+        "GLI-025",
+        "GLI-048"
+      ],
+      "decision": "approved",
+      "current": "규칙 extractCriteria가 검색 전에 적용된다. 최대 8턴 전달과 sessionStorage 검색 결과 복원이 있다.",
+      "target": "후속 대화의 의도·부정·조건 변경을 이해하고 요청 국가/도시를 유지한다.",
+      "next": "자연어 intent 출력 스키마와 회귀 시나리오를 추가하고 조건 저장/대화 보관 범위를 확정한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/search.ts",
+          "anchor": "extractCriteria"
+        },
+        {
+          "path": "app/api/search/route.ts",
+          "anchor": "parseConversation"
+        },
+        {
+          "path": "app/components/claude-design-shell.tsx",
+          "anchor": "gli:claude-search"
+        }
+      ],
+      "tests": [
+        "tests/search.test.mjs",
+        "tests/ai-search.test.mjs",
+        "tests/followup-composer.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "6000만원으로 변경 후 도시·완공 조건 유지",
+        "조건에 맞는 후보 없음과 데이터 미연결을 구별",
+        "상세에서 돌아오면 직전 결과/조건 복원",
+        "국가 변경은 명시 요청 또는 동의 이후만"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-011",
+      "title": "GLI AI 역할 배정",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-011"
+      ],
+      "decision": "approved",
+      "current": "규칙 plan metadata와 Gemini scout/advisor, 선택적 OpenAI advisor가 있다. Claude API 배정은 없다.",
+      "target": "하나의 GLI AI 안에서 intent/discovery/review/synthesis 역할을 필요에 따라 배정한다.",
+      "next": "공유 상담 상태와 역할 adapter 계약을 작성하고 효과가 검증된 역할부터 실연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/gli-ai-orchestration.ts",
+          "anchor": "planGliAiRequest"
+        },
+        {
+          "path": "lib/ai-search.ts",
+          "anchor": "runAdvisorSearch"
+        }
+      ],
+      "tests": [
+        "tests/gli-ai-orchestration.test.mjs",
+        "tests/ai-search.test.mjs"
+      ],
+      "dependencies": [
+        "GS-010",
+        "GS-012"
+      ],
+      "acceptance": [
+        "공급사명/키/내부 reasoning이 사용자 응답에 포함되지 않음",
+        "단계 표시를 실제 3개 모델 호출로 오인해 보고하지 않음",
+        "제공 근거 없는 가격·수익·세금 생성 없음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-012",
+      "title": "AI와 수집 비용 통제",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-030"
+      ],
+      "decision": "approved",
+      "current": "회원별 AI 카운터는 있으나 Gemini scout가 회원 확인/usage claim 이전 실행된다.",
+      "target": "탐색과 상담 전체의 요청별·회원별·일별 비용을 통제한다.",
+      "next": "discovery 이전 예산 확인, 실패 환급/계량, 동시 요청 제한과 운영 대시보드를 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/api/search/route.ts",
+          "anchor": "sourceBackedMatchCount < 6"
+        },
+        {
+          "path": "db/membership-entitlements.ts",
+          "anchor": "claimAiSearch"
+        }
+      ],
+      "tests": [
+        "tests/membership-policy.test.mjs",
+        "tests/gemini-discovery.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "비회원·반복 요청도 외부 유료 호출 총량 제한",
+        "provider 실패 후 사용량 중복 차감 없음",
+        "월 60/150/400회는 실제 비용 시험 후 정책 검토"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-013",
+      "title": "원통화·환산 범위·언어",
+      "status": "partial",
+      "legacyTasks": [],
+      "decision": "approved",
+      "current": "환율 API와 범위 표시가 있으나 규칙 검색 예산은 1380 고정 환율이고 언어 메뉴는 준비중이다.",
+      "target": "원문 통화를 보존하고 한국어 KRW/영어 USD 병기와 예산 필터에 같은 환율을 사용한다.",
+      "next": "서버 검색 환율 snapshot을 통일하고 언어 설정을 실제 상태와 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/currency.ts",
+          "anchor": "displayCurrencyForLanguage"
+        },
+        {
+          "path": "app/api/exchange-rates/route.ts",
+          "anchor": "PROVIDER_URL"
+        },
+        {
+          "path": "lib/search.ts",
+          "anchor": "DEMO_KRW_PER_USD"
+        }
+      ],
+      "tests": [
+        "tests/currency.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "RM 최솟값/최댓값 모두 환산",
+        "USD 원문을 KHR로 임의 변경하지 않음",
+        "검색과 카드가 같은 환율 기준 사용",
+        "조회 실패 시 현재 환율로 꾸미지 않음"
+      ],
+      "routes": [
+        "/api/exchange-rates"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-014",
+      "title": "Trust 공개 등급과 사람 검증",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-007",
+        "GLI-029"
+      ],
+      "decision": "approved",
+      "current": "내부 trustScore와 공개 등급 매핑이 있다. 일부 외부 후보는 고정 preliminary 값이다.",
+      "target": "8등급은 근거와 사람 검토 이력으로 재현하고 내부 계산은 서버에서 관리한다.",
+      "next": "등급 산정/검토 버전을 통합하고 실제 모델 경로와 등급 근거의 검증 증거를 만든다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/trust.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "app/components/claude-design-shell.tsx",
+          "anchor": "const trustGrade"
+        },
+        {
+          "path": "db/schema.ts",
+          "anchor": "trustScoreRuns"
+        }
+      ],
+      "tests": [
+        "tests/trust-score.test.mjs",
+        "tests/ai-evaluation.test.mjs"
+      ],
+      "dependencies": [
+        "GS-008",
+        "GS-021"
+      ],
+      "acceptance": [
+        "공개 라벨 GLI TRUST GRADE",
+        "LLM이 검증 등급이나 법적 확정을 임의 변경하지 않음",
+        "8등급과 5단계 열람권을 혼동하지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-015",
+      "title": "상세 정보·출처·자료 권한",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-034",
+        "GLI-039"
+      ],
+      "decision": "approved",
+      "current": "시안 ID와 live ID는 서로 다른 상세 렌더링 경로를 사용한다.",
+      "target": "모든 상세에 승인 디자인·원문 링크·조사 예정·자료 권한을 일관되게 제공한다.",
+      "next": "동적 데이터와 시안 컴포넌트 매핑을 설계하고 콘텐츠별 공개/회원/관리자 범위를 적용한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/assets/[id]/page.tsx",
+          "anchor": "CLAUDE_ASSET_IDS"
+        },
+        {
+          "path": "app/assets/[id]/asset-access-demo.tsx",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/rendered-html.test.mjs",
+        "tests/user-workflows.test.mjs"
+      ],
+      "dependencies": [
+        "GS-001",
+        "GS-008"
+      ],
+      "acceptance": [
+        "외부 매물의 실제 원문 링크를 찾을 수 있음",
+        "원본 media 출처는 기본 자산 자료 영역에 배치",
+        "자료작성 시점·내부 승인 노트는 관리자용",
+        "좌우/하단 패널과 긴 요약의 승인 레이아웃 유지"
+      ],
+      "routes": [
+        "/assets/[id]"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-016",
+      "title": "관심 자산 계정 동기화",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-031"
+      ],
+      "decision": "approved",
+      "current": "favorites API와 D1 유일성이 있으나 새 shell의 화면 상태 연결은 별도이다.",
+      "target": "무제한 관심 등록이 계정별로 저장되고 조회·삭제된다.",
+      "next": "승인된 관심 자산 화면/버튼을 favorites API에 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/api/favorites/route.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "app/favorites/page.tsx",
+          "anchor": "ClaudeDesignShell"
+        }
+      ],
+      "tests": [
+        "tests/user-workflows.test.mjs"
+      ],
+      "dependencies": [
+        "GS-020",
+        "GS-004"
+      ],
+      "acceptance": [
+        "로그인 계정 간 관심 내역 분리",
+        "중복 클릭으로 동일 관심 등록 증가 없음",
+        "새로고침/다른 기기에서 동일 목록"
+      ],
+      "routes": [
+        "/favorites",
+        "/api/favorites"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-017",
+      "title": "멤버십 가격·포함 권한 계산",
+      "status": "implemented",
+      "legacyTasks": [
+        "GLI-030"
+      ],
+      "decision": "approved",
+      "current": "가격/연 할인/포함 단계와 무제한 관심 정책 계산 코드가 있다. UI 결제 연동은 GS-018이다.",
+      "target": "승인 가격과 권한 산식이 모든 결제·열람 경로에서 일치한다.",
+      "next": "가격 정책을 유지하며 실제 결제 어댑터와 화면 연결 시 회귀 검증한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/membership-plans.ts",
+          "anchor": "MEMBERSHIP_PLANS"
+        },
+        {
+          "path": "db/membership-entitlements.ts",
+          "anchor": "getMembershipAccess"
+        }
+      ],
+      "tests": [
+        "tests/membership-policy.test.mjs",
+        "tests/membership-billing.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "Explorer 3000/1.99, Investor 4500/2.99, Private 15000/10",
+        "연간 10/15/20% 할인",
+        "Basic/Standard/Premium 포함 및 관심 무제한"
+      ],
+      "routes": [
+        "/membership"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-018",
+      "title": "실결제·GLI Cash·자산 열람권",
+      "status": "demo",
+      "legacyTasks": [
+        "GLI-014",
+        "GLI-015",
+        "GLI-034"
+      ],
+      "decision": "approved",
+      "current": "provider-neutral 결제 ledger는 있으나 shell activate는 setPaid(true)이며 자산별 Cash는 데모다.",
+      "target": "PG 확인 이벤트로만 권한 반영, GLI Cash 선불 원장과 상품 결제/환불을 운영한다.",
+      "next": "결제사/환불/상품 정책을 확정하고 실제 adapter와 원장을 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/components/claude-design-shell.tsx",
+          "anchor": "case \"activate\""
+        },
+        {
+          "path": "db/payment-webhooks.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "lib/demo-billing.ts",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/payment-webhooks.test.mjs",
+        "tests/membership-billing.test.mjs"
+      ],
+      "dependencies": [
+        "GS-020",
+        "GS-017"
+      ],
+      "acceptance": [
+        "브라우저 paid 파라미터로 실제 권한 획득 불가",
+        "webhook 중복/순서 역전/환불 재전송에 잔액 일치",
+        "상위 자산권 구매 시 하위 개방",
+        "여행/편의 상품과 코인 결제는 별도 확장"
+      ],
+      "routes": [
+        "/membership/checkout",
+        "/api/memberships/checkout",
+        "/api/memberships/checkout/confirm"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-019",
+      "title": "관심 등록 후 직원 조사 큐",
+      "status": "planned",
+      "legacyTasks": [
+        "GLI-044",
+        "GLI-047"
+      ],
+      "decision": "approved",
+      "current": "관심/상담 저장소는 있으나 favorite-triggered 필드 조사 큐는 독립 완성되지 않았다.",
+      "target": "관심 매물의 누락 정보를 직원에게 배정하고 증거와 함께 보완한다.",
+      "next": "research task/필드 증거 테이블과 관심 이벤트 연결을 추가한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "db/user-workflows.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "docs/adr/0021-demand-driven-discovery-and-manual-research.md",
+          "anchor": "Interest and staff research"
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-016",
+        "GS-008",
+        "GS-021"
+      ],
+      "acceptance": [
+        "관심 등록에서 조사 할 일 생성",
+        "같은 원문의 조사 중복 작업 방지",
+        "직원 보완 값이 source 원문을 덮어쓰지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-020",
+      "title": "실사용자 인증과 공개 MY GLI",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-025",
+        "GLI-031"
+      ],
+      "decision": "approved",
+      "current": "ChatGPT 호스팅 인증/공유 demo cookie, /my 구현이 있다. 새 메뉴는 my 준비중으로 연결된다.",
+      "target": "AWS에서도 독립 회원 인증, 소유권 검사, 관리자 역할, 승인된 MY GLI 여정이 작동한다.",
+      "next": "identity adapter와 회원 ID 이관을 설계하고 MY 메뉴를 검증된 여정으로 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/auth.ts",
+          "anchor": "getCurrentUser"
+        },
+        {
+          "path": "app/chatgpt-auth.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "app/my/page.tsx",
+          "anchor": "MyGliPage"
+        }
+      ],
+      "tests": [
+        "tests/user-workflows.test.mjs",
+        "tests/deployment-workflows.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "사용자 A가 B의 관심·상담·결제 내역에 접근 불가",
+        "공유 demo 세션을 production 로그인으로 사용하지 않음",
+        "관리자 최소권한과 계정 철회 검증"
+      ],
+      "routes": [
+        "/my",
+        "/api/me",
+        "/api/auth/demo",
+        "/api/auth/logout"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-021",
+      "title": "관리자 도구 통합",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-046",
+        "GLI-047"
+      ],
+      "decision": "approved",
+      "current": "기존 admin source/review/audit/readiness/상담 도구가 있다. 사용자 샘플 기반 최종 관리툴은 남았다.",
+      "target": "자산·소스·조사·뉴스·회원·Cash·상담 운영을 역할별로 통합한다.",
+      "next": "샘플 수령·최신 상태를 확인하고 ADMIN.md의 모듈별 API를 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/admin/page.tsx",
+          "anchor": "export"
+        },
+        {
+          "path": "db/operations.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "app/admin/audit/page.tsx",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/operations.test.mjs",
+        "tests/source-management.test.mjs",
+        "tests/audit-log.test.mjs"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "샘플 미수령을 임의 디자인 완성으로 처리하지 않음",
+        "게시/회수/조사/수정 권한 분리",
+        "내부 자료작성 시점과 근거 열람 가능"
+      ],
+      "routes": [
+        "/admin",
+        "/admin/audit",
+        "/admin/sources/[slug]",
+        "/admin/listings/[publicId]"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-022",
+      "title": "상담과 알림 운영",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-026",
+        "GLI-027"
+      ],
+      "decision": "approved",
+      "current": "상담 메시지·상태·알림 API가 있다. 새 공개 문의 진입 일부는 준비중이다.",
+      "target": "사용자 상담 신청부터 직원 배정·응답·회원 알림까지 이어진다.",
+      "next": "승인된 상담 UI 연결, 담당자/SLA 결정과 발송 채널 운영을 연결한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "db/consultation-thread.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "db/member-notifications.ts",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/consultation-thread.test.mjs",
+        "tests/consultation-operations.test.mjs"
+      ],
+      "dependencies": [
+        "GS-020",
+        "GS-021"
+      ],
+      "acceptance": [
+        "신청→직원 답변→회원 조회/읽음 확인",
+        "타인 메시지 접근 차단",
+        "알림에 불필요한 상담 원문 복제 없음"
+      ],
+      "routes": [
+        "/api/consultations",
+        "/api/consultations/[id]/messages",
+        "/my/consultations/[id]"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-023",
+      "title": "뉴스와 기사 CMS 전환",
+      "status": "demo",
+      "legacyTasks": [
+        "GLI-049"
+      ],
+      "decision": "approved",
+      "current": "승인 뉴스는 newsItems와 시안 생성 기사로 하드코딩된다.",
+      "target": "관리자가 뉴스 작성·수정·삭제·카테고리·예약·게시·회수를 처리한다.",
+      "next": "news 저장소/미디어 업로드/공개 조회 adapter를 추가하고 두 정적 표현을 통합한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/news.ts",
+          "anchor": "newsItems"
+        },
+        {
+          "path": "app/news/page.tsx",
+          "anchor": "ClaudeDesignShell"
+        },
+        {
+          "path": "scripts/render-claude-handoff.mjs",
+          "anchor": "articleViews"
+        }
+      ],
+      "tests": [
+        "tests/rendered-html.test.mjs"
+      ],
+      "dependencies": [
+        "GS-021"
+      ],
+      "acceptance": [
+        "기존 기사 URL 유지",
+        "공지사항/보도자료/인사이트/이벤트 및 전체보기 유지",
+        "초안은 공개 조회 불가, 예약 게시와 회수 반영"
+      ],
+      "routes": [
+        "/news",
+        "/news/[id]"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-024",
+      "title": "백서·공지·준비중 메뉴",
+      "status": "demo",
+      "legacyTasks": [],
+      "decision": "approved",
+      "current": "백서/공지/준비중 경로와 소개 화면이 있다. 메뉴별 구현 상태는 동일하지 않다.",
+      "target": "백서는 백서로 유지하고 공지는 게시판, 가이드/FAQ 등은 승인 범위대로 확장한다.",
+      "next": "ROUTES.md의 공개 메뉴 목적지를 확인하며 내용·담당자·공개 범위를 확정한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "app/whitepaper/page.tsx",
+          "anchor": "export"
+        },
+        {
+          "path": "app/notices/page.tsx",
+          "anchor": "export"
+        },
+        {
+          "path": "app/coming-soon/page.tsx",
+          "anchor": "export"
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-021"
+      ],
+      "acceptance": [
+        "모든 2뎁스 메뉴에 목적지 존재",
+        "준비중을 작동하는 기능으로 기록하지 않음",
+        "백서 버전과 수정 이력을 관리"
+      ],
+      "routes": [
+        "/whitepaper",
+        "/notices",
+        "/coming-soon"
+      ],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-025",
+      "title": "AWS 실서비스 이식",
+      "status": "planned",
+      "legacyTasks": [],
+      "decision": "proposed",
+      "current": "Cloudflare Worker/D1/R2에 의존한다. AWS 리소스/IaC는 이번 범위에서 구축하지 않았다.",
+      "target": "승인된 AWS 구조에서 UI를 유지하며 persistence/auth/jobs/storage adapters를 교체한다.",
+      "next": "AWS-MIGRATION.md에 따라 환경·역할·규모를 확정하고 계약 테스트 후 adapter를 순차 이식한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "db/index.ts",
+          "anchor": "cloudflare:workers"
+        },
+        {
+          "path": "lib/raw-store.ts",
+          "anchor": "getWorkflowRawStore"
+        },
+        {
+          "path": "vite.config.ts",
+          "anchor": "cloudflare"
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-004",
+        "GS-020"
+      ],
+      "acceptance": [
+        "D1 전용 SQL/트랜잭션을 PostgreSQL로 단순 치환하지 않음",
+        "데이터 이관 정합성/복원/rollback 검증",
+        "개발·스테이징·운영 분리"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-026",
+      "title": "운영·스케줄·복원",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-017",
+        "GLI-018",
+        "GLI-022"
+      ],
+      "decision": "approved",
+      "current": "scheduled worker/재시도/감사/복원 증거 코드가 존재하나 실운영 실행 증거는 이번에 확인하지 않았다.",
+      "target": "실제 작업 실행과 알림, 관측, 백업 복원이 운영 환경에서 검증된다.",
+      "next": "배포 환경 scheduler/worker/알림/backup을 연결하고 실제 시험 증거를 기록한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "workers/ingestion/scheduled.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "db/release-readiness.ts",
+          "anchor": "ReleaseGate"
+        },
+        {
+          "path": "db/operations-health.ts",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/operations-scheduler.test.mjs",
+        "tests/operations-health.test.mjs",
+        "tests/release-readiness.test.mjs"
+      ],
+      "dependencies": [
+        "GS-025"
+      ],
+      "acceptance": [
+        "실패 작업 backoff와 dead-letter/재처리",
+        "중복 스케줄로 게시물 중복 생성 없음",
+        "실제 백업을 별도 DB에 복원하고 수량 비교"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-027",
+      "title": "원문 증거와 내부 운영 데이터",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-021",
+        "GLI-033"
+      ],
+      "decision": "approved",
+      "current": "snapshot/audit/review ledger는 있으나 public discovery는 해당 저장 경로와 분리된다.",
+      "target": "필드 증거/작성시점/검수 기록을 관리자에게 제공하고 공개 DTO를 통제한다.",
+      "next": "public collector provenance와 관리자 evidence를 연결하고 필드 공개 정책을 적용한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "db/schema.ts",
+          "anchor": "rawSnapshots"
+        },
+        {
+          "path": "db/audit-log.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "lib/assets.ts",
+          "anchor": "documentDateLabel"
+        }
+      ],
+      "tests": [
+        "tests/audit-log.test.mjs"
+      ],
+      "dependencies": [
+        "GS-004",
+        "GS-008"
+      ],
+      "acceptance": [
+        "관리자가 원문과 수집시점/문서시점을 구별",
+        "공개 payload에 관리자 비고/비밀정보 포함 없음",
+        "출처 원문 링크와 내부 snapshot 링크 구별"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-028",
+      "title": "데모 승인 가정과 실서비스 게시 절차",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-040",
+        "GLI-036",
+        "GLI-038"
+      ],
+      "decision": "approved",
+      "current": "DEMO_SOURCE_AUTO_APPROVAL과 approval-gated ingestion이 있다. source registry의 실제 운영 승인 상태는 미검증이다.",
+      "target": "데모 자동 공개와 실제 수집 승인/검토/게시 경로가 환경별로 분리된다.",
+      "next": "production에서 모든 수집 진입점을 정책/검토 경로로 통합하고 실행 증거를 남긴다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/demo-data-mode.ts",
+          "anchor": "isDemoSourceAutoApprovalEnabled"
+        },
+        {
+          "path": "db/operations.ts",
+          "anchor": "export"
+        },
+        {
+          "path": "ingestion/source-policy.ts",
+          "anchor": "export"
+        }
+      ],
+      "tests": [
+        "tests/demo-data-mode.test.mjs",
+        "tests/source-policy.test.mjs"
+      ],
+      "dependencies": [
+        "GS-004",
+        "GS-021"
+      ],
+      "acceptance": [
+        "production에서는 데모 플래그가 검토를 생략하지 않음",
+        "demo 공개와 GLI 사람 검증은 다른 상태",
+        "중지 source가 새 작업에서 제외됨"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-029",
+      "title": "파트너 자산·사진·프로젝트 자료",
+      "status": "demo",
+      "legacyTasks": [],
+      "decision": "approved",
+      "current": "파트너 문서 기반 12개 자산 항목과 사진/갤러리가 코드에 있다. 외부 재고 동기화가 아니다.",
+      "target": "문서·프로젝트·개별 물건 관계와 gallery/관련 웹 자료를 관리자에서 관리한다.",
+      "next": "원 자료별 프로젝트 매핑·사진 교체·공개 범위를 기록하고 관리툴로 이관한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "lib/partner-assets.ts",
+          "anchor": "partnerAssets"
+        },
+        {
+          "path": "app/assets/[id]/asset-gallery.tsx",
+          "anchor": "export"
+        },
+        {
+          "path": "design-handoff/ASSETS.md",
+          "anchor": ""
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-021"
+      ],
+      "acceptance": [
+        "Thu Thiem/Con Dao 프로젝트 카테고리",
+        "Pavilion 승인 및 RLC 자료기준 게시 이력 보존",
+        "파트너 GLI 검증과 외부 Market Data 혼동 없음",
+        "여러 사진과 홈페이지/관련 영상 연결"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-030",
+      "title": "추후 상품과 수동 조사 영역",
+      "status": "deferred",
+      "legacyTasks": [],
+      "decision": "approved",
+      "current": "여행/편의 기능/Cash 확장/선택적 코인/소셜 수동 조사는 방향만 존재한다.",
+      "target": "추가 상품과 결제수단을 현재 Web2 권한 모델과 분리해 확장한다.",
+      "next": "출시 범위가 확정될 때 개별 기능 카드를 추가한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "docs/adr/0020-gli-cash-tiered-asset-demo.md",
+          "anchor": ""
+        },
+        {
+          "path": "docs/adr/0021-demand-driven-discovery-and-manual-research.md",
+          "anchor": "Social media"
+        }
+      ],
+      "tests": [],
+      "dependencies": [
+        "GS-018"
+      ],
+      "acceptance": [
+        "초기 자동 수집에 소셜·커뮤니티 4단계 추가하지 않음",
+        "코인을 GLI Cash 잔액과 동일시하지 않음",
+        "미정 서비스의 가격/혜택을 임의 확정하지 않음"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    },
+    {
+      "id": "GS-031",
+      "title": "실행형 개발기획서 유지",
+      "status": "implemented",
+      "legacyTasks": [
+        "GLI-050"
+      ],
+      "decision": "approved",
+      "current": "상태·결정·코드·테스트·완료 조건 문서와 검증 도구를 구축했고 문서 검사와 mutation probes를 통과했다.",
+      "target": "새 AI가 대화 전체를 다시 읽지 않고 정확한 작업 범위와 다음 항목을 찾는다.",
+      "next": "모든 후속 개발에서 관련 명세/registry/결정/증거를 갱신하고 HISTORY에 변경 전후·검증·남은 일·배포 상태를 추가한다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "docs/implementation/README.md",
+          "anchor": "GLI 실행형"
+        },
+        {
+          "path": "scripts/validate-development-spec.mjs",
+          "anchor": "validateRegistry"
+        }
+      ],
+      "tests": [],
+      "dependencies": [],
+      "acceptance": [
+        "모든 기능에 현재/목표/다음/증거/완료 조건 존재",
+        "문서와 source 경로의 단절을 검사",
+        "사용자 제안과 확정 정책 구분",
+        "완료 코드와 live 검증을 독립 기록",
+        "모든 개발 작업의 관련 명세 갱신과 append-only HISTORY 기록이 완료 조건"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "documentation_checks_passed",
+        "automatedTests": "spec_check_and_mutation_probes_passed_2026-09-08",
+        "live": "not_applicable_documentation_only"
+      }
+    },
+    {
+      "id": "GS-032",
+      "title": "실서비스 수용시험과 검증 이관",
+      "status": "partial",
+      "legacyTasks": [
+        "GLI-023",
+        "GLI-029"
+      ],
+      "decision": "approved",
+      "current": "기존 단위/worker tests가 있으나 완료표와 readiness는 일부 이전 모델/화면 기준이다.",
+      "target": "실제 공개 여정·현재 provider·데이터·계정·결제·복원을 근거로 판정한다.",
+      "next": "ACCEPTANCE.md의 회귀 시나리오를 이식하고 환경/커밋/실행 결과를 남긴다.",
+      "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
+      "evidence": [
+        {
+          "path": "tests/deployment-workflows.test.mjs",
+          "anchor": ""
+        },
+        {
+          "path": "db/release-readiness.ts",
+          "anchor": "AI_EVALUATION"
+        },
+        {
+          "path": "docs/MVP_COMPLETION_MATRIX.md",
+          "anchor": ""
+        }
+      ],
+      "tests": [
+        "tests/release-readiness.test.mjs",
+        "tests/ai-evaluation.test.mjs"
+      ],
+      "dependencies": [
+        "GS-020",
+        "GS-025",
+        "GS-026"
+      ],
+      "acceptance": [
+        "정적 검사를 실제 live 성공으로 표시하지 않음",
+        "현재 AI 경로의 평가가 readiness에 반영",
+        "승인 UI와 실제 사용자 여정의 수용시험"
+      ],
+      "routes": [],
+      "verification": {
+        "level": "code_review",
+        "automatedTests": "not_run_in_this_audit",
+        "live": "not_verified"
+      }
+    }
+  ]
+}

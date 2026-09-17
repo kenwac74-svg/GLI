@@ -1,5 +1,7 @@
 import type { Asset } from "./assets.ts";
 
+// GLI-SPEC: GS-005 GS-029; docs/implementation/COUNTRY-SOURCES.md.
+// Static partner inventory does not imply a live collector for that country.
 // Partner assets are published from the supplied document set at the document's
 // stated reference point. They are not presented as live inventory. A future
 // admin workflow must replace these fixtures with versioned Project, Offering,

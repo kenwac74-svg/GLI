@@ -22,6 +22,9 @@ import { discoverCambodiaAssets } from "../../../lib/cambodia-live-discovery";
 import { planGliAiRequest } from "../../../lib/gli-ai-orchestration";
 import { discoverWithGemini } from "../../../lib/gemini-discovery";
 
+// GLI-SPEC: GS-003 GS-004 GS-006 GS-010 GS-012; docs/implementation/API-CONTRACTS.md.
+// This synchronous demo path has in-memory discovery; queued persistence and
+// a discovery-wide usage gate remain backlog work, not completed integrations.
 export async function POST(request: Request) {
   let body: unknown;
   try {

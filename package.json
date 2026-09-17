@@ -6,6 +6,8 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "spec:check": "node scripts/validate-development-spec.mjs --self-test",
+    "spec:refresh": "node scripts/validate-development-spec.mjs --refresh",
     "design:generate": "node scripts/render-claude-handoff.mjs",
     "prebuild": "npm run design:generate",
     "dev": "vinext dev",

@@ -1,5 +1,8 @@
 "use client";
 
+// GLI-SPEC: GS-001 GS-006 GS-015 GS-016 GS-018 GS-020 GS-023 GS-024.
+// See docs/implementation/CURRENT-STATE.md before wiring remaining demo actions.
+// Preserve approved visuals; local paid/favorite state is not backend authority.
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
