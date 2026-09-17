@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GLI 디자인 핸드오프</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="crossorigin" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;600;700&display=swap" />
+<style>
+  :root{
+    --forest:#0F3D33; --green:#1B6B58; --green-700:#15584A; --green-100:#E8F2EE;
+    --lime:#C8F04A; --lime-700:#5F7D0B; --gold:#7A5214; --gold-100:#F5EEE1;
+    --ink:#14201D; --ink-2:#4C5652; --paper:#FAF9F6; --surface:#FFFFFF; --line:#E4E2DB;
+    --r:14px; --sh:0 1px 2px rgba(20,32,29,.05),0 4px 14px rgba(20,32,29,.05);
+    --f:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo",sans-serif;
+    --fn:"Schibsted Grotesk",Pretendard,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--f);background:var(--paper);color:var(--ink);font-size:16px;line-height:1.75;word-break:keep-all}
+  a{color:var(--green);text-decoration:none}
+  a:hover{color:var(--green-700);text-decoration:underline}
+  .wrap{max-width:960px;margin:0 auto;padding:0 36px}
+  .hero{background:var(--forest);color:#fff;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(760px 460px at 84% 6%,rgba(200,240,74,.16),transparent 62%);pointer-events:none}
+  .hero .wrap{position:relative;padding:62px 36px 66px}
+  .kicker{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--lime);margin-bottom:14px}
+  h1{font-size:42px;font-weight:800;line-height:1.2;letter-spacing:-.03em}
+  .lead{font-size:18px;color:rgba(255,255,255,.76);margin-top:16px;max-width:640px;text-wrap:pretty}
+  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .meta span{font-family:var(--fn);font-size:14px;font-weight:600;color:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:7px 14px}
+  h2{font-size:26px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+  section{padding:52px 0 0}
+  .sub{color:var(--ink-2);margin-bottom:22px;max-width:660px}
+  .files{display:grid;gap:14px}
+  .file{display:block;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--sh);padding:22px 24px;color:var(--ink)}
+  .file:hover{text-decoration:none;border-color:var(--green);box-shadow:0 2px 4px rgba(20,32,29,.05),0 14px 34px rgba(20,32,29,.12)}
+  .file strong{display:block;font-family:var(--fn);font-size:17px;font-weight:700;margin-bottom:5px}
+  .file span{display:block;font-size:15px;color:var(--ink-2);line-height:1.65}
+  .file.key{border-color:var(--gold);background:var(--gold-100)}
+  .file.key strong{color:var(--gold)}
+  ol{margin:0;padding-left:22px}
+  ol li{margin-bottom:12px}
+  ol li b{font-weight:700}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:15px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line)}
+  th{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--ink-2)}
+  td code{font-family:var(--fn);font-size:14px;background:var(--green-100);color:var(--green-700);padding:2px 7px;border-radius:6px}
+  .note{border-left:3px solid var(--gold);background:var(--gold-100);border-radius:0 var(--r) var(--r) 0;padding:18px 22px;margin-top:22px;font-size:15px;line-height:1.7}
+  footer{margin-top:64px;background:var(--forest);color:rgba(255,255,255,.6);font-size:14px}
+  footer .wrap{padding:30px 36px}
+  @media(max-width:640px){h1{font-size:31px}.wrap{padding:0 22px}.hero .wrap{padding:44px 22px 48px}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="wrap">
+    <p class="kicker">DESIGN HANDOFF</p>
+    <h1>GLI 디자인 핸드오프</h1>
+    <p class="lead">시안과 그 규칙을 담은 폴더입니다. 개발 코드는 포함하지 않습니다. Next.js 구현 시 이 시안의 구조·토큰·카피를 옮기면 됩니다.</p>
+    <div class="meta">
+      <span>kenwac74-svg/GLI</span>
+      <span>design/claude-ui-refresh</span>
+      <span>2026-08-09</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section>
+    <h2>파일</h2>
+    <p class="sub">시안을 보려면 원본 파일을 브라우저로 엽니다. 별도 빌드는 필요하지 않습니다.</p>
+    <div class="files">
+      <a class="file" href="source/gli-demo.dc.html"><strong>source/gli-demo.dc.html</strong><span>전체 시안 원본. 9개 화면이 한 파일에 들어 있습니다.</span></a>
+      <a class="file key" href="DEMO-DATA.md"><strong>DEMO-DATA.md</strong><span>가상 데이터 13항목 목록. 실개발 착수 전 반드시 확인해야 합니다.</span></a>
+      <a class="file" href="DESIGN-RULES.md"><strong>DESIGN-RULES.md</strong><span>타이포·색상·형태·레이아웃 규정 v2.</span></a>
+      <a class="file" href="README.md"><strong>README.md</strong><span>화면 목록, 개편 핵심 변경, 구현 주의사항.</span></a>
+    </div>
+    <div class="note"><b>DEMO-DATA.md를 먼저 읽으십시오.</b> 이 시안은 완성 시의 모습을 보여주는 데모입니다. 후기·추이 차트·대표 인용문 등은 작성된 가상 값이며, 실데이터로 착각하면 안 됩니다.</div>
+  </section>
+
+  <section>
+    <h2>화면</h2>
+    <p class="sub">단일 파일 안에서 <code>state.view</code> 값으로 전환됩니다.</p>
+    <table>
+      <thead><tr><th>VIEW</th><th>화면</th><th>저장소 대응</th></tr></thead>
+      <tbody>
+        <tr><td><code>land</code></td><td>랜딩 (기본 진입)</td><td>신규</td></tr>
+        <tr><td><code>home</code></td><td>마켓플레이스</td><td>explore-client.tsx</td></tr>
+        <tr><td><code>detail</code></td><td>자산 상세</td><td>assets/[id]/page.tsx</td></tr>
+        <tr><td><code>about</code></td><td>GLI 소개</td><td>신규</td></tr>
+        <tr><td><code>fav</code></td><td>관심자산</td><td>신규</td></tr>
+        <tr><td><code>plan</code> · <code>co</code></td><td>멤버십 · 결제</td><td>membership/</td></tr>
+        <tr><td><code>news</code> · <code>article</code></td><td>뉴스 목록 · 기사</td><td>라이브 /news</td></tr>
+        <tr><td><code>paper</code></td><td>백서</td><td>라이브 /whitepaper</td></tr>
+        <tr><td><code>trust</code></td><td>검증 체계</td><td>라이브 대응</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>이번 개편의 핵심 변경</h2>
+    <ol>
+      <li><b>진입 화면이 바뀌었습니다.</b> 기존에는 접속 즉시 자산 목록이 나왔습니다. 이제 랜딩이 기본이고, 마켓플레이스는 자산 탐색 메뉴로 들어갑니다.</li>
+      <li><b>액센트 컬러 도입.</b> 딥그린 단일 팔레트에서 딥그린(면) + 라임(행동) 2축으로. CTA·활성 필터·차트가 라임으로 통일됩니다.</li>
+      <li><b>마켓플레이스 필터 통합.</b> 흩어져 있던 국가 탭·카테고리 박스·거래유형 세그먼트를 스티키 칩 레일 하나로 합쳤습니다. 동작하지 않던 카테고리 박스는 제거했습니다.</li>
+      <li><b>자산 카드 재설계.</b> 카드 전체가 클릭 영역이 되고 하단 CTA 버튼을 뺐습니다. 가격을 전용 서체·크기로 분리했습니다.</li>
+      <li><b>상세 우측 사이드바 확장.</b> 스펙 스트립과 Trust Score 추이 차트를 추가했습니다.</li>
+      <li><b>형태 토큰 조정.</b> 라운드 6→14px, 그림자 1단→2단 레이어.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>구현 시 주의</h2>
+    <ol>
+      <li>시안의 <code>renderVals()</code>는 뷰 모델입니다. 정렬·필터·등급 판정·차트 경로 계산을 그대로 옮기면 됩니다.</li>
+      <li>카드 하트 버튼은 <code>stopPropagation</code> 필수입니다. 빠뜨리면 카드 클릭과 충돌합니다.</li>
+      <li>이미지는 <code>&lt;img src&gt;</code> 대신 <code>background-image</code>를 씁니다. 이유는 DESIGN-RULES.md 8절에 있습니다.</li>
+      <li>마퀴 애니메이션(티커·후기 배너)은 <code>prefers-reduced-motion</code>을 존중해야 합니다.</li>
+    </ol>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">본 문서는 디자인 검토용 핸드오프입니다. 게재 정보와 수치는 실제 계약 조건이 아닙니다.</div>
+</footer>
+</body>
+</html>

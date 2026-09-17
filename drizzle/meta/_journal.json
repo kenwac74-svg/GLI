@@ -1,0 +1,90 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1785411502465,
+      "tag": "0000_elite_adam_destine",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785416200000,
+      "tag": "0001_seed_approved_fixture",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785474000000,
+      "tag": "0002_admin_ingestion_pipeline",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1785481200000,
+      "tag": "0003_cash_checkout_sessions",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1785488400000,
+      "tag": "0004_authorized_source_connectors",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1785495600000,
+      "tag": "0005_payment_webhook_ledger",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1785502800000,
+      "tag": "0006_operations_health_and_retry",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1785506400000,
+      "tag": "0007_operations_notification_delivery",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1785510000000,
+      "tag": "0008_audit_log_query_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1785513600000,
+      "tag": "0009_backup_restore_evidence",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1785517200000,
+      "tag": "0010_consultation_threads",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1785520800000,
+      "tag": "0011_member_notifications",
+      "breakpoints": true
+    }
+  ]
+}

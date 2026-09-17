@@ -1,0 +1,29 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gli-ingestion-worker",
+  "main": "workers/ingestion/scheduled.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "<production-d1-name>",
+      "database_id": "<production-d1-id>",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "FILES",
+      "bucket_name": "<production-r2-bucket>"
+    }
+  ],
+  "vars": {
+    "OPERATIONS_ACTOR_USER_ID": "<active-admin-user-id>",
+    "RETRY_JOBS_PER_TICK": "3",
+    "ALERT_WEBHOOK_ALLOWED_HOSTS": "<approved-alert-host>"
+  }
+}
