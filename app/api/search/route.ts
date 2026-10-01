@@ -21,7 +21,7 @@ import { listCuratedOpportunities } from "../../../lib/curated-opportunities";
 import { discoverCambodiaAssets } from "../../../lib/cambodia-live-discovery";
 import { planGliAiRequest } from "../../../lib/gli-ai-orchestration";
 import { discoverWithGemini } from "../../../lib/gemini-discovery";
-import { isLocalAdvisorPreview, selectAdvisorProvider } from "../../../lib/advisor-runtime";
+import { isDemoGuestAdvisor, isLocalAdvisorPreview, selectAdvisorProvider } from "../../../lib/advisor-runtime";
 import { prepareConsultationSearch } from "../../../lib/consultation-search";
 import { parseAssetReferences, resolveAssetReferences } from "../../../lib/consultation-references";
 import { assetLocale, localizeAssets } from "../../../lib/asset-localization";
@@ -134,7 +134,8 @@ async function search(request: Request) {
   const advisorProvider = selectAdvisorProvider();
   const runtimeAvailable = advisorProvider !== "disabled";
   const localAdvisorPreview = isLocalAdvisorPreview(request.url, advisorProvider);
-  const canUseDeepSearch = localAdvisorPreview ||
+  const guestAdvisor = memberContext === null && isDemoGuestAdvisor();
+  const canUseDeepSearch = localAdvisorPreview || guestAdvisor ||
     (access !== null && access.aiMonthlyLimit !== 0 && (access.aiRemaining === null || access.aiRemaining > 0));
   let usageClaimed = false;
   let deliveredAi = false;

@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isLocalAdvisorPreview, selectAdvisorProvider } from "../lib/advisor-runtime.ts";
+import { isDemoGuestAdvisor, isLocalAdvisorPreview, selectAdvisorProvider } from "../lib/advisor-runtime.ts";
+
+test("guest advisor requires explicit demo stage and flag", () => {
+  assert.equal(isDemoGuestAdvisor({ DEPLOYMENT_STAGE: "demo", GLI_DEMO_GUEST_AI: "enabled" }), true);
+  for (const stage of [undefined, "development", "production"]) {
+    assert.equal(isDemoGuestAdvisor({ DEPLOYMENT_STAGE: stage, GLI_DEMO_GUEST_AI: "enabled" }), false);
+  }
+  assert.equal(isDemoGuestAdvisor({ DEPLOYMENT_STAGE: "demo" }), false);
+  assert.equal(isDemoGuestAdvisor({ DEPLOYMENT_STAGE: "demo", GLI_DEMO_GUEST_AI: "disabled" }), false);
+});
 
 test("OpenRouter is explicit and never uses a direct key as a substitute", () => {
   const env = { LLM_PROVIDER: "openrouter", OPENAI_API_KEY: "test", GEMINI_API_KEY: "test" };

@@ -3,6 +3,12 @@ import { mapListingRowToAsset } from "./assets-repository.ts";
 import type { D1DatabaseLike } from "./user-workflows.ts";
 
 // Provider-neutral contract; D1 SQL stays below this boundary for the AWS port.
+// TODO(P53): Add optional raw-page snapshots and prefetched image objects through
+// a provider-neutral store (R2 now, S3 on AWS). Persist image SHA-256/version and
+// source/check timestamps; revalidate on recollection, hash downloaded bytes,
+// and replace the active reference only after a changed object is saved safely.
+// Identical content reuses the cached object; a failed refresh keeps the old one.
+// Current save retains normalized fields/image URLs, not image files or chats.
 export type DiscoveryRepository = {
   save(assets: readonly Asset[], observedAt: string): Promise<Asset[]>;
   list(countries?: readonly string[]): Promise<Asset[]>;

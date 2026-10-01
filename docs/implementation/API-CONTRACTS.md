@@ -112,3 +112,7 @@ preserve multi-country scope. `coverage` and `discovery.countries` contain count
 status (`collected|partial|unavailable`) and collectedCount. First no-geography
 question defaults to KH/VN/PH; subsequent no-geography questions retain scope.
 See [MULTI-COUNTRY-SEARCH.md](MULTI-COUNTRY-SEARCH.md). No endpoint or auth change.
+## P54 비로그인 공개 데모 상담
+
+`POST /api/search`는 DEPLOYMENT_STAGE=demo와 GLI_DEMO_GUEST_AI=enabled가 모두 충족되고 계정이 없으면 실제 상담 모델을 사용할 수 있다. deepSearchEligible에 반영하며 비로그인의 monthlyLimit=0은 회원 월 이용권 미보유를 뜻한다. 운영 한도는 별도: 전체300회/일, 비로그인 공용 풀100회/일. 회원 이용권/실제 ADMIN 검증은 유지한다. flag 미설정/disabled 또는 상용 단계에서는 기존 게이트를 적용한다.
+

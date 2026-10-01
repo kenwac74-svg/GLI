@@ -2,6 +2,7 @@
 
 Goal:
 - Publish approved demo work; temporary admin policy (P52).
+- P54: enable bounded anonymous demo advisor and verify publicly.
 
 Completed:
 - Input/recent20 dashboard, private drafts, active-admin gate and atomic audit.
@@ -31,17 +32,22 @@ Remaining:
 - SNS intake remains planning-only in separate chat; no principles applied.
 - Some PH geographic titles stay English; same-rank ordering favors source order.
 - Top input reset UX unchanged; explicit reset works, ordinary follow-up persists.
-- Public rollout/cross-instance QA, raw versions/backups and draft publication open.
+- Hosted ADMIN provisioning and authenticated advisor response QA remain open.
+- Raw versions/backups and manual draft publication remain future work.
+- P53: Prefetch image objects; revalidate/hash/version on recollection. See DURABLE-DISCOVERY.
 - Homedy/Batdongsan/Lamudi/Rentpad and auxiliary sources remain held.
 - P41 work, Top5 versus final3 and income-versus-inventory absence separate.
 - FX up to23h cache; standalone legacy rules still demo1380, public path observed.
 
 Next:
 - Actual account provisioned as ADMIN in LOCAL D1; browser sign-in remains open.
-- Localhost lacks Sites authentication gateway; hosted rollout/admin QA pending.
+- Hosted account is MEMBER; actual admin sign-in/save QA remains pending.
 - Ranking/reset/translation refinements and intermediate test platform separate.
 
 Last verified:
 - 278 tests, typecheck/lint/migrations/build; spec49 routes/4 protected baselines.
 - Real PH and unspecified-country browser responses captured; costs not measured.
-- No commit, push or deployment performed.
+- Sites version66 deployed successfully; source7d28475 pushed to Sites remote.
+- Live D1 schema includes AI usage/discovered_assets/manual_asset_drafts tables.
+- Hosted OpenRouter Astra configured; revision7/version66 redeploy succeeded.
+- VN16/PH1 public search results with FX/translation; anonymous advisor rules only.

@@ -18,6 +18,7 @@ interface Env {
   OPENROUTER_API_KEY?: string;
   OPENROUTER_MODEL?: string;
   GLI_LOCAL_AI_PREVIEW?: "enabled" | "disabled";
+  GLI_DEMO_GUEST_AI?: "enabled" | "disabled";
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;
   GEMINI_THINKING_LEVEL?: "minimal" | "low" | "medium" | "high";

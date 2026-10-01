@@ -1,6 +1,12 @@
 type AdvisorEnvironment = Readonly<Record<string, string | undefined>>;
 export type AdvisorProvider = "openrouter" | "openai" | "gemini" | "disabled";
 
+// P54: anonymous paid consultation is an explicit demo-only opt-in. Operating
+// request caps still apply to the shared guest pool; this grants no account role.
+export function isDemoGuestAdvisor(env: AdvisorEnvironment = process.env): boolean {
+  return env.DEPLOYMENT_STAGE === "demo" && env.GLI_DEMO_GUEST_AI === "enabled";
+}
+
 export function selectAdvisorProvider(env: AdvisorEnvironment = process.env): AdvisorProvider {
   // A selected comparison gateway must not silently switch to a direct provider.
   if (env.LLM_PROVIDER === "openrouter") {

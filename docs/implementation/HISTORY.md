@@ -1,9 +1,29 @@
 # 개발 변경 이력
 
+## HIST-20261002-005
+
+- P54 / GS-012: 사용자 공개 AI 상담 로그인 제한 해제 승인으로 명시적 demo+guest flag일 때 비로그인 상담 eligibility만 추가했다. 실제 관리자 인증/회원 이용권/운영 전체300회·비로그인 공용100회/일/공급자 호출 감사·단계 제한은 유지한다. 비로그인 개별100회로 오해하지 않도록 정책/API를 명시했다.
+- 파일: advisor-runtime helper/search route/worker Env/회귀시험/DECISIONS/API-CONTRACTS/상태·이력. 공개 디자인/DB schema 변경 없음. 최종 검증과 배포·실제 비로그인 상담 증거는 완료 후 추가한다.
+
+## HIST-20261002-004
+
+- P53 / GS-004/025: 사용자 향후 원문/이미지/상담 기록 저장 가능성 및 이미지 사전 확보·재수집 해시 비교 최신화 요청을 DURABLE-DISCOVERY와 repository TODO에 기록했다. 공급자 중립 R2/S3 객체 저장, 바이트 SHA-256/버전/관측 시각, 조건부 조회, 동일 객체 재사용/변경 후 안전한 참조 갱신/실패 시 기존 유지, 백그라운드 수집과 보존·대화 접근 정책을 후속으로 명시한다.
+- 현재 동작은 정규화 매물+이미지 URL 저장으로 유지. 제품/API/DB schema/디자인/환경 설정 변경 없음. 유료 API/빌드/커밋/푸시/공개 배포 없음. 명세 및 diff 검증만 수행한다.
+
+## HIST-20261002-003
+
+- 사용자 공개 상담 모델 활성화 및 VN/PH 검색 검수 지시. 기존 LOCAL 선택과 일치하게 Sites LLM_PROVIDER=openrouter/OPENROUTER_MODEL=openai/gpt-6-astra와 전용 키(secret)를 설정했다. 나머지 설정은 유지하고 키를 Git/문서/브라우저에 기록하지 않는다. 환경 revision7, 기존66버전 재배포 `appgdep_6abe7e5f41448191bd23fe5f7577da6f` succeeded. 제품 코드/디자인 변경 없음.
+- 공개 glibiz.net/explore 비로그인 실제 UI 질문2회 검수: VN 호치민 매매16후보(프로젝트2+외부14), VND18.57B/원화970,798,010원 표시; PH 마닐라 월PHP70000 이하 임대1후보(PHP49800/월,1,075,948원/월). Dot 출처/후속 입력/가격 환산/일부 한국어 번역 확인. 숫자는 시험 당시 API 환산값으로 고정 시세가 아니다. 해당 조건에 걸린 수이지 전체 시장 재고가 아니다.
+- 호출 감사에서 Gemini translation HTTP200 기록을 확인했다. 비로그인 상담은 기존 access/aiMonthlyLimit 게이트로 provider=disabled가 되어 규칙형 답변이다. 서버 모델 설정 활성과 실제 상담 모델 성공을 혼동하지 않는다. 정상 /my → ChatGPT 로그인 화면까지 열었으며 사용자 로그인 후 실제 advisor/intent 호출 검증은 대기. 인증 우회/무료 이용권 변경/관리자 권한 변경 없음.
+- 발견한 후속: 일부 지명 미번역, 가격 미기재 프로젝트의 상위 후보 노출, 유사 제목·면적 후보 반복. 동일 호실 확정이나 중복 자동 삭제는 하지 않았다. 이번 활성화에 임의 수정하지 않는다. 검수 화면 work/public-ph-qa-20261002.jpg는 로컬 제외 파일이며 키/대화 원문 전체를 Git에 저장하지 않는다.
+
 ## HIST-20261002-002
 
 - P52 / GS-021: 사용자 현재까지 작업 공개 배포 지시 및 임시 관리자 정책을 ADMIN/DECISIONS에 기록했다. 데모 종료 후 정식 관리자 개발은 별도 후속이며 현재 권한/공개 게시 경계를 약화하지 않는다.
 - 배포 준비에서 root 실행 로그와 tsbuildinfo를 Git 제외하여 소스 패키지 혼입을 방지한다. 사용자 파일을 삭제하지 않는다. 제품/API/디자인 변경 없음. 기존 278시험/typecheck/lint/migration/build 통과 증거를 유지하며 최종 명세 검증/패키징 및 공개 배포 결과는 아래에 추가한다.
+- 최종 검증:278/278, lint 오류0/기존 경고10, typecheck/migration/build 통과; 명세33기능/49route/보호 시각원본4개 동일. 원격 선행 이력을 fast-forward 통합하고 보관한 로컬 작업을 복원했다. 충돌 파일은 승인된 로컬 최신본, 원격 뉴스/공지 변경은 유지. Git 줄바꿈으로 달라진 보호 파일은 기존 SHA-256과 일치하는 원래 바이트로 복구했다. 로컬 원문/키/로그 삭제 없음.
+- Sites 소스 커밋 `7d2847516db38581281728206e97b2a07f2ea29b` push 확인 및 패키지 생성. Windows npm/bash/tar 경로와 단기 인증 만료는 배포 프로세스 환경만 조정했으며 프로젝트 설정/제품 코드를 변경하지 않았다. 저장 버전66 `appgprj_6a631d1b30488191aadc2864f6625b3b~appgver_043e55d370c48191aa9e50be7a88f9c0`, 공개 배포 `appgdep_6abe7aabea048191a6859c946ce76cb8` succeeded. URL https://gli-ai-property-demo.kenwac74.chatgpt.site ; 기존 공개 도메인 glibiz.net 유지.
+- 독립 공개 DB overview에서 ai_operation_requests/ai_provider_calls/discovered_assets/manual_asset_drafts 생성 확인. 실제 수집 저장/관리자 로그인·초안 저장의 공개 종단 시험은 미수행. 해당 실제 계정은 공개 DB MEMBER/ACTIVE로 확인되어 LOCAL ADMIN 권한이 자동 이관되지 않음을 명시한다. 공개 LLM_PROVIDER=disabled이며 기존 키/모델/환경값을 바꾸지 않았다. 모든 AI 활성/관리자 사용 완료로 주장하지 않는다. 유료 AI 추가 호출 없음. 이 배포 결과 기록은 배포 후 로컬 문서 변경이며 버전66 안의 기록은 배포 준비 상태다.
 
 ## HIST-20261002-001
 
