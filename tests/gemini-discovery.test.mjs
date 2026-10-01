@@ -115,12 +115,12 @@ test("returns only server-validated listings from approved Cambodia sources", as
   );
 });
 
-test("does not call Gemini outside the currently connected Cambodia scope", async () => {
+test("does not call Gemini outside registered countries", async () => {
   let called = false;
   const result = await discoverWithGemini("세부 콘도", {
     ...criteria,
-    country: "Philippines",
-    city: "Cebu",
+    country: "Malaysia",
+    city: "Kuala Lumpur",
   }, {
     apiKey: "test-key",
     now: () => NOW,
@@ -133,6 +133,31 @@ test("does not call Gemini outside the currently connected Cambodia scope", asyn
   assert.equal(called, false);
   assert.equal(result.status, "disabled");
   assert.deepEqual(result.assets, []);
+});
+
+test("fresh multi-country scout includes VN/PH and rejects country-source mismatches", async () => {
+  let calls = 0;
+  const scope = { ...criteria, countries: ["Cambodia", "Vietnam", "Philippines"], city: null, maxPriceUsd: null };
+  const options = { apiKey: "fresh-test", now: () => NOW, refresh: true, fetchImpl: async (_url, init) => {
+    calls++;
+    const body = JSON.parse(init.body);
+    const task = JSON.parse(body.contents[0].parts[0].text);
+    assert.ok(task.allowedDomains.includes("dotproperty.com.vn"));
+    assert.ok(task.allowedDomains.includes("dotproperty.com.ph"));
+    return geminiResponse([
+      listing({ country: "Vietnam", city: "Ho Chi Minh", currency: "VND", price: 2000000000, publishedAt: "", sourceUrl: "https://www.dotproperty.com.vn/en/ads/test-vn" }),
+      listing({ country: "Philippines", city: "Cebu", currency: "PHP", price: 4000000, sourceUrl: "https://www.dotproperty.com.ph/ads/test-ph" }),
+      listing({ country: "Vietnam", sourceUrl: "https://www.dotproperty.com.ph/ads/wrong-country" }),
+      listing({ country: "Vietnam", sourceUrl: "https://www.dotproperty.com.vn/en/condos-for-sale" }),
+    ]);
+  } };
+  const first = await discoverWithGemini("fresh countries", scope, options);
+  const second = await discoverWithGemini("fresh countries", scope, options);
+  assert.equal(calls, 2);
+  assert.equal(second.cached, false);
+  assert.deepEqual(first.assets.map(asset => asset.countryCode), ["VN", "PH"]);
+  assert.equal(first.assets[0].updatedAt, "");
+  assert.ok(first.assets.every(asset => asset.sourceObservedAt === NOW.toISOString()));
 });
 
 test("fails closed without exposing provider errors or unstructured text", async () => {

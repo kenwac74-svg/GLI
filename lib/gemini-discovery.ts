@@ -1,7 +1,9 @@
 import { createHash } from "node:crypto";
 import type { Asset } from "./assets.ts";
 import type { PriceCurrency } from "./currency.ts";
+import { convertCurrency, type ExchangeRateSnapshot } from "./currency.ts";
 import type { SearchCriteria } from "./search.ts";
+import { DISCOVERY_COUNTRIES, discoveryDomains, isDiscoveryCountry } from "./discovery-countries.ts";
 
 export type GeminiDiscoveryStatus =
   | "disabled"
@@ -29,6 +31,8 @@ type GeminiDiscoveryOptions = {
   signal?: AbortSignal;
   scope?: string;
   failureCooldownMs?: number;
+  refresh?: boolean;
+  exchangeRate?: ExchangeRateSnapshot | null;
 };
 
 type GeminiPayload = {
@@ -42,17 +46,10 @@ type GeminiPayload = {
 };
 
 // GLI-SPEC: GS-002 GS-004 GS-005 GS-009 GS-012; docs/implementation/CURRENT-STATE.md.
-// Cambodia-only scout with process-local results. Model availability, durable
+// Registered-country scout with process-local results. Model availability, durable
 // evidence, missing post dates and all-call cost limits need separate verification.
 const DEFAULT_MODEL = "gemini-3.6-flash";
-const ALLOWED_SOURCE_HOSTS = new Set([
-  "khmer24.com",
-  "www.khmer24.com",
-  "camrealtyservice.com",
-  "www.camrealtyservice.com",
-  "cambodiaproperty.asia",
-  "www.cambodiaproperty.asia",
-]);
+const ALLOWED_SOURCE_HOSTS = new Set(discoveryDomains(Object.keys(DISCOVERY_COUNTRIES)));
 const SUPPORTED_CURRENCIES = new Set<PriceCurrency>([
   "USD",
   "KHR",
@@ -141,7 +138,7 @@ export async function discoverWithGemini(
 ): Promise<GeminiDiscoveryResult> {
   const now = options.now?.() ?? new Date();
   const apiKey = options.apiKey ?? process.env.GEMINI_API_KEY;
-  if (!apiKey || criteria.country !== "Cambodia") {
+  if (!apiKey || !(criteria.countries ?? [criteria.country]).some(isDiscoveryCountry)) {
     return emptyResult("disabled", now);
   }
   options.signal?.throwIfAborted();
@@ -154,7 +151,7 @@ export async function discoverWithGemini(
       thinkingLevel: options.thinkingLevel ?? process.env.GEMINI_THINKING_LEVEL ?? "medium" }))
     .digest("hex");
   const cached = cache.get(cacheKey);
-  if (cached && cached.expiresAt > now.getTime()) {
+  if (cached && cached.expiresAt > now.getTime() && (!options.refresh || cached.result.status === "error")) {
     return { ...cached.result, cached: true };
   }
   const existing = pending.get(cacheKey);
@@ -199,7 +196,7 @@ async function collectWithGemini(query: string, criteria: SearchCriteria, option
               {
                 text: [
                   "You are the private web-discovery component of GLI.",
-                  "Search only for currently published Cambodia property listing pages on Khmer24, CAM Realty, and Cambodia Property Asia.",
+                  "Search currently published property listings only in the supplied countries and approved domains. First scan listing titles and visible list metadata for relevance, then inspect suitable direct listing pages for evidence. Prefer recent listings when publication dates are visible; never infer a publication date from retrieval time.",
                   "Never create a listing, price, address, date, image URL, or source URL.",
                   "Use a direct listing page as sourceUrl, never a search page, home page, social post, or Google result URL.",
                   "Return only facts visible in search evidence. Use an empty string or 0 when a nonessential field is unavailable.",
@@ -218,7 +215,8 @@ async function collectWithGemini(query: string, criteria: SearchCriteria, option
                     task: "Find direct listing pages matching the user's request and structure the visible listing facts.",
                     userQuery: query,
                     authoritativeCriteria: criteria,
-                    allowedDomains: [...ALLOWED_SOURCE_HOSTS],
+                    allowedDomains: discoveryDomains(criteria.countries ?? [criteria.country]),
+                    countrySources: Object.fromEntries((criteria.countries ?? [criteria.country]).filter(isDiscoveryCountry).map(country => [country, DISCOVERY_COUNTRIES[country].domains])),
                     maxResults,
                   }),
                 },
@@ -254,6 +252,11 @@ async function collectWithGemini(query: string, criteria: SearchCriteria, option
       .map((listing) => validateListing(listing, criteria, now))
       .filter((asset): asset is Asset => asset !== null)
       .slice(0, maxResults);
+    // Use the request's observed FX, never an LLM-generated conversion.
+    if (options.exchangeRate) for (const asset of assets) {
+      const amount = convertCurrency(asset.price, asset.currency, "USD", options.exchangeRate.rates);
+      if (amount !== null) asset.priceUsdReference = { amount, provider: options.exchangeRate.provider, asOf: options.exchangeRate.updatedAt };
+    }
     for (const asset of assets) discoveredAssets.set(asset.id, asset);
     const result: GeminiDiscoveryResult = {
       assets,
@@ -292,10 +295,12 @@ function validateListing(
   if (!isRecord(value)) return null;
   const sourceUrl = safeSourceUrl(value.sourceUrl);
   if (!sourceUrl) return null;
+  if (!isDiscoveryCountry(value.country) ||
+      !(criteria.countries ?? [criteria.country]).includes(value.country) ||
+      !DISCOVERY_COUNTRIES[value.country].domains.some(domain => domain === sourceUrl.hostname.replace(/^www\./, ""))) return null;
   if (
     typeof value.title !== "string" ||
     value.title.trim().length < 3 ||
-    value.country !== "Cambodia" ||
     typeof value.city !== "string" ||
     !sameLocation(value.city, criteria.city ?? value.city) ||
     (value.transaction !== "sale" && value.transaction !== "rent") ||
@@ -338,9 +343,9 @@ function validateListing(
     .toUpperCase();
 
   return {
-    id: `GLI-KH-WEB-${id}`,
-    country: "Cambodia",
-    countryCode: "KH",
+    id: `GLI-${DISCOVERY_COUNTRIES[value.country].code}-WEB-${id}`,
+    country: value.country,
+    countryCode: DISCOVERY_COUNTRIES[value.country].code,
     city: cleanText(value.city, 100),
     district,
     transaction: value.transaction,
@@ -361,6 +366,7 @@ function validateListing(
     sourceName,
     sourceUrl: sourceUrl.toString(),
     updatedAt,
+    sourceObservedAt: now.toISOString(),
     strengths: ["외부 공개 원문 연결", "가격과 위치 정보 확인"],
     checks: ["현재 거래 가능 여부", "계약 조건", "권리 관계"],
   };
@@ -402,10 +408,11 @@ function safeSourceUrl(value: unknown): URL | null {
       url.username ||
       url.password ||
       url.hash ||
-      !ALLOWED_SOURCE_HOSTS.has(url.hostname.toLocaleLowerCase("en-US")) ||
+      !ALLOWED_SOURCE_HOSTS.has(url.hostname.toLocaleLowerCase("en-US").replace(/^www\./, "")) ||
       path === "/" ||
       path.includes("/wp-json/") ||
-      /\/(?:search|category|c-property)(?:\/|$)/.test(path)
+      /\/(?:search|category|c-property)(?:\/|$)/.test(path) ||
+      (url.hostname.includes("dotproperty") && !/^\/(?:en\/)?ads\//.test(path))
     ) {
       return null;
     }
@@ -431,6 +438,8 @@ function sourceLabel(hostname: string, proposed: unknown): string {
   if (hostname.includes("khmer24")) return "Khmer24";
   if (hostname.includes("camrealtyservice")) return "CAM Realty";
   if (hostname.includes("cambodiaproperty")) return "Cambodia Property Asia";
+  if (hostname.includes("dotproperty.com.vn")) return "Dot Property Vietnam";
+  if (hostname.includes("dotproperty.com.ph")) return "Dot Property Philippines";
   return typeof proposed === "string" && proposed.trim()
     ? cleanText(proposed, 80)
     : hostname;
@@ -443,7 +452,7 @@ function parsePublishedAt(value: unknown, now: Date): string {
       return new Date(parsed).toISOString();
     }
   }
-  return now.toISOString();
+  return "";
 }
 
 function sameLocation(left: string, right: string): boolean {

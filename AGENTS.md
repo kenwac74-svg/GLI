@@ -85,6 +85,11 @@
 
 ## Architecture
 
+- New discovery countries must update `lib/discovery-countries.ts`, connect a
+  bounded collector, and test source/country/FX boundaries. Broad search and
+  Gemini scope derive from that registry. Never suppress external scouting
+  because stored candidates already satisfy a count threshold (P56).
+
 - Preserve the existing vinext, Next.js App Router, Cloudflare Sites, npm, and lockfile setup.
 - Use D1 for structured product data and R2 for raw snapshots, evidence, and reports.
 - Keep crawling and normalization isolated from public request handlers.

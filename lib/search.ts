@@ -1,4 +1,5 @@
 import type { Asset } from "./assets";
+import { DISCOVERY_COUNTRIES } from "./discovery-countries.ts";
 import { searchPriceUsd, type ExchangeRateSnapshot } from "./currency.ts";
 
 export type SearchCriteria = {
@@ -59,7 +60,7 @@ const COUNTRIES = new Set<SearchCountry>([
   "Philippines",
   "Malaysia",
 ]);
-export const CONNECTED_SEARCH_COUNTRIES: SearchCountry[] = ["Cambodia", "Vietnam", "Philippines"];
+export const CONNECTED_SEARCH_COUNTRIES = Object.keys(DISCOVERY_COUNTRIES) as SearchCountry[];
 export function searchCountries(criteria: SearchCriteria): SearchCountry[] {
   return criteria.countries ?? [criteria.country];
 }

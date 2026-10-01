@@ -11,7 +11,7 @@ type Result = {
   demoOnly: true; checkedAt: string; cached: boolean; assets: Asset[];
   sources: { name: string; status: "collected" | "blocked" | "unavailable" | "disabled"; count: number; reason?: string }[];
 };
-type Options = { enabled?: boolean; fetchImpl?: typeof fetch; now?: () => Date };
+type Options = { enabled?: boolean; refresh?: boolean; fetchImpl?: typeof fetch; now?: () => Date };
 let cache: { expiresAt: number; result: Result } | null = null;
 let pending: Promise<Result> | null = null;
 const liveAssets = new Map<string, Asset>();
@@ -23,7 +23,7 @@ export async function discoverPhilippinesAssets(options: Options = {}): Promise<
   if (!options.enabled) return { demoOnly: true, checkedAt: now.toISOString(), cached: false, assets: [],
     sources: [{ name: "Dot Property Philippines", status: "disabled", count: 0, reason: "demo_only" }, ...held] };
   const useCache = !options.fetchImpl && !options.now;
-  if (useCache && cache && cache.expiresAt > now.getTime()) return { ...cache.result, cached: true };
+  if (useCache && cache && cache.expiresAt > now.getTime() && (!options.refresh || cache.result.assets.length === 0)) return { ...cache.result, cached: true };
   if (useCache && pending) return pending;
   const job = collect(options.fetchImpl ?? fetch, now, held);
   if (!useCache) return job;

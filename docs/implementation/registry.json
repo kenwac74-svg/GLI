@@ -222,7 +222,7 @@
       "status": "partial",
       "legacyTasks": [],
       "decision": "approved",
-      "current": "P45 베트남 및 P47 필리핀 Dot Property 제한 수집을 검색/상담/Map 상세에 연결했다. P48 요청 국가 목록의 기존 collector를 병렬 실행하고 국가별 collected/partial/unavailable을 전달한다. 원문 VND/PHP와 관측 FX를 보존한다. Homedy/Batdongsan/Lamudi/Rentpad와 보조자료는 보류한다.",
+      "current": "P56 KH/VN/PH 공동 등록부에서 광역 검색과 Gemini 출처 범위를 파생한다. 실제 후보 검색마다 목록을 재조회하고 Gemini scout를 병렬 실행하며 DB 후보 수로 생략하지 않는다. 원문 VND/PHP와 관측 FX를 보존한다. Homedy/Batdongsan/Lamudi/Rentpad와 보조자료는 보류한다. 로컬 검증이며 공개 배포는 별도다.",
       "target": "국가별로 선정된 출처와 파트너 제공 채널을 독립 연결한다.",
       "next": "영속 저장과 국가/도시/예산 재고 범위를 보완하고 실제 임대계약/순수익 근거를 별도 수집한다. Homedy 매핑, Batdongsan 정상 접근/승인 feed 및 상용 협의는 별도다. 보조자료는 고도화까지 보류.",
       "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
@@ -245,7 +245,7 @@
         },
         {
           "path": "lib/gemini-discovery.ts",
-          "anchor": "criteria.country !== \"Cambodia\""
+          "anchor": "countrySources: Object.fromEntries"
         }
       ],
       "tests": ["tests/vietnam-discovery.test.mjs", "tests/philippines-discovery.test.mjs", "tests/exchange-rates.test.mjs", "tests/multi-country-search.test.mjs"],
@@ -565,7 +565,7 @@
       "evidence": [
         {
           "path": "app/api/search/route.ts",
-          "anchor": "sourceBackedMatchCount < 6"
+          "anchor": "const webJob = geminiDiscoveryEnabled"
         },
         {
           "path": "db/membership-entitlements.ts",

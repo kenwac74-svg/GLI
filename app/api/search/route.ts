@@ -11,7 +11,6 @@ import {
   runAdvisorSearch,
 } from "../../../lib/ai-search";
 import {
-  extractCriteria,
   parseSearchContext,
   searchCountries,
 } from "../../../lib/search";
@@ -29,7 +28,6 @@ import { createAiOperation } from "../../../lib/ai-operation";
 import { parseConversation } from "../../../lib/conversation-context";
 import { discoverVietnamReferences, isVietnamDemoRequestEnabled } from "../../../lib/vietnam-discovery.ts";
 import { discoverPhilippinesAssets, isPhilippinesDemoRequestEnabled } from "../../../lib/philippines-discovery.ts";
-import { searchPriceUsd, type PriceCurrency } from "../../../lib/currency.ts";
 import { getExchangeRates } from "../../../lib/exchange-rates.ts";
 import { collectSearchCountries } from "../../../lib/multi-country-discovery.ts";
 import { getDiscoveryRepository } from "../../../lib/discovery-storage.ts";
@@ -176,32 +174,22 @@ async function search(request: Request) {
   const geminiDiscoveryEnabled =
     Boolean(process.env.GEMINI_API_KEY) &&
     process.env.GEMINI_DISCOVERY !== "disabled";
+  // Scout in parallel with lightweight listing feeds, never only after DB scarcity.
+  const webJob = geminiDiscoveryEnabled
+    ? discoverWithGemini(query, requestedCriteria, { refresh: true, exchangeRate: exchange && !exchange.stale ? exchange.snapshot : null, fetchImpl: operation.forStage("discovery"), signal: request.signal, scope: operation.scope })
+    : Promise.resolve(null);
   const liveDiscovery = discovery.live = await collectSearchCountries(requestedCriteria, async country =>
     country === "Cambodia" && liveDiscoveryEnabled
-      ? discoverCambodiaAssets({ city: requestedCriteria.city })
+      ? discoverCambodiaAssets({ city: requestedCriteria.city, refresh: true })
       : country === "Vietnam" && await isVietnamDemoRequestEnabled(request.url)
-        ? discoverVietnamReferences({ enabled: true })
+        ? discoverVietnamReferences({ enabled: true, refresh: true })
       : country === "Philippines" && await isPhilippinesDemoRequestEnabled(request.url)
-        ? discoverPhilippinesAssets({ enabled: true }) : null);
+        ? discoverPhilippinesAssets({ enabled: true, refresh: true }) : null);
   const curatedAssets = listCuratedOpportunities().filter(
     (asset) => !source.assets.some((candidate) => candidate.id === asset.id),
   );
-  const sourceBackedAssets = [
-    ...(liveDiscovery?.assets ?? []),
-    ...source.assets,
-    ...curatedAssets,
-  ];
-  const sourceBackedMatchCount = countStrictMatches(
-    sourceBackedAssets,
-    requestedCriteria,
-  );
   request.signal.throwIfAborted();
-  const webDiscovery = discovery.web =
-    searchCountries(requestedCriteria).length === 1 && requestedCriteria.country === "Cambodia" &&
-    geminiDiscoveryEnabled &&
-    sourceBackedMatchCount < 6
-      ? await discoverWithGemini(query, requestedCriteria, { fetchImpl: operation.forStage("discovery"), signal: request.signal, scope: operation.scope })
-      : null;
+  const webDiscovery = discovery.web = await webJob;
   discoveredAssets = mergeExternalAssets(
     webDiscovery?.assets ?? [],
     liveDiscovery?.assets ?? [],
@@ -358,38 +346,3 @@ function mergeExternalAssets<T extends { sourceUrl?: string; id: string; transac
   });
 }
 
-function countStrictMatches<
-  T extends {
-    country: string;
-    city: string;
-    district: string;
-    transaction: string;
-    propertyType: string;
-    bedrooms: number;
-    price: number;
-    currency: PriceCurrency;
-    priceUsdReference?: { amount: number; provider: string; asOf: string };
-    title: string;
-    summary: string;
-  },
->(assets: T[], criteria: ReturnType<typeof extractCriteria>): number {
-  const location = (value: string) =>
-    value.trim().toLocaleLowerCase("en-US");
-  return assets.filter((asset) => {
-    if (!searchCountries(criteria).includes(asset.country as typeof criteria.country)) return false;
-    if (criteria.city && location(asset.city) !== location(criteria.city)) return false;
-    if (criteria.district && asset.district !== criteria.district) return false;
-    if (criteria.transaction && asset.transaction !== criteria.transaction) return false;
-    if (criteria.propertyType && asset.propertyType !== criteria.propertyType) return false;
-    if (criteria.bedrooms !== null && asset.bedrooms !== criteria.bedrooms) return false;
-    const priceUsd = searchPriceUsd(asset);
-    if (criteria.maxPriceUsd !== null && (priceUsd === null || priceUsd > criteria.maxPriceUsd)) return false;
-    if (
-      criteria.wantsRiver &&
-      !/river|mekong|riverside|강|메콩/i.test(`${asset.title} ${asset.summary}`)
-    ) {
-      return false;
-    }
-    return true;
-  }).length;
-}

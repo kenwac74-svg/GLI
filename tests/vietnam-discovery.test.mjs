@@ -92,6 +92,9 @@ test("runtime shares a collection and caches source records for details", async 
       assert.equal(result.sources.some(source => source.name === "IQI Vietnam"), false);
     }
     assert.equal(requests.length, 4);
+    const refreshed = await discoverVietnamReferences({ enabled: true, refresh: true });
+    assert.equal(refreshed.cached, false);
+    assert.ok(requests.length > 4);
     assert.equal(findLiveVietnamAsset(first.assets[0].id).sourceUrl, first.assets[0].sourceUrl);
   } finally { globalThis.fetch = originalFetch; }
 });

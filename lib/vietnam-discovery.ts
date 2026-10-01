@@ -54,6 +54,7 @@ type HtmlNode = {
   attrs?: { name: string; value: string }[];
 };
 type Options = {
+  refresh?: boolean;
   enabled?: boolean;
   fetchImpl?: typeof fetch;
   now?: () => Date;
@@ -110,7 +111,7 @@ export async function discoverVietnamReferences(options: Options = {}): Promise<
   };
   // Injected fetch/clock are isolated from runtime cache (tests and diagnostics).
   const useCache = !options.fetchImpl && !options.now;
-  if (useCache && cache && cache.expiresAt > now.getTime()) return { ...cache.result, cached: true };
+  if (useCache && cache && cache.expiresAt > now.getTime() && (!options.refresh || cache.result.assets.length === 0)) return { ...cache.result, cached: true };
   if (useCache && pending) return pending;
   const job = collect(options.fetchImpl ?? fetch, now);
   if (!useCache) return job;

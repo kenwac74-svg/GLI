@@ -180,3 +180,13 @@ GLI-052 / P34 follow-up (2026-09-18): GS-033 adds Gemini Korean translation for 
 - Select payment provider and membership refund policy.
 - Name the Cambodia verifier and consultation operator.
 - Approve the production alert destination and provision the scheduled worker secrets.
+## 2026-10-02 deferred batch: detail return (P55)
+
+- User reconfirmed missing return button on the public asset detail screen.
+- Record only; implement with the next user-approved batch, not immediately.
+- Reuse approved label `탐색 결과로 돌아가기`; preserve conversation, search
+  criteria, candidate order and list scroll without another paid search.
+- Direct detail entry without saved state falls back to asset exploration.
+- Verify detail identity (C1), desktop/mobile and browser Back together.
+- Claude handles any new visual placement; Codex handles navigation/state.
+

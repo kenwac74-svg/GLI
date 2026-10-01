@@ -26,6 +26,7 @@ type DiscoveryOptions = {
   timeoutMs?: number;
   maxRecordsPerSource?: number;
   cacheTtlMs?: number;
+  refresh?: boolean;
   city?: string | null;
 };
 
@@ -62,7 +63,7 @@ export async function discoverCambodiaAssets(
   const searchTerm = options.city?.trim() || null;
   const cacheKey = `${CACHE_KEY}:${searchTerm?.toLocaleLowerCase("en-US") ?? "all"}`;
   const cached = cache.get(cacheKey);
-  if (cached && cached.expiresAt > now.getTime()) {
+  if (cached && cached.expiresAt > now.getTime() && (!options.refresh || cached.result.assets.length === 0)) {
     return { ...cached.result, cached: true };
   }
 
