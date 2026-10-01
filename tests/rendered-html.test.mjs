@@ -178,6 +178,56 @@ test("uses the whole asset card to open detailed information", async () => {
   assert.doesNotMatch(html, /검증 요약 보기/);
 });
 
+test("asset localization locales are bounded on search and list APIs", async () => {
+  const { default: worker } = await import("../dist/server/index.js");
+  const context = { waitUntil() {}, passThroughOnException() {} };
+  const env = { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } };
+  for (const locale of ["ko", "en", "ko-KR", "en-US", "invalid"]) {
+    const list = await worker.fetch(new Request(`http://localhost/api/assets?locale=${locale}`), env, context);
+    assert.equal(list.status, locale === "invalid" ? 400 : 200);
+    const search = await worker.fetch(new Request("http://localhost/api/search", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ query: "베트남 매매", locale }) }), env, context);
+    const result = await search.json();
+    assert.equal(search.status, locale === "invalid" ? 400 : 200);
+    if (locale === "invalid") assert.equal(result.error.code, "INVALID_LOCALE");
+    else assert.equal(result.locale, locale.startsWith("ko") ? "ko" : "en");
+  }
+});
+
+test("search API validates public references and retains review candidates without client facts", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-review-api`);
+  const { default: worker } = await import(workerUrl.href);
+  const send = body => worker.fetch(new Request("http://localhost/api/search", {
+    method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body),
+  }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  const initial = await (await send({ query: "프놈펜 매매 콘도" })).json();
+  const ids = initial.matches.slice(0, 2).map(asset => asset.id);
+  assert.equal(ids.length, 2);
+  const response = await send({ query: "두 번째 물건은?", context: initial.criteria, previousAssetIds: ids,
+    matches: [{ id: ids[1], price: 1, title: "Tampered" }], model: "not-allowed" });
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.consultation.mode, "review");
+  assert.deepEqual(result.consultation.referencedAssetIds, [ids[1]]);
+  assert.deepEqual(result.resultSet, { assetIds: ids, returnedCount: 2 });
+  assert.deepEqual(result.matches.map(asset => [asset.id, asset.price]), initial.matches.slice(0, 2).map(asset => [asset.id, asset.price]));
+  assert.equal(result.discovery, null);
+  assert.doesNotMatch(JSON.stringify(result), /Tampered|not-allowed/);
+  for (const body of [
+    { previousAssetIds: [ids[0], ids[0]] },
+    { previousAssetIds: ids, selectedAssetIds: ["UNKNOWN"] },
+    { previousAssetIds: [{ id: ids[0], price: 1 }] },
+  ]) {
+    const invalid = await send({ query: "계속", ...body });
+    assert.equal(invalid.status, 400);
+    assert.equal((await invalid.json()).error.code, "INVALID_ASSET_REFERENCES");
+  }
+  const missing = await (await send({ query: "첫 번째 물건은?", context: initial.criteria, previousAssetIds: ["EXPIRED-PUBLIC-ID", ids[1]] })).json();
+  assert.equal(missing.consultation.mode, "clarify");
+  assert.deepEqual(missing.consultation.missingAssetIds, ["EXPIRED-PUBLIC-ID"]);
+  assert.equal(missing.discovery, null);
+});
+
 test("renders global country controls and the four investment asset categories", async () => {
   const response = await render("/explore");
   assert.equal(response.status, 200);

@@ -4,6 +4,9 @@ import { findCuratedOpportunity } from "./curated-opportunities.ts";
 import type { PublicAssetsFilters } from "../db/assets-repository.ts";
 import { findLiveCambodiaAsset } from "./cambodia-live-discovery.ts";
 import { findGeminiDiscoveredAsset } from "./gemini-discovery.ts";
+import { findLiveVietnamAsset } from "./vietnam-discovery.ts";
+import { findLivePhilippinesAsset } from "./philippines-discovery.ts";
+import { getDiscoveryRepository } from "./discovery-storage.ts";
 
 // GLI-SPEC: GS-004 GS-005 GS-015; docs/implementation/CURRENT-STATE.md.
 // A D1 mode label does not prove live Map/curated results were persisted to D1.
@@ -19,7 +22,7 @@ type RuntimeEnv = {
 };
 
 export function getAssetDataMode(
-  runtimeEnv: RuntimeEnv = process.env,
+  runtimeEnv: RuntimeEnv = { DATA_MODE: process.env.DATA_MODE },
 ): AssetDataMode {
   const mode = runtimeEnv.DATA_MODE ?? "approved-fixture";
   if (mode !== "approved-fixture" && mode !== "d1") {
@@ -51,8 +54,10 @@ export async function getAsset(publicId: string): Promise<{
   asset: Asset | null;
   mode: AssetDataMode;
 }> {
+  const persisted = await (await getDiscoveryRepository())?.get(publicId);
+  if (persisted) return { asset: persisted, mode: getAssetDataMode() };
   const liveAsset =
-    findLiveCambodiaAsset(publicId) ?? findGeminiDiscoveredAsset(publicId);
+    findLiveCambodiaAsset(publicId) ?? findGeminiDiscoveredAsset(publicId) ?? findLiveVietnamAsset(publicId) ?? findLivePhilippinesAsset(publicId);
   if (liveAsset) {
     return { asset: liveAsset, mode: getAssetDataMode() };
   }

@@ -98,6 +98,58 @@ async function loadWorker() {
   return (await import(workerUrl.href)).default;
 }
 
+test("built search accepts long prior answers without spending in rules mode", async t => {
+  const worker = await loadWorker();
+  const { database, sqlite } = await createDatabase();
+  t.after(() => sqlite.close());
+  const upstream = t.mock.method(globalThis, "fetch", async () => { throw new Error("unexpected_network"); });
+  const response = await dispatch(worker, database, "/api/search", {
+    method: "POST", body: { query: "베트남 물건 찾아줘", conversation: [{ role: "assistant", text: "이전 상담 내용 ".repeat(400) }] },
+  });
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.criteria.country, "Vietnam");
+  assert.deepEqual(result.operationalAccess, { limited: false, unavailable: false });
+  assert.equal(upstream.mock.callCount(), 0);
+  assert.equal(sqlite.prepare("SELECT count(*) AS n FROM ai_operation_requests").get().n, 0);
+});
+
+test("built search meters failed Gemini discovery and blocks dispatch at global cap", async t => {
+  const worker = await loadWorker();
+  const { database, sqlite } = await createDatabase();
+  t.after(() => sqlite.close());
+  const configuration = {
+    LLM_PROVIDER: "disabled", GEMINI_API_KEY: "offline-test-only", GEMINI_ADVISOR: "disabled",
+    GEMINI_DISCOVERY: "enabled", GEMINI_TRANSLATION: "disabled", LIVE_CAMBODIA_DISCOVERY: "disabled",
+  };
+  const original = Object.fromEntries(Object.keys(configuration).map(key => [key, process.env[key]]));
+  Object.assign(process.env, configuration);
+  t.after(() => {
+    for (const [key, value] of Object.entries(original)) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  });
+  const upstream = t.mock.method(globalThis, "fetch", async url => {
+    assert.match(String(url), /^https:\/\/generativelanguage\.googleapis\.com\//);
+    return Response.json({ usageMetadata: { promptTokenCount: 12, totalTokenCount: 12 } }, { status: 503 });
+  });
+  const request = query => dispatch(worker, database, "/api/search", { method: "POST", runtimeEnv: configuration, body: { query } });
+  const first = await request("프놈펜에서 17달러 이하 콘도 매매");
+  assert.equal(first.status, 200);
+  assert.equal(upstream.mock.callCount(), 1);
+  assert.equal(sqlite.prepare("SELECT count(*) AS n FROM ai_operation_requests").get().n, 1);
+  assert.equal(sqlite.prepare("SELECT input_tokens FROM ai_provider_calls").get().input_tokens, 12);
+  await request("프놈펜에서 17달러 이하 콘도 매매");
+  assert.equal(upstream.mock.callCount(), 1, "failure cooldown avoids a second attempt");
+  const day = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+  const insert = sqlite.prepare("INSERT INTO ai_operation_requests VALUES (?, ?, ?, ?)");
+  for (let i = 1; i < 300; i++) insert.run(`filled-${i}`, day, `other-${i}`, Date.now());
+  const limited = await request("프놈펜에서 19달러 이하 콘도 매매");
+  assert.equal(limited.status, 200);
+  assert.equal((await limited.json()).operationalAccess.limited, true);
+  assert.equal(upstream.mock.callCount(), 1, "no paid dispatch after cap");
+});
+
 function authHeaders(email) {
   return {
     "oai-authenticated-user-email": email,

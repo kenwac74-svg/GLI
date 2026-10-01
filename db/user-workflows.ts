@@ -169,7 +169,7 @@ export async function ensureUser(
             id, email, display_name, role, status, created_at, updated_at
           ) VALUES (?, ?, ?, 'MEMBER', 'ACTIVE', ?, ?)
         `)
-        .bind(id, email, displayName, now, now),
+        .bind(id, email, displayName ?? null, now, now),
       auditStatement(database, {
         actorUserId: id,
         action: "USER_CREATED",
@@ -185,7 +185,7 @@ export async function ensureUser(
     return {
       id,
       email,
-      displayName,
+      displayName: displayName ?? null,
       role: "MEMBER",
       status: "ACTIVE",
       createdAt: now,

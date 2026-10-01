@@ -85,6 +85,7 @@ export default async function AdminPage() {
             <p>승인된 자료를 수집하고 검토가 끝난 자산만 사용자 검색에 게시합니다.</p>
           </div>
           <div className="admin-head-actions">
+            <Link href="/admin/manual"><Database size={16} /> 수동 입력</Link>
             <Link href="/admin/readiness">
               <Rocket size={16} />
               출시 준비

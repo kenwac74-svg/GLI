@@ -1,5 +1,7 @@
 # GLI 디자인 핸드오프
 
+> **AI 상담 후속 기획안:** [GLI-052-CONSULTATION-UX-BRIEF.md](GLI-052-CONSULTATION-UX-BRIEF.md). 2026-09-18 BuildBlock 벤치마크를 B1~B5에 반영했다. 이 문서를 Claude 작업 진입점으로 사용한다. Codex 개발/Claude 디자인 분업은 [전체 작업지시서](../docs/implementation/GLI-052-AI-CONSULTATION-WORK-ORDER.md)를 따른다. A1 착수·A4 UX 범위는 승인됐으며 A2·A3 고정 정책은 미확정이다. 실제 시각안 통합·새 비용·배포는 별도 승인이다.
+
 > **현재 모바일 작업지시:** [`GLI-051-MOBILE-RESPONSIVE-FIX-BRIEF.md`](GLI-051-MOBILE-RESPONSIVE-FIX-BRIEF.md)
 >
 > 실제 Android와 360/390/412px 브라우저에서 확인된 페이지 전체 가로 넘침을 다룬다. 이 문서는 모바일 헤더·랜딩 타이포·내부 스크롤에 한정된 후속 지시이며, 사용자 승인 전에는 시각 원본이나 React 구현을 변경하지 않는다.

@@ -4,6 +4,32 @@ import test from "node:test";
 import { discoverWithGemini } from "../lib/gemini-discovery.ts";
 
 const NOW = new Date("2026-08-13T03:00:00.000Z");
+
+test("concurrent identical discovery coalesces, failures cool down, accounts remain isolated", async () => {
+  let calls = 0;
+  const options = { apiKey: "coalesce-test", now: () => NOW, scope: "member-a", fetchImpl: async () => {
+    calls++;
+    await new Promise(resolve => setTimeout(resolve, 10));
+    return new Response("unavailable", { status: 503 });
+  } };
+  const results = await Promise.all(Array.from({ length: 3 }, () => discoverWithGemini("same coalesce query", criteria, options)));
+  assert.equal(calls, 1);
+  assert.ok(results.every(result => result.status === "error"));
+  assert.equal((await discoverWithGemini("same coalesce query", criteria, options)).cached, true);
+  assert.equal(calls, 1);
+  await discoverWithGemini("same coalesce query", criteria, { ...options, scope: "member-b" });
+  assert.equal(calls, 2);
+  await discoverWithGemini("same coalesce query", criteria, { ...options, now: () => new Date(NOW.getTime() + 61000) });
+  assert.equal(calls, 3);
+});
+
+test("pre-canceled discovery never calls upstream", async () => {
+  const controller = new AbortController();
+  controller.abort();
+  await assert.rejects(discoverWithGemini("cancel-test", criteria, { apiKey: "test", signal: controller.signal,
+    fetchImpl: async () => { assert.fail("must not dispatch"); },
+  }));
+});
 const criteria = {
   country: "Cambodia",
   city: "Sihanoukville",

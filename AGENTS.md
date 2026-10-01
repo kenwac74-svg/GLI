@@ -1,6 +1,41 @@
 # GLI Engineering Guide
 
+## GLI AI development workflow (user, 2026-09-30)
+
+- Work on GLI only. Prefer this Work Local tree to GitHub for current code;
+  inspect the remote only when divergence, PR/CI, or a pull/merge requires it.
+- Search first and read only task-relevant files (initially about 5-10). Skip
+  node_modules, builds, caches, logs, backups, old versions, and lockfiles
+  unless necessary. Never re-analyze the whole repository by default.
+- Make minimal edits; no unrelated refactors or duplicate backup files. On a
+  failure, inspect the first real error and nearby log lines. Do not rerun an
+  unchanged failing command; after about two failed approaches, revisit the
+  problem definition and environment before increasing model effort.
+- Verify related tests first, then the needed local build at the task boundary.
+  Use established scripts; do not rebuild or deploy after each small change.
+  The existing specification/history and definition-of-done rules below remain.
+- Current deployment is the GPT site. Firebase DEV/TEST is a future migration:
+  verify its project, configuration, and scripts before any deployment. Never
+  change, merge, or deploy Production without explicit user instruction.
+- Default model recommendation: Sol for ordinary implementation, fixes, APIs,
+  Firebase DEV/TEST, UI, tests, builds, and reviews. Prefer cheaper models for
+  mechanical search, log filtering, simple Git, and fixed procedures. Recommend
+  Astra only for new core architecture, cross-service failures, failed Sol
+  approaches, major migration/technology choices, or intertwined security,
+  authority, financial/RWA, and data constraints. File count and log length
+  alone do not justify Astra. Prefer small context + Sol; recommend only when
+  materially useful and continue the task.
+- Use `AI_CONTEXT.md` for stable facts and root `CURRENT_STATE.md` for a short
+  current snapshot. Update relevant specifications and append-only history at
+  task completion. Stop when the requested unit is verified.
+
 ## Start here: executable development specification
+
+- Named web delegation: "미니" = Gemini, "로드" = Claude. When the user asks
+  to assign work, use `skills/gli-web-delegation/SKILL.md` (also installed as a
+  user skill). Use the existing relevant in-app conversation, minimum context,
+  no secrets, and independent review. These are web collaborators, not GLI
+  product API calls or internal Codex subagents; registration sends no task.
 
 - Read `docs/implementation/README.md`, `CURRENT-STATE.md`, and `DECISIONS.md`
   before interpreting historical completion claims. `registry.json` connects
@@ -19,9 +54,12 @@
 - Claude owns approved design. Apply only user-approved improvements; keep
   copy, fonts, colors, spacing, DOM and responsive behavior faithful. The later
   selective-adoption decision supersedes blindly copying an entire new handoff.
-- Distinguish public fixture/Map discovery from durable D1/R2 ingestion. Only
-  Cambodia has external discovery adapters; other-country partner cards are not
-  evidence of connected crawlers. AWS migration remains a separately tracked plan.
+- Distinguish public fixture/Map discovery from durable D1/R2 ingestion. Cambodia
+  has listing discovery adapters; P45 enables bounded Dot Property Vietnam
+  listing discovery for LOCAL/explicit demo only; P47 adds Dot Philippines.
+  Homedy mapping, Batdongsan
+  access and P44 auxiliary sources remain held. Partner cards are not crawlers.
+  Demo approval is not model-training or commercial reuse permission.
 - Run `npm run spec:check` for documentation/link verification. Use
   `npm run spec:refresh` after changing the registry or route inventory.
 - For documentation and comment-only work, use the spec check and diff review;

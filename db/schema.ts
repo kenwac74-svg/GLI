@@ -3,10 +3,60 @@
 import {
   index,
   integer,
+  real,
   sqliteTable,
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
+
+// GS-021 / P51: manual input stays private pending review.
+export const manualAssetDrafts = sqliteTable("manual_asset_drafts", {
+  id: text("id").primaryKey(),
+  actorUserId: text("actor_user_id").notNull().references(() => users.id),
+  inputHash: text("input_hash").notNull(),
+  payloadJson: text("payload_json").notNull(),
+  status: text("status").notNull().default("REVIEW_PENDING"),
+  createdAt: integer("created_at").notNull(),
+}, table => [index("manual_asset_drafts_created_idx").on(table.createdAt)]);
+
+// GS-004 / P50: discovered candidates are not verified listings.
+export const discoveredAssets = sqliteTable("discovered_assets", {
+  publicId: text("public_id").primaryKey(),
+  sourceUrl: text("source_url").notNull(),
+  transactionType: text("transaction_type").notNull(),
+  country: text("country").notNull(),
+  payloadJson: text("payload_json").notNull(),
+  firstSeenAt: integer("first_seen_at").notNull(),
+  observedAt: integer("observed_at").notNull(),
+}, table => [
+  uniqueIndex("discovered_assets_source_transaction_idx").on(table.sourceUrl, table.transactionType),
+  index("discovered_assets_country_observed_idx").on(table.country, table.observedAt),
+]);
+
+// GS-012 / P38: attempts and observed provider usage are independent of the
+// refundable membership counter. Unknown cost is null, never estimated as zero.
+export const aiOperationRequests = sqliteTable("ai_operation_requests", {
+  id: text("id").primaryKey(),
+  dayKey: text("day_key").notNull(),
+  actorKey: text("actor_key").notNull(),
+  startedAt: integer("started_at").notNull(),
+}, table => [index("ai_operations_day_actor_idx").on(table.dayKey, table.actorKey)]);
+
+export const aiProviderCalls = sqliteTable("ai_provider_calls", {
+  id: text("id").primaryKey(),
+  operationId: text("operation_id").notNull().references(() => aiOperationRequests.id),
+  stage: text("stage").notNull(),
+  provider: text("provider").notNull(),
+  model: text("model").notNull(),
+  status: text("status").notNull(),
+  httpStatus: integer("http_status"),
+  inputTokens: integer("input_tokens"),
+  outputTokens: integer("output_tokens"),
+  totalTokens: integer("total_tokens"),
+  costUsd: real("cost_usd"),
+  startedAt: integer("started_at").notNull(),
+  finishedAt: integer("finished_at"),
+}, table => [index("ai_calls_operation_idx").on(table.operationId)]);
 
 export const sources = sqliteTable(
   "sources",

@@ -1,0 +1,76 @@
+/* Generated verbatim from GLI-052 final consultation styles. */
+  /* 상담 흐름 (GLI-052). 이력 접기 · 답변이 가리키는 후보 · 선택 자산 표시. */
+  .hist-tog{display:flex;align-items:center;gap:9px;width:100%;min-height:48px;padding:0;font-family:var(--f);font-size:15px;font-weight:600;color:var(--ink-2);background:none;border:0;cursor:pointer;text-align:left}
+  .hist-tog:hover{color:var(--green-700)}
+  .hist-tog svg{transition:transform .2s}
+  .hist-tog[aria-expanded="true"] svg{transform:rotate(180deg)}
+  .leads{margin-top:18px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .leads-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;background:var(--green-100);padding:11px 16px;font-size:14px;color:var(--green-700)}
+  .leads-h b{font-weight:700}
+  .lead-thumb{flex:none;width:96px;height:72px;padding:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#EDEAE3;cursor:pointer}
+  .lead-thumb i{display:block;width:100%;height:100%;background-size:cover;background-position:center;transition:transform .3s}
+  .lead-thumb:hover i{transform:scale(1.06)}
+  .turn-body{display:flex;flex-direction:column;gap:12px}
+  .cites{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .cites-l{font-size:14px;font-weight:600;color:var(--ink-2)}
+  a.cite{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;font-size:14px;font-weight:600;color:var(--green-700);background:var(--surface);border:1px solid var(--line);border-radius:999px}
+  a.cite:hover{border-color:var(--green);background:var(--green-100)}
+  .cite-flat{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;font-size:14px;font-weight:600;color:var(--ink-2);background:var(--paper);border:1px solid var(--line);border-radius:999px}
+  .lead-other{padding:12px 16px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-2)}
+  .lead-more{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:52px;padding:0;font-family:var(--f);font-size:15px;font-weight:600;color:var(--green-700);background:var(--surface);border:0;border-top:1px solid var(--line);cursor:pointer}
+  .lead-more:hover{background:var(--green-100)}
+  @media(max-width:560px){.lead-thumb{width:72px;height:56px}.lead-n{min-width:120px!important}}
+  .leads .lead{display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--line)}
+  .lead-t{flex:1;min-width:min(240px,100%)}
+  .lead-t a{display:flex;align-items:center;gap:9px;flex-wrap:wrap;min-height:48px;font-size:17px;font-weight:600;color:var(--ink)}
+  .lead-t p{font-size:15px;color:var(--ink-2)}
+  .lead-n{text-align:right;min-width:148px}
+  .lead-n small{display:block;font-size:14px;color:var(--ink-2)}
+  .lead-n b{display:block;font-family:var(--fn);font-size:19px;font-weight:700}
+  .lead-n span{font-size:14px;color:var(--ink-2)}
+  .pickchip{display:inline-flex;align-items:center;gap:2px;min-height:48px;padding:0 2px 0 15px;font-size:14px;font-weight:600;color:var(--green-700);background:var(--green-100);border:1px solid #CFE1DA;border-radius:999px}
+  .pickchip button{display:flex;align-items:center;justify-content:center;width:48px;height:48px;padding:0;color:var(--green-700);background:none;border:0;border-radius:999px;cursor:pointer}
+  .pickchip button i{display:flex;align-items:center;justify-content:center;width:28px;height:28px;background:rgba(21,88,74,.12);border-radius:999px}
+  button.reason{width:100%;min-height:48px;font-family:var(--f);font-size:15px;text-align:left;border:0;cursor:pointer}
+  button.reason:hover{box-shadow:inset 0 0 0 1px var(--green-300)}
+  .on-asset{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:14px;font-weight:600;color:var(--green-700)}
+  .card.picked{border-color:var(--green);box-shadow:var(--sh-h)}
+
+  /* GLI-052 보완 — 요약·결과 순번 일치, 상태 표시, 모바일 M2 */
+  .lead-rk{flex:none;font-family:var(--fn);font-size:14px;font-weight:700;color:var(--green-700);background:var(--green-100);border-radius:6px;padding:2px 8px}
+  .lead-t a{overflow-wrap:anywhere}
+  .lead-n .lead-g{display:block;font-size:14px;font-weight:600;color:var(--ink)}
+  .turn-miss{margin-top:12px;padding:10px 12px;font-size:14px;color:var(--ink-2);background:var(--paper);border:1px solid var(--line);border-radius:var(--r)}
+  .clar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+  .clar .chip{min-height:44px;font-weight:600}
+  .fw-alt{display:flex;align-items:center;gap:0 10px;flex-wrap:wrap;margin-top:10px;font-size:14px;color:var(--ink-2)}
+  .fw-alt button{min-height:44px;padding:0;font-family:var(--f);font-size:14px;font-weight:700;color:var(--green-700);background:none;border:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .newans{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;font-family:var(--f);font-size:15px;font-weight:600;color:#fff;background:var(--forest);border:0;border-radius:999px;box-shadow:var(--sh-h);cursor:pointer}
+  @media(max-width:560px){
+    .consult-sec{padding:24px 12px 0!important}
+    .consult-sec .panel{padding:18px 16px}
+    .consult-sec .panel h2{font-size:22px!important}
+    .turn{display:block;padding:14px 0}
+    .turn-who{display:block;margin-bottom:6px;padding-top:0;font-size:13px}
+    .leads{margin-top:14px}
+    .leads-h{padding:10px 14px}
+    .leads .lead{gap:2px 10px;padding:10px 14px}
+    .lead-thumb{display:none}
+    .lead-t{flex:1 1 100%;min-width:0}
+    .lead-t a{min-height:44px;font-size:16px;gap:8px}
+    .lead-t p{display:none}
+    .lead-n{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;text-align:left;min-width:0!important}
+    .lead-n b{display:inline;font-size:16px}
+    .lead-n small,.lead-n .lead-g{display:inline}
+    .cites{margin-top:12px}
+    a.cite,.cite-flat{min-height:44px}
+    .cites-full{display:none}
+  }
+  .cites-m{display:none;margin-top:12px}
+  .cites-m summary{display:flex;align-items:center;gap:8px;min-height:44px;font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;list-style:none}
+  .cites-m summary::-webkit-details-marker{display:none}
+  .cites-m summary::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px)}
+  .cites-m[open] summary::after{transform:rotate(-135deg) translateY(-2px)}
+  .cites-m .cites{margin-top:4px}
+  @media(max-width:560px){.cites-m{display:block}}
+

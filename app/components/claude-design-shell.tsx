@@ -3,8 +3,14 @@
 // GLI-SPEC: GS-001 GS-006 GS-015 GS-016 GS-018 GS-020 GS-023 GS-024.
 // See docs/implementation/CURRENT-STATE.md before wiring remaining demo actions.
 // Preserve approved visuals; local paid/favorite state is not backend authority.
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
+import { ConsultationPanel, type ConsultationHandle } from "./consultation-panel";
+import { CONSULTATION_REASON_ICONS } from "../generated/claude-consultation-icons";
+import { candidateConverted, candidatePrice, displayResult, localizeDemoResult, localizeDemoTurn, trustGrade, type Candidate, type RuntimeTurn, type SearchPayload } from "../../lib/consultation-view";
+import { boundConversation } from "../../lib/conversation-context";
+import { candidateLocation } from "../../lib/location-display";
 import {
   CLAUDE_ARTICLE_VIEWS,
   CLAUDE_ASSET_IDS,
@@ -22,37 +28,6 @@ type ViewName = keyof typeof CLAUDE_VIEWS;
 type BillingCycle = keyof typeof CLAUDE_PLAN_VIEWS;
 type PlanId = keyof typeof CLAUDE_CHECKOUT_VIEWS;
 type SearchStage = "idle" | "understanding" | "searching" | "reviewing" | "composing" | "complete" | "error";
-type RuntimeTurn = {
-  id: string;
-  role: "나" | "GLI AI";
-  text: string;
-  resultUpdate?: string;
-};
-
-type SearchPayload = {
-  answer: string;
-  clarification: string | null;
-  criteria?: unknown;
-  matches: Array<{
-    id: string;
-    title: string;
-    country: string;
-    city: string;
-    district: string;
-    transaction: "sale" | "rent";
-    price: number;
-    maxPrice?: number;
-    currency: string;
-    areaSqm: number;
-    bedrooms: number;
-    bathrooms: number;
-    image: string;
-    trustScore: number;
-    originLabel?: string;
-    sourceName?: string;
-    matchReasons?: string[];
-  }>;
-};
 
 const NEWS_IDS = [
   "gli-news-iqi-vietnam-mou-2025-12-12",
@@ -67,6 +42,12 @@ const NEWS_IDS = [
 ] as const;
 
 const SEARCH_KEY = "gli:claude-search";
+// Keep the approved HTML's live DOM (including focus, selection and IME) across
+// shell state updates. Only a different view fragment should replace its nodes.
+const ApprovedHtml = memo(function ApprovedHtml({ html }: { html: string }) {
+  return <div dangerouslySetInnerHTML={{ __html: html }} />;
+});
+
 const resultCandidateIds = (result: SearchPayload | null) =>
   result?.matches.map((match) => match.id) ?? [];
 
@@ -81,22 +62,6 @@ function describeResultUpdate(previous: SearchPayload | null, next: SearchPayloa
     ? "조건을 반영해 탐색 결과를 업데이트했습니다."
     : `조건을 반영해 탐색 결과를 업데이트했습니다. 현재 확인 가능한 후보는 ${nextIds.length}건입니다.`;
 }
-
-const trustGrade = (score: number) => score >= 90
-  ? "S"
-  : score >= 85
-    ? "A+"
-    : score >= 80
-      ? "A"
-      : score >= 75
-        ? "B+"
-        : score >= 70
-          ? "B"
-          : score >= 65
-            ? "C+"
-            : score >= 60
-              ? "C"
-              : "D";
 
 export function ClaudeDesignShell({
   view,
@@ -128,15 +93,47 @@ export function ClaudeDesignShell({
   const [searchElapsed, setSearchElapsed] = useState(0);
   const [searchResultCount, setSearchResultCount] = useState(0);
   const [runtimeTurns, setRuntimeTurns] = useState<RuntimeTurn[]>([]);
+  const localizedTurns = useMemo(() => runtimeTurns.map(localizeDemoTurn), [runtimeTurns]);
   const [followupValue, setFollowupValue] = useState("");
   const [followupLoading, setFollowupLoading] = useState(false);
   const [followupError, setFollowupError] = useState(false);
   const autoSearchRef = useRef<string | null>(null);
-  const followupTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const consultationRef = useRef<ConsultationHandle>(null);
+  const [consultationTarget, setConsultationTarget] = useState<HTMLElement | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState<Candidate | null>(null);
   const scrollSearchResultsRef = useRef(false);
   const searchStartedAtRef = useRef(0);
   const searchRunRef = useRef(0);
   const searchTimersRef = useRef<number[]>([]);
+  const searchAbortRef = useRef<AbortController | null>(null);
+  const exchangeRateRef = useRef<SearchPayload["rate"]>(undefined);
+
+  useEffect(() => {
+    if (view !== "home") return;
+    let canceled = false;
+    // Restore FX for saved results without re-running a paid consultation.
+    void fetch("/api/exchange-rates").then(async response => response.ok ? response.json() : null).then(snapshot => {
+      if (canceled || !snapshot || snapshot.stale || !Number.isFinite(snapshot.rates?.KRW) || snapshot.rates.KRW <= 0) return;
+      const rate = { krwPerUsd: snapshot.rates.KRW, asOf: snapshot.updatedAt, rates: snapshot.rates };
+      exchangeRateRef.current = rate;
+      setRuntimeTurns(turns => turns.map(turn => turn.result ? { ...turn, result: { ...turn.result, rate } } : turn));
+      const stored = window.sessionStorage.getItem(SEARCH_KEY);
+      if (stored) applySearchResult(JSON.parse(stored) as SearchPayload);
+    }).catch(() => { /* Keep original prices when FX is unavailable. */ });
+    return () => { canceled = true; };
+    // The restore reads refs only; shell keystrokes must not re-fetch FX.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
+
+  useEffect(() => {
+    const abort = () => searchAbortRef.current?.abort();
+    window.addEventListener("pagehide", abort);
+    return () => {
+      abort();
+      window.removeEventListener("pagehide", abort);
+      searchTimersRef.current.forEach(timer => window.clearTimeout(timer));
+    };
+  }, [view]);
 
   const viewHtml = useMemo(() => {
     if (view === "detail") {
@@ -158,6 +155,16 @@ export function ClaudeDesignShell({
     return CLAUDE_VIEWS[view];
   }, [articleId, assetId, cycle, doc, initialPlan, paid, soonSection, tier, view]);
 
+  useLayoutEffect(() => {
+    const panel = view === "home" ? rootRef.current?.querySelector<HTMLElement>("[data-view='home'] main .panel") : null;
+    if (panel) {
+      panel.replaceChildren();
+      panel.dataset.consult = "true";
+      panel.parentElement?.classList.add("consult-sec");
+    }
+    setConsultationTarget(panel ?? null);
+  }, [view, viewHtml]);
+
   useEffect(() => {
     if (view !== "detail") return;
     const root = rootRef.current;
@@ -172,6 +179,7 @@ export function ClaudeDesignShell({
   }, [gallery, tier, view, viewHtml]);
 
   function navigate(path: string) {
+    searchAbortRef.current?.abort();
     if (path.startsWith("/explore")) {
       setLocationSearch(new URL(path, window.location.href).search);
     }
@@ -179,6 +187,7 @@ export function ClaudeDesignShell({
   }
 
   function navigateExploreFilter(param?: string, value?: string) {
+    searchAbortRef.current?.abort();
     const path = param && value
       ? `/explore?${param}=${encodeURIComponent(value)}`
       : "/explore";
@@ -187,7 +196,10 @@ export function ClaudeDesignShell({
   }
 
   useEffect(() => {
-    const syncLocationSearch = () => setLocationSearch(window.location.search);
+    const syncLocationSearch = () => {
+      searchAbortRef.current?.abort();
+      setLocationSearch(window.location.search);
+    };
     syncLocationSearch();
     window.addEventListener("popstate", syncLocationSearch);
     return () => window.removeEventListener("popstate", syncLocationSearch);
@@ -195,9 +207,6 @@ export function ClaudeDesignShell({
 
   const searchIsActive = ["understanding", "searching", "reviewing", "composing"].includes(searchStage);
   const searchBusy = searchIsActive || followupLoading;
-  const hasCompletedAnswer = runtimeTurns.some(
-    (turn) => turn.role === "GLI AI" && turn.id.endsWith("-answer"),
-  );
 
   useEffect(() => {
     if (!searchIsActive) return;
@@ -295,68 +304,7 @@ export function ClaudeDesignShell({
     }
     if (!searchIsActive) loading?.remove();
 
-    const panel = root.querySelector<HTMLElement>("[data-view='home'] main .panel");
-    if (panel) {
-      panel.querySelectorAll("[data-runtime-turn]").forEach((turn) => turn.remove());
-      const anchor = panel.querySelector(".min");
-      runtimeTurns.forEach((runtimeTurn) => {
-        const turn = document.createElement("div");
-        turn.className = "turn";
-        turn.dataset.runtimeTurn = runtimeTurn.id;
-        turn.style.marginTop = "0";
-        const who = document.createElement("span");
-        who.className = "turn-who";
-        who.textContent = runtimeTurn.role;
-        const paragraph = document.createElement("p");
-        paragraph.textContent = runtimeTurn.text;
-        if (runtimeTurn.role === "나") paragraph.style.color = "var(--ink)";
-        if (runtimeTurn.resultUpdate) {
-          const content = document.createElement("div");
-          const note = document.createElement("p");
-          note.className = "turn-note";
-          note.dataset.resultUpdate = "true";
-          const message = document.createElement("span");
-          message.textContent = runtimeTurn.resultUpdate;
-          const link = document.createElement("button");
-          link.type = "button";
-          link.dataset.action = "viewChangedResults";
-          link.textContent = "변경된 탐색 결과 보기";
-          note.append(message, link);
-          content.append(paragraph, note);
-          turn.append(who, content);
-        } else {
-          turn.append(who, paragraph);
-        }
-        panel.insertBefore(turn, anchor);
-      });
-    }
-
-    const followup = root.querySelector<HTMLFormElement>("[data-followup-composer]");
-    const followupInput = followup?.querySelector<HTMLTextAreaElement>("[data-followup-input]");
-    const followupButton = followup?.querySelector<HTMLButtonElement>("[data-action='runFollowUp']");
-    const followupStatus = followup?.querySelector<HTMLElement>("[data-followup-status]");
-    followupTextareaRef.current = followupInput ?? null;
-    if (followup && followupInput && followupButton && followupStatus) {
-      followup.hidden = !hasCompletedAnswer;
-      followup.classList.toggle("is-loading", followupLoading);
-      followup.classList.toggle("is-error", followupError);
-      followup.setAttribute("aria-busy", String(followupLoading));
-      followupInput.disabled = followupLoading;
-      followupInput.value = followupValue;
-      followupButton.disabled = followupLoading || !followupValue.trim();
-      followupButton.textContent = followupError ? "다시 보내기" : "보내기";
-      followupStatus.replaceChildren();
-      if (followupLoading) {
-        const dots = document.createElement("span");
-        dots.className = "fw-dots";
-        dots.setAttribute("aria-hidden", "true");
-        dots.append(document.createElement("i"), document.createElement("i"), document.createElement("i"));
-        followupStatus.append(dots, "GLI AI가 답변을 정리하고 있습니다");
-      } else if (followupError) {
-        followupStatus.textContent = "답변을 불러오지 못했습니다. 다시 보내 주세요.";
-      }
-    }
-  }, [followupError, followupLoading, followupValue, hasCompletedAnswer, runtimeTurns, searchBusy, searchElapsed, searchIsActive, searchResultCount, searchStage, view, viewHtml]);
+  }, [searchBusy, searchElapsed, searchIsActive, searchResultCount, searchStage, view, viewHtml]);
 
   function clearSearchTimers() {
     searchTimersRef.current.forEach((timer) => window.clearTimeout(timer));
@@ -371,6 +319,8 @@ export function ClaudeDesignShell({
   }
 
   function applySearchResult(result: SearchPayload, scrollToResults = false) {
+    result = localizeDemoResult(result);
+    if (exchangeRateRef.current) result = { ...result, rate: exchangeRateRef.current };
     const root = rootRef.current;
     if (!root) return;
     const idSet = new Set(result.matches.map((match) => match.id));
@@ -386,9 +336,62 @@ export function ClaudeDesignShell({
     });
     const grid = root.querySelector<HTMLElement>("[data-results] .grid3");
     for (const match of result.matches) {
-      if ((CLAUDE_ASSET_IDS as readonly string[]).includes(match.id) || !grid) continue;
-      grid.append(createSearchCard(match));
-      visible += 1;
+      if (!grid) continue;
+      const existing = Array.from(cards).find(card => CLAUDE_ASSET_IDS[Number(card.dataset.i)] === match.id);
+      // Preserve approved card markup while making visual ordinals match the API.
+      if (existing) grid.append(existing);
+      else {
+        grid.append(createSearchCard(match));
+        visible += 1;
+      }
+      const card = existing ?? grid.lastElementChild as HTMLElement;
+      card.id = `asset-${match.id}`;
+      card.dataset.id = match.id;
+      const label = card.querySelector("h4");
+      if (label) label.textContent = match.title;
+      const price = card.querySelector(".cprice");
+      if (price) price.textContent = candidatePrice(match);
+      const converted = card.querySelector(".cprice + span");
+      if (converted) converted.textContent = candidateConverted(match, result.rate);
+      const headLabel = card.querySelector(".cnums small");
+      if (headLabel) headLabel.textContent = match.priceLabel ?? (match.transaction === "rent" ? "월 임대료" : "매매가");
+      const grade = card.querySelector(".ctrust b");
+      if (grade) grade.textContent = trustGrade(match.trustScore);
+      const location = card.querySelector(".loc");
+      if (location) {
+        Array.from(location.childNodes).filter(node => node.nodeType === Node.TEXT_NODE).forEach(node => node.remove());
+        location.append(candidateLocation(match));
+      }
+      const photo = card.querySelector<HTMLElement>(".photo-img");
+      if (photo) { photo.style.backgroundImage = `url(${JSON.stringify(match.image)})`; photo.setAttribute("aria-label", match.title); }
+      const rank = document.createElement("span");
+      rank.className = "tag rec";
+      rank.dataset.resultRank = "true";
+      rank.textContent = `추천 ${result.matches.indexOf(match) + 1}위`;
+      const tags = card.querySelector(".tagstack");
+      if (tags) {
+        const txn = document.createElement("span"); txn.className = "tag"; txn.textContent = match.transaction === "rent" ? "임대" : "매매";
+        tags.replaceChildren(rank);
+        if (match.originLabel || match.sourceName) {
+          const origin = document.createElement("span"); origin.className = "tag verified"; origin.textContent = match.originLabel ?? match.sourceName ?? ""; tags.append(origin);
+        }
+        tags.append(txn);
+      }
+      card.querySelector(".reason")?.remove();
+      const reason = document.createElement("button");
+      reason.type = "button";
+      reason.className = "reason";
+      reason.dataset.action = "askAsset";
+      reason.dataset.id = match.id;
+      reason.innerHTML = CONSULTATION_REASON_ICONS.join("");
+      const reasonText = document.createElement("span");
+      reasonText.style.flex = "1";
+      reasonText.textContent = match.matchReasons?.join(" · ") || `Trust ${trustGrade(match.trustScore)} 등급 자산`;
+      reason.insertBefore(reasonText, reason.lastChild);
+      const spec = card.querySelector(".cspec");
+      if (spec) spec.textContent = `${match.areaSqm || "조사 예정"}㎡ · ${match.bedrooms ? `${match.bedrooms}BR` : "Studio"} · ${match.bathrooms || "조사 예정"}Bath`;
+      if (spec) spec.before(reason);
+      else card.querySelector(".cbody")?.append(reason);
     }
     const resultSection = root.querySelector<HTMLElement>("[data-results]");
     const title = resultSection?.querySelector("h2");
@@ -437,7 +440,7 @@ export function ClaudeDesignShell({
     const heading = document.createElement("div");
     const location = document.createElement("p");
     location.className = "loc";
-    location.textContent = `${match.district}, ${match.city}, ${match.country}`;
+    location.textContent = candidateLocation(match);
     const title = document.createElement("h4");
     title.style.fontSize = "19px";
     title.style.letterSpacing = "-.01em";
@@ -460,9 +463,7 @@ export function ClaudeDesignShell({
     }).format(match.price);
     const converted = document.createElement("span");
     converted.style.cssText = "font-size:14px;color:var(--ink-2);overflow-wrap:anywhere";
-    converted.textContent = match.currency === "USD"
-      ? `약 ${Math.round(match.price * 1380).toLocaleString("ko-KR")}원${match.transaction === "rent" ? "/월" : ""}`
-      : "환산 가격 확인 중";
+    converted.textContent = candidateConverted(match, exchangeRateRef.current);
     priceWrap.append(priceLabel, price, converted);
     const trust = document.createElement("div");
     trust.className = "ctrust";
@@ -488,37 +489,47 @@ export function ClaudeDesignShell({
     return card;
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (view !== "home") return;
     if (searchIsActive) return;
     const stored = window.sessionStorage.getItem(SEARCH_KEY);
     if (!stored) return;
     try {
-      applySearchResult(
-        JSON.parse(stored) as SearchPayload,
-        scrollSearchResultsRef.current,
-      );
+      const result = localizeDemoResult(JSON.parse(stored) as SearchPayload);
+      applySearchResult(result, scrollSearchResultsRef.current);
       scrollSearchResultsRef.current = false;
+      if (runtimeTurns.length === 0) {
+        // Restore after hydration; do not overwrite a question sent in between.
+        const restore = window.setTimeout(() => setRuntimeTurns(turns => turns.length ? turns : [
+          { id: "restored-answer", role: "GLI AI", result,
+            text: [result.answer, result.clarification].filter(Boolean).join("\n") },
+        ]), 0);
+        return () => window.clearTimeout(restore);
+      }
     } catch {
       window.sessionStorage.removeItem(SEARCH_KEY);
     }
-    // The source HTML is regenerated as one immutable view fragment.
-    // Reapply the stored backend result whenever that fragment changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchIsActive, searchStage, view, viewHtml]);
+    // Restore candidates when the view or conversation changes, not per keystroke.
+  }, [view, viewHtml, searchIsActive, runtimeTurns]);
 
   useEffect(() => {
     if (view !== "home") return;
     const params = new URLSearchParams(locationSearch || window.location.search);
     const query = params.get("q")?.trim();
-    if (query && autoSearchRef.current !== query) {
+    // Defer the first request so React's development cleanup cannot cancel an
+    // already-marked auto-search and then suppress its next setup.
+    const autoSearchTimer = query && autoSearchRef.current !== query ? window.setTimeout(() => {
       autoSearchRef.current = query;
       void runSearch(query);
-    }
+    }, 0) : null;
 
     const country = params.get("country") ?? params.get("cc");
     const category = params.get("cat");
     const transaction = params.get("txn");
+    // Do not reopen static fixture cards over a restored search on reload.
+    if (!country && !category && !transaction && window.sessionStorage.getItem(SEARCH_KEY)) {
+      return () => { if (autoSearchTimer !== null) window.clearTimeout(autoSearchTimer); };
+    }
     const countryIndexes: Record<string, number[]> = {
       KH: [0, 1, 2, 3, 4, 5, 6, 7, 16, 18],
       VN: [8, 9],
@@ -549,12 +560,16 @@ export function ClaudeDesignShell({
         : !allowedByTransaction || allowedByTransaction.has(index);
       card.hidden = !(countryMatch && categoryMatch && transactionMatch);
     });
+    return () => { if (autoSearchTimer !== null) window.clearTimeout(autoSearchTimer); };
   }, [locationSearch, view, viewHtml]);
 
   async function runSearch(query?: string, mode: "initial" | "followup" = "initial") {
     const textarea = rootRef.current?.querySelector<HTMLTextAreaElement>("#q");
     const value = (query ?? (mode === "followup" ? followupValue : textarea?.value) ?? "").trim();
-    if (!value || searchBusy) return;
+    if (!value || searchBusy || searchAbortRef.current) return;
+    const controller = new AbortController();
+    searchAbortRef.current = controller;
+    consultationRef.current?.arm(mode === "followup");
     const runId = ++searchRunRef.current;
     if (mode === "initial") {
       clearSearchTimers();
@@ -571,43 +586,47 @@ export function ClaudeDesignShell({
     }
     setRuntimeTurns((turns) => [
       ...turns,
-      { id: `${runId}-query`, role: "나", text: value },
+      { id: `${runId}-query`, role: "나", text: value, onAsset: mode === "followup" ? selectedAsset?.title : undefined },
     ]);
     try {
       const previous = window.sessionStorage.getItem(SEARCH_KEY);
       let previousResult: SearchPayload | null = null;
       if (previous) {
         try {
-          previousResult = JSON.parse(previous) as SearchPayload;
+          previousResult = localizeDemoResult(JSON.parse(previous) as SearchPayload);
         } catch {
           window.sessionStorage.removeItem(SEARCH_KEY);
         }
       }
       const context = previousResult?.criteria;
-      const conversation = runtimeTurns.slice(-8).map((turn) => ({
+      const conversation = boundConversation(localizedTurns.map((turn) => ({
         role: turn.role === "나" ? "user" : "assistant",
         text: turn.text,
-      }));
+      })));
       const response = await fetch("/api/search", {
         method: "POST",
+        signal: controller.signal,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ query: value, context, conversation }),
+        body: JSON.stringify({ query: value, context, conversation, previousAssetIds: resultCandidateIds(previousResult), selectedAssetIds: mode === "followup" && selectedAsset ? [selectedAsset.id] : [] }),
       });
       if (!response.ok) throw new Error("search_failed");
-      const result = (await response.json()) as SearchPayload;
+      const result = localizeDemoResult(displayResult((await response.json()) as SearchPayload, previousResult));
       if (searchRunRef.current !== runId) return;
       if (mode === "initial") {
         clearSearchTimers();
         setSearchStage("composing");
         await new Promise((resolve) => window.setTimeout(resolve, 350));
       }
+      controller.signal.throwIfAborted();
+      consultationRef.current?.arriving();
       window.sessionStorage.setItem(SEARCH_KEY, JSON.stringify(result));
-      scrollSearchResultsRef.current = mode === "initial";
+      scrollSearchResultsRef.current = false;
       setRuntimeTurns((turns) => [
         ...turns,
         {
           id: `${runId}-answer`,
           role: "GLI AI",
+          result,
           text: [result.answer, result.clarification].filter(Boolean).join("\n"),
           resultUpdate: mode === "followup"
             ? describeResultUpdate(previousResult, result)
@@ -619,13 +638,16 @@ export function ClaudeDesignShell({
         setSearchStage("complete");
       } else {
         setFollowupValue("");
-        window.setTimeout(() => {
-          const field = followupTextareaRef.current;
-          if (field) field.style.height = "auto";
-        }, 0);
+        setSelectedAsset(null);
       }
     } catch {
       if (searchRunRef.current !== runId) return;
+      if (controller.signal.aborted) {
+        clearSearchTimers();
+        setSearchStage("idle");
+        setRuntimeTurns(turns => turns.filter(turn => turn.id !== `${runId}-query`));
+        return;
+      }
       if (mode === "followup") {
         setFollowupError(true);
         setRuntimeTurns((turns) => turns.filter((turn) => turn.id !== `${runId}-query`));
@@ -638,17 +660,9 @@ export function ClaudeDesignShell({
         ]);
       }
     } finally {
+      if (searchAbortRef.current === controller) searchAbortRef.current = null;
       if (mode === "followup") {
         setFollowupLoading(false);
-        window.setTimeout(() => {
-          const composer = followupTextareaRef.current?.closest<HTMLElement>("[data-followup-composer]");
-          if (!composer) return;
-          const rect = composer.getBoundingClientRect();
-          const overflow = rect.bottom - window.innerHeight + 24;
-          if (overflow <= 4) return;
-          const distance = Math.min(overflow, Math.max(rect.top - 24, 0));
-          window.scrollTo({ top: window.scrollY + distance, behavior: "auto" });
-        }, 50);
       }
     }
   }
@@ -657,6 +671,20 @@ export function ClaudeDesignShell({
     const action = element.dataset.action;
     const value = element.dataset.v;
     switch (action) {
+      case "askAsset": {
+        consultationRef.current?.cancel();
+        const stored = window.sessionStorage.getItem(SEARCH_KEY);
+        if (!stored) break;
+        const result = localizeDemoResult(JSON.parse(stored) as SearchPayload);
+        const candidate = result.matches.find(asset => asset.id === element.dataset.id);
+        if (!candidate) break;
+        setSelectedAsset(candidate);
+        rootRef.current?.querySelectorAll<HTMLElement>("[data-results] .card").forEach(card => card.classList.toggle("picked", card.dataset.id === candidate.id));
+        const field = rootRef.current?.querySelector<HTMLTextAreaElement>("[data-followup-input]");
+        field?.scrollIntoView({ block: "center", behavior: "smooth" });
+        if (!window.matchMedia("(pointer: coarse)").matches) field?.focus({ preventScroll: true });
+        break;
+      }
       case "goLand": navigate("/"); break;
       case "goAbout": navigate("/about"); break;
       case "goHome": navigate("/explore"); break;
@@ -767,6 +795,7 @@ export function ClaudeDesignShell({
     <div
       ref={rootRef}
       onClick={(event) => {
+        if ((event.target as HTMLElement).closest("[data-consult]")) return;
         const element = (event.target as HTMLElement).closest<HTMLElement>("[data-action]");
         if (!element) return;
         event.preventDefault();
@@ -778,6 +807,7 @@ export function ClaudeDesignShell({
         handleAction(element);
       }}
       onInput={(event) => {
+        if ((event.target as HTMLElement).closest("[data-consult]")) return;
         const input = (event.target as HTMLElement).closest<HTMLTextAreaElement>("[data-followup-input]");
         if (!input) return;
         setFollowupValue(input.value);
@@ -785,6 +815,8 @@ export function ClaudeDesignShell({
         input.style.height = `${Math.min(input.scrollHeight, 168)}px`;
       }}
       onKeyDown={(event) => {
+        if ((event.target as HTMLElement).closest("[data-consult]")) return;
+        if (event.nativeEvent.isComposing || event.keyCode === 229) return;
         const target = event.target as HTMLElement;
         const followupElement = target.closest<HTMLTextAreaElement>("[data-followup-input]");
         const queryElement = target.closest<HTMLElement>("[data-action-keydown='onQueryKey']");
@@ -802,9 +834,16 @@ export function ClaudeDesignShell({
         }
       }}
     >
-      <div dangerouslySetInnerHTML={{ __html: CLAUDE_HEADER_HTML }} />
-      <div dangerouslySetInnerHTML={{ __html: viewHtml }} />
-      <div dangerouslySetInnerHTML={{ __html: CLAUDE_FOOTER_HTML }} />
+      <ApprovedHtml html={CLAUDE_HEADER_HTML} />
+      <ApprovedHtml html={viewHtml} />
+      <ApprovedHtml html={CLAUDE_FOOTER_HTML} />
+      {consultationTarget && createPortal(<ConsultationPanel ref={consultationRef}
+        turns={localizedTurns} busy={searchBusy} loading={followupLoading} error={followupError}
+        value={followupValue} onValue={setFollowupValue} onSend={() => void runSearch(followupValue, "followup")}
+        selected={selectedAsset} onClearPick={() => setSelectedAsset(null)}
+        onResults={() => rootRef.current?.querySelector("[data-results]")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        onAsset={id => { document.getElementById(`asset-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }); }}
+        onConsult={() => navigate("/coming-soon?section=consult")} />, consultationTarget)}
     </div>
   );
 }

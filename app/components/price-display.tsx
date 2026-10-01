@@ -40,7 +40,11 @@ export function PriceDisplay({
   const [snapshot, setSnapshot] = useState<ExchangeRateSnapshot | null>(null);
 
   useEffect(() => {
-    if (!exchangeRateRequest) exchangeRateRequest = loadExchangeRates();
+    if (!exchangeRateRequest) exchangeRateRequest = loadExchangeRates().then(result => {
+      // A temporary failure must not poison all later detail views in this tab.
+      if (!result) exchangeRateRequest = null;
+      return result;
+    });
     void exchangeRateRequest.then(setSnapshot);
   }, []);
 

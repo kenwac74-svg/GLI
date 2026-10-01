@@ -5,27 +5,47 @@ import {
   releaseAiSearch,
   type MembershipAccess,
 } from "../../../db/membership-entitlements.ts";
-import { listAssets } from "../../../lib/assets-data";
+import { getAsset, listAssets } from "../../../lib/assets-data";
 import {
   createSafetyIdentifier,
   runAdvisorSearch,
-  type AdvisorConversationTurn,
 } from "../../../lib/ai-search";
 import {
   extractCriteria,
   parseSearchContext,
+  searchCountries,
 } from "../../../lib/search";
 import { getCurrentUser } from "../../auth";
-import { ensureMemberContext } from "../../../lib/member-data";
+import { ensureMemberContext, getWorkflowDatabase, workflowErrorResponse } from "../../../lib/member-data";
 import { listCuratedOpportunities } from "../../../lib/curated-opportunities";
 import { discoverCambodiaAssets } from "../../../lib/cambodia-live-discovery";
 import { planGliAiRequest } from "../../../lib/gli-ai-orchestration";
 import { discoverWithGemini } from "../../../lib/gemini-discovery";
+import { isLocalAdvisorPreview, selectAdvisorProvider } from "../../../lib/advisor-runtime";
+import { prepareConsultationSearch } from "../../../lib/consultation-search";
+import { parseAssetReferences, resolveAssetReferences } from "../../../lib/consultation-references";
+import { assetLocale, localizeAssets } from "../../../lib/asset-localization";
+import { createAiOperation } from "../../../lib/ai-operation";
+import { parseConversation } from "../../../lib/conversation-context";
+import { discoverVietnamReferences, isVietnamDemoRequestEnabled } from "../../../lib/vietnam-discovery.ts";
+import { discoverPhilippinesAssets, isPhilippinesDemoRequestEnabled } from "../../../lib/philippines-discovery.ts";
+import { searchPriceUsd, type PriceCurrency } from "../../../lib/currency.ts";
+import { getExchangeRates } from "../../../lib/exchange-rates.ts";
+import { collectSearchCountries } from "../../../lib/multi-country-discovery.ts";
+import { getDiscoveryRepository } from "../../../lib/discovery-storage.ts";
 
 // GLI-SPEC: GS-003 GS-004 GS-006 GS-010 GS-012; docs/implementation/API-CONTRACTS.md.
-// This synchronous demo path has in-memory discovery; queued persistence and
-// a discovery-wide usage gate remain backlog work, not completed integrations.
+// P38 guards paid stages; P50 stores original discovery before translation.
 export async function POST(request: Request) {
+  try { return await search(request); }
+  catch (error) {
+    if (request.signal.aborted) return new Response(null, { status: 499 });
+    return workflowErrorResponse(error);
+  }
+}
+
+async function search(request: Request) {
+  request.signal.throwIfAborted();
   let body: unknown;
   try {
     body = await request.json();
@@ -86,8 +106,68 @@ export async function POST(request: Request) {
     );
   }
 
+  const fields = body as Record<string, unknown>;
+  const locale = assetLocale(fields.locale);
+  if (!locale) {
+    return NextResponse.json({ error: { code: "INVALID_LOCALE", message: "지원하는 언어를 확인해 주세요." } }, { status: 400 });
+  }
+  const previousAssetIds = parseAssetReferences(fields.previousAssetIds);
+  const selectedAssetIds = parseAssetReferences(fields.selectedAssetIds);
+  if (!previousAssetIds || !selectedAssetIds || selectedAssetIds.some(id => !previousAssetIds.includes(id))) {
+    return NextResponse.json({ error: { code: "INVALID_ASSET_REFERENCES", message: "이전 후보 정보를 확인해 주세요." } }, { status: 400 });
+  }
+  // Resolve only public records. Never reuse client-supplied prices or summaries.
+  const references = await resolveAssetReferences(previousAssetIds, async id => (await getAsset(id)).asset);
+  const currentUser = await getCurrentUser();
+  const memberContext = currentUser ? await ensureMemberContext(currentUser) : null;
+  const operation = createAiOperation({
+    database: async () => memberContext?.database ?? await getWorkflowDatabase(),
+    // Anonymous visitors share a conservative pool until durable guest identity
+    // is approved. Never trust a caller-controlled forwarded IP as an account.
+    actor: memberContext?.workflowUser.id ?? "anonymous-demo",
+    signal: request.signal,
+  });
+  const now = Date.now();
+  let access: MembershipAccess | null = memberContext
+    ? await getMembershipAccess(memberContext.database, memberContext.workflowUser.id, now)
+    : null;
+  const advisorProvider = selectAdvisorProvider();
+  const runtimeAvailable = advisorProvider !== "disabled";
+  const localAdvisorPreview = isLocalAdvisorPreview(request.url, advisorProvider);
+  const canUseDeepSearch = localAdvisorPreview ||
+    (access !== null && access.aiMonthlyLimit !== 0 && (access.aiRemaining === null || access.aiRemaining > 0));
+  let usageClaimed = false;
+  let deliveredAi = false;
+  // Claim once for the whole consultation, before either paid OpenRouter call.
+  if (runtimeAvailable && canUseDeepSearch && memberContext && !localAdvisorPreview) {
+    access = await claimAiSearch(memberContext.database, memberContext.workflowUser.id, now);
+    usageClaimed = access.aiMonthlyLimit !== null;
+  }
+  const provider = runtimeAvailable && canUseDeepSearch ? advisorProvider : "disabled";
+  try {
+  request.signal.throwIfAborted();
+  const localization = { fetchImpl: operation.forStage("translation"), signal: request.signal };
+  const referenceAssets = await localizeAssets(references.flatMap(reference => reference.asset ? [reference.asset] : []), locale, localization);
+  for (const reference of references) reference.asset = referenceAssets.find(asset => asset.id === reference.id) ?? null;
+  request.signal.throwIfAborted();
   const source = await listAssets({ limit: 100 });
-  const requestedCriteria = extractCriteria(query, context);
+  const discoveryRepository = await getDiscoveryRepository();
+  let persistedCount = 0;
+  let freshCount = 0;
+  const discovery: {
+    live: Awaited<ReturnType<typeof collectSearchCountries>> | null;
+    web: Awaited<ReturnType<typeof discoverWithGemini>> | null;
+  } = { live: null, web: null };
+  let discoveredAssets: Awaited<ReturnType<typeof discoverCambodiaAssets>>["assets"] = [];
+  const exchange = await getExchangeRates();
+  const prepared = await prepareConsultationSearch(query, {
+    provider, context, conversation, references, selectedAssetIds, locale,
+    exchangeRate: exchange && !exchange.stale ? exchange.snapshot : null,
+    fetch: operation.forStage("intent"),
+    decisionFetch: provider === "openrouter" && process.env.GLI_JEV_ROUTING !== "disabled"
+      ? operation.forStage("decision") : undefined,
+  }, async (requestedCriteria) => {
+  request.signal.throwIfAborted();
   const liveDiscoveryEnabled =
     process.env.LIVE_CAMBODIA_DISCOVERY === "enabled" ||
     (process.env.LIVE_CAMBODIA_DISCOVERY !== "disabled" &&
@@ -95,10 +175,13 @@ export async function POST(request: Request) {
   const geminiDiscoveryEnabled =
     Boolean(process.env.GEMINI_API_KEY) &&
     process.env.GEMINI_DISCOVERY !== "disabled";
-  const liveDiscovery =
-    requestedCriteria.country === "Cambodia" && liveDiscoveryEnabled
-      ? await discoverCambodiaAssets({ city: requestedCriteria.city })
-      : null;
+  const liveDiscovery = discovery.live = await collectSearchCountries(requestedCriteria, async country =>
+    country === "Cambodia" && liveDiscoveryEnabled
+      ? discoverCambodiaAssets({ city: requestedCriteria.city })
+      : country === "Vietnam" && await isVietnamDemoRequestEnabled(request.url)
+        ? discoverVietnamReferences({ enabled: true })
+      : country === "Philippines" && await isPhilippinesDemoRequestEnabled(request.url)
+        ? discoverPhilippinesAssets({ enabled: true }) : null);
   const curatedAssets = listCuratedOpportunities().filter(
     (asset) => !source.assets.some((candidate) => candidate.id === asset.id),
   );
@@ -111,68 +194,72 @@ export async function POST(request: Request) {
     sourceBackedAssets,
     requestedCriteria,
   );
-  const webDiscovery =
-    requestedCriteria.country === "Cambodia" &&
+  request.signal.throwIfAborted();
+  const webDiscovery = discovery.web =
+    searchCountries(requestedCriteria).length === 1 && requestedCriteria.country === "Cambodia" &&
     geminiDiscoveryEnabled &&
     sourceBackedMatchCount < 6
-      ? await discoverWithGemini(query, requestedCriteria)
+      ? await discoverWithGemini(query, requestedCriteria, { fetchImpl: operation.forStage("discovery"), signal: request.signal, scope: operation.scope })
       : null;
-  const discoveredAssets = mergeExternalAssets(
+  discoveredAssets = mergeExternalAssets(
     webDiscovery?.assets ?? [],
     liveDiscovery?.assets ?? [],
   );
-  const advisorAssets = [
+  freshCount = discoveredAssets.length;
+  // A cached collection keeps its original observation time, never today's
+  // request time. Stored candidates remain unverified if the source is offline.
+  if (discoveryRepository) {
+    const liveSaved = await discoveryRepository.save(liveDiscovery.assets, liveDiscovery.checkedAt);
+    const webSaved = webDiscovery
+      ? await discoveryRepository.save(webDiscovery.assets, webDiscovery.checkedAt) : [];
+    persistedCount = liveSaved.length + webSaved.length;
+    discoveredAssets = mergeExternalAssets([...webSaved, ...liveSaved, ...discoveredAssets],
+      await discoveryRepository.list(searchCountries(requestedCriteria)));
+  }
+  return [
     ...discoveredAssets,
     ...source.assets,
     ...curatedAssets,
   ];
-  const currentUser = await getCurrentUser();
-  const memberContext = currentUser
-    ? await ensureMemberContext(currentUser)
-    : null;
-  const now = Date.now();
-  let access: MembershipAccess | null = memberContext
-    ? await getMembershipAccess(
-        memberContext.database,
-        memberContext.workflowUser.id,
-        now,
-      )
-    : null;
-  const advisorProvider = selectAdvisorProvider();
-  const runtimeAvailable = advisorProvider !== "disabled";
-  const localAdvisorPreview =
-    process.env.NODE_ENV !== "production" && advisorProvider === "gemini";
-  const canUseDeepSearch =
-    localAdvisorPreview ||
-    (access !== null &&
-      access.aiMonthlyLimit !== 0 &&
-      (access.aiRemaining === null || access.aiRemaining > 0));
-  let usageClaimed = false;
+  });
+  const { live: liveDiscovery, web: webDiscovery } = discovery;
+  prepared.preparedSearch.coverage = liveDiscovery?.coverage;
+  request.signal.throwIfAborted();
 
-  if (runtimeAvailable && canUseDeepSearch && memberContext) {
-    access = await claimAiSearch(
-      memberContext.database,
-      memberContext.workflowUser.id,
-      now,
-    );
-    usageClaimed = access.aiMonthlyLimit !== null;
+  // Filter against original source fields first; translate only visible results.
+  // Review candidates were already localized above, so never translate a translation.
+  if (!prepared.review) {
+    prepared.preparedSearch.matches = await localizeAssets(prepared.preparedSearch.matches, locale, localization);
+    const localized = new Map(prepared.preparedSearch.matches.map(asset => [asset.id, asset]));
+    prepared.assets = prepared.assets.map(asset => localized.get(asset.id) ?? asset);
+  }
+
+  if (exchange && !exchange.stale) {
+    prepared.preparedSearch.rate = { krwPerUsd: exchange.snapshot.rates.KRW!,
+      asOf: exchange.snapshot.updatedAt, rates: exchange.snapshot.rates };
   }
 
   const safetyIdentifier = createSafetyIdentifier(
     request.headers.get("cf-connecting-ip") ??
       request.headers.get("x-forwarded-for"),
   );
-  const result = await runAdvisorSearch(query, advisorAssets, {
+  const result = await runAdvisorSearch(query, prepared.assets, {
+      fetch: operation.forStage("advisor"),
       safetyIdentifier,
       context,
       conversation,
-      provider: runtimeAvailable && canUseDeepSearch
-        ? advisorProvider
-        : "disabled",
+      preparedSearch: prepared.preparedSearch,
+      review: prepared.review,
+      provider: prepared.intent.clarification ? "disabled" : provider,
     });
-  const orchestration = planGliAiRequest(query, {
+  request.signal.throwIfAborted();
+  const plannedOrchestration = planGliAiRequest(query, {
     hasConversationContext: context !== null,
   });
+  const orchestration = prepared.intent.clarification
+    ? { ...plannedOrchestration, depth: "quick" as const,
+        summary: prepared.intent.clarification, stages: plannedOrchestration.stages.slice(0, 1) }
+    : plannedOrchestration;
   const liveAssetIds = new Set(discoveredAssets.map((asset) => asset.id));
   const displayedExternalCount = result.matches.filter((asset) =>
     liveAssetIds.has(asset.id),
@@ -201,18 +288,29 @@ export async function POST(request: Request) {
               (access.aiRemaining ?? 0) + 1,
             ),
     };
+    usageClaimed = false;
   }
 
   const publicAdvisorMode = result.advisor.mode === "rules" ? "rules" : "ai";
+  deliveredAi = publicAdvisorMode === "ai";
 
   return NextResponse.json({
     ...result,
+    locale,
+    resultSet: { assetIds: result.matches.map(asset => asset.id), returnedCount: result.matches.length },
+    consultation: {
+      mode: prepared.intent.clarification ? "clarify" : prepared.review
+        ? prepared.review.needsClarification ? "clarify" : "review" : "search",
+      referencedAssetIds: prepared.review?.assetIds ?? [],
+      missingAssetIds: prepared.review?.missingAssetIds ?? [],
+    },
     advisor: {
       mode: publicAdvisorMode,
       groundedAssetIds: result.advisor.groundedAssetIds,
     },
     orchestration,
     dataMode: source.mode,
+    operationalAccess: { limited: operation.state.blocked, unavailable: operation.state.auditFailed },
     membershipAccess: {
       authenticated: Boolean(memberContext),
       planId: access?.planId ?? null,
@@ -227,62 +325,32 @@ export async function POST(request: Request) {
       ? {
           checkedAt:
             webDiscovery?.checkedAt ?? liveDiscovery?.checkedAt ?? new Date().toISOString(),
-          cached: Boolean(liveDiscovery?.cached && webDiscovery?.cached),
-          collectedCount: discoveredAssets.length,
+          cached: Boolean((liveDiscovery?.cached ?? true) && (webDiscovery?.cached ?? true)),
+          collectedCount: freshCount,
+          storage: { mode: discoveryRepository ? "d1" : "disabled", savedCount: persistedCount },
           displayedCount: displayedExternalCount,
           sources: liveDiscovery?.sources ?? [],
+          countries: liveDiscovery?.coverage ?? [],
           webSearchCount: webDiscovery?.groundedQueryCount ?? 0,
         }
       : null,
   });
-}
-
-function selectAdvisorProvider(): "gemini" | "openai" | "disabled" {
-  if (
-    process.env.LLM_PROVIDER === "openai" &&
-    Boolean(process.env.OPENAI_API_KEY)
-  ) {
-    return "openai";
-  }
-  if (
-    Boolean(process.env.GEMINI_API_KEY) &&
-    process.env.GEMINI_ADVISOR !== "disabled"
-  ) {
-    return "gemini";
-  }
-  return "disabled";
-}
-
-function parseConversation(value: unknown): AdvisorConversationTurn[] | null {
-  if (value === undefined) return [];
-  if (!Array.isArray(value) || value.length > 8) return null;
-
-  const turns: AdvisorConversationTurn[] = [];
-  for (const turn of value) {
-    if (
-      typeof turn !== "object" ||
-      turn === null ||
-      !("role" in turn) ||
-      (turn.role !== "user" && turn.role !== "assistant") ||
-      !("text" in turn) ||
-      typeof turn.text !== "string"
-    ) {
-      return null;
+  } finally {
+    // A canceled/failed consultation may return customer allowance, never the
+    // operating attempt or provider-call ledger (which may already be billed).
+    if (usageClaimed && !deliveredAi && memberContext && access) {
+      await releaseAiSearch(memberContext.database, memberContext.workflowUser.id, access.periodKey, Date.now());
     }
-    const text = turn.text.trim();
-    if (!text || text.length > 1_200) return null;
-    turns.push({ role: turn.role, text });
   }
-  return turns;
 }
 
-function mergeExternalAssets<T extends { sourceUrl?: string; id: string }>(
+function mergeExternalAssets<T extends { sourceUrl?: string; id: string; transaction?: string }>(
   preferred: T[],
   fallback: T[],
 ): T[] {
   const seen = new Set<string>();
   return [...preferred, ...fallback].filter((asset) => {
-    const key = asset.sourceUrl?.trim().toLocaleLowerCase("en-US") || asset.id;
+    const key = asset.sourceUrl ? `${asset.sourceUrl.trim().toLocaleLowerCase("en-US")}:${asset.transaction ?? ""}` : asset.id;
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
@@ -298,6 +366,8 @@ function countStrictMatches<
     propertyType: string;
     bedrooms: number;
     price: number;
+    currency: PriceCurrency;
+    priceUsdReference?: { amount: number; provider: string; asOf: string };
     title: string;
     summary: string;
   },
@@ -305,13 +375,14 @@ function countStrictMatches<
   const location = (value: string) =>
     value.trim().toLocaleLowerCase("en-US");
   return assets.filter((asset) => {
-    if (asset.country !== criteria.country) return false;
+    if (!searchCountries(criteria).includes(asset.country as typeof criteria.country)) return false;
     if (criteria.city && location(asset.city) !== location(criteria.city)) return false;
     if (criteria.district && asset.district !== criteria.district) return false;
     if (criteria.transaction && asset.transaction !== criteria.transaction) return false;
     if (criteria.propertyType && asset.propertyType !== criteria.propertyType) return false;
     if (criteria.bedrooms !== null && asset.bedrooms !== criteria.bedrooms) return false;
-    if (criteria.maxPriceUsd !== null && asset.price > criteria.maxPriceUsd) return false;
+    const priceUsd = searchPriceUsd(asset);
+    if (criteria.maxPriceUsd !== null && (priceUsd === null || priceUsd > criteria.maxPriceUsd)) return false;
     if (
       criteria.wantsRiver &&
       !/river|mekong|riverside|강|메콩/i.test(`${asset.title} ${asset.summary}`)

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./claude-design.css";
+import "./generated/claude-consultation.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://gli-ai-property-demo.kenwac74.chatgpt.site"),

@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { listAssets } from "../../../lib/assets-data";
+import { assetLocale, localizeAssets } from "../../../lib/asset-localization";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const locale = assetLocale(url.searchParams.get("locale") ?? undefined);
+  if (!locale) {
+    return NextResponse.json({ error: { code: "INVALID_LOCALE", message: "지원하는 언어를 확인해 주세요." } }, { status: 400 });
+  }
   const transaction = url.searchParams.get("transaction");
   const direct = url.searchParams.get("direct");
   if (transaction && transaction !== "sale" && transaction !== "rent") {
@@ -13,7 +18,7 @@ export async function GET(request: Request) {
   }
 
   const result = await listAssets({
-    transaction: transaction ?? undefined,
+    transaction: transaction === "sale" || transaction === "rent" ? transaction : undefined,
     limit: 100,
   });
   const assets =
@@ -22,7 +27,7 @@ export async function GET(request: Request) {
       : result.assets;
 
   return NextResponse.json({
-    data: assets,
+    data: await localizeAssets(assets, locale),
     meta: { count: assets.length, dataMode: result.mode },
   });
 }

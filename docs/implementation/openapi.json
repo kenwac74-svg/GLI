@@ -3,9 +3,69 @@
   "info": {
     "title": "GLI current exploration API (partial inventory)",
     "version": "2026-09-08",
-    "description": "Code-inspected contract for search/assets only. Other routes are inventoried in ROUTES.md. Planned AWS/job/CMS endpoints are not implemented by this document. Trim occurs before query/turn length validation."
+    "description": "Partial contract for search/assets and demo Vietnam project references. Other routes are inventoried in ROUTES.md. Planned AWS/job/CMS endpoints are not implemented by this document. Trim occurs before query/turn length validation."
   },
   "paths": {
+    "/api/discovery/vietnam": {
+      "get": {
+        "x-code-path": "app/api/discovery/vietnam/route.ts",
+        "summary": "Demo-only bounded Vietnam listings (P45); auxiliary references deferred",
+        "responses": {
+          "200": {
+            "description": "Dot Property bounded sale/rent collection. ERA/Batdongsan/Homedy remain disabled. Empty projects is not evidence of market absence. No paid AI call by this endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["demoOnly", "checkedAt", "cached", "projects", "assets", "sources"],
+                  "properties": {
+                    "demoOnly": { "const": true },
+                    "checkedAt": { "type": "string", "format": "date-time" },
+                    "cached": { "type": "boolean" },
+                    "storage": { "$ref": "#/components/schemas/DiscoveryStorage" },
+                    "assets": {
+                      "type": "array", "maxItems": 40,
+                      "description": "Original VND fields; sourceObservedAt is collection time, not publication time. P50 saves validated discovery to D1 when enabled; storage reports mode and saved count. Not staff verification or current availability.",
+                      "items": { "type": "object", "required": ["id", "country", "transaction", "price", "currency", "sourceUrl", "sourceObservedAt"] }
+                    },
+                    "projects": {
+                      "type": "array",
+                      "description": "Currently empty under P44. Preserved ERA project contract for future approved enrichment; not individual-unit data.",
+                      "items": {
+                        "type": "object",
+                        "required": ["id", "kind", "sourceUrl", "title", "unitPrice", "monthlyRent", "netMonthlyIncome"],
+                        "properties": {
+                          "id": { "type": "string" },
+                          "kind": { "const": "project" },
+                          "sourceUrl": { "type": "string", "format": "uri" },
+                          "title": { "type": "string" },
+                          "unitPrice": { "type": "null" },
+                          "monthlyRent": { "type": "null" },
+                          "netMonthlyIncome": { "type": "null" }
+                        }
+                      }
+                    },
+                    "sources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "status": { "enum": ["collected", "blocked", "unavailable", "mapping_required", "disabled"] },
+                          "count": { "type": "integer", "minimum": 0 },
+                          "reason": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": { "description": "demo_only: commercial/default production collection disabled" }
+        }
+      }
+    },
     "/api/search": {
       "post": {
         "x-code-path": "app/api/search/route.ts",
@@ -32,7 +92,7 @@
             }
           },
           "400": {
-            "description": "INVALID_JSON, INVALID_QUERY, INVALID_SEARCH_CONTEXT or INVALID_CONVERSATION",
+            "description": "INVALID_JSON, INVALID_QUERY, INVALID_SEARCH_CONTEXT, INVALID_CONVERSATION, INVALID_ASSET_REFERENCES or INVALID_LOCALE",
             "content": {
               "application/json": {
                 "schema": {
@@ -49,6 +109,11 @@
         "x-code-path": "app/api/assets/route.ts",
         "summary": "Current fixture/D1 list, capped at 100",
         "parameters": [
+          {
+            "name": "locale", "in": "query",
+            "schema": { "$ref": "#/components/schemas/AssetLocale" },
+            "description": "Korean asset text by default; en returns source text, not a fully English UI."
+          },
           {
             "name": "transaction",
             "in": "query",
@@ -81,7 +146,7 @@
             }
           },
           "400": {
-            "description": "INVALID_TRANSACTION",
+            "description": "INVALID_TRANSACTION or INVALID_LOCALE",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,6 +161,9 @@
   },
   "components": {
     "schemas": {
+      "AssetLocale": {
+        "type": "string", "enum": ["ko", "ko-KR", "en", "en-US"], "default": "ko"
+      },
       "SearchCriteria": {
         "type": "object",
         "required": [
@@ -120,6 +188,11 @@
               "Philippines",
               "Malaysia"
             ]
+          },
+          "countries": {
+            "type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true,
+            "description": "Authoritative optional scope; multiple countries require null city/district. country remains a legacy anchor.",
+            "items": { "type": "string", "enum": ["Cambodia", "Vietnam", "Philippines", "Malaysia"] }
           },
           "city": {
             "anyOf": [
@@ -226,8 +299,46 @@
           },
           "wantsRiver": {
             "type": "boolean"
+          },
+          "consultation": {
+            "$ref": "#/components/schemas/ConsultationConditions"
           }
         }
+      },
+      "ConsultationConditions": {
+        "type": "object",
+        "required": ["budget", "targetMonthlyIncome", "completedOnly", "tenantedOnly", "furnishedOnly", "cashPurchase"],
+        "description": "Optional conversational state, not proof of asset evidence. Public consultation budget and listing comparisons use the same observed FX snapshot; standalone legacy rules retain demo reference FX.",
+        "properties": {
+          "budget": {
+            "anyOf": [{"type": "null"}, {
+              "type": "object", "required": ["amount", "currency", "scope"],
+              "properties": {
+                "amount": {"type": "number", "exclusiveMinimum": 0, "maximum": 100000000000},
+                "currency": {"type": "string", "enum": ["KRW", "USD", "PHP", "VND"]},
+                "scope": {"type": "string", "enum": ["purchase", "monthlyRent", "totalInvestment"]}
+              }
+            }]
+          },
+          "targetMonthlyIncome": {
+            "anyOf": [{"type": "null"}, {
+              "type": "object", "required": ["amount", "currency", "basis"],
+              "properties": {
+                "amount": {"type": "number", "exclusiveMinimum": 0, "maximum": 100000000000},
+                "currency": {"type": "string", "enum": ["KRW", "USD"]},
+                "basis": {"type": "string", "enum": ["gross", "net", "unspecified"]}
+              }
+            }]
+          },
+          "completedOnly": {"type": "boolean"},
+          "tenantedOnly": {"type": "boolean"},
+          "furnishedOnly": {"type": "boolean"},
+          "cashPurchase": {"type": "boolean"}
+        }
+      },
+      "AssetReferences": {
+        "type": "array", "maxItems": 18, "uniqueItems": true,
+        "items": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9:_-]{0,159}$" }
       },
       "SearchRequest": {
         "type": "object",
@@ -235,6 +346,7 @@
           "query"
         ],
         "properties": {
+          "locale": { "$ref": "#/components/schemas/AssetLocale" },
           "query": {
             "type": "string",
             "minLength": 1,
@@ -243,6 +355,8 @@
           "context": {
             "$ref": "#/components/schemas/SearchCriteria"
           },
+          "previousAssetIds": { "$ref": "#/components/schemas/AssetReferences" },
+          "selectedAssetIds": { "$ref": "#/components/schemas/AssetReferences", "description": "Subset of previousAssetIds; selections only, not access authority." },
           "conversation": {
             "type": "array",
             "maxItems": 8,
@@ -263,7 +377,8 @@
                 "text": {
                   "type": "string",
                   "minLength": 1,
-                  "maxLength": 1200
+                  "maxLength": 32000,
+                  "description": "Visible answer is retained. Server/model context is deterministically bounded to at most 1200 characters per turn."
                 }
               }
             }
@@ -338,11 +453,47 @@
           "orchestration",
           "dataMode",
           "membershipAccess",
-          "discovery"
+          "discovery",
+          "resultSet",
+          "consultation",
+          "locale"
         ],
         "properties": {
+          "locale": { "type": "string", "enum": ["ko", "en"] },
+          "resultSet": {
+            "type": "object", "required": ["assetIds", "returnedCount"],
+            "properties": {
+              "assetIds": { "$ref": "#/components/schemas/AssetReferences" },
+              "returnedCount": { "type": "integer", "minimum": 0, "maximum": 18 }
+            }
+          },
+          "consultation": {
+            "type": "object", "required": ["mode", "referencedAssetIds", "missingAssetIds"],
+            "properties": {
+              "mode": { "type": "string", "enum": ["search", "review", "clarify"] },
+              "referencedAssetIds": { "$ref": "#/components/schemas/AssetReferences" },
+              "missingAssetIds": { "$ref": "#/components/schemas/AssetReferences" }
+            }
+          },
+          "citations": {
+            "type": "array",
+            "items": { "type": "object", "required": ["assetId", "label"], "properties": {
+              "assetId": { "type": "string" }, "label": { "type": "string" },
+              "sourceName": { "type": "string" }, "url": { "type": "string", "format": "uri" }
+            } }
+          },
           "criteria": {
             "$ref": "#/components/schemas/SearchCriteria"
+          },
+          "coverage": {
+            "type": "array", "maxItems": 4,
+            "items": { "type": "object", "required": ["country", "status", "collectedCount"],
+              "properties": {
+                "country": { "type": "string", "enum": ["Cambodia", "Vietnam", "Philippines", "Malaysia"] },
+                "status": { "type": "string", "enum": ["collected", "partial", "unavailable"] },
+                "collectedCount": { "type": "integer", "minimum": 0 }
+              }
+            }
           },
           "answer": {
             "type": "string"
@@ -414,6 +565,15 @@
           "membershipAccess": {
             "type": "object"
           },
+          "operationalAccess": {
+            "type": "object",
+            "required": ["limited", "unavailable"],
+            "properties": {
+              "limited": { "type": "boolean" },
+              "unavailable": { "type": "boolean" }
+            },
+            "description": "P38 operating request gate status. No provider identity, token counts or billing details are public."
+          },
           "discovery": {
             "anyOf": [
               {
@@ -428,6 +588,7 @@
                   "collectedCount": {
                     "type": "integer"
                   },
+                  "storage": { "$ref": "#/components/schemas/DiscoveryStorage" },
                   "displayedCount": {
                     "type": "integer"
                   },
@@ -447,6 +608,14 @@
               }
             ]
           }
+        }
+      },
+      "DiscoveryStorage": {
+        "type": "object",
+        "required": ["mode", "savedCount"],
+        "properties": {
+          "mode": { "type": "string", "enum": ["d1", "disabled"] },
+          "savedCount": { "type": "integer", "minimum": 0 }
         }
       },
       "AssetsResponse": {

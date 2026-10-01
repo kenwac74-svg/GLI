@@ -20,6 +20,8 @@ import { AssetAccessDemo } from "./asset-access-demo";
 import { BackToResultsButton } from "./back-to-results-button";
 import { ClaudeDesignShell } from "../../components/claude-design-shell";
 import { CLAUDE_ASSET_IDS } from "../../generated/claude-static";
+import { localizeAssets } from "../../../lib/asset-localization";
+import { candidateLocation } from "../../../lib/location-display";
 
 export const dynamic = "force-dynamic";
 
@@ -32,8 +34,9 @@ export default async function AssetPage({
   if ((CLAUDE_ASSET_IDS as readonly string[]).includes(id)) {
     return <ClaudeDesignShell view="detail" assetId={id} />;
   }
-  const { asset } = await getAsset(id);
-  if (!asset) notFound();
+  const { asset: originalAsset } = await getAsset(id);
+  if (!originalAsset) notFound();
+  const [asset] = await localizeAssets([originalAsset]);
   const currentUser = await getCurrentUser();
   let membershipAccess = getMembershipEntitlements(null);
   if (currentUser) {
@@ -87,7 +90,7 @@ export default async function AssetPage({
             />
             <div className="detail-title">
               <p>
-                <MapPin size={15} /> {asset.district}, {asset.city}, {asset.country}
+                <MapPin size={15} /> {candidateLocation(asset)}
               </p>
               <h1>{asset.title}</h1>
               <PriceDisplay

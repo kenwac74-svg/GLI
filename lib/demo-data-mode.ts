@@ -11,5 +11,5 @@ export function isDemoSourceAutoApprovalEnabled(
 
 export async function isRuntimeDemoSourceAutoApprovalEnabled(): Promise<boolean> {
   const { env } = await import("cloudflare:workers");
-  return isDemoSourceAutoApprovalEnabled(env);
+  return isDemoSourceAutoApprovalEnabled({ DEPLOYMENT_STAGE: env.DEPLOYMENT_STAGE, DEMO_SOURCE_AUTO_APPROVAL: env.DEMO_SOURCE_AUTO_APPROVAL });
 }

@@ -43,6 +43,8 @@ export type Asset = {
   price: number;
   maxPrice?: number;
   currency: PriceCurrency;
+  priceUsdReference?: { amount: number; provider: string; asOf: string };
+  sourceObservedAt?: string;
   areaSqm: number;
   image: string;
   images?: string[];

@@ -127,3 +127,14 @@ export function isPriceCurrency(value: unknown): value is PriceCurrency {
     PRICE_CURRENCIES.includes(value as PriceCurrency)
   );
 }
+
+// Budget criteria are USD. An unconverted foreign-currency amount is never USD.
+export function searchPriceUsd(asset: {
+  price: number; currency: PriceCurrency;
+  priceUsdReference?: { amount: number; provider: string; asOf: string };
+}): number | null {
+  if (asset.currency === "USD") return Number.isFinite(asset.price) && asset.price >= 0 ? asset.price : null;
+  const reference = asset.priceUsdReference;
+  return reference && Number.isFinite(reference.amount) && reference.amount >= 0
+    && reference.provider && Number.isFinite(Date.parse(reference.asOf)) ? reference.amount : null;
+}

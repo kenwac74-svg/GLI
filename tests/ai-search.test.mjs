@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { searchAssets } from "../lib/search.ts";
 
 import {
   createSafetyIdentifier,
@@ -255,4 +256,133 @@ test("hashes a request identifier before it leaves the service", () => {
   assert.equal(identifier?.length, 64);
   assert.doesNotMatch(identifier ?? "", /203\.0\.113\.7/);
   assert.equal(createSafetyIdentifier(null), undefined);
+});
+
+test("OpenRouter sends identical grounded input with conversation and an explicit model", async () => {
+  const requests = [];
+  for (const model of ["openai/test", "anthropic/test", "google/test"]) {
+    const result = await runAdvisorSearch("월 500달러 이하 2베드 임대", assets, {
+      provider: "openrouter", apiKey: "router-test-key", model,
+      conversation: [{ role: "user", text: "프놈펜에 거주할 집을 찾고 있어." }],
+      fetch: async (url, init) => {
+        assert.equal(url, "https://openrouter.ai/api/v1/chat/completions");
+        assert.equal(init.headers.authorization, "Bearer router-test-key");
+        const body = JSON.parse(init.body);
+        requests.push(body);
+        assert.equal(body.model, model);
+        assert.equal(body.provider.allow_fallbacks, false);
+        assert.equal(body.provider.require_parameters, true);
+        assert.equal(body.reasoning.exclude, true);
+        assert.equal(body.response_format.json_schema.strict, true);
+        assert.equal(body.models, undefined);
+        return Response.json({ model, provider: "test-endpoint", choices: [{ finish_reason: "stop", message: { content: JSON.stringify({
+          answer: "두 후보의 실제 관리비와 가구 상태를 확인하겠습니다.", clarification: null,
+          selectedAssetIds: ["GLI-KH-A"], reasons: [{ assetId: "GLI-KH-A", items: ["요청 지역"] }],
+        }) } }], usage: { prompt_tokens: 123, completion_tokens: 45, cost: 0.001 } });
+      },
+    });
+    assert.equal(result.advisor.mode, "openrouter");
+    assert.equal(result.advisor.model, model);
+    assert.equal(result.advisor.resolvedModel, model);
+    assert.equal(result.matches[0].trustScore, assets[0].trustScore);
+    assert.deepEqual(result.advisor.usage, { inputTokens: 123, outputTokens: 45, costUsd: 0.001 });
+  }
+  const inputs = requests.map((body) => JSON.parse(body.messages[1].content));
+  for (const input of inputs) {
+    assert.equal(input.recentConversation.length, 1);
+    assert.equal(input.exchangeRate, undefined);
+    assert.ok(input.candidates.every((candidate) => candidate.trustScore === undefined && candidate.trustGrade));
+    assert.doesNotMatch(JSON.stringify(input), /example\.test|sourceUrl|contact/i);
+    assert.deepEqual(input.candidates, inputs[0].candidates);
+  }
+});
+
+test("OpenRouter can counsel without candidates instead of returning a canned answer", async () => {
+  const result = await runAdvisorSearch("시아누크빌 2베드 매매", [], {
+    provider: "openrouter", apiKey: "test", model: "vendor/model",
+    fetch: async (_url, init) => {
+      const body = JSON.parse(init.body);
+      assert.equal(body.response_format.json_schema.schema.properties.selectedAssetIds.maxItems, 0);
+      return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({
+        answer: "현재 제공된 자료에는 조건에 맞는 후보가 없습니다.", clarification: "완공 매물만 찾으시나요?",
+        selectedAssetIds: [], reasons: [],
+      }) } }] });
+    },
+  });
+  assert.equal(result.advisor.mode, "openrouter");
+  assert.deepEqual(result.matches, []);
+});
+
+test("OpenRouter receives observed VND/KRW facts for advice; demo rates never become evidence", async () => {
+  const asset = { ...assets[0], id: "VN-FX", country: "Vietnam", city: "Ho Chi Minh City", district: "District 2",
+    price: 27000000, maxPrice: 28000000, currency: "VND", priceUsdReference: { amount: 1080, provider: "test", asOf: "2026-10-01" } };
+  const observed = { krwPerUsd: 1350, asOf: "2026-10-01", rates: { USD: 1, VND: 25000, KRW: 1350 } };
+  for (const rate of [observed, { krwPerUsd: 1380, asOf: "demo-reference" }, { ...observed, rates: { USD: 1, KRW: 1350 } }]) {
+    const result = await runAdvisorSearch("베트남 호치민 2베드 임대 원화로 알려줘", [asset], {
+      provider: "openrouter", apiKey: "test", model: "vendor/model",
+      preparedSearch: { ...searchAssets("베트남 임대", []), matches: [{ ...asset, matchReasons: [] }], rate },
+      fetch: async (_url, init) => {
+        const request = JSON.parse(init.body);
+        const input = JSON.parse(request.messages[1].content);
+        assert.deepEqual(input.exchangeRate, rate.rates ? rate : undefined);
+        assert.equal(input.candidates[0].locationLabel, "2군, 호치민, 베트남");
+        assert.equal(input.candidates[0].price, asset.price);
+        assert.deepEqual(input.candidates[0].priceUsdReference, asset.priceUsdReference);
+        assert.deepEqual(input.candidates[0].priceKrwReference, rate === observed
+          ? { amount: 1458000, maxAmount: 1512000, currency: "KRW", asOf: observed.asOf } : null);
+        assert.match(input.currencyRule, /Never ask the user.*even when the reference is absent/);
+        assert.match(input.currencyRule, /retain the original asking price/);
+        assert.match(request.messages[0].content, /사용자에게 환율 입력이나 선택을 요청하지 않습니다/);
+        return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({
+          answer: "제시 월세를 기준으로 비교할 수 있습니다.", clarification: null, selectedAssetIds: [asset.id], reasons: [],
+        }) } }] });
+      },
+    });
+    assert.equal(result.advisor.mode, "openrouter");
+  }
+});
+
+test("OpenRouter failures stay failures and do not leak upstream messages or keys", async () => {
+  for (const status of [401, 402, 429, 503]) {
+    const result = await runAdvisorSearch("월 500달러 이하 임대", assets, {
+      provider: "openrouter", apiKey: "secret-test-key", model: "vendor/model",
+      fetch: async () => Response.json({ error: { message: "secret-test-key upstream detail" } }, { status }),
+    });
+    assert.equal(result.advisor.mode, "rules");
+    assert.deepEqual(result.advisor.failure, { code: "http_error", status });
+    assert.doesNotMatch(JSON.stringify(result), /secret-test-key|upstream detail/);
+  }
+});
+
+test("OpenRouter may decline all candidates when required facts are unverified", async () => {
+  const result = await runAdvisorSearch("월 500달러 이하 임대", assets, {
+    provider: "openrouter", apiKey: "test", model: "vendor/model",
+    fetch: async (_url, init) => {
+      const body = JSON.parse(init.body);
+      assert.equal(body.response_format.json_schema.schema.properties.selectedAssetIds.minItems, 0);
+      return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({
+        answer: "요청하신 가구 포함 여부는 아직 확인되지 않았습니다.",
+        clarification: null, selectedAssetIds: [], reasons: [],
+      }) } }] });
+    },
+  });
+  assert.equal(result.advisor.mode, "openrouter");
+  assert.deepEqual(result.matches, []);
+});
+
+test("OpenRouter rejects unknown IDs, incomplete JSON and unsupported assurances", async () => {
+  for (const [finishReason, answer, ids, failure] of [
+    ["stop", "확인하겠습니다.", ["INVENTED"], "invalid_output"],
+    ["length", "확인하겠습니다.", ["GLI-KH-A"], "incomplete_output"],
+    ["stop", "수익을 보장합니다.", ["GLI-KH-A"], "unsupported_assurance"],
+  ]) {
+    const result = await runAdvisorSearch("월 500달러 이하 임대", assets, {
+      provider: "openrouter", apiKey: "test", model: "vendor/model",
+      fetch: async () => Response.json({ choices: [{ finish_reason: finishReason, message: { content: JSON.stringify({
+        answer, clarification: null, selectedAssetIds: ids, reasons: [],
+      }) } }] }),
+    });
+    assert.equal(result.advisor.mode, "rules");
+    assert.equal(result.advisor.failure.code, failure);
+  }
 });

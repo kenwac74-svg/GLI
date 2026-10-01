@@ -26,6 +26,9 @@ type GeminiDiscoveryOptions = {
   timeoutMs?: number;
   cacheTtlMs?: number;
   maxResults?: number;
+  signal?: AbortSignal;
+  scope?: string;
+  failureCooldownMs?: number;
 };
 
 type GeminiPayload = {
@@ -66,6 +69,7 @@ const cache = new Map<
   { expiresAt: number; result: GeminiDiscoveryResult }
 >();
 const discoveredAssets = new Map<string, Asset>();
+const pending = new Map<string, Promise<GeminiDiscoveryResult>>();
 
 const LISTING_SCHEMA = {
   type: "object",
@@ -140,16 +144,39 @@ export async function discoverWithGemini(
   if (!apiKey || criteria.country !== "Cambodia") {
     return emptyResult("disabled", now);
   }
+  options.signal?.throwIfAborted();
 
   const model = options.model ?? process.env.GEMINI_MODEL ?? DEFAULT_MODEL;
   const maxResults = Math.min(Math.max(options.maxResults ?? 10, 1), 12);
   const cacheKey = createHash("sha256")
-    .update(JSON.stringify({ query, criteria, model, maxResults }))
+    .update(JSON.stringify({ query: query.trim().replace(/\s+/g, " "), criteria, model, maxResults,
+      scope: options.scope ?? createHash("sha256").update(apiKey).digest("hex"),
+      thinkingLevel: options.thinkingLevel ?? process.env.GEMINI_THINKING_LEVEL ?? "medium" }))
     .digest("hex");
   const cached = cache.get(cacheKey);
   if (cached && cached.expiresAt > now.getTime()) {
     return { ...cached.result, cached: true };
   }
+  const existing = pending.get(cacheKey);
+  if (existing) return waitForDiscovery(existing, options.signal);
+  if (pending.size >= 32) return emptyResult("error", now);
+  const job = collectWithGemini(query, criteria, options, now, apiKey, model, maxResults)
+    .then(result => {
+      // Failures cool down too; otherwise every submit repeats a paid failure.
+      if (cache.size >= 256) cache.delete(cache.keys().next().value!);
+      cache.set(cacheKey, {
+        expiresAt: now.getTime() + (result.status === "error"
+          ? options.failureCooldownMs ?? 60_000 : options.cacheTtlMs ?? 10 * 60_000),
+        result,
+      });
+      return result;
+    }).finally(() => pending.delete(cacheKey));
+  pending.set(cacheKey, job);
+  return waitForDiscovery(job, options.signal);
+}
+
+async function collectWithGemini(query: string, criteria: SearchCriteria, options: GeminiDiscoveryOptions,
+  now: Date, apiKey: string, model: string, maxResults: number): Promise<GeminiDiscoveryResult> {
 
   const controller = new AbortController();
   const timeout = setTimeout(
@@ -216,7 +243,7 @@ export async function discoverWithGemini(
             },
           },
         }),
-        signal: controller.signal,
+        signal: options.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal,
       },
     );
 
@@ -235,16 +262,22 @@ export async function discoverWithGemini(
       cached: false,
       groundedQueryCount: extractGroundedQueries(payload).length,
     };
-    cache.set(cacheKey, {
-      expiresAt: now.getTime() + (options.cacheTtlMs ?? 10 * 60_000),
-      result,
-    });
     return result;
   } catch {
     return emptyResult("error", now);
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function waitForDiscovery(job: Promise<GeminiDiscoveryResult>, signal?: AbortSignal): Promise<GeminiDiscoveryResult> {
+  if (!signal) return job;
+  signal.throwIfAborted();
+  return new Promise((resolve, reject) => {
+    const abort = () => reject(signal.reason);
+    signal.addEventListener("abort", abort, { once: true });
+    job.then(resolve, reject).finally(() => signal.removeEventListener("abort", abort));
+  });
 }
 
 export function findGeminiDiscoveredAsset(id: string): Asset | undefined {

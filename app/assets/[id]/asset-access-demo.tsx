@@ -58,7 +58,7 @@ export function AssetAccessDemo({
   publicResources: AssetPublicResource[];
 }) {
   const [selectedId, setSelectedId] = useState<AccessTierId>("free");
-  const [unlockedLevel, setUnlockedLevel] = useState(initialUnlockedLevel);
+  const [unlockedLevel, setUnlockedLevel] = useState<(typeof TIERS)[number]["level"]>(initialUnlockedLevel);
   const [cashBalance, setCashBalance] = useState(5000);
   const [pendingId, setPendingId] = useState<AccessTierId | null>(null);
 
@@ -79,7 +79,7 @@ export function AssetAccessDemo({
     const cost = CASH_COST[pending.id] ?? 0;
     if (cost > cashBalance) return;
     setCashBalance((balance) => balance - cost);
-    setUnlockedLevel((level) => Math.max(level, pending.level));
+    setUnlockedLevel((level) => level > pending.level ? level : pending.level);
     setPendingId(null);
   }
 

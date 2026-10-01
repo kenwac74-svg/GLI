@@ -145,7 +145,7 @@ function parseEndpoint(endpoint: string | undefined): URL | null {
 }
 
 export function assertSourceCollectionAllowed(
-  connector: Pick<SourceConnector<unknown>, "sourceSlug" | "requestedFields">,
+  connector: Pick<SourceConnector<unknown>, "sourceSlug" | "requestedFields" | "connectorKind" | "endpoint">,
   policy: SourcePolicy,
   now: Date = new Date(),
 ): void {

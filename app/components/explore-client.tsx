@@ -782,7 +782,7 @@ function describeCriteria(criteria: SearchCriteria): string[] {
   }
   if (criteria.district) items.push(criteria.district);
   if (criteria.propertyType) {
-    const labels: Record<Asset["propertyType"], string> = {
+    const labels: Record<NonNullable<SearchCriteria["propertyType"]>, string> = {
       condo: "콘도",
       house: "주택",
       villa: "빌라",

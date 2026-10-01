@@ -10,6 +10,9 @@ const { d1, r2 } = hostingConfig;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
+// QA copies/build outputs and SQLite/R2 files are not source dependencies.
+// Watching them can crash Windows dev servers with EBUSY during a QA build.
+const ignoredDevFiles = ["**/.runtime-*/**", "**/work/**", "**/.wrangler/**"];
 
 const localBindingConfig = {
   main: "./worker/index.ts",
@@ -22,9 +25,13 @@ const localBindingConfig = {
     DEMO_AUTH_HOSTS: process.env.DEMO_AUTH_HOSTS ?? "",
     LLM_PROVIDER: process.env.LLM_PROVIDER ?? "disabled",
     OPENAI_MODEL: process.env.OPENAI_MODEL ?? "gpt-5.6-sol",
+    OPENROUTER_MODEL: process.env.OPENROUTER_MODEL ?? "",
+    GLI_LOCAL_AI_PREVIEW: process.env.GLI_LOCAL_AI_PREVIEW ?? "disabled",
     GEMINI_MODEL: process.env.GEMINI_MODEL ?? "gemini-3.6-flash",
     GEMINI_THINKING_LEVEL: process.env.GEMINI_THINKING_LEVEL ?? "medium",
     GEMINI_DISCOVERY: process.env.GEMINI_DISCOVERY ?? "enabled",
+    GEMINI_TRANSLATION: process.env.GEMINI_TRANSLATION ?? "enabled",
+    GEMINI_TRANSLATION_MODEL: process.env.GEMINI_TRANSLATION_MODEL ?? process.env.GEMINI_MODEL ?? "gemini-3.7-flash",
     GEMINI_ADVISOR: process.env.GEMINI_ADVISOR ?? "enabled",
     GEMINI_ADVISOR_MODEL:
       process.env.GEMINI_ADVISOR_MODEL ?? "models/gemini-3.7-flash",
@@ -68,9 +75,9 @@ export default defineConfig(async () => {
         ? {
             useFsEvents: false,
             usePolling: true,
-            ignored: ["**/.runtime-*/**"],
+            ignored: ignoredDevFiles,
           }
-        : { ignored: ["**/.runtime-*/**"] },
+        : { ignored: ignoredDevFiles },
     },
     plugins: [
       vinext(),

@@ -394,6 +394,19 @@ footer img{display:inline}
 
 fs.mkdirSync(outputDir, { recursive: true });
 fs.writeFileSync(cssPath, `${css}\n${reactFidelityCss}`, "utf8");
+// Select only the final GLI-052 consultation styles; all other pages stay frozen.
+const consultationSource = fs.readFileSync(path.join(root, "design-handoff/source/gli-052-consultation.dc.html"), "utf8");
+const consultationStart = consultationSource.indexOf("  /* 상담 흐름 (GLI-052)");
+const consultationEnd = consultationSource.indexOf("  /* 후속 질문 컴포저", consultationStart);
+if (consultationStart < 0 || consultationEnd < 0) throw new Error("Missing GLI-052 consultation CSS boundary");
+fs.writeFileSync(path.join(outputDir, "claude-consultation.css"),
+  "/* Generated verbatim from GLI-052 final consultation styles. */\n" + consultationSource.slice(consultationStart, consultationEnd), "utf8");
+const reasonMarkup = consultationSource.match(/<button type="button" class="reason"[\s\S]*?<\/button>/)?.[0];
+if (!reasonMarkup) throw new Error("Missing approved candidate question control");
+const reasonNode = parse5.parseFragment(reasonMarkup).childNodes[0];
+const reasonIcons = reasonNode.childNodes.filter(node => node.tagName === "svg").map(node => parse5.serializeOuter(node));
+fs.writeFileSync(path.join(outputDir, "claude-consultation-icons.ts"),
+  `// Generated from the approved GLI-052 question control; do not redraw.\nexport const CONSULTATION_REASON_ICONS = ${JSON.stringify(reasonIcons)} as const;\n`, "utf8");
 fs.writeFileSync(
   outputPath,
   [

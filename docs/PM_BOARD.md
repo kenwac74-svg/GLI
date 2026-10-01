@@ -10,6 +10,29 @@ Updated: 2026-09-13
 
 ## Delivery policy
 
+2026-10-01 GS-005 / P47: connect only accessible Dot Property Philippines in
+LOCAL/explicit demo. Actual server collection: 20 sale + 20 rent, PHP/KRW
+reference and bounded detail cache passed. Lamudi/Rentpad and auxiliary sources
+stay held. 262 tests/build passed; no new paid AI test, UI redesign or deployment.
+
+2026-09-30 GS-005 / P45: user approved bounded demo reuse. Dot Property sale/rent
+field mapping passed (20 each) and search/Map detail connected; VND budgets use
+observed FX only. Homedy mapping, Batdongsan access and auxiliary sources stay held.
+No UI redesign, paid AI verification call, public deployment or commercial approval.
+
+2026-09-30 GS-005 / P44 supersedes P43 auxiliary collection: only fully reviewed
+listing sources may activate. ERA is deferred; IQI/media/maps skipped; Batdongsan
+probes stopped. Dot Property/Homedy are candidates on reuse/mapping hold, not
+passed sources. See COUNTRY-SOURCES and HIST-20260930-005.
+
+2026-09-30 GS-005 / P43: ERA Vietnam demo project-reference endpoint added;
+Batdongsan direct collection is HTTP 403 blocked, not connected listing data.
+Project references are separate from priced units and current search/AI/UI.
+Commercial permission, durable storage and unit/rental mapping remain open.
+See COUNTRY-SOURCES and HIST-20260930-004. No commit/push/deployment authorised.
+
+2026-09-23 CHECKPOINT (P40/P41): implementation paused at the user's request until their next instruction after token replenishment. Local code validated through HIST-20260923-017 (232 tests); later records are backlog/policy only. Resume C1 detail identity, result return/state preservation, real processing-stage feedback, translation coverage/name rules and legacy detail labels as one planned batch. No commit/push/deployment authorized by this checkpoint.
+
 - Branch: `codex/web2-mvp`
 - Production branch: `main`
 - Integration owner: Codex
@@ -87,7 +110,27 @@ Updated: 2026-09-13
 | GLI-050 | Codex | GLI Product Owner | COMPLETE | executable development specification: 32 features, 46 route files, history/next work, source annotations and partial OpenAPI; spec checker/self-tests, script lint, four visual hashes and ten comment-only application diffs verified; no runtime/UI deployment |
 | GLI-051 | Claude Design/Codex | GLI Product Owner | IN PROGRESS | 2026-09-16: mobile-only patch applied; landing/explore width checks passed at 320/360/390/412/768/1440px; clipped menu scrolling repaired. Existing copy/data/events preserved. Awaiting user visual acceptance and real-device checks before public deployment; see HIST-20260916-001 |
 
+## 2026-09-18 consultation follow-up
+
+| ID | Owner | Reviewer | Status | Deliverable |
+|---|---|---|---|---|
+| GLI-052 | Codex PM/backend/integration; Claude Design UX | GLI Product Owner | IN PROGRESS / CANDIDATE CONTINUITY | P33 BuildBlock handoff B1-B5 prepared. Local search/review branching preserves prior IDs/order, resolves ordinal targets against public records and passes source/detail/check evidence. Astra synthetic 2-turn review and local actual candidate follow-up passed; 194 automated tests passed. Typing no longer restores the original sample list. Static card/detail C1 mapping, durable state, verified income/expenses, public trial limits, Claude UX and deployment remain pending. |
+
+GLI-048 COMPLETE is a historical integration milestone, not proof of current consultation correctness. The 2026-09-18 review found ID/content mismatch, follow-up amount interpretation errors and a composer-order defect; GLI-052 tracks the follow-up without deleting past records.
+
+GLI-052-PROGRESS (2026-09-23): QUEUED FOR NEXT BATCH. Replace the generic consultation loading sentence with specific, truthful server-stage feedback for initial and follow-up requests. User explicitly requested backlog registration only; no immediate UI/code change. Scope and acceptance: docs/implementation/GLI-052-INTEGRATION-20260923.md, "다음 일괄 업데이트 작업".
+
+GLI-052-RETURN (2026-09-23): CONFIRMED DEFECT / NEXT BATCH. Claude detail lacks an explicit return-to-results button; preserve conversation, criteria, IDs/order and scroll without another paid search. Related C1 defect reproduced: GLI-KH-102 detail shows BKK1 rent $700/56sqm instead of search sale $75,360/47sqm. Correct ID-to-detail mapping with the return flow; scope/acceptance in GLI-052-INTEGRATION-20260923.md. Documentation only in this turn.
+
+GLI-052-TRANSLATION-COVERAGE (2026-09-23): NEXT BATCH / GS-033 C1. Distinguish preserved proper names/geography, mixed-language fields skipped when any Hangul is present, and old hardcoded detail labels (including obsolete Trust Score). Review mixed-field translation coverage and align UI labels with approved design/grade policy; no runtime change in this recording task.
+
+2026-10-01 GS-013/033: user reported translation/KRW failure. Scoped repair handles VND cross-rate display in cards/TOP3, saved-result FX restoration, known separate geography labels, mixed-language translation and quoted-name protection (compatible v1 cache reused). Full check 256 tests passed; local saved candidates show Korean places and KRW monthly values. No paid test/design change/commit/push/deploy. Remaining: live translation coverage, unknown geography/brands, fixed KRW budget parser and legacy detail labels. Other P41 backlog remains held.
+
+GLI-052 / P34 follow-up (2026-09-18): GS-033 adds Gemini Korean translation for external listing text, preserving source facts and R2 originals. Local cards/detail/advisor share the projection; source translations are reused. No design or public deployment change. Legacy external detail still shows the old Trust Score/access tabs, and detail-to-explore navigation can temporarily restore fixture cards while retaining the external result count. These separate C1/navigation issues remain pending; translation work does not close them.
+
 ## Decisions
+
+2026-09-23 P38 stage-1 backend follow-up: common D1 operating request guard (300 global/100 account daily; anonymous shared pool), independent provider usage ledger, discovery coalescing/cooldown, cancellation and bounded conversation context are implemented locally. Typecheck is now in `npm run check`; isolated build and 223 tests passed. Latest Claude design is not integrated; external-asset durability, guest identity, public deployment and GCP/AWS migration remain separate. See HIST-20260923-014 and implementation/AI-OPERATING-GUARD.md.
 
 | ID | Decision | Status |
 |---|---|---|

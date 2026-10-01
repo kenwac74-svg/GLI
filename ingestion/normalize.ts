@@ -55,7 +55,7 @@ type CanonicalValue =
   | CanonicalValue[]
   | { [key: string]: CanonicalValue };
 
-const COUNTRY_ALIASES = new Map(
+const COUNTRY_ALIASES = new Map<string, readonly [string, string]>(
   [
     ["bn", ["Brunei", "BN"]],
     ["brunei", ["Brunei", "BN"]],

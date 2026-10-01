@@ -75,7 +75,49 @@ This register controls production collection. Technical accessibility is not per
   remain `AUTHORIZATION_REQUIRED`. IPS, Realestate.com.kh, and FazWaz remain
   disabled until an authorized delivery channel is approved.
 
-## Reviewed pages
+## Vietnam demo decision / 2026-09-30
+
+- User approved ERA Vietnam projects and Batdongsan as demo candidates (P43).
+  This is not written provider permission. Commercial status remains
+  AUTHORIZATION_REQUIRED; deployment outside LOCAL/explicit demo is disabled.
+- ERA public robots permits `/du-an/`; direct robots/list requests returned 200.
+  Public JSON is decoded without executing source scripts, extracting creator
+  data, or claiming a project is a priced/available individual unit.
+- Batdongsan robots/list server requests returned 403. The demo collector stops
+  there. No access-control bypass or retry; require an authorised feed or
+  allowlisting. Normal responses still require a verified listing field map.
+- See `lib/vietnam-discovery.ts`, `app/api/discovery/vietnam/route.ts`, and
+  `docs/implementation/COUNTRY-SOURCES.md`. Existing Cambodia policies remain.
+
+## Vietnam bounded demo listing approval / P45 / 2026-09-30
+
+- User explicitly approved demo reuse to improve grounded GLI consultation.
+  Dot Property sale/rent field mapping and ordinary public GET passed. Only
+  LOCAL/explicit demo admission is enabled; commercial AUTHORIZATION_REQUIRED
+  and no-training/no-bypass boundaries remain. This is not a provider licence.
+- One page/transaction, at most 20 units each; selected property fields and first
+  image only, no agent/contact/private data. Original URL identity, VND prices
+  and observation time preserved; no invented publication dates or net income.
+- Homedy remains technically held after timeouts; Batdongsan remains blocked;
+  auxiliary ERA/IQI/media/maps remain deferred. P45 supersedes only the earlier
+  demo reuse hold, not commercial authorisation or access refusal.
+
+## Vietnam review holds / P44 / 2026-09-30 (historical; P45 supersedes Dot demo hold)
+
+- Add only first-review-passed listing sources. ERA auxiliary projects are
+  deferred and IQI/media/maps are not connected. Preserve their future scope.
+- Batdongsan remains held for HTTP403; no recurring access probes.
+- Dot Property robots/homepage: HTTP200. Its operations policy restricts
+  third-party copying/distribution; reuse authorisation is unconfirmed.
+- Homedy robots/homepage: HTTP200. GPTBot is disallowed, and its operating
+  rules reserve content rights; reuse authorisation and listing mapping are
+  unconfirmed. No training collection or identity-based bypass is authorised.
+- These are conservative activation holds, not final legal findings. No new
+  Vietnam listing source is approved/active. Demo access does not lift holds.
+- Policies: https://www.dotproperty.com.vn/en/operations-policy and
+  https://homedy.com/quy-che-hoat-dong . Inspect permitted fields/feed before enabling.
+
+## Previously reviewed pages
 
 - Khmer24 privacy policy: https://www.khmer24.com/privacy-policy
 - Khmer24 posting rules: https://www.khmer24.com/posting-rule

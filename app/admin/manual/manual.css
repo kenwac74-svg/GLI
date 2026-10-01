@@ -1,0 +1,11 @@
+.manual-draft-form { display: block; }
+.manual-draft-form fieldset { padding: 0; margin: 0 0 16px; border: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.manual-draft-form label { min-width: 0; display: grid; align-content: start; gap: 7px; }
+.manual-draft-form select, .manual-draft-form textarea { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 5px; color: var(--ink); background: #fff; font: inherit; }
+.manual-draft-form textarea { resize: vertical; }
+.manual-draft-form .source-config-actions button { display: inline-flex; align-items: center; gap: 8px; }
+.manual-draft-page .ops-workbench { margin-top: 24px; }
+.manual-draft-list { list-style: none; margin: 0; padding: 0; }
+.manual-draft-list li { display: grid; gap: 6px; padding: 16px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.manual-draft-list span { font-size: 13px; }
+@media (max-width: 600px) { .manual-draft-form fieldset { grid-template-columns: minmax(0, 1fr); } }

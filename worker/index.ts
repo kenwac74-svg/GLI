@@ -1,9 +1,10 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import type { D1Database, R2Bucket } from "../worker-runtime";
 
 interface Env {
-  ASSETS: Fetcher;
+  ASSETS: { fetch(request: Request): Promise<Response> };
   DB: D1Database;
   FILES: R2Bucket;
   DATA_MODE?: "approved-fixture" | "d1";
@@ -11,13 +12,18 @@ interface Env {
   DEMO_AUTH_ENABLED?: "true" | "false";
   DEMO_ADMIN_ENABLED?: "true" | "false";
   DEMO_AUTH_HOSTS?: string;
-  LLM_PROVIDER?: "openai" | "disabled";
+  LLM_PROVIDER?: "openai" | "gemini" | "openrouter" | "disabled";
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
+  OPENROUTER_API_KEY?: string;
+  OPENROUTER_MODEL?: string;
+  GLI_LOCAL_AI_PREVIEW?: "enabled" | "disabled";
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;
   GEMINI_THINKING_LEVEL?: "minimal" | "low" | "medium" | "high";
   GEMINI_DISCOVERY?: "enabled" | "disabled";
+  GEMINI_TRANSLATION?: "enabled" | "disabled";
+  GEMINI_TRANSLATION_MODEL?: string;
   LIVE_CAMBODIA_DISCOVERY?: "enabled" | "disabled";
   IMAGES: {
     input(stream: ReadableStream): {

@@ -82,7 +82,7 @@ export async function discoverCambodiaAssets(
         fetchImpl,
         now: () => now,
         timeoutMs,
-        ...(source.requiredLinkPathPrefix
+        ...("requiredLinkPathPrefix" in source && source.requiredLinkPathPrefix
           ? { requiredLinkPathPrefix: source.requiredLinkPathPrefix }
           : {}),
       });

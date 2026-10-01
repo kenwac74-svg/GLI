@@ -18,6 +18,11 @@ const migrationFiles = [
   "drizzle/0012_ai_evaluation_evidence.sql",
   "drizzle/0013_membership_entitlements.sql",
   "drizzle/0014_listing_review_decisions.sql",
+  "drizzle/0015_khmer24_reference_connector.sql",
+  "drizzle/0016_cambodia_multi_source_registry.sql",
+  "drizzle/0017_ai_operating_usage.sql",
+  "drizzle/0018_discovered_assets.sql",
+  "drizzle/0019_manual_asset_drafts.sql",
 ];
 const database = new DatabaseSync(":memory:");
 
@@ -114,10 +119,14 @@ try {
     )
     .get();
   assert.deepEqual({ ...sourceReadiness }, {
-    sources: 4,
+    sources: 7,
     approved: 1,
     disabled: 3,
   });
+
+  const aiOperatingTables = database.prepare(`SELECT count(*) AS count FROM sqlite_master
+    WHERE type = 'table' AND name IN ('ai_operation_requests', 'ai_provider_calls')`).get();
+  assert.equal(aiOperatingTables.count, 2);
 
   const paymentLedger = database
     .prepare(
