@@ -22,3 +22,5 @@ The product source will be integrated from the existing GLI prototype under PM c
 - [Development team proposals](docs/GLI_DEVELOPMENT_PROPOSALS.md)
 
 These documents are the durable planning handoff between Cloud Chat/Project and local Work/Codex. Confirmed business decisions should be recorded here rather than relying on a single chat session.
+
+- [Claude research handoff](docs/GLI_CLAUDE_RESEARCH_HANDOFF.md) — unresolved research agenda; not a confirmed-policy document.
