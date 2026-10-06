@@ -1,5 +1,23 @@
 # GLI Master Business Handoff
 
+## 0. Highest-level product principle
+
+This principle takes precedence over all lower-level GLI search, verification, AI, data, and UX rules.
+
+> **범용 LLM보다 검색·상담이 못하면 실패한다. 범용 LLM이 할 수 있는 것은 최소한 다 해야 하며, GLI의 차별성은 그 이후 사용자가 해야 할 일을 대신 수행하는 데 있어야 한다.**
+
+Operational interpretation:
+
+1. GLI must meet or exceed the practical usefulness, speed, breadth, and conversational quality that users can already obtain from leading general-purpose LLMs for overseas property discovery and initial advice.
+2. Verification rules must not make GLI less useful than a general-purpose LLM at the discovery stage.
+3. Generic LLM capabilities are the baseline, not the moat.
+4. GLI's added value begins after discovery: normalization of foreign information, evidence-state control, additional research, expert/field verification, persistent Verification Records, transaction support, and later compliant fractional/RWA access.
+5. When a lower-level rule conflicts with this principle, the lower-level rule must be revised rather than degrading the user experience.
+
+Canonical product sequence:
+
+> **Find well → Explain clearly → Show confidence/evidence → Investigate what is missing → Execute the next step**
+
 Updated: 2026-10-06  
 Scope: business/product planning canonical handoff for Cloud Chat ↔ GitHub ↔ Local Work/Codex.
 
