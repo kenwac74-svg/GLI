@@ -32,3 +32,10 @@
 - Exact Trust Score weights and thresholds.
 - Exact Premium/Business prices and SLA.
 - Exact 2027+ RWA/fractional structure subject to legal/regulatory review.
+
+## 2026-10-06 — Highest-level product principle established
+- **Top-level rule:** if GLI gives a slower, less detailed, or less practically useful answer than a leading general-purpose LLM, the product has failed at the first user-value layer.
+- GLI must treat the capabilities of leading general-purpose LLMs as the minimum baseline, not as differentiation.
+- Verification, data-quality, safety, or internal DB rules may not suppress useful discovery to the point that GLI becomes less useful than general-purpose AI.
+- GLI differentiation must begin after baseline discovery/advice: normalization, evidence-state management, additional investigation, expert/field execution, persistent Verification Record, transaction support, and future compliant RWA/fractional access.
+- Any lower-level architecture or requirement that conflicts with this principle must be re-evaluated.
