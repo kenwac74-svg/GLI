@@ -227,3 +227,50 @@ test("validates structured conversational context before reuse", () => {
     null,
   );
 });
+
+test("never substitutes a supported country for an unsupported one named by the user", () => {
+  const criteria = extractCriteria(
+    "방콕에서 외국인 쿼터가 남아 있는 콘도를 3억 원 이하로 찾아줘",
+  );
+
+  assert.equal(criteria.unsupportedLocation?.label, "태국");
+
+  const result = searchAssets(
+    "방콕에서 외국인 쿼터가 남아 있는 콘도를 3억 원 이하로 찾아줘",
+    assets,
+  );
+
+  assert.deepEqual(result.matches, []);
+  assert.match(result.answer, /태국/);
+  assert.doesNotMatch(result.answer, /프놈펜/);
+  assert.doesNotMatch(result.answer, /캄보디아 자산을 추천/);
+});
+
+test("recognizes an unsupported location in English too", () => {
+  const criteria = extractCriteria(
+    "Looking for a 2BR condo in Bangkok under USD 200k, mainly for rental yield.",
+  );
+  assert.equal(criteria.unsupportedLocation?.label, "태국");
+});
+
+test("an explicit supported country overrides an incidental unsupported mention", () => {
+  const criteria = extractCriteria(
+    "방콕 여행도 고려했지만 결국 캄보디아 프놈펜에서 콘도를 찾아줘",
+  );
+  assert.equal(criteria.country, "Cambodia");
+  assert.equal(criteria.unsupportedLocation, null);
+});
+
+test("treats buying to let out as a purchase search, not a tenancy search", () => {
+  const criteria = extractCriteria(
+    "프놈펜에서 1억 원 안쪽으로 외국인 명의로 살 수 있는 콘도 찾아줘. 사서 월세 놓을 거야.",
+  );
+
+  assert.equal(criteria.transaction, "sale");
+  assert.equal(criteria.purpose, "income");
+});
+
+test("still treats a plain tenancy request as rent", () => {
+  const criteria = extractCriteria("프놈펜에서 월 700달러 이하 1베드 임대 콘도 찾아줘");
+  assert.equal(criteria.transaction, "rent");
+});

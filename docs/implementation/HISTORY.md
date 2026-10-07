@@ -65,3 +65,16 @@ ID: HIST-YYYYMMDD-NNN
 - 검증: `npm run spec:refresh`, `npm run spec:check` 통과. 32개 기능, 46개 경로, 시각 기준 파일 4개 무변경을 확인했으며 `git diff --check`도 통과. 로컬·공개 페이지의 360/390/412px 읽기 전용 측정으로 결함을 재현했으나 디자인 소스와 React 실행 코드는 변경하지 않아 빌드·런타임 회귀 시험은 수행하지 않음.
 - 남은 일: Claude가 시안과 폭별 캡처·측정값을 제출하고 GLI Product Owner가 승인한 뒤 Codex가 승인된 변경분만 React에 통합·검수한다.
 - 커밋·배포: 로컬 핸드오프 문서 작업. Git 커밋·푸시·공개 배포 수행하지 않음.
+
+## HIST-20261006-001
+
+- 작업일 / 작성자: 2026-10-06 / Claude.
+- 관련 항목: GS-010. 근거는 사용자의 "기술적으로 일반 LLM보다 좋은 결과를 내고 GLI 사업목적에 부합하는 플랫폼 가치와 차별화된 사용자 경험"에 집중하라는 지시. 제휴·계약은 범위 밖으로 명시적으로 제외됨.
+- 배경: 범용 LLM 대비 동등성 벤치마크 설계(`docs/research/P0-1_LLM_PARITY_BENCHMARK.md`) 과정의 로컬 시험에서 두 결함을 코드로 확인함.
+- 변경 전 → 후:
+  - `extractCriteria`가 인식하지 못하는 국가/도시(예: 방콕)를 언급하면 `country ?? context?.country ?? "Cambodia"`로 조용히 대체해 요청하지 않은 캄보디아 자산을 보여줬음 → 태국/인도네시아/싱가포르를 포함한 `UNSUPPORTED_LOCATION_PATTERNS`을 추가해 `unsupportedLocation`로 표시하고, `searchAssets`가 이를 최우선으로 검사해 지원 국가로 대체하지 않고 커버 범위를 명시함(한국어 조사 은/는 자동 선택 포함).
+  - "사서 월세 놓을 거야"(매입 후 임대인 의도)가 `explicitRent` 정규식("월세")에 걸려 임대(rent) 검색으로 분류됐음 → `landlordIntent` 패턴을 추가해 매입(purpose=income)으로 분류하도록 수정. 세입자로서의 일반 임대 요청(예: "월 700달러 이하 1베드 임대")은 영향 없음.
+- 변경 파일 / 갱신 명세: `lib/search.ts`(핵심 로직), `lib/ai-evaluation.ts`(새 필드에 맞춰 평가 시나리오 컨텍스트 리터럴 보완), `tests/search.test.mjs`(회귀 테스트 5건 추가), `docs/implementation/registry.json`(GS-010 current/next/acceptance/tests/verification 갱신).
+- 검증: `npm run build` 통과(타입 오류 0). `npm run check`(lint + db:validate + test) 통과, 테스트 172/172(기존 167 전부 무변경 통과 + 신규 5건). 로컬 서버(`vinext start`)에 `tools/parity-probe.mjs`로 S1~S7 재실행해 S4(방콕) 응답이 더 이상 "프놈펜"을 언급하지 않고 커버 범위를 명시함을, S2(매입 후 임대) 응답이 매입 후보를 반환함을 확인. `npm run spec:check`는 이 커밋 직후 별도 실행 예정.
+- 남은 일: 라오스·미얀마·일본 등 추가 미지원 국가 패턴 확장, S1-F류 후속 대화 맥락 단절(예: "첫 번째 후보" 참조), `/api/search`의 직렬 호출 구조(수집 12초+12초, Gemini 30초, 상담 30초 순차)로 인한 최악 지연은 다음 작업으로 남김. 실제 glibiz.net(배포본)에서의 재현 확인은 미실행 — 이 변경은 로컬 빌드로만 검증됨.
+- 커밋·배포: 이 작업 직후 `agent/gli-latest-20260917` 브랜치에 커밋 예정. 공개 배포 수행하지 않음.

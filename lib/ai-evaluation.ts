@@ -119,6 +119,7 @@ const EVALUATION_CASES: readonly EvaluationCase[] = [
       purpose: "residence",
       wantsShortStay: false,
       wantsRiver: false,
+      unsupportedLocation: null,
     },
     expectedCriteria: {
       transaction: "rent",

@@ -419,9 +419,9 @@
         "GLI-048"
       ],
       "decision": "approved",
-      "current": "규칙 extractCriteria가 검색 전에 적용된다. 최대 8턴 전달과 sessionStorage 검색 결과 복원이 있다.",
+      "current": "규칙 extractCriteria가 검색 전에 적용된다. 최대 8턴 전달과 sessionStorage 검색 결과 복원이 있다. GLI가 다루지 않는 국가·도시(태국/방콕·푸켓·파타야·치앙마이, 인도네시아/자카르타·발리, 싱가포르)가 언급되면 지원 국가로 조용히 대체하지 않고 커버 범위 밖임을 명시한다(unsupportedLocation). '월세 놓을 거야'류의 임대인 의도 표현은 매입(purpose=income)으로 분류하고, 세입자로서의 임대 요청과 구분한다.",
       "target": "후속 대화의 의도·부정·조건 변경을 이해하고 요청 국가/도시를 유지한다.",
-      "next": "자연어 intent 출력 스키마와 회귀 시나리오를 추가하고 조건 저장/대화 보관 범위를 확정한다.",
+      "next": "자연어 intent 출력 스키마와 회귀 시나리오를 추가하고 조건 저장/대화 보관 범위를 확정한다. 남은 지원 외 국가(라오스·미얀마·일본 등) 패턴 확장과 후속 대화에서의 화제 복원(예: '첫 번째 후보' 참조)은 별도 과제로 남는다.",
       "owner": "후속 구현: Codex/백엔드 개발자; 제품 결정: GLI; 시각 변경: Claude",
       "evidence": [
         {
@@ -438,21 +438,23 @@
         }
       ],
       "tests": [
-        "tests/search.test.mjs",
         "tests/ai-search.test.mjs",
-        "tests/followup-composer.test.mjs"
+        "tests/followup-composer.test.mjs",
+        "tests/search.test.mjs"
       ],
       "dependencies": [],
       "acceptance": [
         "6000만원으로 변경 후 도시·완공 조건 유지",
         "조건에 맞는 후보 없음과 데이터 미연결을 구별",
         "상세에서 돌아오면 직전 결과/조건 복원",
-        "국가 변경은 명시 요청 또는 동의 이후만"
+        "국가 변경은 명시 요청 또는 동의 이후만",
+        "요청 국가가 GLI 커버 범위 밖이면 지원 국가로 대체하지 않고 커버 범위를 밝힌다",
+        "매입 후 임대 의도('월세 놓을 거야')를 세입자 임대 요청과 구분해 매입으로 분류한다"
       ],
       "routes": [],
       "verification": {
-        "level": "code_review",
-        "automatedTests": "not_run_in_this_audit",
+        "level": "automated_test",
+        "automatedTests": "npm run check 통과 (lint, db:validate, test 172/172)",
         "live": "not_verified"
       }
     },
