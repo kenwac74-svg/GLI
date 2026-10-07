@@ -1,5 +1,9 @@
 # GLI 디자인 핸드오프
 
+> **현재 결과 화면 작업지시:** [`GLI-052-RESULT-SCREEN-BRIEF.md`](GLI-052-RESULT-SCREEN-BRIEF.md)
+>
+> AI 탐색 결과 화면을 일반 AI 수준의 답과 GLI 확인 정보 두 층으로 개선하는 디자인 지시서다. PC를 먼저 확정하고 모바일은 후속이며, 승인 전에는 시각 원본이나 React 구현을 변경하지 않는다.
+
 > **현재 모바일 작업지시:** [`GLI-051-MOBILE-RESPONSIVE-FIX-BRIEF.md`](GLI-051-MOBILE-RESPONSIVE-FIX-BRIEF.md)
 >
 > 실제 Android와 360/390/412px 브라우저에서 확인된 페이지 전체 가로 넘침을 다룬다. 이 문서는 모바일 헤더·랜딩 타이포·내부 스크롤에 한정된 후속 지시이며, 사용자 승인 전에는 시각 원본이나 React 구현을 변경하지 않는다.
