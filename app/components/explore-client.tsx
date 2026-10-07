@@ -234,7 +234,18 @@ export function ExploreClient({
       const response = await fetch("/api/search", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ query: clean, context: criteria ?? undefined }),
+        body: JSON.stringify({
+          query: clean,
+          context: criteria ?? undefined,
+          conversation: turns
+            .filter((turn) => turn.id !== welcomeTurn.id)
+            .slice(-8)
+            .map((turn) => ({
+              role: turn.role === "user" ? "user" : "assistant",
+              text: turn.text.slice(0, 1_200),
+            })),
+          previousAssetIds: visibleAssets.slice(0, 20).map((asset) => asset.id),
+        }),
       });
       if (!response.ok) throw new Error("search_failed");
       const result = (await response.json()) as AdvisorSearchResult & {

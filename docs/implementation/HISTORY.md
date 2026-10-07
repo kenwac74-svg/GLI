@@ -78,3 +78,16 @@ ID: HIST-YYYYMMDD-NNN
 - 검증: `npm run build` 통과(타입 오류 0). `npm run check`(lint + db:validate + test) 통과, 테스트 172/172(기존 167 전부 무변경 통과 + 신규 5건). 로컬 서버(`vinext start`)에 `tools/parity-probe.mjs`로 S1~S7 재실행해 S4(방콕) 응답이 더 이상 "프놈펜"을 언급하지 않고 커버 범위를 명시함을, S2(매입 후 임대) 응답이 매입 후보를 반환함을 확인. `npm run spec:check`는 이 커밋 직후 별도 실행 예정.
 - 남은 일: 라오스·미얀마·일본 등 추가 미지원 국가 패턴 확장, S1-F류 후속 대화 맥락 단절(예: "첫 번째 후보" 참조), `/api/search`의 직렬 호출 구조(수집 12초+12초, Gemini 30초, 상담 30초 순차)로 인한 최악 지연은 다음 작업으로 남김. 실제 glibiz.net(배포본)에서의 재현 확인은 미실행 — 이 변경은 로컬 빌드로만 검증됨.
 - 커밋·배포: 이 작업 직후 `agent/gli-latest-20260917` 브랜치에 커밋 예정. 공개 배포 수행하지 않음.
+
+## HIST-20261007-001
+
+- 작업일 / 작성자: 2026-10-07 / Claude.
+- 관련 항목: GS-010. 근거는 사내 비공개 기술 데모 단계에서 일반 LLM 대비 기술 품질을 높이라는 사용자 지시와 HIST-20261006-001의 남은 일 두 가지(후속 대화 맥락 단절, /api/search 직렬 지연).
+- 변경 전 → 후:
+  - 후속 질문 맥락: 서버는 사용자가 직전에 본 자산 목록을 몰랐고(탐색 화면 `explore-client`는 대화조차 보내지 않음) "그중 첫 번째 후보 확인해 줘"는 조건 검색으로만 처리됨 → 두 클라이언트가 `previousAssetIds`(표시 순서)를 보내고, 서버가 서수 참조를 해석(`lib/followup-reference.ts`)해 해당 자산을 결과 맨 앞에 고정한다. 규칙 모드 답변은 저장된 강점/확인사항만 사용하고, Gemini에는 `focusAssetId`를 전달한다. 목록에 없거나 범위 밖이면 기존 동작.
+  - 지연: 수집 12초 → Gemini 탐색 30초 → 상담 30초 순차(최악 약 84초) → 수집과 Gemini 탐색을 병렬 실행하고(탐색 20초 제한) 상담은 총 45초 예산의 잔여 시간(최소 15초)을 사용한다. 최악 약 45초.
+- 변경 파일/명세: `app/api/search/route.ts`, `lib/ai-search.ts`, `lib/followup-reference.ts`(신규), `app/components/explore-client.tsx`, `app/components/claude-design-shell.tsx`(요청 본문만, 시각 변경 없음), `tests/followup-reference.test.mjs`(신규 4건), `docs/implementation/registry.json`, `API-CONTRACTS.md`.
+- 가정·트레이드오프: Gemini 탐색 시작 조건이 '수집 결과 포함 6건 미만'에서 '정적·큐레이션 6건 미만'으로 바뀌어 수집이 6건 이상을 채워도 탐색이 호출될 수 있음(호출 비용 증가 가능). 상담 모델 타임아웃이 탐색 소요에 따라 15~45초로 변동.
+- 검증: `npm run check` 통과(lint 오류 0, db:validate, test 176/176; 기존 172 + 신규 4). 첫 실행에서 `followup-composer` 계약 테스트가 요청 본문 문자열을 검사해 실패 → 본문을 `{ query, context, conversation, previousAssetIds }` 한 줄로 유지해 해결. 실제 지연(초 단위)과 glibiz.net 배포본 재현은 미실행. `docs/research/P0-1_LLM_PARITY_BENCHMARK.md`와 `tools/parity-probe.mjs`는 이 브랜치에 존재하지 않아 벤치마크 실측은 수행하지 못함.
+- 남은 일: 서수 외 대명사 참조, 병렬 탐색 비용 확인, 실서비스 지연 실측.
+- 커밋·배포: 로컬 커밋·푸시는 아래 확인 후. 공개 배포는 수행하지 않음.

@@ -4,8 +4,8 @@
 
 ## 현재 검색
 
-- body: `query`(trim 이후 1~800자), 선택적 `context`(SearchCriteria 전체), 선택적 `conversation`(최대 8턴; user/assistant; 각 trim 이후 1~1200자).
-- 잘못된 JSON/query/context/conversation은 400과 `{error:{code,message}}`.
+- body: `query`(trim 이후 1~800자), 선택적 `context`(SearchCriteria 전체), 선택적 `conversation`(최대 8턴; user/assistant; 각 trim 이후 1~1200자), 선택적 `previousAssetIds`(직전에 보여준 자산 ID, 표시 순서, 최대 20개, 각 1~200자). '첫 번째 후보' 같은 서수 참조는 이 목록으로만 해석하며 범위 밖이면 일반 조건 검색으로 처리한다.
+- 잘못된 JSON/query/context/conversation/previousAssetIds는 400과 `{error:{code,message}}`.
 - context는 국가 4개, 도시/구역 null 또는 1~80자, transaction sale/rent/null, 예산 범위와 purpose/boolean 필드를 검증한다. 정확한 조건은 `parseSearchContext`.
 - response: answer, clarification, criteria, matches, rate, citations, advisor, orchestration, membershipAccess, dataMode, discovery.
 - advisor mode는 공개 `ai` 또는 `rules`. provider/model/key는 공개 응답에서 제거한다.
