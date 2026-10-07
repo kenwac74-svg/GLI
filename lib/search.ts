@@ -12,6 +12,10 @@ export type SearchCriteria = {
   purpose: "income" | "seasonal" | "residence" | "general";
   wantsShortStay: boolean;
   wantsRiver: boolean;
+  // A country or city the user named that GLI does not cover. When set, the
+  // search must refuse to substitute a supported country (e.g. Cambodia) in
+  // its place — see "never silently substitutes an unsupported location" below.
+  unsupportedLocation: { label: string; mentionedAs: string } | null;
 };
 
 export type SearchCountry = "Cambodia" | "Vietnam" | "Philippines" | "Malaysia";
@@ -80,6 +84,28 @@ const CITY_PATTERNS: ReadonlyArray<{
   { country: "Malaysia", city: "Johor Bahru", pattern: /johor bahru|\bjb\b|\uC870\uD638\uBC14\uB8E8/i },
   { country: "Malaysia", city: "Penang", pattern: /\bpenang\b|\uD398\uB0AD/i },
 ];
+// Countries and well-known cities GLI does not yet cover. Matched text must
+// never fall through to a supported country's default city (see extractCriteria):
+// a user asking about Bangkok must be told Thailand isn't covered, not shown
+// Phnom Penh listings as if they were an answer.
+const UNSUPPORTED_LOCATION_PATTERNS: ReadonlyArray<{
+  label: string;
+  pattern: RegExp;
+}> = [
+  {
+    label: "태국",
+    pattern: /\b(?:thailand|bangkok|phuket|pattaya|chiang mai)\b|태국|방콕|푸켓|파타야|치앙마이/i,
+  },
+  {
+    label: "인도네시아",
+    pattern: /\b(?:indonesia|jakarta|\bbali\b)\b|인도네시아|자카르타|발리/i,
+  },
+  {
+    label: "싱가포르",
+    pattern: /\bsingapore\b|싱가포르|싱가폴/i,
+  },
+];
+
 const DISTRICT_ALIASES: ReadonlyArray<{
   district: string;
   patterns: readonly string[];
@@ -154,6 +180,18 @@ export function parseSearchContext(value: unknown): SearchCriteria | null {
   ) {
     return null;
   }
+  if (value.unsupportedLocation !== null) {
+    if (
+      !isRecord(value.unsupportedLocation) ||
+      typeof value.unsupportedLocation.label !== "string" ||
+      value.unsupportedLocation.label.length === 0 ||
+      value.unsupportedLocation.label.length > 80 ||
+      typeof value.unsupportedLocation.mentionedAs !== "string" ||
+      value.unsupportedLocation.mentionedAs.length > 120
+    ) {
+      return null;
+    }
+  }
 
   return {
     country: value.country as SearchCountry,
@@ -167,6 +205,7 @@ export function parseSearchContext(value: unknown): SearchCriteria | null {
     purpose: value.purpose as SearchCriteria["purpose"],
     wantsShortStay: value.wantsShortStay,
     wantsRiver: value.wantsRiver,
+    unsupportedLocation: value.unsupportedLocation as SearchCriteria["unsupportedLocation"],
   };
 }
 
@@ -179,6 +218,17 @@ export function extractCriteria(
   const explicitCountry =
     COUNTRY_PATTERNS.find(({ pattern }) => pattern.test(text))?.country ??
     explicitCity?.country;
+  // Only treat the mention as unsupported when no supported country/city also
+  // matched this turn — an explicit supported country always wins.
+  const unsupportedMention =
+    !explicitCountry && !explicitCity
+      ? UNSUPPORTED_LOCATION_PATTERNS.find(({ pattern }) => pattern.test(text))
+      : undefined;
+  const unsupportedLocation = unsupportedMention
+    ? { label: unsupportedMention.label, mentionedAs: query.trim().slice(0, 120) }
+    : explicitCountry || explicitCity
+      ? null
+      : (context?.unsupportedLocation ?? null);
   const country = explicitCountry ?? context?.country ?? "Cambodia";
   const city = explicitCity?.country === country ? explicitCity.city : extractCity(text, country) ??
     (explicitCountry && explicitCountry !== context?.country ? defaultCity(country) : context?.city) ??
@@ -189,6 +239,13 @@ export function extractCriteria(
     )?.district ?? null;
   const income =
     /투자|수익|월세(?:가|를|로)?\s*(?:잘|수익)|임대\s*(?:수익|료)|yield|income/i.test(text);
+  // "사서 월세 놓을 거야" (buy it, then let it out) names the user as the future
+  // landlord — this is a purchase, not a rental search, even though the text
+  // contains "월세"/"임대". Without this, explicitRent below wins and the system
+  // searches for a tenancy instead of a property to buy.
+  const landlordIntent =
+    /(?:월세|임대|세)\s*(?:를|로)?\s*(?:놓|주|받)(?:을|는|겠)/.test(text) ||
+    /rent\s+(?:it\s+)?out/i.test(text);
   const seasonal =
     /별장|세컨드\s*하우스|겨울마다|개월.*(?:쉬|놀|체류)|내가 없을 때/.test(text);
   const explicitRent = /임대|월세|렌트|rent/.test(text);
@@ -219,14 +276,27 @@ export function extractCriteria(
     country,
     city,
     district,
-    transaction: explicitRent && !income ? "rent" : explicitSale || income || seasonal ? "sale" : null,
+    transaction:
+      explicitRent && !income && !landlordIntent
+        ? "rent"
+        : explicitSale || income || seasonal || landlordIntent
+          ? "sale"
+          : null,
     propertyType: type,
     maxPriceUsd,
     budgetKrw,
     bedrooms: bedroomMatch ? Number(bedroomMatch[1]) : null,
-    purpose: seasonal ? "seasonal" : income ? "income" : explicitRent ? "residence" : "general",
+    purpose:
+      seasonal
+        ? "seasonal"
+        : income || landlordIntent
+          ? "income"
+          : explicitRent
+            ? "residence"
+            : "general",
     wantsShortStay: /에어비앤비|airbnb|단기\s*임대/.test(text),
     wantsRiver: /강|메콩|리버|river|전망/.test(text),
+    unsupportedLocation,
   };
 
   if (!context || /조건\s*초기화|처음부터|새\s*탐색/.test(text)) {
@@ -252,6 +322,7 @@ export function extractCriteria(
       ? false
       : current.wantsShortStay || context.wantsShortStay,
     wantsRiver: removesRiver ? false : current.wantsRiver || context.wantsRiver,
+    unsupportedLocation,
   };
 }
 
@@ -261,6 +332,17 @@ export function searchAssets(
   context: SearchCriteria | null = null,
 ): SearchResult {
   const criteria = extractCriteria(query, context);
+  // A location GLI does not cover is an absolute stop: never fall through to
+  // a supported country's assets (e.g. showing Phnom Penh for a Bangkok ask).
+  if (criteria.unsupportedLocation) {
+    return {
+      criteria,
+      answer: buildUnsupportedLocationAnswer(criteria.unsupportedLocation),
+      clarification: `${SUPPORTED_COUNTRY_LABELS} 중에서 관심 있으신 국가가 있을까요?`,
+      matches: [],
+      rate: { krwPerUsd: DEMO_KRW_PER_USD, asOf: "demo-reference" },
+    };
+  }
   // Country and city are hard recommendation boundaries. Other conditions may
   // be relaxed only inside the requested location and only as a visible fallback.
   const countryAssets = allAssets.filter((asset) => asset.country === criteria.country);
@@ -434,4 +516,22 @@ function countryLabel(country: SearchCountry): string {
     Philippines: "필리핀",
     Malaysia: "말레이시아",
   }[country];
+}
+
+const SUPPORTED_COUNTRY_LABELS = "캄보디아·베트남·필리핀·말레이시아";
+
+// Picks the correct Korean topic particle (은/는) for a label ending in a
+// Hangul syllable, so "태국" (has a final consonant) reads "태국은", not "태국는".
+function topicParticle(label: string): "은" | "는" {
+  const code = label.codePointAt(label.length - 1) ?? 0;
+  if (code < 0xac00 || code > 0xd7a3) return "는";
+  return (code - 0xac00) % 28 === 0 ? "는" : "은";
+}
+
+function buildUnsupportedLocationAnswer(location: {
+  label: string;
+  mentionedAs: string;
+}): string {
+  const particle = topicParticle(location.label);
+  return `현재 GLI는 ${SUPPORTED_COUNTRY_LABELS}만 다룹니다. 요청하신 ${location.label}${particle} 아직 커버 범위 밖이라 다른 국가의 자산을 ${location.label} 결과인 것처럼 보여드리지 않습니다.`;
 }
