@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>A 후보가 없을 때</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<style>
+:root{--ground:#F2F5F4;--card:#FFFFFF;--ink:#12231F;--muted:#4F625D;--line:#D9E1DE;--brand:#0E5A49;--brand-soft:#DCEFE8;--info:#3B4E6B;--info-soft:#E8EDF5}
+body{margin:0;background:#F2F5F4;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#12231F}
+button{font-family:inherit}
+a{color:#0E5A49}a:hover{color:#08382C}
+</style>
+</helmet>
+<div style="background: var(--ground); min-height: 100%; display: flex; flex-direction: column">
+
+<div style="background: var(--card); border-bottom: 1px solid var(--line); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; gap: 12px">
+<span style="font-size: 24px; font-weight: 700; color: var(--brand); letter-spacing: 0.02em">GLI</span>
+<span style="font-size: 15px; color: var(--muted)">AI 투자 탐색</span>
+</div>
+<div style="display: flex; gap: 28px; font-size: 15px">
+<a href="#" style="text-decoration: none; color: var(--ink)">자산 탐색</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">관심 자산</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">로그인</a>
+</div>
+</div>
+
+<div style="max-width: 1280px; width: 100%; box-sizing: border-box; padding: 24px 32px 48px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="font-size: 15px; color: var(--muted); margin-right: 4px">이 조건으로 찾았어요</span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 8px 7px 14px; border-radius: 20px">겨울 거주<button aria-label="겨울 거주 조건 빼기" style="border: 0; background: transparent; color: var(--brand); cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 8px 7px 14px; border-radius: 20px">예산 1억 원<button aria-label="예산 조건 빼기" style="border: 0; background: transparent; color: var(--brand); cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 8px 7px 14px; border-radius: 20px">동남아<button aria-label="지역 조건 빼기" style="border: 0; background: transparent; color: var(--brand); cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand); color: #fff; font-size: 15px; font-weight: 700; padding: 7px 8px 7px 14px; border-radius: 20px">매입<button aria-label="매입 조건 빼기" style="border: 0; background: transparent; color: #fff; cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+<div style="flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+
+<div style="align-self: flex-end; max-width: 78%; background: var(--ink); color: #fff; font-size: 17px; line-height: 1.6; padding: 14px 20px; border-radius: 18px 18px 4px 18px">매입으로 찾아 주세요</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--brand)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>GLI AI
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 25px; font-weight: 700; line-height: 1.5; color: var(--ink); text-wrap: balance">매입으로 보면 1억 원 안에서는 후보가 좁아져요. 지금 GLI가 확인한 매입 후보는 없고, 아래 방법으로 범위를 넓혀 볼 수 있어요.</p>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">매입이라면 먼저 따져 볼 것</h2>
+<span style="display: inline-flex; align-items: center; gap: 6px; background: var(--info-soft); color: var(--info); font-size: 14px; font-weight: 500; padding: 3px 11px; border-radius: 14px">일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px"><b style="font-size: 17px">집값 외 비용</b><p style="margin: 6px 0 0; font-size: 15px; line-height: 1.65; color: var(--muted)">취득 비용과 가구 비용, 해마다 드는 유지비를 합쳐 예산을 잡아 보세요.</p></div>
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px"><b style="font-size: 17px">비워 두는 동안</b><p style="margin: 6px 0 0; font-size: 15px; line-height: 1.65; color: var(--muted)">8개월 동안의 관리비와 관리 대행, 되팔 때의 수월함을 확인하세요.</p></div>
+</div>
+<span style="font-size: 14px; color: var(--muted)">제도와 가격은 바뀌므로 결정하기 전에 최신 정보를 확인하세요.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">이렇게 바꿔 볼까요</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">예산을 1억 3천만 원으로 늘려 볼게요</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">베트남도 함께 찾아 주세요</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">한 철 임대로 먼저 살아 볼게요</button>
+</div>
+</div>
+
+<div style="display: flex; gap: 10px; align-items: stretch; background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 8px 8px 8px 20px">
+<label for="followN" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">이어서 질문하기</label>
+<input id="followN" type="text" placeholder="이어서 질문하세요" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 17px; color: var(--ink); background: transparent">
+<button style="font-size: 16px; font-weight: 700; min-height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--brand); color: #fff; cursor: pointer">보내기</button>
+</div>
+
+</div>
+
+<div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+
+<div style="background: var(--brand); color: #fff; border-radius: 16px; padding: 18px 22px; display: flex; align-items: center; gap: 14px">
+<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M8.7 12.2l2.4 2.4 4.4-4.8"/></svg>
+<div style="display: flex; flex-direction: column">
+<b style="font-size: 20px">GLI가 확인한 후보</b>
+<span style="font-size: 15px; opacity: 0.92">매입 조건에 맞는 후보는 아직 없어요</span>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px dashed var(--line); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 8px">
+<b style="font-size: 18px">지금은 보여 드릴 매입 후보가 없어요</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">대신 겨울 한 철 살아 보기에 맞는 임대 후보를 보여 드려요. 살아 본 뒤에 매입을 정하는 분이 많아요.</span>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 140px; flex: 0 0 140px; background: #CFE3DC">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="Boeng Trabek 콘도 예시 이미지"><defs><linearGradient id="n1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE3EC"/><stop offset="1" stop-color="#E8F1EE"/></linearGradient><pattern id="m1" width="12" height="14" patternUnits="userSpaceOnUse"><rect x="2" y="3" width="7" height="8" fill="#DDEBF1"/></pattern></defs><rect width="168" height="150" fill="url(#n1)"/><rect x="40" y="22" width="64" height="128" fill="#6F8F86"/><rect x="40" y="22" width="64" height="128" fill="url(#m1)"/><rect x="108" y="58" width="36" height="92" fill="#8AA79D"/><rect x="108" y="58" width="36" height="92" fill="url(#m1)"/><rect y="140" width="168" height="10" fill="#5C7B70"/></svg>
+</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<b style="font-size: 17px; line-height: 1.4">Boeng Trabek 15층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 26px; font-weight: 700">$380</span><span style="font-size: 15px; color: var(--muted)">월 · 임대</span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 700; padding: 3px 12px; border-radius: 14px">Trust A</span><a href="#" style="font-size: 15px">원문 보기</a></div>
+</div>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 140px; flex: 0 0 140px; background: #D8E6DD">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="Urban Village 콘도 예시 이미지"><defs><linearGradient id="n2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9DDC4"/><stop offset="1" stop-color="#F3EEDD"/></linearGradient><pattern id="m2" width="14" height="12" patternUnits="userSpaceOnUse"><rect x="3" y="2" width="8" height="7" fill="#F2E9D2"/></pattern></defs><rect width="168" height="150" fill="url(#n2)"/><rect x="18" y="40" width="50" height="110" fill="#8C7F68"/><rect x="18" y="40" width="50" height="110" fill="url(#m2)"/><rect x="74" y="16" width="56" height="134" fill="#6E8478"/><rect x="74" y="16" width="56" height="134" fill="url(#m2)"/><rect y="140" width="168" height="10" fill="#6B7A62"/></svg>
+</div>
+<div style="padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<b style="font-size: 17px; line-height: 1.4">Urban Village 고층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 26px; font-weight: 700">$500</span><span style="font-size: 15px; color: var(--muted)">월 · 임대</span></div>
+<div style="display: flex; align-items: center; gap: 10px"><span style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 700; padding: 3px 12px; border-radius: 14px">Trust A</span><a href="#" style="font-size: 15px">원문 보기</a></div>
+</div>
+</div>
+</div>
+
+<button style="min-height: 52px; font-size: 17px; font-weight: 700; border: 0; background: var(--brand); color: #fff; border-radius: 12px; cursor: pointer">이 임대 후보 비교하기</button>
+
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

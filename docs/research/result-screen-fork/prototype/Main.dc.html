@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>A 대화와 후보를 나란히</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<style>
+:root{--ground:#F2F5F4;--card:#FFFFFF;--ink:#12231F;--muted:#4F625D;--line:#D9E1DE;--brand:#0E5A49;--brand-soft:#DCEFE8;--info:#3B4E6B;--info-soft:#E8EDF5}
+body{margin:0;background:#F2F5F4;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#12231F}
+button{font-family:inherit}
+a{color:#0E5A49}a:hover{color:#08382C}
+</style>
+</helmet>
+<div style="background: var(--ground); min-height: 100%; display: flex; flex-direction: column">
+
+<div style="background: var(--card); border-bottom: 1px solid var(--line); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; gap: 12px">
+<span style="font-size: 24px; font-weight: 700; color: var(--brand); letter-spacing: 0.02em">GLI</span>
+<span style="font-size: 15px; color: var(--muted)">AI 투자 탐색</span>
+</div>
+<div style="display: flex; gap: 28px; font-size: 15px">
+<a href="#" style="text-decoration: none; color: var(--ink)">자산 탐색</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">관심 자산</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">로그인</a>
+</div>
+</div>
+
+<div style="max-width: 1280px; width: 100%; box-sizing: border-box; padding: 24px 32px 48px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="font-size: 15px; color: var(--muted); margin-right: 4px">이 조건으로 찾았어요</span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 8px 7px 14px; border-radius: 20px">겨울 거주<button aria-label="겨울 거주 조건 빼기" style="border: 0; background: transparent; color: var(--brand); cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 8px 7px 14px; border-radius: 20px">예산 1억 원<button aria-label="예산 조건 빼기" style="border: 0; background: transparent; color: var(--brand); cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+<span style="display: inline-flex; align-items: center; gap: 4px; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 8px 7px 14px; border-radius: 20px">동남아<button aria-label="지역 조건 빼기" style="border: 0; background: transparent; color: var(--brand); cursor: pointer; width: 28px; height: 28px; font-size: 18px; line-height: 1">×</button></span>
+<span style="font-size: 15px; color: var(--muted)">조건을 누르면 빼고 다시 찾아요</span>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+<div style="flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+
+<div style="align-self: flex-end; max-width: 78%; background: var(--ink); color: #fff; font-size: 17px; line-height: 1.6; padding: 14px 20px; border-radius: 18px 18px 4px 18px">은퇴하고 겨울마다 지낼 따뜻한 곳 알아보고 있어요. 예산은 1억 정도예요</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--brand)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>GLI AI
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 25px; font-weight: 700; line-height: 1.5; color: var(--ink); text-wrap: balance">1억 원이면 바로 사기보다 겨울 한 철씩 살아 보며 정하는 쪽이 안전하고, 동남아 몇 곳은 매입도 가능한 범위예요.</p>
+<span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; background: var(--info-soft); color: var(--info); font-size: 14px; font-weight: 500; padding: 4px 12px; border-radius: 14px">일반 정보로 요약했어요</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">겨울에 지내기 좋은 곳</h2>
+<span style="display: inline-flex; align-items: center; gap: 6px; background: var(--info-soft); color: var(--info); font-size: 14px; font-weight: 500; padding: 3px 11px; border-radius: 14px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="프놈펜을 그린 도시 이미지"><defs><linearGradient id="s1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3CE95"/><stop offset="1" stop-color="#FBEBD2"/></linearGradient></defs><rect width="240" height="140" fill="url(#s1)"/><circle cx="188" cy="38" r="17" fill="#EFA64F"/><path d="M0 96l22-8 20 8 24-14 22 10 26-18 24 12 28-10 26 12 24-6v64H0z" fill="#B9C9B2"/><rect x="34" y="62" width="22" height="58" fill="#7E9A8B"/><rect x="62" y="48" width="26" height="72" fill="#5F8174"/><rect x="94" y="70" width="18" height="50" fill="#7E9A8B"/><path d="M128 120V84l14-22 14 22v36z" fill="#C98B3A"/><rect x="164" y="58" width="24" height="62" fill="#5F8174"/><rect x="194" y="76" width="20" height="44" fill="#7E9A8B"/><rect y="118" width="240" height="22" fill="#2F6F66"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">캄보디아 프놈펜</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">건기라 쾌적하고 생활비가 낮은 편. 외국인도 콘도 매입이 가능해요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="다낭을 그린 도시 이미지"><defs><linearGradient id="s2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9DCEB"/><stop offset="1" stop-color="#EAF5F8"/></linearGradient></defs><rect width="240" height="140" fill="url(#s2)"/><circle cx="52" cy="36" r="14" fill="#F6E3A4"/><path d="M0 84c30-24 52-30 84-8 26-22 56-26 88-6 24-8 46-4 68 8v62H0z" fill="#8FB7A9"/><rect x="150" y="46" width="14" height="74" fill="#4B7F9A"/><rect x="170" y="60" width="18" height="60" fill="#6C9AB0"/><rect x="194" y="52" width="14" height="68" fill="#4B7F9A"/><rect x="112" y="70" width="16" height="50" fill="#6C9AB0"/><rect y="104" width="240" height="36" fill="#4D93B3"/><path d="M0 116c20-6 40-6 60 0s40 6 60 0 40-6 60 0 40 6 60 0v24H0z" fill="#79B5CF"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">베트남 다낭·나트랑</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">겨울에도 따뜻하고 한국인 생활권과 병원이 잘 갖춰진 편이에요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="치앙마이를 그린 도시 이미지"><defs><linearGradient id="s3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6E7C8"/><stop offset="1" stop-color="#F1F5E4"/></linearGradient></defs><rect width="240" height="140" fill="url(#s3)"/><path d="M0 74c40-30 70-34 104-10 34-24 80-26 136 6v70H0z" fill="#A5C29A"/><path d="M0 98c50-24 90-20 130 0 40-18 74-16 110 4v38H0z" fill="#6E9B6B"/><path d="M118 108V80l12-30 12 30v28z" fill="#D8A63F"/><path d="M130 50v-14" stroke="#D8A63F" stroke-width="3"/><rect x="56" y="92" width="26" height="30" fill="#4C7A57"/><rect x="170" y="88" width="30" height="34" fill="#4C7A57"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">태국 치앙마이·후아힌</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">생활 인프라가 안정적이에요. 콘도 매입은 외국인 비율 제한이 있어요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+
+</div>
+<span style="font-size: 14px; color: var(--muted)">도시 이미지는 분위기를 그린 대표 이미지이며 실제 건물이나 방이 아니에요.</span>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">살까, 한 철 빌릴까</h2>
+<span style="display: inline-flex; align-items: center; gap: 6px; background: var(--info-soft); color: var(--info); font-size: 14px; font-weight: 500; padding: 3px 11px; border-radius: 14px">일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">한 철 임대</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">부담이 적고 되돌리기 쉬워요. 한 번 살아 보고 결정할 수 있어요.</span>
+</div>
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">매입</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">비워 두는 8개월의 관리비와 관리 대행, 되팔 때의 수월함을 따져 봐야 해요.</span>
+</div>
+</div>
+<span style="font-size: 14px; color: var(--muted)">제도와 가격은 바뀌므로 결정하기 전에 최신 정보를 확인하세요.</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">이어서 물어보세요</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">병원은 가까운가요?</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">비자와 체류 기간은요?</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">사려면 비용이 얼마나 더 드나요?</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">비워 두는 동안 누가 관리하나요?</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">매입으로 찾아 주세요</button>
+<button style="font-size: 16px; padding: 11px 18px; min-height: 46px; border-radius: 24px; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); cursor: pointer">한두 해 살아 보고 정할래요</button>
+</div>
+</div>
+
+<div style="display: flex; gap: 10px; align-items: stretch; background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 8px 8px 8px 20px">
+<label for="followA" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">이어서 질문하기</label>
+<input id="followA" type="text" placeholder="이어서 질문하세요" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 17px; color: var(--ink); background: transparent">
+<button style="font-size: 16px; font-weight: 700; min-height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--brand); color: #fff; cursor: pointer">보내기</button>
+</div>
+
+</div>
+
+<div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+
+<div style="background: var(--brand); color: #fff; border-radius: 16px; padding: 18px 22px; display: flex; align-items: center; gap: 14px">
+<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M8.7 12.2l2.4 2.4 4.4-4.8"/></svg>
+<div style="display: flex; flex-direction: column">
+<b style="font-size: 20px">GLI가 확인한 후보</b>
+<span style="font-size: 15px; opacity: 0.92">프놈펜 임대 · 한 철 살아 보기에 맞는 3곳</span>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 168px; flex: 0 0 168px; position: relative; background: #CFE3DC">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="Boeng Trabek 콘도 예시 이미지"><defs><linearGradient id="b1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE3EC"/><stop offset="1" stop-color="#E8F1EE"/></linearGradient><pattern id="w1" width="12" height="14" patternUnits="userSpaceOnUse"><rect x="2" y="3" width="7" height="8" fill="#DDEBF1"/></pattern></defs><rect width="168" height="150" fill="url(#b1)"/><rect x="40" y="22" width="64" height="128" fill="#6F8F86"/><rect x="40" y="22" width="64" height="128" fill="url(#w1)"/><rect x="108" y="58" width="36" height="92" fill="#8AA79D"/><rect x="108" y="58" width="36" height="92" fill="url(#w1)"/><rect y="140" width="168" height="10" fill="#5C7B70"/></svg>
+</div>
+<div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<b style="font-size: 18px; line-height: 1.4">Boeng Trabek 15층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">$380</span><span style="font-size: 15px; color: var(--muted)">월 · 약 508,791원</span></div>
+<span style="font-size: 15px; color: var(--muted)">50㎡ · 침실 1 · 임대</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 2px">
+<span style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 700; padding: 3px 12px; border-radius: 14px">Trust A</span>
+<a href="#" style="font-size: 15px">원문 보기</a>
+<span style="font-size: 15px; color: var(--muted)">확인할 것 3가지</span>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line)">
+<button style="flex: 1; min-height: 44px; font-size: 15px; font-weight: 500; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); border-radius: 10px; cursor: pointer">저장하기</button>
+<button style="flex: 1; min-height: 44px; font-size: 15px; font-weight: 500; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); border-radius: 10px; cursor: pointer">비교에 담기</button>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 168px; flex: 0 0 168px; position: relative; background: #D8E6DD">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="Urban Village 콘도 예시 이미지"><defs><linearGradient id="b2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9DDC4"/><stop offset="1" stop-color="#F3EEDD"/></linearGradient><pattern id="w2" width="14" height="12" patternUnits="userSpaceOnUse"><rect x="3" y="2" width="8" height="7" fill="#F2E9D2"/></pattern></defs><rect width="168" height="150" fill="url(#b2)"/><rect x="18" y="40" width="50" height="110" fill="#8C7F68"/><rect x="18" y="40" width="50" height="110" fill="url(#w2)"/><rect x="74" y="16" width="56" height="134" fill="#6E8478"/><rect x="74" y="16" width="56" height="134" fill="url(#w2)"/><rect x="134" y="70" width="26" height="80" fill="#8C7F68"/><rect y="140" width="168" height="10" fill="#6B7A62"/></svg>
+</div>
+<div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<b style="font-size: 18px; line-height: 1.4">Urban Village 고층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">$500</span><span style="font-size: 15px; color: var(--muted)">월 · 약 669,462원</span></div>
+<span style="font-size: 15px; color: var(--muted)">54㎡ · 침실 1 · 임대</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 2px">
+<span style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 700; padding: 3px 12px; border-radius: 14px">Trust A</span>
+<a href="#" style="font-size: 15px">원문 보기</a>
+<span style="font-size: 15px; color: var(--muted)">확인할 것 3가지</span>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line)">
+<button style="flex: 1; min-height: 44px; font-size: 15px; font-weight: 500; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); border-radius: 10px; cursor: pointer">저장하기</button>
+<button style="flex: 1; min-height: 44px; font-size: 15px; font-weight: 500; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); border-radius: 10px; cursor: pointer">비교에 담기</button>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<b style="font-size: 17px">BKK1 고층 1베드룸 콘도</b>
+<span style="font-size: 15px; color: var(--muted)">월 $700 · 56㎡ · 임대</span>
+</div>
+<a href="#" style="font-size: 15px; white-space: nowrap">자세히 보기</a>
+</div>
+
+<div style="display: flex; gap: 10px; margin-top: 4px">
+<button style="flex: 1.3; min-height: 54px; font-size: 17px; font-weight: 700; border: 0; background: var(--brand); color: #fff; border-radius: 12px; cursor: pointer">후보 비교하기</button>
+<button style="flex: 1; min-height: 54px; font-size: 17px; font-weight: 700; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); border-radius: 12px; cursor: pointer">상담 신청</button>
+</div>
+<span style="font-size: 14px; line-height: 1.6; color: var(--muted)">이 칸에는 GLI가 확인한 후보만 나와요. 왼쪽의 일반 정보는 참고용이에요.</span>
+
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1380}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>
