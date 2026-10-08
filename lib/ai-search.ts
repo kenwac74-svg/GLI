@@ -29,6 +29,7 @@ type AdvisorOptions = {
   safetyIdentifier?: string;
   context?: SearchCriteria | null;
   conversation?: AdvisorConversationTurn[];
+  focusAssetId?: string | null;
 };
 
 type ModelResult = {
@@ -70,6 +71,8 @@ const GLI_GEMINI_ADVISOR_INSTRUCTION = `당신은 해외 투자 자산 탐색 �
 19. 후속 질문은 한 번에 하나만 합니다. 여러 선택지를 제시해야 한다면 하나의 자연스러운 질문 안에 포함합니다.
 20. GLI가 제공한 후보가 없는 상태에서는 시장 평균이나 법률 정보를 기억에 의존해 단정하지 않습니다.
 
+21. focusAssetId가 있으면 사용자가 직전 목록에서 지칭한 후보입니다. 해당 자산을 중심으로 답하고 첫 번째 선택 자산으로 둡니다.
+
 말투는 정중하고 자연스러운 한국어를 사용합니다. 지나치게 광고하거나 투자를 재촉하지 않고, 고정된 문장이나 동일한 결론 형식을 반복하지 않습니다.`;
 const UNSUPPORTED_ASSURANCE =
   /보장(?:합니다|됩니다|된|할 수)|확정 수익|무조건|법적 검증 완료|권리 검증 완료|guaranteed returns?|legally verified/i;
@@ -79,7 +82,11 @@ export async function runAdvisorSearch(
   allAssets: Asset[],
   options: AdvisorOptions = {},
 ): Promise<AdvisorSearchResult> {
-  const baseline = searchAssets(query, allAssets, options.context);
+  const baseline = applyFocusAsset(
+    searchAssets(query, allAssets, options.context),
+    allAssets,
+    options.focusAssetId ?? null,
+  );
   const fallback = buildFallback(baseline);
   const provider = options.provider ?? process.env.LLM_PROVIDER ?? "disabled";
   const apiKey = options.apiKey ??
@@ -254,6 +261,7 @@ async function runGeminiAdvisor(
         input: JSON.stringify({
           userQuestion: query,
           recentConversation: (options.conversation ?? []).slice(-8),
+          focusAssetId: options.focusAssetId ?? null,
           parsedCriteria: baseline.criteria,
           exchangeRate: baseline.rate,
           candidates: candidates.map(toGroundedCandidate),
@@ -327,6 +335,32 @@ export function createSafetyIdentifier(value: string | null): string | undefined
   const clean = value?.split(",")[0]?.trim();
   if (!clean) return undefined;
   return createHash("sha256").update(`gli-search:${clean}`).digest("hex");
+}
+
+// A follow-up like "그중 첫 번째 후보" names one asset from the list the user was
+// just shown. Pin it first (even if criteria ranking dropped it) and answer from
+// stored strengths/checks only, so the reference never invents verification.
+function applyFocusAsset(
+  result: SearchResult,
+  allAssets: Asset[],
+  focusAssetId: string | null,
+): SearchResult {
+  if (!focusAssetId || result.criteria.unsupportedLocation) return result;
+  const asset = allAssets.find((candidate) => candidate.id === focusAssetId);
+  if (!asset) return result;
+  const existing = result.matches.find((match) => match.id === focusAssetId);
+  const focus = existing ?? { ...asset, matchReasons: asset.strengths.slice(0, 3) };
+  const strengths = asset.strengths.length
+    ? ` 강점은 ${asset.strengths.join(", ")}입니다.`
+    : "";
+  const checks = asset.checks.length
+    ? ` 계약 전 확인할 사항은 ${asset.checks.join(", ")}입니다.`
+    : "";
+  return {
+    ...result,
+    answer: `말씀하신 후보는 ${asset.district} · ${asset.title}입니다.${strengths}${checks}`,
+    matches: [focus, ...result.matches.filter((match) => match.id !== focusAssetId)],
+  };
 }
 
 function buildFallback(result: SearchResult): AdvisorSearchResult {

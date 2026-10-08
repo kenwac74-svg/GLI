@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>A 동작하는 시안</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<style>
+:root{--ground:#F2F5F4;--card:#FFFFFF;--ink:#12231F;--muted:#4F625D;--line:#D9E1DE;--brand:#0E5A49;--brand-soft:#DCEFE8;--info:#3B4E6B;--info-soft:#E8EDF5}
+body{margin:0;background:#F2F5F4;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#12231F}
+button{font-family:inherit}
+a{color:#0E5A49}a:hover{color:#08382C}
+.chip{font-size:16px;padding:11px 18px;min-height:46px;border-radius:24px;border:1.5px solid #0E5A49;background:#fff;color:#0E5A49;cursor:pointer}
+.chip:hover{background:#DCEFE8}
+.tag{display:inline-flex;align-items:center;gap:4px;background:#DCEFE8;color:#0E5A49;font-size:15px;font-weight:500;padding:7px 8px 7px 14px;border-radius:20px}
+.tag button{border:0;background:transparent;color:#0E5A49;cursor:pointer;width:28px;height:28px;font-size:18px;line-height:1}
+.gen{display:inline-flex;align-items:center;gap:6px;background:#E8EDF5;color:#3B4E6B;font-size:14px;font-weight:500;padding:3px 11px;border-radius:14px}
+.act{flex:1;min-height:44px;font-size:15px;font-weight:500;border-radius:10px;cursor:pointer;background:#fff}
+@keyframes gliSweep{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel{background:linear-gradient(90deg,#E4EAE7 25%,#F3F6F5 50%,#E4EAE7 75%);background-size:200% 100%;animation:gliSweep 1.6s linear infinite}
+@keyframes gliIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+.in{animation:gliIn .35s ease-out}
+@media (prefers-reduced-motion: reduce){.skel,.in{animation:none}}
+</style>
+</helmet>
+<div style="background: var(--ground); min-height: 100%; display: flex; flex-direction: column">
+
+<div style="background: var(--card); border-bottom: 1px solid var(--line); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; gap: 12px">
+<span style="font-size: 24px; font-weight: 700; color: var(--brand); letter-spacing: 0.02em">GLI</span>
+<span style="font-size: 15px; color: var(--muted)">AI 투자 탐색</span>
+</div>
+<div style="display: flex; gap: 24px; font-size: 15px; align-items: center">
+<a href="#" style="text-decoration: none; color: var(--ink)">자산 탐색</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">관심 자산</a>
+<button onClick="{{ restart }}" style="font-size: 14px; min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1.5px dashed var(--muted); background: transparent; color: var(--muted); cursor: pointer">시안 처음부터 다시</button>
+</div>
+</div>
+
+<div style="max-width: 1280px; width: 100%; box-sizing: border-box; padding: 24px 32px 56px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; position: relative">
+<span style="font-size: 15px; color: var(--muted); margin-right: 4px">이 조건으로 찾았어요</span>
+<sc-for list="{{ tags }}" as="item" hint-placeholder-count="3">
+<span class="tag">{{ item.label }}<button aria-label="{{ item.aria }}" onClick="{{ item.remove }}">×</button></span>
+</sc-for>
+<button onClick="{{ toggleAdd }}" style="font-size: 15px; font-weight: 500; min-height: 40px; padding: 0 14px; border-radius: 20px; border: 1.5px dashed var(--brand); background: transparent; color: var(--brand); cursor: pointer">+ 조건 추가</button>
+<sc-if value="{{ addOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0; top: 52px; z-index: 5; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px; display: flex; flex-direction: column; min-width: 260px; box-shadow: 0 8px 24px rgba(18,35,31,0.12)">
+<sc-for list="{{ addOptions }}" as="opt" hint-placeholder-count="3">
+<button onClick="{{ opt.add }}" style="text-align: left; font-size: 16px; min-height: 44px; padding: 0 14px; border: 0; background: transparent; color: var(--ink); cursor: pointer; border-radius: 8px">{{ opt.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+<div style="flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+
+<sc-if value="{{ showArchiveBar }}" hint-placeholder-val="{{ false }}">
+<div class="in" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 18px">
+<span style="font-size: 15px; color: var(--muted)">이전 탐색</span>
+<span style="font-size: 15px; font-weight: 500; flex: 1; min-width: 0">겨울 거주 · 예산 1억 원 · 동남아</span>
+<button onClick="{{ toggleArchive }}" style="min-height: 40px; padding: 0 16px; font-size: 15px; font-weight: 500; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); border-radius: 10px; cursor: pointer">{{ archiveLabel }}</button>
+</div>
+</sc-if>
+<sc-if value="{{ showFirst }}" hint-placeholder-val="{{ true }}">
+<div style="align-self: flex-end; max-width: 78%; background: var(--ink); color: #fff; font-size: 17px; line-height: 1.6; padding: 14px 20px; border-radius: 18px 18px 4px 18px">은퇴하고 겨울마다 지낼 따뜻한 곳 알아보고 있어요. 예산은 1억 정도예요</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--brand)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>GLI AI
+<sc-if value="{{ writing }}" hint-placeholder-val="{{ false }}"><span style="font-weight: 400; color: var(--muted)">정리하고 있어요…</span></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ f1 }}" hint-placeholder-val="{{ true }}">
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 25px; font-weight: 700; line-height: 1.5; color: var(--ink); text-wrap: balance">1억 원이면 바로 사기보다 겨울 한 철씩 살아 보며 정하는 쪽이 안전하고, 동남아 몇 곳은 매입도 가능한 범위예요.</p>
+<span class="gen" style="align-self: flex-start">일반 정보로 요약했어요</span>
+</div>
+<div class="in" style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{ topChips }}" as="c" hint-placeholder-count="3">
+<button class="chip" onClick="{{ c.ask }}">{{ c.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-for list="{{ turns }}" as="t" hint-placeholder-count="0">
+<div class="in" style="display: flex; flex-direction: column; gap: 14px">
+<sc-if value="{{ t.newTopic }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 12px; margin-top: 10px; color: var(--muted); font-size: 15px"><span style="flex: 1; height: 1px; background: var(--line)"></span><span>새 탐색을 시작했어요 · 위는 이전 대화예요</span><span style="flex: 1; height: 1px; background: var(--line)"></span></div>
+</sc-if>
+<div style="align-self: flex-end; max-width: 78%; background: var(--ink); color: #fff; font-size: 17px; line-height: 1.6; padding: 14px 20px; border-radius: 18px 18px 4px 18px">{{ t.user }}</div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 26px; display: flex; flex-direction: column; gap: 10px">
+<b style="font-size: 24px; line-height: 1.5; text-wrap: balance">{{ t.title }}</b>
+<span style="font-size: 16px; line-height: 1.7; color: var(--ink)">{{ t.text }}</span>
+<sc-if value="{{ t.income }}" hint-placeholder-val="{{ false }}">
+<div style="background: var(--ground); border-radius: 12px; padding: 14px 18px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 15px; color: var(--muted)">{{ t.targetLine }}</span>
+<span style="font-size: 15px; color: var(--muted)">관리비, 빈 기간, 세금을 빼고 손에 쥐는 금액은 표시 월세보다 적어요.</span>
+</div>
+</sc-if>
+<sc-if value="{{ t.general }}" hint-placeholder-val="{{ true }}"><span class="gen" style="align-self: flex-start">일반 정보</span></sc-if>
+</div>
+<sc-if value="{{ t.income }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">월세 수입을 노린다면 살펴볼 곳</h2>
+<span class="gen">일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="프놈펜을 그린 도시 이미지"><defs><linearGradient id="i1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3CE95"/><stop offset="1" stop-color="#FBEBD2"/></linearGradient></defs><rect width="240" height="140" fill="url(#i1)"/><circle cx="188" cy="38" r="17" fill="#EFA64F"/><path d="M0 96l22-8 20 8 24-14 22 10 26-18 24 12 28-10 26 12 24-6v64H0z" fill="#B9C9B2"/><rect x="34" y="62" width="22" height="58" fill="#7E9A8B"/><rect x="62" y="48" width="26" height="72" fill="#5F8174"/><rect x="94" y="70" width="18" height="50" fill="#7E9A8B"/><path d="M128 120V84l14-22 14 22v36z" fill="#C98B3A"/><rect x="164" y="58" width="24" height="62" fill="#5F8174"/><rect x="194" y="76" width="20" height="44" fill="#7E9A8B"/><rect y="118" width="240" height="22" fill="#2F6F66"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">캄보디아 프놈펜</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">수도라 임대 수요가 꾸준한 편이에요. 외국인 거주자와 주재원이 주된 수요예요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="시엠립을 그린 도시 이미지"><defs><linearGradient id="i2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F4D9B0"/><stop offset="1" stop-color="#F7EEDD"/></linearGradient></defs><rect width="240" height="140" fill="url(#i2)"/><circle cx="64" cy="40" r="15" fill="#EFA64F"/><path d="M0 104c40-16 80-14 120 0 40-14 80-12 120 2v34H0z" fill="#7FA47A"/><path d="M92 112V84h56v28z" fill="#B88A4A"/><path d="M104 84V66h32v18z" fill="#C99B55"/><path d="M114 66V50h12v16z" fill="#D8AE63"/><path d="M120 50V38" stroke="#D8AE63" stroke-width="3"/><rect x="40" y="96" width="24" height="26" fill="#4C7A57"/><rect x="176" y="92" width="28" height="30" fill="#4C7A57"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">캄보디아 시엠립</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">관광 수요에 따라 월세와 빈 기간이 계절마다 달라지는 편이에요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="다낭을 그린 도시 이미지"><defs><linearGradient id="i3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9DCEB"/><stop offset="1" stop-color="#EAF5F8"/></linearGradient></defs><rect width="240" height="140" fill="url(#i3)"/><circle cx="52" cy="36" r="14" fill="#F6E3A4"/><path d="M0 84c30-24 52-30 84-8 26-22 56-26 88-6 24-8 46-4 68 8v62H0z" fill="#8FB7A9"/><rect x="150" y="46" width="14" height="74" fill="#4B7F9A"/><rect x="170" y="60" width="18" height="60" fill="#6C9AB0"/><rect x="194" y="52" width="14" height="68" fill="#4B7F9A"/><rect x="112" y="70" width="16" height="50" fill="#6C9AB0"/><rect y="104" width="240" height="36" fill="#4D93B3"/><path d="M0 116c20-6 40-6 60 0s40 6 60 0 40-6 60 0 40 6 60 0v24H0z" fill="#79B5CF"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">베트남 다낭·나트랑</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">장기 거주와 관광 수요가 함께 있어 단기 임대가 많은 편이에요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+</div>
+<span style="font-size: 14px; color: var(--muted)">도시 이미지는 분위기를 그린 대표 이미지이며 실제 건물이나 방이 아니에요.</span>
+</div>
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">장기 임대 vs 단기 임대</h2>
+<span class="gen">일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">장기 임대</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">월세는 낮아도 수입이 안정적이고 관리 부담이 적어요.</span>
+</div>
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">단기 임대</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">월세는 높게 나올 수 있지만 빈 기간과 관리 부담이 커요.</span>
+</div>
+</div>
+<span style="font-size: 14px; color: var(--muted)">표시 월세와 실제 수입은 달라요. 제도와 가격은 바뀌므로 결정하기 전에 최신 정보를 확인하세요.</span>
+</div>
+</sc-if>
+<sc-if value="{{ t.hasChips }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{ t.chips }}" as="c" hint-placeholder-count="3">
+<button class="chip" onClick="{{ c.ask }}">{{ c.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-for>
+
+<sc-if value="{{ f2 }}" hint-placeholder-val="{{ true }}">
+<div class="in" style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">겨울에 지내기 좋은 곳</h2>
+<span class="gen"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="프놈펜을 그린 도시 이미지"><defs><linearGradient id="p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3CE95"/><stop offset="1" stop-color="#FBEBD2"/></linearGradient></defs><rect width="240" height="140" fill="url(#p1)"/><circle cx="188" cy="38" r="17" fill="#EFA64F"/><path d="M0 96l22-8 20 8 24-14 22 10 26-18 24 12 28-10 26 12 24-6v64H0z" fill="#B9C9B2"/><rect x="34" y="62" width="22" height="58" fill="#7E9A8B"/><rect x="62" y="48" width="26" height="72" fill="#5F8174"/><rect x="94" y="70" width="18" height="50" fill="#7E9A8B"/><path d="M128 120V84l14-22 14 22v36z" fill="#C98B3A"/><rect x="164" y="58" width="24" height="62" fill="#5F8174"/><rect x="194" y="76" width="20" height="44" fill="#7E9A8B"/><rect y="118" width="240" height="22" fill="#2F6F66"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">캄보디아 프놈펜</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">건기라 쾌적하고 생활비가 낮은 편. 외국인도 콘도 매입이 가능해요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="다낭을 그린 도시 이미지"><defs><linearGradient id="p2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B9DCEB"/><stop offset="1" stop-color="#EAF5F8"/></linearGradient></defs><rect width="240" height="140" fill="url(#p2)"/><circle cx="52" cy="36" r="14" fill="#F6E3A4"/><path d="M0 84c30-24 52-30 84-8 26-22 56-26 88-6 24-8 46-4 68 8v62H0z" fill="#8FB7A9"/><rect x="150" y="46" width="14" height="74" fill="#4B7F9A"/><rect x="170" y="60" width="18" height="60" fill="#6C9AB0"/><rect x="194" y="52" width="14" height="68" fill="#4B7F9A"/><rect x="112" y="70" width="16" height="50" fill="#6C9AB0"/><rect y="104" width="240" height="36" fill="#4D93B3"/><path d="M0 116c20-6 40-6 60 0s40 6 60 0 40-6 60 0 40 6 60 0v24H0z" fill="#79B5CF"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">베트남 다낭·나트랑</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">겨울에도 따뜻하고 한국인 생활권과 병원이 잘 갖춰진 편이에요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="position: relative; height: 138px">
+<svg viewBox="0 0 240 140" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="치앙마이를 그린 도시 이미지"><defs><linearGradient id="p3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D6E7C8"/><stop offset="1" stop-color="#F1F5E4"/></linearGradient></defs><rect width="240" height="140" fill="url(#p3)"/><path d="M0 74c40-30 70-34 104-10 34-24 80-26 136 6v70H0z" fill="#A5C29A"/><path d="M0 98c50-24 90-20 130 0 40-18 74-16 110 4v38H0z" fill="#6E9B6B"/><path d="M118 108V80l12-30 12 30v28z" fill="#D8A63F"/><path d="M130 50v-14" stroke="#D8A63F" stroke-width="3"/><rect x="56" y="92" width="26" height="30" fill="#4C7A57"/><rect x="170" y="88" width="30" height="34" fill="#4C7A57"/></svg>
+<span style="position: absolute; left: 10px; bottom: 10px; background: rgba(18,35,31,0.78); color: #fff; font-size: 14px; padding: 2px 9px; border-radius: 10px">도시 이미지</span>
+</div>
+<div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">태국 치앙마이·후아힌</b>
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">생활 인프라가 안정적이에요. 콘도 매입은 외국인 비율 제한이 있어요.</span>
+<a href="#" style="font-size: 15px">출처 보기</a>
+</div>
+</div>
+
+</div>
+<span style="font-size: 14px; color: var(--muted)">도시 이미지는 분위기를 그린 대표 이미지이며 실제 건물이나 방이 아니에요.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ f3 }}" hint-placeholder-val="{{ true }}">
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">살까, 한 철 빌릴까</h2>
+<span class="gen">일반 정보</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">한 철 임대</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">부담이 적고 되돌리기 쉬워요. 한 번 살아 보고 결정할 수 있어요.</span>
+</div>
+<div style="background: var(--ground); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+<b style="font-size: 17px">매입</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">비워 두는 8개월의 관리비와 관리 대행, 되팔 때의 수월함을 따져 봐야 해요.</span>
+</div>
+</div>
+<span style="font-size: 14px; color: var(--muted)">제도와 가격은 바뀌므로 결정하기 전에 최신 정보를 확인하세요.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ s4 }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ hasMoreChips }}" hint-placeholder-val="{{ true }}">
+<div class="in" style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">더 물어보세요</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<sc-for list="{{ moreChips }}" as="c" hint-placeholder-count="3">
+<button class="chip" onClick="{{ c.ask }}">{{ c.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+<div style="display: flex; gap: 10px; align-items: stretch; background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 8px 8px 8px 20px">
+<label for="followP" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">이어서 질문하기</label>
+<input id="followP" type="text" value="{{ followText }}" onInput="{{ onFollowInput }}" onKeyDown="{{ onFollowKey }}" placeholder="이어서 질문하세요" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 17px; color: var(--ink); background: transparent">
+<button onClick="{{ sendFollow }}" style="font-size: 16px; font-weight: 700; min-height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--brand); color: #fff; cursor: pointer">보내기</button>
+</div>
+</sc-if>
+
+</div>
+
+<div style="flex: 1 1 440px; min-width: 0; position: sticky; top: 16px; align-self: flex-start; border: 2px solid var(--brand); border-radius: 18px; overflow: hidden; background: var(--card)">
+
+<div style="background: var(--brand); color: #fff; padding: 16px 22px; display: flex; align-items: center; gap: 14px">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M8.7 12.2l2.4 2.4 4.4-4.8"/></svg>
+<div style="display: flex; flex-direction: column">
+<b style="font-size: 20px">GLI가 확인한 후보</b>
+<span style="font-size: 15px; opacity: 0.92">{{ panelSub }}</span>
+</div>
+</div>
+
+<div style="padding: 16px; display: flex; flex-direction: column; gap: 14px; background: #F7FAF9">
+
+<sc-if value="{{ panelLoading }}" hint-placeholder-val="{{ false }}">
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex"><div class="skel" style="width: 168px; flex: 0 0 168px; min-height: 150px"></div><div style="padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1"><div class="skel" style="height: 20px; width: 80%; border-radius: 6px"></div><div class="skel" style="height: 30px; width: 40%; border-radius: 6px"></div><div class="skel" style="height: 14px; width: 60%; border-radius: 6px"></div></div></div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex"><div class="skel" style="width: 168px; flex: 0 0 168px; min-height: 150px"></div><div style="padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1"><div class="skel" style="height: 20px; width: 72%; border-radius: 6px"></div><div class="skel" style="height: 30px; width: 36%; border-radius: 6px"></div><div class="skel" style="height: 14px; width: 56%; border-radius: 6px"></div></div></div>
+</sc-if>
+
+<sc-if value="{{ showBuyNone }}" hint-placeholder-val="{{ false }}">
+<div class="in" style="background: var(--card); border: 1px dashed var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<b style="font-size: 18px">지금은 보여 드릴 매입 후보가 없어요</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">1억 원 안에서 GLI가 확인한 매입 후보가 아직 없어요. 예산이나 지역을 바꾸면 달라질 수 있어요. 아래는 지금 확인된 임대 후보예요. 살아 본 뒤에 매입을 정하는 분도 많아요.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{ showUnsup }}" hint-placeholder-val="{{ false }}">
+<div class="in" style="background: var(--card); border: 1px dashed var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<b style="font-size: 18px">{{ unsupTitle }}</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">GLI가 확인한 후보는 지금 캄보디아, 베트남, 필리핀에 있어요. 왼쪽은 참고용 일반 정보이고, 다른 나라의 후보를 대신 보여 드리지는 않아요.</span>
+<button onClick="{{ backToFirst }}" style="align-self: flex-start; margin-top: 6px; min-height: 44px; padding: 0 18px; font-size: 15px; font-weight: 700; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); border-radius: 10px; cursor: pointer">캄보디아 후보 보기</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ showIncome }}" hint-placeholder-val="{{ false }}">
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<b style="font-size: 18px">{{ incomeTitle }}</b>
+<span style="font-size: 15px; line-height: 1.65; color: var(--muted)">GLI가 확인한 프놈펜 임대 후보의 월세와 비교했어요. 한 채로 목표를 채우기 어려우면 여러 채가 필요해요.</span>
+</div>
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="3">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; gap: 10px; font-size: 15px"><span style="font-weight: 500">{{ b.name }}</span><span style="color: var(--muted)">{{ b.rent }} · {{ b.need }}</span></div>
+<div style="height: 14px; background: #E4EAE7; border-radius: 7px; overflow: hidden"><div style="height: 14px; background: var(--brand); border-radius: 7px; width: {{ b.w }}"></div></div>
+</div>
+</sc-for>
+<span style="font-size: 14px; line-height: 1.6; color: var(--muted)">막대 끝이 목표 월세 수입이에요. 표시 월세 기준이며 관리비, 빈 기간, 세금은 빠져 있어요.</span>
+<button onClick="{{ toggleIncomeCards }}" style="align-self: flex-start; min-height: 44px; padding: 0 18px; font-size: 15px; font-weight: 700; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); border-radius: 10px; cursor: pointer">{{ incomeBtn }}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ showCands }}" hint-placeholder-val="{{ true }}">
+
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 168px; flex: 0 0 168px; position: relative; background: #CFE3DC">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="Boeng Trabek 콘도 예시 이미지"><defs><linearGradient id="q1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE3EC"/><stop offset="1" stop-color="#E8F1EE"/></linearGradient><pattern id="r1" width="12" height="14" patternUnits="userSpaceOnUse"><rect x="2" y="3" width="7" height="8" fill="#DDEBF1"/></pattern></defs><rect width="168" height="150" fill="url(#q1)"/><rect x="40" y="22" width="64" height="128" fill="#6F8F86"/><rect x="40" y="22" width="64" height="128" fill="url(#r1)"/><rect x="108" y="58" width="36" height="92" fill="#8AA79D"/><rect x="108" y="58" width="36" height="92" fill="url(#r1)"/><rect y="140" width="168" height="10" fill="#5C7B70"/></svg>
+</div>
+<div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<b style="font-size: 18px; line-height: 1.4">Boeng Trabek 15층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">$380</span><span style="font-size: 15px; color: var(--muted)">월 · 약 508,791원</span></div>
+<span style="font-size: 15px; color: var(--muted)">50㎡ · 침실 1 · 임대</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 700; padding: 3px 12px; border-radius: 14px">Trust A</span>
+<a href="#" style="font-size: 15px">원문 보기</a>
+<span style="font-size: 15px; color: var(--muted)">확인할 것 3가지</span>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line)">
+<button class="act" onClick="{{ saveOne }}" style="border: 1.5px solid var(--line); color: var(--ink)">저장하기</button>
+<button class="act" onClick="{{ compareOne }}" style="border: 1.5px solid var(--brand); color: var(--brand)">비교에 담기</button>
+</div>
+</div>
+
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 168px; flex: 0 0 168px; position: relative; background: #D8E6DD">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="Urban Village 콘도 예시 이미지"><defs><linearGradient id="q2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9DDC4"/><stop offset="1" stop-color="#F3EEDD"/></linearGradient><pattern id="r2" width="14" height="12" patternUnits="userSpaceOnUse"><rect x="3" y="2" width="8" height="7" fill="#F2E9D2"/></pattern></defs><rect width="168" height="150" fill="url(#q2)"/><rect x="18" y="40" width="50" height="110" fill="#8C7F68"/><rect x="18" y="40" width="50" height="110" fill="url(#r2)"/><rect x="74" y="16" width="56" height="134" fill="#6E8478"/><rect x="74" y="16" width="56" height="134" fill="url(#r2)"/><rect x="134" y="70" width="26" height="80" fill="#8C7F68"/><rect y="140" width="168" height="10" fill="#6B7A62"/></svg>
+</div>
+<div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<b style="font-size: 18px; line-height: 1.4">Urban Village 고층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">$500</span><span style="font-size: 15px; color: var(--muted)">월 · 약 669,462원</span></div>
+<span style="font-size: 15px; color: var(--muted)">54㎡ · 침실 1 · 임대</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 700; padding: 3px 12px; border-radius: 14px">Trust A</span>
+<a href="#" style="font-size: 15px">원문 보기</a>
+<span style="font-size: 15px; color: var(--muted)">확인할 것 3가지</span>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line)">
+<button class="act" onClick="{{ saveOne }}" style="border: 1.5px solid var(--line); color: var(--ink)">저장하기</button>
+<button class="act" onClick="{{ compareOne }}" style="border: 1.5px solid var(--brand); color: var(--brand)">비교에 담기</button>
+</div>
+</div>
+
+<div class="in" style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+<div style="display: flex">
+<div style="width: 168px; flex: 0 0 168px; position: relative; background: #D3E0E4">
+<svg viewBox="0 0 168 150" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" style="display: block" role="img" aria-label="BKK1 콘도 예시 이미지"><defs><linearGradient id="q3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C6D9E6"/><stop offset="1" stop-color="#E6EEF0"/></linearGradient><pattern id="r3" width="12" height="14" patternUnits="userSpaceOnUse"><rect x="2" y="3" width="7" height="9" fill="#E3EEF4"/></pattern></defs><rect width="168" height="150" fill="url(#q3)"/><rect x="52" y="8" width="42" height="142" fill="#5F7C8C"/><rect x="52" y="8" width="42" height="142" fill="url(#r3)"/><rect x="98" y="40" width="40" height="110" fill="#7A97A5"/><rect x="98" y="40" width="40" height="110" fill="url(#r3)"/><rect x="18" y="80" width="30" height="70" fill="#7A97A5"/><rect y="140" width="168" height="10" fill="#52707F"/></svg>
+</div>
+<div style="padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<b style="font-size: 18px; line-height: 1.4">BKK1 고층 1베드룸 콘도</b>
+<div style="display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Schibsted Grotesk', 'Noto Sans KR', sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.02em">$700</span><span style="font-size: 15px; color: var(--muted)">월</span></div>
+<span style="font-size: 15px; color: var(--muted)">56㎡ · 침실 1 · 임대</span>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="background: #EEF1F0; color: var(--muted); font-size: 15px; font-weight: 500; padding: 3px 12px; border-radius: 14px">등급 확인 중</span>
+<a href="#" style="font-size: 15px">원문 보기</a>
+</div>
+</div>
+</div>
+<div style="display: flex; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line)">
+<button class="act" onClick="{{ saveOne }}" style="border: 1.5px solid var(--line); color: var(--ink)">저장하기</button>
+<button class="act" onClick="{{ compareOne }}" style="border: 1.5px solid var(--brand); color: var(--brand)">비교에 담기</button>
+</div>
+</div>
+
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+<button onClick="{{ compareAll }}" style="flex: 1.3; min-width: 150px; min-height: 54px; font-size: 17px; font-weight: 700; border: 0; background: var(--brand); color: #fff; border-radius: 12px; cursor: pointer">후보 비교하기</button>
+<button onClick="{{ consult }}" style="flex: 1; min-width: 120px; min-height: 54px; font-size: 17px; font-weight: 700; border: 1.5px solid var(--brand); background: var(--card); color: var(--brand); border-radius: 12px; cursor: pointer">상담 신청</button>
+</div>
+<sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div class="in" role="status" style="background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 10px 14px; border-radius: 10px">{{ toast }}</div></sc-if>
+
+</sc-if>
+
+<span style="font-size: 14px; line-height: 1.6; color: var(--muted)">이 칸에는 GLI가 확인한 후보만 나와요. 왼쪽의 일반 정보는 참고용이에요.</span>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.timers = [];
+    this.state = this.fresh();
+    ['restart','toggleAdd','onFollowInput','onFollowKey','sendFollow','saveOne','compareOne','compareAll','consult','backToFirst','toggleIncomeCards','toggleArchive'].forEach((m) => { this[m] = this[m].bind(this); });
+  }
+  fresh() {
+    return { shown: 0, tags: ['겨울 거주', '예산 1억 원', '동남아'], mode: null, turns: [], asked: [], addOpen: false, loading: false, followText: '', toast: '', scene: 'first', targetUsd: 0, unsup: '', incomeCards: false, thread: 0, archiveOpen: false };
+  }
+  componentDidMount() { this.play(); }
+  componentWillUnmount() { this.timers.forEach(clearTimeout); }
+  play() {
+    this.timers.forEach(clearTimeout);
+    this.timers = [600, 1400, 2400, 3200, 4000].map((ms, i) => setTimeout(() => this.setState({ shown: i + 1 }), ms));
+  }
+  restart() { this.timers.forEach(clearTimeout); this.setState(this.fresh()); this.play(); }
+  flash() {
+    this.setState({ loading: true });
+    this.timers.push(setTimeout(() => this.setState({ loading: false }), 500));
+  }
+  say(msg) {
+    this.setState({ toast: msg });
+    this.timers.push(setTimeout(() => this.setState({ toast: '' }), 2200));
+  }
+  chipData() {
+    return [
+      { id: 'hosp', top: true, q: '병원은 가까운가요?', title: '병원은 도시마다 달라요', text: '프놈펜, 다낭, 치앙마이처럼 큰 도시에는 외국인이 이용하는 병원이 비교적 갖춰진 편이에요. 후보를 정한 뒤에 그 동네에서 가장 가까운 병원과 응급 상황 대처를 꼭 확인하세요.', general: true },
+      { id: 'buy', top: true, q: '매입으로 찾아 주세요', title: '매입으로 바꿔 다시 찾았어요', text: '1억 원 안에서 GLI가 확인한 매입 후보는 아직 없어요. 오른쪽에서 지금 확인된 임대 후보를 먼저 볼 수 있어요.', general: false, mode: 'buy', addTag: '매입', dropTag: '한 철 임대' },
+      { id: 'rent', top: true, q: '한두 해 살아 보고 정할래요', title: '한 철 임대로 먼저 살아 보세요', text: '살아 본 뒤에 매입을 정하면 실패 부담이 줄어요. 오른쪽에 지금 GLI가 확인한 프놈펜 임대 후보가 있어요.', general: false, mode: 'rent', addTag: '한 철 임대', dropTag: '매입' },
+      { id: 'visa', top: false, q: '비자와 체류 기간은요?', title: '체류 방법은 나라마다 달라요', text: '나라마다 겨울 체류에 맞는 비자와 머물 수 있는 기간이 달라요. 가려는 나라가 정해지면 그 나라의 최신 기준을 확인하세요.', general: true },
+      { id: 'cost', top: false, q: '사려면 비용이 얼마나 더 드나요?', title: '집값 외 비용도 계산하세요', text: '집값 말고도 취득 비용, 가구 비용, 해마다 드는 유지비가 있어요. 나라와 집 유형에 따라 크게 달라서 후보를 정한 뒤 계산하는 것이 좋아요.', general: true },
+      { id: 'manage', top: false, q: '비워 두는 동안 누가 관리하나요?', title: '관리 방법을 미리 정하세요', text: '비워 두는 동안은 관리 대행이나 단지 관리 서비스를 쓰는 경우가 많아요. 비용과 범위는 후보마다 달라서 확인이 필요해요.', general: true }
+    ];
+  }
+  askChip(c) {
+    const turns = this.state.turns.concat([{ user: c.q, title: c.title, text: c.text, general: c.general, thread: this.state.thread }]);
+    let tags = this.state.tags.slice();
+    let mode = this.state.mode;
+    if (c.addTag) {
+      tags = tags.filter((t) => t !== c.dropTag);
+      if (tags.indexOf(c.addTag) < 0) tags.push(c.addTag);
+      mode = c.mode;
+      this.flash();
+    }
+    this.setState({ turns, tags, mode, asked: this.state.asked.concat([c.id]) });
+  }
+  removeTag(t) {
+    const tags = this.state.tags.filter((x) => x !== t);
+    const mode = t === '매입' ? null : this.state.mode;
+    this.setState({ tags, mode });
+    this.flash();
+  }
+  addTag(label) {
+    let tags = this.state.tags.slice();
+    if (label === '예산 1억 3천만 원') tags = tags.filter((t) => t !== '예산 1억 원');
+    if (tags.indexOf(label) < 0) tags.push(label);
+    this.setState({ tags, addOpen: false });
+    this.flash();
+  }
+  toggleAdd() { this.setState({ addOpen: !this.state.addOpen }); }
+  onFollowInput(e) { this.setState({ followText: e.target.value }); }
+  onFollowKey(e) { if (e.key === 'Enter') this.sendFollow(); }
+  sendFollow() {
+    const q = (this.state.followText || '').trim();
+    if (!q) return;
+    const unsup = q.match(/방콕|태국|일본|라오스|미얀마|인도네시아|발리|싱가포르/);
+    const money = q.match(/(\d[\d,.]*)\s*만\s*원?/);
+    const income = money && /월세|임대|수익/.test(q) && /(나올|받|수익|매물|사서|투자)/.test(q);
+    if (unsup) {
+      const label = unsup[0];
+      this.setState({
+        scene: 'unsup', unsup: label, mode: null, thread: this.state.thread + 1, archiveOpen: false,
+        tags: [label], followText: '',
+        turns: this.state.turns.concat([{ thread: this.state.thread + 1, user: q, newTopic: true, title: label + '은 아는 만큼만 알려 드릴게요', text: label + '은 인기 있는 지역이지만, GLI가 확인한 후보는 아직 없어요. 지역의 일반적인 분위기와 생활 여건은 참고용으로 말씀드릴 수 있고, 가격과 매물은 확인된 것만 보여 드려요.', general: true, chipLabels: ['캄보디아로 찾아 주세요', '베트남으로 찾아 주세요'] }])
+      });
+      this.flash();
+      return;
+    }
+    if (income) {
+      const man = Number(money[1].replace(/,/g, ''));
+      const usd = Math.round(man * 10000 / 1380);
+      this.setState({
+        scene: 'income', targetUsd: usd, mode: null, incomeCards: false, thread: this.state.thread + 1, archiveOpen: false,
+        tags: ['매입 후 임대', '월 임대수익 ' + man + '만 원', '동남아'], followText: '',
+        turns: this.state.turns.concat([{ thread: this.state.thread + 1, user: q, newTopic: true, income: true, title: '월 ' + man + '만 원이 나오려면 이 정도 월세가 필요해요', text: '월세 수입이 목적이라면 집값과 월세, 비어 있는 기간, 관리비를 함께 봐야 해요. 표시된 월세만 보고 정하면 실제 수입이 기대보다 적을 수 있어요.', targetLine: '목표 월세 수입 약 $' + usd.toLocaleString('en-US') + ' (' + man + '만 원, 참고 환율)', general: true, chipLabels: ['임대 중인 매물만 보고 싶어요', '프놈펜으로 좁혀 주세요', '예산부터 말씀드릴게요'] }])
+      });
+      this.flash();
+      return;
+    }
+    this.setState({
+      turns: this.state.turns.concat([{ thread: this.state.thread, user: q, title: '질문을 받았어요', text: '이 시안에서는 입력하신 질문이 이렇게 대화에 이어져요. 실제 서비스에서는 여기에 답이 위에서부터 흐르듯 나오고, 오른쪽 후보도 그에 맞게 바뀌어요.', general: false }]),
+      followText: ''
+    });
+  }
+  askGeneric(label) {
+    this.setState({ turns: this.state.turns.concat([{ thread: this.state.thread, user: label, title: '이어서 찾아볼게요', text: '이 시안에서는 버튼을 누르면 이렇게 대화가 이어져요. 실제 서비스에서는 여기에 답이 나오고 오른쪽 후보도 바뀌어요.', general: false }]) });
+  }
+  backToFirst() {
+    this.setState({ scene: 'first', unsup: '', mode: null, tags: ['캄보디아', '프놈펜 임대'] });
+    this.flash();
+  }
+  toggleArchive() { this.setState({ archiveOpen: !this.state.archiveOpen }); }
+  toggleIncomeCards() { this.setState({ incomeCards: !this.state.incomeCards }); }
+  saveOne() { this.say('관심 자산에 저장했어요 (시안)'); }
+  compareOne() { this.say('비교 목록에 담았어요 (시안)'); }
+  compareAll() { this.say('후보 3곳을 나란히 비교해요 (시안)'); }
+  consult() { this.say('상담 신청 화면으로 이동해요 (시안)'); }
+  renderVals() {
+    const s = this.state;
+    const chips = this.chipData();
+    const open = chips.filter((c) => s.asked.indexOf(c.id) < 0);
+    const mk = (c) => ({ label: c.q, ask: () => this.askChip(c) });
+    const topChips = open.filter((c) => c.top).map(mk);
+    const moreChips = open.filter((c) => !c.top).map(mk);
+    const options = ['침실 1개', '병원 가까운 곳', '예산 1억 3천만 원'].filter((o) => s.tags.indexOf(o) < 0);
+    const ready = s.shown >= 5;
+    const panelLoading = !ready || s.loading;
+    const usd = s.targetUsd || 0;
+    const rents = [['Boeng Trabek 15층 1베드룸', 380], ['Urban Village 고층 1베드룸', 500], ['BKK1 고층 1베드룸', 700]];
+    const bars = rents.map((r) => {
+      const pct = usd ? Math.min(100, Math.round((r[1] / usd) * 100)) : 0;
+      const n = usd ? Math.ceil(usd / r[1]) : 1;
+      return { name: r[0], rent: '월 $' + r[1], need: n <= 1 ? '한 채로 충분' : n + '채 필요', w: pct + '%' };
+    });
+    const cur = s.thread;
+    const showFirst = cur === 0 || s.archiveOpen;
+    const turnsOut = s.turns.filter((t) => t.thread === cur || s.archiveOpen).map((t) => ({
+      user: t.user, title: t.title, text: t.text, general: t.general, newTopic: !!t.newTopic, income: !!t.income, targetLine: t.targetLine || '',
+      hasChips: !!(t.chipLabels && t.chipLabels.length),
+      chips: (t.chipLabels || []).map((l) => ({ label: l, ask: () => this.askGeneric(l) }))
+    }));
+    const scene = s.scene;
+    return {
+      bars,
+      incomeTitle: '월 약 $' + usd.toLocaleString('en-US') + '이 되려면',
+      incomeBtn: s.incomeCards ? '후보 카드 접기' : '이 임대 후보 3곳 자세히 보기',
+      unsupTitle: (s.unsup || '이 지역') + '은 아직 GLI가 확인한 후보가 없어요',
+      tags: s.tags.map((t) => ({ label: t, aria: t + ' 조건 빼기', remove: () => this.removeTag(t) })),
+      addOptions: options.map((o) => ({ label: o, add: () => this.addTag(o) })),
+      addOpen: s.addOpen,
+      turns: turnsOut,
+      topChips, moreChips,
+      hasMoreChips: moreChips.length > 0 && cur === 0,
+      f1: s.shown >= 1 && showFirst, f2: s.shown >= 2 && showFirst, f3: s.shown >= 3 && showFirst, s4: s.shown >= 4,
+      showFirst, showArchiveBar: cur > 0, archiveLabel: s.archiveOpen ? '이전 탐색 접기' : '이전 탐색 보기',
+      writing: s.shown < 4,
+      followText: s.followText,
+      toast: s.toast,
+      panelLoading,
+      showBuyNone: ready && !s.loading && scene === 'first' && s.mode === 'buy',
+      showUnsup: ready && !s.loading && scene === 'unsup',
+      showIncome: ready && !s.loading && scene === 'income',
+      showCands: ready && !s.loading && (scene === 'first' || (scene === 'income' && s.incomeCards)),
+      panelSub: !ready || s.loading ? '조건에 맞는 후보를 찾고 있어요' : (scene === 'income' ? '월세 수입 목적 · 확인된 임대 수준과 비교' : scene === 'unsup' ? '이 지역은 아직 확인된 후보가 없어요' : s.mode === 'buy' ? '매입 후보는 아직 없어요 · 임대 3곳은 확인됨' : '프놈펜 임대 · 한 철 살아 보기에 맞는 3곳')
+    };
+  }
+}
+</script>
+</body>
+</html>

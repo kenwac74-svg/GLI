@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>A 처리 중</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Schibsted+Grotesk:wght@600;700&display=swap">
+<style>
+:root{--ground:#F2F5F4;--card:#FFFFFF;--ink:#12231F;--muted:#4F625D;--line:#D9E1DE;--brand:#0E5A49;--brand-soft:#DCEFE8;--info:#3B4E6B;--info-soft:#E8EDF5;--shine:#E7EDEA}
+body{margin:0;background:#F2F5F4;font-family:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:#12231F}
+button{font-family:inherit}
+a{color:#0E5A49}a:hover{color:#08382C}
+@keyframes gliSweep{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.gli-skel{background:linear-gradient(90deg,#E4EAE7 25%,#F3F6F5 50%,#E4EAE7 75%);background-size:200% 100%;animation:gliSweep 1.6s linear infinite}
+@keyframes gliBlink{0%,100%{opacity:.25}50%{opacity:1}}
+.gli-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#0E5A49;animation:gliBlink 1.2s infinite}
+@media (prefers-reduced-motion: reduce){.gli-skel,.gli-dot{animation:none}}
+</style>
+</helmet>
+<div style="background: var(--ground); min-height: 100%; display: flex; flex-direction: column">
+
+<div style="background: var(--card); border-bottom: 1px solid var(--line); padding: 0 32px; height: 64px; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box">
+<div style="display: flex; align-items: baseline; gap: 12px">
+<span style="font-size: 24px; font-weight: 700; color: var(--brand); letter-spacing: 0.02em">GLI</span>
+<span style="font-size: 15px; color: var(--muted)">AI 투자 탐색</span>
+</div>
+<div style="display: flex; gap: 28px; font-size: 15px">
+<a href="#" style="text-decoration: none; color: var(--ink)">자산 탐색</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">관심 자산</a>
+<a href="#" style="text-decoration: none; color: var(--ink)">로그인</a>
+</div>
+</div>
+
+<div style="max-width: 1280px; width: 100%; box-sizing: border-box; padding: 24px 32px 48px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<span style="font-size: 15px; color: var(--muted); margin-right: 4px">이 조건으로 찾고 있어요</span>
+<span style="display: inline-flex; align-items: center; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 14px; border-radius: 20px">겨울 거주</span>
+<span style="display: inline-flex; align-items: center; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 14px; border-radius: 20px">예산 1억 원</span>
+<span style="display: inline-flex; align-items: center; background: var(--brand-soft); color: var(--brand); font-size: 15px; font-weight: 500; padding: 7px 14px; border-radius: 20px">동남아</span>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+
+<div style="flex: 1 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+
+<div style="align-self: flex-end; max-width: 78%; background: var(--ink); color: #fff; font-size: 17px; line-height: 1.6; padding: 14px 20px; border-radius: 18px 18px 4px 18px">은퇴하고 겨울마다 지낼 따뜻한 곳 알아보고 있어요. 예산은 1억 정도예요</div>
+
+<div style="display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--brand)">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></svg>GLI AI
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; display: flex; flex-direction: column; gap: 12px">
+<p style="margin: 0; font-size: 25px; font-weight: 700; line-height: 1.5; color: var(--ink); text-wrap: balance">1억 원이면 바로 사기보다 겨울 한 철씩 살아 보며 정하는 쪽이 안전하고, 동남아 몇 곳은 매입도 가능한 범위예요.</p>
+<span style="font-size: 15px; color: var(--muted); display: flex; align-items: center; gap: 8px"><span class="gli-dot"></span>지내기 좋은 곳과 비교를 정리하고 있어요</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--muted)">겨울에 지내기 좋은 곳</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px">
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden"><div class="gli-skel" style="height: 138px"></div><div style="padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px"><div class="gli-skel" style="height: 18px; width: 60%; border-radius: 6px"></div><div class="gli-skel" style="height: 14px; width: 92%; border-radius: 6px"></div><div class="gli-skel" style="height: 14px; width: 70%; border-radius: 6px"></div></div></div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden"><div class="gli-skel" style="height: 138px"></div><div style="padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px"><div class="gli-skel" style="height: 18px; width: 52%; border-radius: 6px"></div><div class="gli-skel" style="height: 14px; width: 88%; border-radius: 6px"></div><div class="gli-skel" style="height: 14px; width: 64%; border-radius: 6px"></div></div></div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden"><div class="gli-skel" style="height: 138px"></div><div style="padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 10px"><div class="gli-skel" style="height: 18px; width: 58%; border-radius: 6px"></div><div class="gli-skel" style="height: 14px; width: 90%; border-radius: 6px"></div><div class="gli-skel" style="height: 14px; width: 66%; border-radius: 6px"></div></div></div>
+</div>
+</div>
+
+<div style="display: flex; gap: 10px; align-items: stretch; background: var(--card); border: 1.5px solid var(--line); border-radius: 16px; padding: 8px 8px 8px 20px; opacity: 0.7">
+<label for="followL" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">이어서 질문하기</label>
+<input id="followL" type="text" placeholder="답을 정리하는 동안 다음 질문을 미리 적어 둘 수 있어요" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 17px; color: var(--ink); background: transparent">
+<button style="font-size: 16px; font-weight: 700; min-height: 48px; padding: 0 24px; border: 0; border-radius: 12px; background: var(--muted); color: #fff">보내기</button>
+</div>
+
+</div>
+
+<div style="flex: 1 1 440px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+
+<div style="background: var(--brand); color: #fff; border-radius: 16px; padding: 18px 22px; display: flex; align-items: center; gap: 14px">
+<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M8.7 12.2l2.4 2.4 4.4-4.8"/></svg>
+<div style="display: flex; flex-direction: column">
+<b style="font-size: 20px">GLI가 확인한 후보</b>
+<span style="font-size: 15px; opacity: 0.92">조건에 맞는 후보를 찾고 있어요</span>
+</div>
+</div>
+
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex">
+<div class="gli-skel" style="width: 168px; flex: 0 0 168px; min-height: 160px"></div>
+<div style="padding: 18px; display: flex; flex-direction: column; gap: 12px; flex: 1">
+<div class="gli-skel" style="height: 20px; width: 80%; border-radius: 6px"></div>
+<div class="gli-skel" style="height: 30px; width: 40%; border-radius: 6px"></div>
+<div class="gli-skel" style="height: 14px; width: 60%; border-radius: 6px"></div>
+</div>
+</div>
+<div style="background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; display: flex">
+<div class="gli-skel" style="width: 168px; flex: 0 0 168px; min-height: 160px"></div>
+<div style="padding: 18px; display: flex; flex-direction: column; gap: 12px; flex: 1">
+<div class="gli-skel" style="height: 20px; width: 72%; border-radius: 6px"></div>
+<div class="gli-skel" style="height: 30px; width: 36%; border-radius: 6px"></div>
+<div class="gli-skel" style="height: 14px; width: 56%; border-radius: 6px"></div>
+</div>
+</div>
+
+<span style="font-size: 15px; line-height: 1.6; color: var(--muted)">확인된 후보가 준비되는 대로 이 칸에 하나씩 나타나요.</span>
+
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

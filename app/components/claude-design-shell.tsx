@@ -588,10 +588,11 @@ export function ClaudeDesignShell({
         role: turn.role === "나" ? "user" : "assistant",
         text: turn.text,
       }));
+      const previousAssetIds = previousResult?.matches.slice(0, 20).map((asset) => asset.id) ?? [];
       const response = await fetch("/api/search", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ query: value, context, conversation }),
+        body: JSON.stringify({ query: value, context, conversation, previousAssetIds }),
       });
       if (!response.ok) throw new Error("search_failed");
       const result = (await response.json()) as SearchPayload;

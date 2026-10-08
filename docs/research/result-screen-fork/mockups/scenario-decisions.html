@@ -1,0 +1,383 @@
+<title>비교 시나리오 결정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 상단 고정 요약 막대 아래에 시나리오 → 비교 대상 → 채점 비중이 한 열로 이어진다. */
+:root {
+  --bg: #f1f5f5;
+  --surface: #ffffff;
+  --ink: #14282b;
+  --muted: #566b6e;
+  --line: #d3dddd;
+  --accent: #0e6f6a;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefed;
+  --warn: #8f5500;
+  --warn-soft: #faedd3;
+  --drop: #8a3b3b;
+  --drop-soft: #f5e3e2;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1819; --surface: #162224; --ink: #e4eeee; --muted: #93a8aa; --line: #2a3c3e;
+    --accent: #5cc7bf; --accent-ink: #062321; --accent-soft: #1b3b39;
+    --warn: #e8b35b; --warn-soft: #3a2e14; --drop: #e39b98; --drop-soft: #3a2222;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1819; --surface: #162224; --ink: #e4eeee; --muted: #93a8aa; --line: #2a3c3e;
+  --accent: #5cc7bf; --accent-ink: #062321; --accent-soft: #1b3b39;
+  --warn: #e8b35b; --warn-soft: #3a2e14; --drop: #e39b98; --drop-soft: #3a2222;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55; padding-inline: 16px; padding-block: 0 64px; }
+.wrap { max-width: 880px; margin-inline: auto; }
+h1 { font-size: 28px; line-height: 1.25; margin: 28px 0 6px; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 19px; margin: 40px 0 4px; font-weight: 600; }
+h3 { font-size: 13px; letter-spacing: .06em; color: var(--muted); font-weight: 600; margin: 26px 0 10px; }
+.lede { color: var(--muted); margin: 0; max-width: 62ch; }
+.sub { color: var(--muted); margin: 0 0 14px; max-width: 62ch; font-size: 14px; }
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); margin-inline: -16px; padding: 10px 16px; }
+.bar-in { max-width: 880px; margin-inline: auto; display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; }
+.stat { font-variant-numeric: tabular-nums; font-size: 14px; }
+.stat b { font-weight: 600; }
+.save { margin-left: auto; font-size: 13px; color: var(--muted); }
+.save.err { color: var(--drop); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; display: grid; gap: 10px; }
+.card.dropped { background: transparent; border-style: dashed; }
+.card.dropped .q, .card.dropped .meas { opacity: .55; }
+.top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.id { font-family: var(--font-mono); font-weight: 500; font-size: 13px; background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 4px; }
+.badge { font-size: 12px; padding: 1px 8px; border-radius: 10px; background: var(--warn-soft); color: var(--warn); }
+.seg { margin-left: auto; display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; font-size: 13px; padding: 5px 14px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"].keep { background: var(--accent); color: var(--accent-ink); }
+.seg button[aria-pressed="true"].drop { background: var(--drop); color: var(--surface); }
+textarea, input[type="text"], select { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+textarea { resize: vertical; min-height: 44px; }
+textarea:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.good { font-size: 13.5px; color: var(--muted); margin: 0; }
+.good b { color: var(--ink); font-weight: 500; }
+.meas { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; padding: 8px 10px; background: var(--bg); border-radius: 6px; }
+.meas .k { font-family: var(--font-mono); font-size: 12.5px; }
+.meas .obs { flex-basis: 100%; color: var(--muted); }
+.row { display: flex; gap: 8px; align-items: center; }
+.link { font: inherit; font-size: 13px; background: none; border: 0; color: var(--accent); cursor: pointer; padding: 2px 4px; text-decoration: underline; }
+.add { background: var(--surface); border: 1px dashed var(--line); border-radius: 8px; padding: 14px 16px; display: grid; gap: 8px; }
+.add .row > :first-child { flex: 0 0 150px; }
+.btn { font: inherit; font-size: 14px; font-weight: 500; padding: 8px 16px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 14px; }
+.chk { display: flex; flex-wrap: wrap; gap: 8px; }
+.chk label, .rad label { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.chk label:has(input:checked), .rad label:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.rad { display: flex; flex-wrap: wrap; gap: 8px; }
+.w { display: grid; grid-template-columns: minmax(0, 1fr) 140px 52px; gap: 6px 12px; align-items: center; }
+.w .n { font-weight: 500; }
+.w .d { grid-column: 1 / -1; font-size: 13px; color: var(--muted); margin-top: -4px; }
+.w input[type="range"] { width: 100%; accent-color: var(--accent); }
+.pct { font-family: var(--font-mono); font-size: 14px; text-align: right; font-variant-numeric: tabular-nums; }
+.share { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--line); }
+.share i { display: block; height: 100%; }
+.final { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.note { font-size: 13px; color: var(--muted); }
+.banner { background: var(--warn-soft); color: var(--warn); padding: 8px 12px; border-radius: 6px; font-size: 13.5px; margin-top: 14px; }
+@media (max-width: 560px) {
+  h1 { font-size: 24px; }
+  .seg { margin-left: 0; }
+  .add .row { flex-direction: column; align-items: stretch; }
+  .add .row > :first-child { flex-basis: auto; }
+  .w { grid-template-columns: minmax(0, 1fr) 44px; }
+  .w input[type="range"] { grid-column: 1 / -1; grid-row: 3; }
+  .w .d { grid-row: 2; }
+}
+@media (prefers-reduced-motion: no-preference) { .card { transition: opacity .15s; } }
+</style>
+
+<div class="bar"><div class="bar-in">
+  <span class="stat">포함 <b id="nKeep">16</b></span>
+  <span class="stat">제외 <b id="nDrop">0</b></span>
+  <span class="stat">문구 수정 <b id="nEdit">0</b></span>
+  <span class="stat">직접 추가 <b id="nAdd">0</b></span>
+  <span class="save" id="saveState" role="status">불러오는 중</span>
+</div></div>
+
+<div class="wrap">
+  <h1>비교 시나리오 결정</h1>
+  <p class="lede">GLI 검색과 일반 AI를 같은 질문으로 비교하기 위한 16개 시나리오입니다. 빼거나 고치거나 더하고, 아래에서 비교 대상과 채점 비중을 정해 주세요. 바꾸면 자동으로 저장되고 Claude가 그대로 읽습니다.</p>
+  <div class="banner" id="noDb" hidden>이 화면에서는 저장할 수 없습니다. 입력은 이 탭에서만 유지되고 Claude에게 전달되지 않습니다.</div>
+
+  <h2>1. 시나리오</h2>
+  <p class="sub">각 카드의 "실측"은 2026-10-07에 실서비스에서 3회씩 잰 값입니다. 문구를 고치면 그대로 새 질문이 됩니다.</p>
+  <div id="groups"></div>
+
+  <h3>시나리오 추가</h3>
+  <div class="add">
+    <div class="row">
+      <select id="addGroup" aria-label="묶음"></select>
+      <input type="text" id="addText" placeholder="실제 사용자가 할 법한 질문을 그대로 적어 주세요" maxlength="300" aria-label="추가할 질문">
+    </div>
+    <div class="row"><button class="btn ghost" id="addBtn" type="button">추가</button><span class="note">추가한 질문은 아직 실측값이 없습니다.</span></div>
+  </div>
+
+  <h2>2. 비교할 일반 AI</h2>
+  <p class="sub">같은 질문을 사람이 직접 입력해 답변을 모읍니다. 해당하는 것을 모두 고르세요.</p>
+  <div class="panel">
+    <div class="chk" id="llms"></div>
+    <input type="text" id="llmOther" placeholder="그 외 서비스나 모델 이름 (선택)" maxlength="120" aria-label="그 외 비교 대상">
+    <div>
+      <div class="note" style="margin-bottom:6px">웹 검색 기능</div>
+      <div class="rad" id="search"></div>
+    </div>
+  </div>
+
+  <h2>3. 채점 비중</h2>
+  <p class="sub">질문마다 5개 항목을 0~2점으로 채점합니다. 어느 항목을 더 크게 볼지 정해 주세요. 0은 점수에서 뺍니다.</p>
+  <div class="panel">
+    <div id="weights" style="display:grid;gap:14px"></div>
+    <div class="share" id="share" aria-hidden="true"></div>
+  </div>
+
+  <div class="final">
+    <button class="btn" id="finalBtn" type="button">결정 완료로 표시</button>
+    <span class="note" id="finalNote"></span>
+  </div>
+</div>
+
+<script>
+(function () {
+  var GROUPS = [
+    { key: "g1", name: "가. 기본 검색" },
+    { key: "g2", name: "나. 애매한 질문" },
+    { key: "g3", name: "다. 이어서 묻기" },
+    { key: "g4", name: "라. 요청 지키기" },
+    { key: "g5", name: "마. 지어내기 유도" },
+    { key: "g6", name: "바. 비교와 행동" }
+  ];
+  var SCEN = [
+    { id: "S1", g: "g1", q: "프놈펜에서 월 700달러 이하 1베드 임대 찾아줘", good: "조건에 맞는 후보와 확인할 사항을 보여 줌", m: { t: "60~64초", mode: "AI", n: "3개", obs: "후보와 확인사항 설명은 양호. 시간이 가장 큰 문제." } },
+    { id: "S2", g: "g1", q: "BKK1 강 보이는 2베드 매매, 예산 2억", good: "원화 예산을 이해하고 후보 또는 없다는 설명을 줌", m: { t: "36~41초", mode: "AI", n: "0개", obs: "없음을 설명하고 강 조망 조건 완화를 되물음." } },
+    { id: "S3", g: "g2", q: "은퇴하고 겨울마다 지낼 따뜻한 곳 알아보고 있어. 예산은 1억 정도야", good: "임대와 매입 갈래를 짚고 보이는 후보로 이어짐", m: { t: "47~55초", mode: "AI", n: "0개", obs: "분석은 좋지만 후보와 다음 단계가 없음. 3회 중 1회 서버 오류." } },
+    { id: "S4", g: "g2", q: "아이 학교 때문에 1년만 살 집이 필요해", good: "기간과 가족 구성을 이해해 임대로 해석함", m: { t: "33~48초", mode: "AI", n: "0개", obs: "임대로 이해했으나 후보 없음." } },
+    { id: "S5", g: "g2", q: "너무 비싸지 않은 데로 투자하고 싶어", good: "예산을 되묻고 임의로 가정하지 않음", m: { t: "46~50초", mode: "AI", n: "0개", obs: "예산을 되묻지 않고 설명만 함." } },
+    { id: "S6", g: "g3", q: "그중 첫 번째 후보 확인해 줘 (S1 이후)", good: "첫 후보를 지칭해 설명함", m: { t: "14~16초", mode: "AI", n: "3개", obs: "첫 후보를 정확히 짚음. 대화 본문을 AI가 읽은 덕분." } },
+    { id: "S7", g: "g3", q: "더 싼 건 없어? (S1 이후)", good: "이전 조건을 유지하고 가격만 낮춤", m: { t: "49~50초", mode: "AI", n: "2개", obs: "조건 유지, 스튜디오 대안을 제시함." } },
+    { id: "S8", g: "g3", q: "강 전망은 필요 없어, 대신 2베드로 (S1 이후)", good: "일부 조건 해제와 변경을 반영함", m: { t: "54~57초", mode: "AI", n: "3개", obs: "조건 변경을 반영함. 3회 중 1회 서버 오류." } },
+    { id: "S9", g: "g4", q: "방콕 콘도 매매 알려줘", good: "범위 밖임을 밝히고 다른 나라를 대신 추천하지 않음", m: { t: "18~38초", mode: "AI", n: "0개", obs: "범위 밖 안내, 다른 나라를 추천하지 않음." } },
+    { id: "S10", g: "g4", q: "캄보디아 말고 베트남 호치민으로 바꿔줘 (S1 이후)", good: "명시한 국가 변경은 따름", m: { t: "40~42초", mode: "AI", n: "0개", obs: "변경을 수용했고 호치민 매물은 없다고 안내." } },
+    { id: "S11", g: "g5", q: "사서 월세 놓을 건데 수익률 확실한 곳 알려줘", good: "수익률을 단정하지 않고 매입 후보로 이해함", m: { t: "43~45초", mode: "AI 2·규칙 1", n: "0·0·5개", obs: "3회 중 1회는 AI가 실패해 기계적 안내문으로 떨어짐." } },
+    { id: "S12", g: "g5", q: "여기 연 10% 나온다는 게 맞아? (S11 이후)", good: "근거 없는 수치를 확인해 주지 않음", m: { t: "4~6초", mode: "규칙", n: "0개", obs: "\"어느 자산인지\" 고정 문구만 나옴." } },
+    { id: "S13", g: "g5", q: "법적으로 외국인이 문제없이 살 수 있는 곳만 알려줘", good: "확인되지 않은 것을 확인됐다고 하지 않음", m: { t: "48~50초", mode: "AI", n: "0개", obs: "확정하지 않고 필요한 확인 자료를 안내함." } },
+    { id: "S14", g: "g6", q: "BKK1이랑 톤레바삭 중에 어디가 나아?", good: "근거 있는 정보로 비교하고 목적을 되물을 수 있음", m: { t: "49~56초", mode: "AI", n: "0개", obs: "단정을 피했지만 비교할 자료가 부족함." } },
+    { id: "S15", g: "g6", q: "마음에 드는 곳 상담 받고 싶어 (S1 이후)", good: "상담이나 관심 저장 같은 다음 단계로 안내함", m: { t: "4~5초", mode: "규칙", n: "3개", obs: "후보 3개가 보이는데도 \"어느 자산인지\" 고정 문구." } },
+    { id: "S16", g: "g6", q: "조건 초기화하고 처음부터 다시 (S1 이후)", good: "이전 조건을 버리고 새 탐색을 시작함", m: { t: "39~42초", mode: "AI", n: "0개", obs: "초기화는 수용했지만 이후 안내가 없음." } }
+  ];
+  var LLMS = ["ChatGPT", "Gemini", "Claude", "Perplexity"];
+  var SEARCH = [["on", "켠 상태"], ["off", "끈 상태"], ["default", "서비스 기본값"]];
+  var WEIGHTS = [
+    ["A", "알아듣기", "말한 그대로 이해하는가"],
+    ["B", "사실 정확도", "없는 매물이나 숫자를 만들지 않는가"],
+    ["C", "요청 지키기", "국가와 조건을 멋대로 바꾸지 않는가"],
+    ["D", "다음 행동", "눈에 보이는 후보나 다음 단계로 이어지는가"],
+    ["E", "속도", "첫 결과가 얼마나 빨리 나오는가"]
+  ];
+  var SHARE_COLORS = ["var(--accent)", "var(--warn)", "var(--drop)", "var(--muted)", "var(--ink)"];
+
+  var dec = {};
+  var cfg = { llms: [], other: "", search: "default", weights: { A: 2, B: 2, C: 2, D: 2, E: 2 }, finalized: false };
+  var db = null, canWrite = true, ready = false;
+  var cards = {};
+  var timers = {}, chains = {};
+  var rev = {}, savedRev = {};
+  function dirty(id) { return (rev[id] || 0) > (savedRev[id] || 0); }
+  var $ = function (id) { return document.getElementById(id); };
+
+  function setSave(text, err) { var s = $("saveState"); s.textContent = text; s.className = "save" + (err ? " err" : ""); }
+
+  function itemFor(id) {
+    for (var i = 0; i < SCEN.length; i++) if (SCEN[i].id === id) return SCEN[i];
+    var d = dec[id];
+    return d && d.custom ? { id: id, g: d.group, q: d.text, custom: true } : null;
+  }
+  function stateOf(id) { return (dec[id] && dec[id].state) || "keep"; }
+  function textOf(item) { var d = dec[item.id]; return d && typeof d.text === "string" ? d.text : item.q; }
+
+  function docBody(id) {
+    var d = dec[id] || {};
+    var body = { state: d.state || "keep", note: d.note || "", updatedAt: new Date().toISOString() };
+    if (d.custom) { body.custom = true; body.group = d.group; body.text = d.text; body.createdAt = d.createdAt || body.updatedAt; }
+    else if (typeof d.text === "string") body.text = d.text;
+    return body;
+  }
+  function persist(id, now) {
+    if (!db || !canWrite) { updateSummary(); return; }
+    rev[id] = (rev[id] || 0) + 1;
+    clearTimeout(timers[id]);
+    timers[id] = setTimeout(function () {
+      setSave("저장 중");
+      chains[id] = (chains[id] || Promise.resolve()).then(function () {
+        var r = rev[id], body = docBody(id);
+        return db.doc("decisions/" + id).set(body).then(function () { savedRev[id] = r; });
+      }).then(function () { setSave("저장됨"); }, function (e) { setSave(e && e.code === "invalid_argument" ? "읽기 전용입니다" : "저장하지 못했습니다", true); if (e && e.code === "invalid_argument") canWrite = false; });
+    }, now ? 0 : 500);
+  }
+  function persistCfg() {
+    if (!db || !canWrite) return;
+    rev.cfg = (rev.cfg || 0) + 1;
+    clearTimeout(timers.cfg);
+    timers.cfg = setTimeout(function () {
+      setSave("저장 중");
+      chains.cfg = (chains.cfg || Promise.resolve()).then(function () {
+        var r = rev.cfg;
+        return db.doc("config/main").set({ llms: cfg.llms, other: cfg.other, search: cfg.search, weights: cfg.weights, finalized: cfg.finalized, updatedAt: new Date().toISOString() }).then(function () { savedRev.cfg = r; });
+      }).then(function () { setSave("저장됨"); }, function () { setSave("저장하지 못했습니다", true); });
+    }, 500);
+  }
+
+  function buildCard(item) {
+    var el = document.createElement("article"); el.className = "card";
+    var top = document.createElement("div"); top.className = "top";
+    var id = document.createElement("span"); id.className = "id"; id.textContent = item.custom ? "추가" : item.id; top.appendChild(id);
+    var badge = document.createElement("span"); badge.className = "badge"; badge.textContent = "문구 수정됨"; badge.hidden = true; top.appendChild(badge);
+    var seg = document.createElement("div"); seg.className = "seg"; seg.setAttribute("role", "group"); seg.setAttribute("aria-label", (item.custom ? "추가" : item.id) + " 포함 여부");
+    var bk = document.createElement("button"); bk.type = "button"; bk.className = "keep"; bk.textContent = "포함";
+    var bd = document.createElement("button"); bd.type = "button"; bd.className = "drop"; bd.textContent = "제외";
+    seg.appendChild(bk); seg.appendChild(bd); top.appendChild(seg); el.appendChild(top);
+    var q = document.createElement("div"); q.className = "q";
+    var ta = document.createElement("textarea"); ta.rows = 2; ta.maxLength = 300; ta.setAttribute("aria-label", "질문 문구"); q.appendChild(ta); el.appendChild(q);
+    if (item.good) { var g = document.createElement("p"); g.className = "good"; var b = document.createElement("b"); b.textContent = "좋은 답: "; g.appendChild(b); g.appendChild(document.createTextNode(item.good)); el.appendChild(g); }
+    if (item.m) {
+      var m = document.createElement("div"); m.className = "meas";
+      [["실측", item.m.t], ["답변", item.m.mode], ["후보", item.m.n]].forEach(function (p) {
+        var s = document.createElement("span"); s.innerHTML = p[0] + " <span class=\"k\"></span>"; s.lastChild.textContent = p[1]; m.appendChild(s);
+      });
+      var o = document.createElement("span"); o.className = "obs"; o.textContent = item.m.obs; m.appendChild(o); el.appendChild(m);
+    }
+    var note = document.createElement("input"); note.type = "text"; note.placeholder = "이 시나리오에 대한 메모 (선택)"; note.maxLength = 300; note.setAttribute("aria-label", "메모"); el.appendChild(note);
+    var foot = document.createElement("div"); foot.className = "row";
+    var reset = document.createElement("button"); reset.type = "button"; reset.className = "link"; reset.textContent = "원래 문구로"; reset.hidden = true; foot.appendChild(reset);
+    if (item.custom) { var del = document.createElement("button"); del.type = "button"; del.className = "link"; del.textContent = "삭제"; foot.appendChild(del);
+      del.addEventListener("click", function () { delete dec[item.id]; removeCard(item.id); updateSummary(); if (db && canWrite) { setSave("저장 중"); db.doc("decisions/" + item.id).delete().then(function () { setSave("저장됨"); }, function () { setSave("저장하지 못했습니다", true); }); } }); }
+    el.appendChild(foot);
+
+    function ensure() { if (!dec[item.id]) dec[item.id] = {}; return dec[item.id]; }
+    bk.addEventListener("click", function () { ensure().state = "keep"; refresh(item.id); persist(item.id, true); });
+    bd.addEventListener("click", function () { ensure().state = "drop"; refresh(item.id); persist(item.id, true); });
+    ta.addEventListener("input", function () { var d = ensure(); if (item.custom) d.text = ta.value; else d.text = ta.value === item.q ? undefined : ta.value; refresh(item.id, ta); persist(item.id); });
+    note.addEventListener("input", function () { ensure().note = note.value; persist(item.id); });
+    reset.addEventListener("click", function () { ensure().text = undefined; refresh(item.id); persist(item.id, true); });
+    cards[item.id] = { el: el, ta: ta, note: note, bk: bk, bd: bd, badge: badge, reset: reset, item: item };
+    return el;
+  }
+  function refresh(id, skip) {
+    var c = cards[id]; if (!c) return; var d = dec[id] || {}; var item = c.item;
+    var st = stateOf(id), txt = textOf(item);
+    c.el.classList.toggle("dropped", st === "drop");
+    c.bk.setAttribute("aria-pressed", String(st === "keep")); c.bd.setAttribute("aria-pressed", String(st === "drop"));
+    var edited = !item.custom && txt !== item.q;
+    c.badge.hidden = !edited; c.reset.hidden = !edited;
+    if (skip !== c.ta && document.activeElement !== c.ta) c.ta.value = txt;
+    if (document.activeElement !== c.note) c.note.value = d.note || "";
+    updateSummary();
+  }
+  function removeCard(id) { var c = cards[id]; if (c) { c.el.remove(); delete cards[id]; } }
+  function listFor(g) { return $("list-" + g); }
+  function ensureCards() {
+    SCEN.forEach(function (s) { if (!cards[s.id]) listFor(s.g).appendChild(buildCard(s)); });
+    Object.keys(dec).forEach(function (id) {
+      var d = dec[id]; if (d.custom && !cards[id]) { var host = listFor(d.group) || listFor("g6"); host.appendChild(buildCard(itemFor(id))); }
+    });
+    Object.keys(cards).forEach(function (id) { if (cards[id].item.custom && !dec[id]) removeCard(id); });
+    Object.keys(cards).forEach(function (id) { refresh(id); });
+  }
+  function updateSummary() {
+    var keep = 0, drop = 0, edit = 0, add = 0;
+    Object.keys(cards).forEach(function (id) {
+      var item = cards[id].item; if (stateOf(id) === "drop") drop++; else keep++;
+      if (item.custom) add++; else if (textOf(item) !== item.q) edit++;
+    });
+    $("nKeep").textContent = keep; $("nDrop").textContent = drop; $("nEdit").textContent = edit; $("nAdd").textContent = add;
+  }
+
+  function renderStatic() {
+    var host = $("groups");
+    GROUPS.forEach(function (g) {
+      var h = document.createElement("h3"); h.textContent = g.name; host.appendChild(h);
+      var l = document.createElement("div"); l.id = "list-" + g.key; host.appendChild(l);
+      var o = document.createElement("option"); o.value = g.key; o.textContent = g.name; $("addGroup").appendChild(o);
+    });
+    LLMS.forEach(function (n) {
+      var lab = document.createElement("label"); var cb = document.createElement("input"); cb.type = "checkbox"; cb.value = n;
+      cb.addEventListener("change", function () { cfg.llms = Array.prototype.map.call(document.querySelectorAll("#llms input:checked"), function (x) { return x.value; }); persistCfg(); });
+      lab.appendChild(cb); lab.appendChild(document.createTextNode(n)); $("llms").appendChild(lab);
+    });
+    SEARCH.forEach(function (p) {
+      var lab = document.createElement("label"); var r = document.createElement("input"); r.type = "radio"; r.name = "search"; r.value = p[0];
+      r.addEventListener("change", function () { if (r.checked) { cfg.search = p[0]; persistCfg(); } });
+      lab.appendChild(r); lab.appendChild(document.createTextNode(p[1])); $("search").appendChild(lab);
+    });
+    WEIGHTS.forEach(function (w, i) {
+      var box = document.createElement("div"); box.className = "w";
+      box.innerHTML = "<span class=\"n\"></span><input type=\"range\" min=\"0\" max=\"5\" step=\"1\"><span class=\"pct\"></span><span class=\"d\"></span>";
+      box.children[0].textContent = w[0] + ". " + w[1]; box.children[3].textContent = w[2];
+      var rng = box.children[1]; rng.id = "w" + w[0]; rng.setAttribute("aria-label", w[1] + " 비중");
+      rng.addEventListener("input", function () { cfg.weights[w[0]] = Number(rng.value); renderWeights(); persistCfg(); });
+      $("weights").appendChild(box);
+    });
+    $("share").innerHTML = WEIGHTS.map(function (_, i) { return "<i id=\"sh" + i + "\" style=\"background:" + SHARE_COLORS[i] + "\"></i>"; }).join("");
+    $("addBtn").addEventListener("click", function () {
+      var t = $("addText").value.trim(); if (!t) return;
+      var id = "C" + Date.now().toString(36);
+      dec[id] = { custom: true, group: $("addGroup").value, text: t, state: "keep", note: "", createdAt: new Date().toISOString() };
+      $("addText").value = ""; ensureCards(); persist(id, true);
+    });
+    $("finalBtn").addEventListener("click", function () { cfg.finalized = !cfg.finalized; renderCfg(); persistCfg(); });
+  }
+  function renderWeights() {
+    var sum = 0; WEIGHTS.forEach(function (w) { sum += cfg.weights[w[0]] || 0; });
+    WEIGHTS.forEach(function (w, i) {
+      var v = cfg.weights[w[0]] || 0, rng = $("w" + w[0]);
+      if (document.activeElement !== rng) rng.value = v;
+      var p = sum ? Math.round(v / sum * 100) : 0;
+      rng.parentNode.children[2].textContent = p + "%"; $("sh" + i).style.width = (sum ? v / sum * 100 : 0) + "%";
+    });
+  }
+  function renderCfg() {
+    Array.prototype.forEach.call(document.querySelectorAll("#llms input"), function (cb) { cb.checked = cfg.llms.indexOf(cb.value) >= 0; });
+    Array.prototype.forEach.call(document.querySelectorAll("#search input"), function (r) { r.checked = r.value === cfg.search; });
+    if (document.activeElement !== $("llmOther")) $("llmOther").value = cfg.other || "";
+    renderWeights();
+    $("finalBtn").textContent = cfg.finalized ? "결정 완료 표시 해제" : "결정 완료로 표시";
+    $("finalBtn").className = "btn" + (cfg.finalized ? " ghost" : "");
+    $("finalNote").textContent = cfg.finalized ? "완료로 표시했습니다. Claude에게 확인해 달라고 말씀해 주세요." : "다 정하셨으면 눌러 주세요. 이후에도 고칠 수 있습니다.";
+  }
+
+  renderStatic(); ensureCards(); renderCfg();
+  $("llmOther").addEventListener("input", function () { cfg.other = $("llmOther").value; persistCfg(); });
+  setSave("저장 준비 중");
+
+  function connect(user) {
+    if (user && user.can) { try { user.can("data.write").then(function (ok) { if (ok === false) { canWrite = false; setSave("읽기 전용입니다", true); } }); } catch (e) {} }
+  }
+  Promise.all([claude.use("db"), claude.use("user")]).then(function (r) {
+    db = r[0]; connect(r[1]);
+    if (!db) { $("noDb").hidden = false; setSave("저장 안 됨", true); return; }
+    db.collection("decisions").onSnapshot(function (snap) {
+      // 서버 데이터는 읽기 전용이므로 복사해서 쓰고, 아직 저장되지 않은 입력은 서버 값으로 덮어쓰지 않는다.
+      var next = {}; snap.docs.forEach(function (d) { if (d.exists) next[d.id] = JSON.parse(JSON.stringify(d.data())); });
+      Object.keys(dec).forEach(function (id) { if (dirty(id)) next[id] = dec[id]; });
+      dec = next; ensureCards(); if (!ready) { ready = true; setSave("저장됨"); }
+    }, function () { setSave("불러오지 못했습니다", true); });
+    db.doc("config/main").onSnapshot(function (s) {
+      if (s.exists && !dirty("cfg")) { var d = s.data(); cfg = { llms: d.llms || [], other: d.other || "", search: d.search || "default", weights: Object.assign({ A: 2, B: 2, C: 2, D: 2, E: 2 }, d.weights || {}), finalized: !!d.finalized }; renderCfg(); }
+      if (!ready) { ready = true; setSave("저장됨"); }
+    }, function () {});
+  });
+})();
+</script>

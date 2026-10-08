@@ -1,0 +1,313 @@
+<title>PC 결과 화면 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 위에 안내, 가운데에 PC 화면 틀(왼쪽 대화 / 오른쪽 GLI 확인 후보), 아래에 의견 입력. 좁은 화면에서는 세로로 쌓는다. */
+:root {
+  --bg: #f1f5f5; --surface: #ffffff; --ink: #14282b; --muted: #566b6e; --line: #d3dddd;
+  --accent: #0e6f6a; --accent-ink: #ffffff; --accent-soft: #dcefed;
+  --warn: #8f5500; --warn-soft: #faedd3; --drop: #8a3b3b;
+  --scr-bg: #f7f8f6; --scr-card: #ffffff; --scr-ink: #17302e; --scr-muted: #5d716f; --scr-line: #dde4e2;
+  --scr-accent: #14573f; --scr-soft: #e3f0ea; --scr-gen: #eef1f6; --scr-gen-ink: #44546b; --scr-user: #14573f; --scr-warn: #fbf0d9; --scr-warn-ink: #7a4d00;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1819; --surface: #162224; --ink: #e4eeee; --muted: #93a8aa; --line: #2a3c3e;
+    --accent: #5cc7bf; --accent-ink: #062321; --accent-soft: #1b3b39; --warn: #e8b35b; --warn-soft: #3a2e14; --drop: #e39b98; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1819; --surface: #162224; --ink: #e4eeee; --muted: #93a8aa; --line: #2a3c3e;
+  --accent: #5cc7bf; --accent-ink: #062321; --accent-soft: #1b3b39; --warn: #e8b35b; --warn-soft: #3a2e14; --drop: #e39b98; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55; padding-inline: 16px; padding-block: 0 72px; }
+.wrap { max-width: 1120px; margin-inline: auto; }
+h1 { font-size: 28px; line-height: 1.25; margin: 28px 0 6px; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 19px; margin: 36px 0 6px; font-weight: 600; }
+.lede { color: var(--muted); margin: 0; max-width: 66ch; }
+.banner { background: var(--warn-soft); color: var(--warn); padding: 9px 12px; border-radius: 6px; font-size: 13.5px; margin-top: 14px; max-width: 76ch; }
+.try { font-size: 13.5px; color: var(--muted); margin: 10px 0 0; }
+/* PC 화면 틀 */
+.pc { margin-top: 16px; background: var(--scr-bg); color: var(--scr-ink); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.top { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: var(--scr-card); border-bottom: 1px solid var(--scr-line); }
+.logo { font-weight: 600; letter-spacing: .04em; color: var(--scr-accent); }
+.conds { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--scr-line); background: var(--scr-card); min-height: 50px; }
+.conds .lab { font-size: 12.5px; color: var(--scr-muted); margin-right: 4px; }
+.tag { display: inline-flex; align-items: center; gap: 4px; font-size: 13px; padding: 4px 6px 4px 11px; border-radius: 14px; background: var(--scr-soft); color: var(--scr-accent); }
+.tag button { font: inherit; border: 0; background: transparent; color: inherit; cursor: pointer; padding: 0 5px; font-size: 15px; line-height: 1; }
+.grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 0; }
+.left { padding: 16px; display: grid; gap: 10px; align-content: start; border-right: 1px solid var(--scr-line); }
+.right { padding: 16px; display: grid; gap: 10px; align-content: start; background: var(--scr-bg); }
+.right .sticky { position: sticky; top: 8px; display: grid; gap: 10px; }
+.me { justify-self: end; max-width: 80%; background: var(--scr-user); color: #fff; padding: 9px 13px; border-radius: 14px 14px 2px 14px; font-size: 14px; }
+.who { font-size: 12px; font-weight: 600; color: var(--scr-accent); }
+.blk { background: var(--scr-card); border: 1px solid var(--scr-line); border-radius: 12px; padding: 13px 14px; }
+.blk h4 { margin: 0 0 8px; font-size: 13px; color: var(--scr-muted); font-weight: 600; }
+.concl { font-size: 16.5px; font-weight: 600; line-height: 1.5; margin: 0; text-wrap: balance; }
+.badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 9px; margin-left: 6px; vertical-align: 1px; font-weight: 500; }
+.badge.gen { background: var(--scr-gen); color: var(--scr-gen-ink); }
+.badge.gli { background: var(--scr-soft); color: var(--scr-accent); }
+.reg { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 11px; padding: 9px 0; border-top: 1px solid var(--scr-line); }
+.reg:first-of-type { border-top: 0; padding-top: 0; }
+.reg b { font-weight: 600; font-size: 14.5px; }
+.reg p { margin: 2px 0 0; color: var(--scr-muted); font-size: 13.5px; }
+.src { font-size: 12px; color: var(--scr-gen-ink); text-decoration: underline; }
+.th { background: linear-gradient(135deg, #cfdad6, #aebdb8); border-radius: 8px; display: grid; place-items: center; color: #4b5f5a; font-size: 11px; text-align: center; padding: 4px; aspect-ratio: 1; }
+.th.w { aspect-ratio: auto; height: 100%; min-height: 104px; border-radius: 0; font-size: 11.5px; }
+.vs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.vs div { background: var(--scr-bg); border-radius: 8px; padding: 9px 10px; font-size: 13px; }
+.vs b { display: block; margin-bottom: 3px; }
+.vs ul { margin: 0; padding-left: 16px; color: var(--scr-muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 16px; background: var(--scr-soft); color: var(--scr-accent); border: 1px solid transparent; cursor: pointer; }
+.chip.q { background: var(--scr-card); border-color: var(--scr-accent); }
+.chip[aria-pressed="true"] { background: var(--scr-accent); color: #fff; }
+.chip:focus-visible, .btn:focus-visible, .tag button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.legend { font-size: 12px; color: var(--scr-muted); margin: 6px 0 0; }
+.note { font-size: 12.5px; color: var(--scr-muted); margin: 6px 0 0; }
+.tray { border: 1px dashed var(--scr-accent); border-radius: 10px; padding: 9px 11px; font-size: 13px; background: var(--scr-card); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tray .empty { color: var(--scr-muted); }
+.sendb { margin-left: auto; font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 7px; background: var(--scr-accent); color: #fff; border: 0; opacity: .55; cursor: default; }
+/* 오른쪽: GLI 확인 후보 */
+.cards { display: grid; gap: 10px; }
+.cd { background: var(--scr-card); border: 1px solid var(--scr-line); border-radius: 12px; overflow: hidden; display: grid; grid-template-columns: 112px minmax(0, 1fr); }
+.cd .bd { padding: 10px 12px 12px; }
+.cd b { display: block; font-size: 14.5px; font-weight: 600; }
+.cd span.s { font-size: 13px; color: var(--scr-muted); }
+.cd .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+.mini { font-size: 11.5px; padding: 2px 8px; border-radius: 9px; background: var(--scr-soft); color: var(--scr-accent); }
+.mini.link { text-decoration: underline; }
+.act { display: flex; gap: 8px; flex-wrap: wrap; }
+.act span { font-size: 13px; padding: 7px 12px; border-radius: 8px; background: var(--scr-accent); color: #fff; }
+.act span.o { background: transparent; color: var(--scr-accent); border: 1px solid var(--scr-accent); }
+.skel { height: 190px; border-radius: 12px; background: linear-gradient(90deg, var(--scr-line), var(--scr-bg), var(--scr-line)); background-size: 200% 100%; }
+@media (prefers-reduced-motion: no-preference) { .skel { animation: sh 1s linear infinite; } }
+@keyframes sh { to { background-position: -200% 0; } }
+.need { background: var(--scr-warn); color: var(--scr-warn-ink); border-radius: 12px; padding: 13px 14px; font-size: 14px; }
+.need b { display: block; margin-bottom: 4px; font-size: 14.5px; }
+.need .done { margin-top: 8px; font-size: 13px; font-weight: 600; }
+.btn { font: inherit; font-size: 14px; font-weight: 500; padding: 7px 15px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+.need .btn { background: var(--scr-warn-ink); border-color: var(--scr-warn-ink); color: #fff; margin-top: 8px; }
+.fb { display: grid; gap: 10px; }
+.fbi { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 8px; }
+.fbi .t { font-weight: 600; font-size: 14.5px; }
+.fbi .d { color: var(--muted); font-size: 13.5px; margin: -4px 0 0; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; width: fit-content; }
+.seg button { font: inherit; font-size: 13px; padding: 5px 14px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"].good { background: var(--accent); color: var(--accent-ink); }
+.seg button[aria-pressed="true"].fix { background: var(--drop); color: var(--surface); }
+input[type="text"] { width: 100%; font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; }
+input:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.save { font-size: 13px; color: var(--muted); margin-top: 10px; }
+.save.err { color: var(--drop); }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } .left { border-right: 0; border-bottom: 1px solid var(--scr-line); } h1 { font-size: 24px; } .right .sticky { position: static; } }
+</style>
+
+<div class="wrap">
+  <h1>PC 결과 화면 시안</h1>
+  <p class="lede">같은 질문의 PC 결과 화면입니다. 왼쪽은 일반 AI 수준의 대화형 답, 오른쪽은 GLI가 확인한 후보입니다. 버튼을 눌러 보면 화면이 어떻게 바뀌는지 볼 수 있습니다.</p>
+  <div class="banner">문구는 제가 쓴 예시이고 실제 AI 답이 아닙니다. 미리보기 이미지는 자리 표시입니다. 실제로는 GLI 서버가 각 출처 링크의 페이지에서 대표 이미지를 미리 가져와 채웁니다. 매물 3건은 실서비스의 임대 후보이고 등급 칸은 자리 표시입니다.</div>
+  <p class="try">눌러 볼 것 ① "이어서 물어보세요"에서 <b>매입을 이미 마음먹었어요</b> ② 같은 곳에서 <b>한두 해 살아 보고 정할래요</b> ③ "먼저 확인하세요" 버튼 ④ 위쪽 조건 태그의 ×</p>
+
+  <div class="pc" aria-label="PC 결과 화면 시안">
+    <div class="top"><span class="logo">GLI</span><span style="color:var(--scr-muted);font-size:13px">AI 투자 탐색</span></div>
+    <div class="conds" id="conds" aria-live="polite"></div>
+    <div class="grid">
+      <div class="left">
+        <div class="me">은퇴하고 겨울마다 지낼 따뜻한 곳 알아보고 있어요. 예산은 1억 정도예요</div>
+        <div class="who">GLI AI</div>
+        <div class="blk"><p class="concl">1억 원이면 바로 사기보다 겨울 한 철씩 살아 보며 정하는 쪽이 안전하고, 동남아 몇 곳은 매입도 가능한 범위예요.</p></div>
+
+        <div class="blk"><h4>겨울(11~2월)에 지내기 좋은 곳<span class="badge gen">일반 정보</span></h4>
+          <div class="reg"><div class="th">미리보기<br>이미지</div><div><b>캄보디아 프놈펜·시엠립</b><p>건기라 쾌적하고 생활비가 낮은 편. 외국인은 콘도 매입이 가능해 1억 원대가 현실적인 범위.</p><a class="src" href="#" onclick="return false">출처 보기</a></div></div>
+          <div class="reg"><div class="th">미리보기<br>이미지</div><div><b>베트남 다낭·나트랑</b><p>겨울에도 따뜻하고 한국인 생활권과 병원이 잘 갖춰짐. 매입가는 더 높은 편.</p><a class="src" href="#" onclick="return false">출처 보기</a></div></div>
+          <div class="reg"><div class="th">미리보기<br>이미지</div><div><b>태국 치앙마이·후아힌</b><p>생활 인프라가 안정적. 콘도 매입은 가능하나 외국인 비율 제한이 있음.</p><a class="src" href="#" onclick="return false">출처 보기</a></div></div>
+          <p class="legend">일반 정보 이미지는 출처 링크의 대표 이미지이며, 해당 지역을 직접 보여 주는 사진이 아닐 수 있습니다.</p>
+        </div>
+
+        <div class="blk"><h4>살까, 한 철 빌릴까<span class="badge gen">일반 정보</span></h4>
+          <div class="vs"><div><b>한 철 임대</b><ul><li>부담이 적고 되돌리기 쉬움</li><li>한 번 살아 보고 결정</li></ul></div>
+          <div><b>매입</b><ul><li>비워 둔 8개월 관리비·관리 대행</li><li>되팔 때의 수월함 확인</li></ul></div></div>
+          <p class="note">제도와 가격은 바뀌므로 결정 전에 최신 정보를 확인해야 해요.</p></div>
+
+        <div class="blk"><h4>먼저 확인하세요 · 누르면 "다음 질문에 담기"</h4>
+          <div class="chips" id="checks"></div>
+          <div class="tray" id="tray" style="margin-top:10px"></div></div>
+
+        <div class="blk"><h4>이어서 물어보세요 · 누르면 바로 다시 찾기</h4>
+          <div class="chips" id="asks"></div></div>
+      </div>
+
+      <div class="right"><div class="sticky">
+        <div class="blk" style="padding:10px 14px"><h4 style="margin:0">GLI가 확인한 후보<span class="badge gli">GLI 확인</span></h4></div>
+        <div id="panel"></div>
+      </div></div>
+    </div>
+  </div>
+
+  <h2>구역별 의견</h2>
+  <p class="lede" style="margin-bottom:12px">구역마다 "좋음" 또는 "고치기"와 한 줄 의견을 남겨 주세요. 자동으로 저장되고 제가 그대로 읽습니다.</p>
+  <div class="fb" id="fb"></div>
+  <div class="save" id="saveState" role="status">불러오는 중</div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var BASE = ["겨울 거주", "예산 1억", "동남아"];
+  var ASKS = [
+    { id: "buy", label: "매입을 이미 마음먹었어요", tag: "매입", group: "mode" },
+    { id: "rent", label: "한두 해 살아 보고 정할래요", tag: "한 철 임대", group: "mode" },
+    { id: "hosp", label: "병원 가까운 곳은?", tag: "병원 가까운 곳", group: "extra" },
+    { id: "price", label: "한 철 임대료는?", tag: "임대료 보기", group: "extra" }
+  ];
+  var CHECKS = ["병원 접근성", "비자·체류 기간", "취득 비용", "비워 두는 동안 관리"];
+  var LIST = [
+    ["Boeng Trabek 15층 1베드룸 콘도", "월 380달러 · 50㎡ · 임대"],
+    ["Urban Village 고층 1베드룸 콘도", "월 500달러 · 54㎡ · 임대"],
+    ["BKK1 고층 1베드룸 콘도", "월 700달러 · 56㎡ · 임대"]
+  ];
+  var st = { asks: [], tray: [], requested: false };
+  var loadTimer = null;
+
+  function renderConds() {
+    var box = $("conds"); box.textContent = "";
+    var lab = document.createElement("span"); lab.className = "lab"; lab.textContent = "내 조건"; box.appendChild(lab);
+    BASE.forEach(function (t) { var s = document.createElement("span"); s.className = "tag"; s.textContent = t; s.style.paddingRight = "11px"; box.appendChild(s); });
+    st.asks.forEach(function (id) {
+      var a = ASKS.filter(function (x) { return x.id === id; })[0];
+      var s = document.createElement("span"); s.className = "tag"; s.appendChild(document.createTextNode(a.tag));
+      var x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", a.tag + " 조건 빼기");
+      x.addEventListener("click", function () { st.asks = st.asks.filter(function (i) { return i !== id; }); st.requested = false; sync(); });
+      s.appendChild(x); box.appendChild(s);
+    });
+  }
+  function renderAsks() {
+    var box = $("asks"); box.textContent = "";
+    ASKS.forEach(function (a) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "chip q"; b.textContent = a.label;
+      b.setAttribute("aria-pressed", String(st.asks.indexOf(a.id) >= 0));
+      b.addEventListener("click", function () {
+        if (a.group === "mode") st.asks = st.asks.filter(function (i) { return ASKS.filter(function (x) { return x.id === i; })[0].group !== "mode"; });
+        if (st.asks.indexOf(a.id) < 0) st.asks.push(a.id);
+        st.requested = false; sync();
+      });
+      box.appendChild(b);
+    });
+  }
+  function renderChecks() {
+    var box = $("checks"); box.textContent = "";
+    CHECKS.forEach(function (c) {
+      var on = st.tray.indexOf(c) >= 0;
+      var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = (on ? "담김 · " : "") + c; b.setAttribute("aria-pressed", String(on));
+      b.addEventListener("click", function () { st.tray = on ? st.tray.filter(function (x) { return x !== c; }) : st.tray.concat([c]); renderChecks(); renderTray(); });
+      box.appendChild(b);
+    });
+  }
+  function renderTray() {
+    var t = $("tray"); t.textContent = "";
+    if (!st.tray.length) { var e = document.createElement("span"); e.className = "empty"; e.textContent = "확인할 것을 누르면 여기에 담겨 다음 질문과 함께 전달돼요."; t.appendChild(e); return; }
+    var l = document.createElement("span"); l.textContent = "다음 질문에 함께 보내기"; t.appendChild(l);
+    st.tray.forEach(function (c) { var s = document.createElement("span"); s.className = "tag"; s.style.paddingRight = "11px"; s.textContent = c; t.appendChild(s); });
+    var b = document.createElement("button"); b.type = "button"; b.className = "sendb"; b.textContent = "질문 보내기 (시안)"; b.disabled = true; t.appendChild(b);
+  }
+  function renderPanel() {
+    var p = $("panel"); p.textContent = "";
+    var buy = st.asks.indexOf("buy") >= 0, hosp = st.asks.indexOf("hosp") >= 0, price = st.asks.indexOf("price") >= 0;
+    if (buy) {
+      var n = document.createElement("div"); n.className = "need";
+      n.innerHTML = "<b>아직 GLI가 확인한 매입 후보가 없어요</b><span></span><div class=\"done\"></div>";
+      n.children[1].textContent = "예산 1억 원, 겨울 거주 목적의 매입 후보를 GLI가 확인하지 못했어요. 이 조건을 조사 요청으로 접수하면 담당자가 확인하고, 후보가 생기면 알려 드려요.";
+      var done = n.querySelector(".done");
+      if (st.requested) { done.textContent = "조사 요청을 접수했어요. 후보가 생기면 알려 드릴게요."; }
+      else { var b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = "조사 요청하고 알림 받기"; b.addEventListener("click", function () { st.requested = true; renderPanel(); }); n.appendChild(b); }
+      p.appendChild(n);
+      var sub = document.createElement("p"); sub.className = "note"; sub.textContent = "대신 지금 확인된 임대 후보로 먼저 살아 보는 방법도 있어요."; p.appendChild(sub);
+    }
+    var cards = document.createElement("div"); cards.className = "cards";
+    LIST.forEach(function (it) {
+      var c = document.createElement("div"); c.className = "cd";
+      var th = document.createElement("div"); th.className = "th w"; th.innerHTML = "미리보기<br>이미지"; c.appendChild(th);
+      var bd = document.createElement("div"); bd.className = "bd";
+      var t = document.createElement("b"); t.textContent = it[0]; bd.appendChild(t);
+      var s = document.createElement("span"); s.className = "s"; s.textContent = it[1]; bd.appendChild(s);
+      var r = document.createElement("div"); r.className = "row";
+      ["Trust 등급 (자리 표시)", "원문 보기", "확인할 것 3"].forEach(function (x, i) { var m = document.createElement("span"); m.className = "mini" + (i === 1 ? " link" : ""); m.textContent = x; r.appendChild(m); });
+      bd.appendChild(r); c.appendChild(bd); cards.appendChild(c);
+    });
+    p.appendChild(cards);
+    if (hosp) { var h = document.createElement("p"); h.className = "note"; h.textContent = "병원 접근성은 GLI가 확인하는 항목이 아니에요. 왼쪽 일반 정보로 안내하고, 후보별로 현지 확인을 요청할 수 있어요."; p.appendChild(h); }
+    if (price) { var q = document.createElement("p"); q.className = "note"; q.textContent = "임대료는 위 카드의 월 금액 기준이에요. 관리비와 공과금 포함 여부는 후보마다 확인이 필요해요."; p.appendChild(q); }
+    var a = document.createElement("div"); a.className = "act"; a.style.marginTop = "4px";
+    ["후보 3개 비교", "저장하기", "상담 신청"].forEach(function (x, i) { var s = document.createElement("span"); s.textContent = x; if (i) s.className = "o"; a.appendChild(s); });
+    p.appendChild(a);
+  }
+  function sync() {
+    renderConds(); renderAsks();
+    var p = $("panel"); p.textContent = ""; var sk = document.createElement("div"); sk.className = "skel"; p.appendChild(sk);
+    clearTimeout(loadTimer); loadTimer = setTimeout(renderPanel, 450);
+  }
+
+  /* 의견 입력 */
+  var BLOCKS = [
+    ["c1", "PC 화면 배치", "왼쪽은 대화형 답, 오른쪽은 GLI 확인 후보로 나란히 둔다."],
+    ["c2", "버튼 두 종류의 동작", "\"이어서 물어보세요\"는 바로 다시 찾기, \"먼저 확인하세요\"는 다음 질문에 담기."],
+    ["c3", "내 조건 줄", "지금 어떤 조건으로 보고 있는지 태그로 보여 주고, 하나씩 뺄 수 있다."],
+    ["c4", "미리보기 이미지", "출처 링크의 대표 이미지를 서버가 미리 가져와 카드에 넣는다."],
+    ["c5", "조사 요청 화면", "확인된 후보가 없는 조건을 조사 요청으로 접수하고 알림을 받는다."],
+    ["all", "전체", "더 고치거나 빠진 것."]
+  ];
+  var fb = {}, db = null, canWrite = true, ready = false, rev = {}, saved = {}, timers = {}, chains = {}, els = {};
+  function setSave(t, err) { var s = $("saveState"); s.textContent = t; s.className = "save" + (err ? " err" : ""); }
+  function dirty(k) { return (rev[k] || 0) > (saved[k] || 0); }
+  function build() {
+    BLOCKS.forEach(function (b) {
+      var k = b[0], box = document.createElement("div"); box.className = "fbi";
+      box.innerHTML = "<div class=\"t\"></div><p class=\"d\"></p><div class=\"seg\" role=\"group\"><button type=\"button\" class=\"good\">좋음</button><button type=\"button\" class=\"fix\">고치기</button></div><input type=\"text\" maxlength=\"300\" placeholder=\"한 줄 의견 (선택)\">";
+      box.children[0].textContent = b[1]; box.children[1].textContent = b[2];
+      box.children[2].setAttribute("aria-label", b[1] + " 평가");
+      var g = box.querySelector(".good"), f = box.querySelector(".fix"), inp = box.querySelector("input");
+      inp.setAttribute("aria-label", b[1] + " 의견");
+      g.addEventListener("click", function () { set(k, "vote", fb[k] && fb[k].vote === "good" ? "" : "good"); });
+      f.addEventListener("click", function () { set(k, "vote", fb[k] && fb[k].vote === "fix" ? "" : "fix"); });
+      inp.addEventListener("input", function () { set(k, "note", inp.value); });
+      els[k] = { g: g, f: f, inp: inp }; $("fb").appendChild(box);
+    });
+  }
+  function paint() {
+    BLOCKS.forEach(function (b) {
+      var k = b[0], d = fb[k] || {}, e = els[k];
+      e.g.setAttribute("aria-pressed", String(d.vote === "good")); e.f.setAttribute("aria-pressed", String(d.vote === "fix"));
+      if (document.activeElement !== e.inp) e.inp.value = d.note || "";
+    });
+  }
+  function set(k, field, v) {
+    if (!fb[k]) fb[k] = {};
+    fb[k][field] = v; paint(); rev[k] = (rev[k] || 0) + 1;
+    if (!db || !canWrite) return;
+    clearTimeout(timers[k]);
+    timers[k] = setTimeout(function () {
+      setSave("저장 중");
+      chains[k] = (chains[k] || Promise.resolve()).then(function () {
+        var r = rev[k], d = fb[k] || {};
+        return db.doc("mockfb2/" + k).set({ vote: d.vote || "", note: d.note || "", updatedAt: new Date().toISOString() }).then(function () { saved[k] = r; });
+      }).then(function () { setSave("저장됨"); }, function (e) { setSave("저장하지 못했습니다", true); if (e && e.code === "invalid_argument") canWrite = false; });
+    }, 500);
+  }
+
+  renderConds(); renderAsks(); renderChecks(); renderTray(); renderPanel(); build(); paint(); setSave("저장 준비 중");
+  claude.use("db").then(function (d) {
+    db = d;
+    if (!db) { setSave("이 화면에서는 저장할 수 없습니다", true); return; }
+    db.collection("mockfb2").onSnapshot(function (snap) {
+      var next = {}; snap.docs.forEach(function (x) { if (x.exists) next[x.id] = JSON.parse(JSON.stringify(x.data())); });
+      Object.keys(fb).forEach(function (k) { if (dirty(k)) next[k] = fb[k]; });
+      fb = next; paint(); if (!ready) { ready = true; setSave("저장됨"); }
+    }, function () { setSave("불러오지 못했습니다", true); });
+  });
+})();
+</script>

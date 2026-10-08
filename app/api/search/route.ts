@@ -21,6 +21,13 @@ import { listCuratedOpportunities } from "../../../lib/curated-opportunities";
 import { discoverCambodiaAssets } from "../../../lib/cambodia-live-discovery";
 import { planGliAiRequest } from "../../../lib/gli-ai-orchestration";
 import { discoverWithGemini } from "../../../lib/gemini-discovery";
+import { resolveFollowupReference } from "../../../lib/followup-reference";
+
+// Worst-case request budget: discovery runs concurrently (<= DISCOVERY_TIMEOUT_MS),
+// then the advisor gets the remainder instead of its own full 30s on top.
+const REQUEST_BUDGET_MS = 45_000;
+const DISCOVERY_TIMEOUT_MS = 20_000;
+const MIN_ADVISOR_TIMEOUT_MS = 15_000;
 
 // GLI-SPEC: GS-003 GS-004 GS-006 GS-010 GS-012; docs/implementation/API-CONTRACTS.md.
 // This synchronous demo path has in-memory discovery; queued persistence and
@@ -86,6 +93,24 @@ export async function POST(request: Request) {
     );
   }
 
+  const previousAssetIds = parsePreviousAssetIds(
+    typeof body === "object" && body !== null && "previousAssetIds" in body
+      ? body.previousAssetIds
+      : undefined,
+  );
+  if (previousAssetIds === null) {
+    return NextResponse.json(
+      {
+        error: {
+          code: "INVALID_PREVIOUS_ASSETS",
+          message: "이전 검색 결과를 확인해 주세요.",
+        },
+      },
+      { status: 400 },
+    );
+  }
+
+  const startedAt = Date.now();
   const source = await listAssets({ limit: 100 });
   const requestedCriteria = extractCriteria(query, context);
   const liveDiscoveryEnabled =
@@ -95,28 +120,26 @@ export async function POST(request: Request) {
   const geminiDiscoveryEnabled =
     Boolean(process.env.GEMINI_API_KEY) &&
     process.env.GEMINI_DISCOVERY !== "disabled";
-  const liveDiscovery =
-    requestedCriteria.country === "Cambodia" && liveDiscoveryEnabled
-      ? await discoverCambodiaAssets({ city: requestedCriteria.city })
-      : null;
   const curatedAssets = listCuratedOpportunities().filter(
     (asset) => !source.assets.some((candidate) => candidate.id === asset.id),
   );
-  const sourceBackedAssets = [
-    ...(liveDiscovery?.assets ?? []),
-    ...source.assets,
-    ...curatedAssets,
-  ];
-  const sourceBackedMatchCount = countStrictMatches(
-    sourceBackedAssets,
-    requestedCriteria,
-  );
-  const webDiscovery =
-    requestedCriteria.country === "Cambodia" &&
+  const isCambodia = requestedCriteria.country === "Cambodia";
+  // Web discovery only runs when stored/curated assets cannot fill the list. It
+  // starts together with live collection so the two waits overlap, not add up.
+  const needsWebDiscovery =
+    isCambodia &&
     geminiDiscoveryEnabled &&
-    sourceBackedMatchCount < 6
-      ? await discoverWithGemini(query, requestedCriteria)
-      : null;
+    countStrictMatches([...source.assets, ...curatedAssets], requestedCriteria) < 6;
+  const [liveDiscovery, webDiscovery] = await Promise.all([
+    isCambodia && liveDiscoveryEnabled
+      ? discoverCambodiaAssets({ city: requestedCriteria.city }).catch(() => null)
+      : null,
+    needsWebDiscovery
+      ? discoverWithGemini(query, requestedCriteria, {
+          timeoutMs: DISCOVERY_TIMEOUT_MS,
+        }).catch(() => null)
+      : null,
+  ]);
   const discoveredAssets = mergeExternalAssets(
     webDiscovery?.assets ?? [],
     liveDiscovery?.assets ?? [],
@@ -166,6 +189,11 @@ export async function POST(request: Request) {
       safetyIdentifier,
       context,
       conversation,
+      focusAssetId: resolveFollowupReference(query, previousAssetIds),
+      timeoutMs: Math.max(
+        MIN_ADVISOR_TIMEOUT_MS,
+        REQUEST_BUDGET_MS - (Date.now() - startedAt),
+      ),
       provider: runtimeAvailable && canUseDeepSearch
         ? advisorProvider
         : "disabled",
@@ -274,6 +302,17 @@ function parseConversation(value: unknown): AdvisorConversationTurn[] | null {
     turns.push({ role: turn.role, text });
   }
   return turns;
+}
+
+function parsePreviousAssetIds(value: unknown): string[] | null {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.length > 20) return null;
+  const ids: string[] = [];
+  for (const id of value) {
+    if (typeof id !== "string" || !id || id.length > 200) return null;
+    ids.push(id);
+  }
+  return ids;
 }
 
 function mergeExternalAssets<T extends { sourceUrl?: string; id: string }>(

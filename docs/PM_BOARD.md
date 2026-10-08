@@ -85,6 +85,7 @@ Updated: 2026-09-13
 | GLI-048 | Claude Design/Codex | GLI Product Owner | COMPLETE | follow-up composer with preserved context, inline loading/error states and mobile behavior; changed-result notice uses the currently displayed server result count and an accessible `변경된 탐색 결과 보기` action, while QA state controls remain excluded from the public UI |
 | GLI-049 | Claude Design/Codex | GLI Product Owner | COMPLETE | add the three approved newsroom items and article routes for the demo; production news must be managed through an administrator CMS with create, edit, delete, schedule, publish and unpublish controls |
 | GLI-050 | Codex | GLI Product Owner | COMPLETE | executable development specification: 32 features, 46 route files, history/next work, source annotations and partial OpenAPI; spec checker/self-tests, script lint, four visual hashes and ten comment-only application diffs verified; no runtime/UI deployment |
+| GLI-052 | Claude Design/Codex | GLI Product Owner | BACKLOG | 2026-10-07: AI 탐색 결과 화면 개선 작업지시서 작성(일반 AI 수준의 답 + GLI 확인 정보, PC 우선, 기존 UI 변경 최소화). 구성 시안은 기획자 검토 완료, 이미지 시안은 Claude Design 대기. Claude Design 시안 대기, 구현 전; see HIST-20261007-008 |
 | GLI-051 | Claude Design/Codex | GLI Product Owner | IN PROGRESS | 2026-09-16: mobile-only patch applied; landing/explore width checks passed at 320/360/390/412/768/1440px; clipped menu scrolling repaired. Existing copy/data/events preserved. Awaiting user visual acceptance and real-device checks before public deployment; see HIST-20260916-001 |
 
 ## Decisions
