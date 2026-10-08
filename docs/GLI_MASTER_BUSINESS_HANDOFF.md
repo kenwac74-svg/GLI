@@ -18,7 +18,7 @@ Canonical product sequence:
 
 > **Find well → Explain clearly → Show confidence/evidence → Investigate what is missing → Execute the next step**
 
-Updated: 2026-10-06  
+Updated: 2026-10-08  
 Scope: business/product planning canonical handoff for Cloud Chat ↔ GitHub ↔ Local Work/Codex.
 
 ## 1. Operating rule
@@ -30,6 +30,38 @@ Scope: business/product planning canonical handoff for Cloud Chat ↔ GitHub ↔
 - Do not treat an AI chat session as the only source of truth.
 - New policy must first be checked for conflict with existing decisions.
 - Code, UI, DB, deployment, and Git changes originating from business planning must be separated as **Development Team Proposal** until explicitly approved for implementation.
+
+### 1.1 GPT–Claude 공동 검토: 동일 문제의 코드 수준 답변 3회 반복 시 중단
+
+상태: **사용자 확정, 2026-10-08.** 이 규칙은 최상위 제품 원칙을 실행하기 위한 협업 절차이며, 기존의 사실성·검증상태 구분이나 코드·배포 승인 요건을 완화하지 않는다.
+
+목적은 GPT의 결론을 Claude에게 추인받는 것이 아니라, 하나의 대화 맥락과 기존 설계에 매몰되어 문제 정의를 다시 보지 못하는 상황을 끊는 것이다. Claude와의 연구는 GLI의 정상적인 공동 협업 방식이다.
+
+**발동 조건**
+
+- 같은 미해결 사용자 문제를 해결한다며 코드 변경 수준의 답을 **3회 이상 반복하면**, 세 번째에 추가 처방을 멈추고 독립 검토로 전환한다. 네 번째 유사 코드 수정 답변을 이어가지 않는다.
+- 실제 코드를 수정한 횟수뿐 아니라, 코드·프롬프트·필터·타임아웃 등의 국소 수정 제안만 반복한 경우도 센다. 표현이나 파일명을 바꿔도 같은 문제와 접근이면 횟수를 초기화하지 않는다.
+- 이는 컨텍스트 매몰의 **운영상 경고 기준**이지, 모델 내부 원인이 입증됐다는 진단은 아니다. 사용자가 먼저 원점 재검토나 Claude 의견을 요구하면 3회까지 기다리지 않는다.
+- 서로 다른 문제를 해결하는 정상적인 다단계 작업을 무조건 합산하지 않는다. 진행 중인 동일 문제의 반복 횟수는 핸드오프에도 남겨 세션 변경으로 사라지지 않게 한다.
+
+**발동 후 순서**
+
+1. 동일 문제에 대한 추가 국소 수정 제안을 중단하고, 고객이 원한 경험과 아직 해결되지 않은 현상을 다시 적는다. 사용자가 원하는 결과와 현재 시스템의 제약을 혼동하지 않는다.
+2. `docs/research/HANDOFF-REVIEW-YYYYMMDD-<issue>.md`에 검토용 기록을 작성한다. 기존 기록이 있으면 중복 생성 대신 이어 쓴다. 대상 저장소·브랜치·기준 커밋·PR을 명시한다.
+3. 문서와 필요한 최소 증거만 GitHub에 커밋하고 실제 저장 여부를 확인한다. 이 협업 규칙은 해당 GLI 검토 문서를 기록하는 권한이며, 앱 코드 수정·머지·배포·유료 실행에 대한 포괄 승인은 아니다. API 키, 개인정보, 비공개 원문 전체를 불필요하게 넣지 않는다.
+4. Claude가 기존 해법을 전제로 삼지 않고 문제부터 검토하도록 전달한다. Git에 있는 근거는 파일 경로와 커밋으로 참조한다. Git 커밋 완료, Claude에게 전달됨, Claude 검토 완료를 서로 다른 상태로 기록한다. 자동 호출이 연결되어 실제 실행된 사실이 없으면 전달 경로를 제공하고 **Claude 검토 대기**로 남긴다.
+5. Claude 의견이 돌아오면 동의·반대·새 가설·추가로 필요한 증거를 비교해 같은 기록에 남긴다. 검토 전에는 같은 방식의 네 번째 처방을 진행하지 않는다. 새 방향은 기존 합의와 충돌 여부를 확인하고, 변경이 필요한 정책·개발안은 사용자 승인 대상으로 분리한다. 다른 모델의 의견이라는 이유만으로 자동 채택하지 않는다.
+
+**검토 문서의 순서**
+
+- 문제: 사용자의 실제 목표, 고객 장면, 성공 기준, 관찰된 실패.
+- 시행착오: 1·2·3차 제안 또는 변경, 각각의 근거·기대 효과·실제 결과. 미실행·미측정은 그대로 표시.
+- 결정 과정: 어떤 전제를 채택했는지, 무엇을 배제했는지, 왜 현재 방법을 반복했는지에 대한 근거 중심 요약. 확인된 사실과 GPT의 해석을 구분.
+- 원점 질문: 코드가 아니라 문제 정의·UX·상품 범위·데이터 가정·운영 방식부터 바꿔야 하는가. 기존 방향을 반증하는 자료와 미해결 질문을 포함.
+- 인계 자료: 재현 절차, 관련 파일·커밋·PR, 화면/로그 등 최소 증거, 확정 정책과 미확정 제안의 경계.
+- 다음 할 일: Claude에게 요구할 독립 의견, 가장 작은 확인 실험, 사용자 결정이 필요한 항목, 중단 상태와 재개 조건.
+
+Claude는 우선 고객 목표·관찰 사실·진짜 제약을 보고 독립적인 문제 정의를 제시한 뒤, 기존 시도와 비교한다. 성공 기준은 모델 간 합의가 아니라 사용자가 체감하는 개선이다. 단순 작업마다 복수 모델을 호출하거나 추론량을 늘리는 방식으로 이 규칙을 대체하지 않는다.
 
 ## 2. GLI product thesis
 
