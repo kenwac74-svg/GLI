@@ -229,9 +229,9 @@ export function mapListingRowToAsset(input: unknown): Asset {
     transaction: transaction as Asset["transaction"],
     propertyType: propertyType as Asset["propertyType"],
     bedrooms:
-      nullableInteger(read(row, "bedrooms"), "bedrooms", publicId) ?? 0,
+      nullableInteger(read(row, "bedrooms"), "bedrooms", publicId),
     bathrooms:
-      nullableInteger(read(row, "bathrooms"), "bathrooms", publicId) ?? 0,
+      nullableInteger(read(row, "bathrooms"), "bathrooms", publicId),
     title: requiredText(read(row, "title"), "title", publicId),
     price: priceMinor / 100,
     currency,
@@ -270,7 +270,7 @@ function matchesPublicQuery(asset: Asset, query: PublicAssetsQuery): boolean {
     (!query.propertyType || asset.propertyType === query.propertyType) &&
     (query.minPriceMinor === undefined || priceMinor >= query.minPriceMinor) &&
     (query.maxPriceMinor === undefined || priceMinor <= query.maxPriceMinor) &&
-    (query.minBedrooms === undefined || asset.bedrooms >= query.minBedrooms)
+    (query.minBedrooms === undefined || (asset.bedrooms !== null && asset.bedrooms >= query.minBedrooms))
   );
 }
 

@@ -197,16 +197,24 @@ function extractFields(asset: Asset): TextField[] {
 function project<T extends Asset>(asset: T, fields?: TextField[]): T {
   if (!fields) {
     const title = localizeSeparatedGeography(asset.title);
-    return title === asset.title ? asset : { ...asset, title };
+    const summary = localizeSeparatedGeography(asset.summary);
+    return { ...asset, title, summary,
+      ...(asset.sourceUrl && extractFields(asset).length ? { translationStatus: "unavailable" as const } : {}),
+      strengths: asset.strengths.map(localizeSeparatedGeography),
+      checks: asset.checks.map(localizeSeparatedGeography),
+      ...(asset.detailFacts ? { detailFacts: asset.detailFacts.map(fact => ({
+        label: localizeSeparatedGeography(fact.label), value: localizeSeparatedGeography(fact.value),
+      })) } : {}),
+    };
   }
   const values = new Map(fields.map(field => [field.key, field.text]));
   return {
-    ...asset, title: localizeSeparatedGeography(values.get("title") ?? asset.title), summary: values.get("summary") ?? asset.summary,
-    strengths: asset.strengths.map((text, index) => values.get(`strengths.${index}`) ?? text),
-    checks: asset.checks.map((text, index) => values.get(`checks.${index}`) ?? text),
+    ...asset, translationStatus: "cached", title: localizeSeparatedGeography(values.get("title") ?? asset.title), summary: localizeSeparatedGeography(values.get("summary") ?? asset.summary),
+    strengths: asset.strengths.map((text, index) => localizeSeparatedGeography(values.get(`strengths.${index}`) ?? text)),
+    checks: asset.checks.map((text, index) => localizeSeparatedGeography(values.get(`checks.${index}`) ?? text)),
     ...(asset.detailFacts ? { detailFacts: asset.detailFacts.map((fact, index) => ({
-      label: values.get(`detailFacts.${index}.label`) ?? fact.label,
-      value: values.get(`detailFacts.${index}.value`) ?? fact.value,
+      label: localizeSeparatedGeography(values.get(`detailFacts.${index}.label`) ?? fact.label),
+      value: localizeSeparatedGeography(values.get(`detailFacts.${index}.value`) ?? fact.value),
     })) } : {}),
   };
 }

@@ -17,7 +17,8 @@ export function geographyLabel(value: string) {
   return PLACES[trimmed] ?? (district ? `${district[1]}군` : trimmed);
 }
 
-export function candidateLocation(asset: { district: string; city: string; country: string }) {
+export function candidateLocation(asset: { district: string; city: string; country: string }, locale: "ko" | "en" = "ko") {
+  if (locale === "en") return [asset.district, asset.city, asset.country].filter(Boolean).join(", ");
   return [asset.district, asset.city, asset.country].filter(Boolean).map(geographyLabel).join(", ");
 }
 

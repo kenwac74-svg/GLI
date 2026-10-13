@@ -241,12 +241,21 @@ export function parseDotPropertyListings(html: string, transaction: Asset["trans
     const image = nodes(card, node => node.tagName === "img" && (attr(node, "src") ?? "").startsWith("https://pix.dotproperty.co.th/"))[0];
     const imageUrl = attr(image, "src");
     if (!imageUrl) continue;
+    // Preserve details already present in this fetched card, without fetching
+    // every listing's detail page during a consultation.
+    const images = [...new Set(nodes(card, node => node.tagName === "img")
+      .map(node => attr(node, "src"))
+      .filter((url): url is string => Boolean(url?.startsWith("https://pix.dotproperty.co.th/"))))].slice(0, 20);
+    const descriptionNode = nodes(card, node => (node.attrs ?? []).some(attribute =>
+      (attribute.name === "itemprop" && attribute.value === "description") ||
+      (attribute.name === "class" && attribute.value.split(/\s+/).some(value => /^(?:listing-)?description$/.test(value)))))[0];
+    const description = publicText(textOf(descriptionNode), 4000);
     // PH dual-purpose adverts share a URL but expose different sale/rent prices.
     const id = `GLI-${philippines ? "PH" : "VN"}-DOT-${createHash("sha256").update(sourceUrl.toString() + (philippines ? `:${transaction}` : "")).digest("hex").slice(0, 12).toUpperCase()}`;
     results.set(id, {
       id, country: market, countryCode: philippines ? "PH" : "VN", city, district: (philippines ? location.slice(1) : location.slice(0, -1)).join(", "),
       transaction, propertyType: "condo", assetCategory: "residential", bedrooms, bathrooms, areaSqm,
-      title, price, currency: philippines ? "PHP" : "VND", image: imageUrl, summary: title,
+      title, price, currency: philippines ? "PHP" : "VND", image: imageUrl, images, summary: description ?? title,
       trustScore: 0, trustStatus: "PRELIMINARY", isGliDirect: false,
       sourceName: `Dot Property ${market}`, sourceUrl: sourceUrl.toString(),
       // The listing card supplies no original timestamp. Never invent one from

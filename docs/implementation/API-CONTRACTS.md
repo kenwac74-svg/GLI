@@ -73,7 +73,16 @@ P50: 활성 D1 discovery 저장 경로는 번역 전 정규화 후보를 저장�
 |---|---|---|
 | 환율 | app/api/exchange-rates/route.ts | snapshot/stale, 실패 503. 검색 응답·상담·VND 표시 공유, 규칙 KRW 예산 해석은 아직 고정 demo 값 |
 | 로그인/회원 | app/auth.ts, app/api/me/route.ts | ChatGPT 호스팅/데모와 AWS 독립 인증은 별개 |
-| 관심 | app/api/favorites/route.ts | DB API와 새 목업 UI 연결 여부를 따로 시험 |
+| 회원 문의 | app/api/inquiries/route.ts | 로그인 POST만. submissionKey/requestText/선택contact·assetId → 서버 회원/자산 확인 → private DB접수 → receiptNumber. 신규201/중복200, 이메일/예약/배정 없음. MY-INQUIRY-WORKFLOW.md |
+| 관심 | app/api/favorites/route.ts | 인증 GET/POST/DELETE를 정식/외부/승인 fixture 안정 참조에 LOCAL 연결. 보관 상태/계정 격리. [계약과 미완료](DB-UI-WORKFLOWS.md) |
+
+## LOCAL 가격 이력 / Claude 표시 인계 (2026-10-13)
+
+`GET /api/assets/:id/price-history`: `{assetId, entries, windowVersionLimit:500}`. 아직 보관 참조가 없는 알려진 공개 자산은 빈 entries와 `historyAvailable:false`; 알 수 없는 ID는404. 비공개 정식 자산은 로그인한 기존 관심 소유자만 접근한다. no-store 응답이다.
+
+Entry: `sourceUrl`, `currency`, `transaction`(sale/rent), `price`, 선택 `maxPrice`, `observedAt`, 선택 `sourceUpdatedAt`. 가격은 Asset 원문 통화 값이며 minor 단위 DTO와 혼동하지 않는다. 관측 시각을 원문 게시/갱신일로 표시하지 않는다. 같은 출처의 동일 가격 반복은 생략하며 출처 간 충돌값은 유지한다. private snapshot/설명/사진 변경 이력/병합 근거는 고객 API에서 제외한다.
+
+Claude 작업 경계: 새로운 패널/그래프는 아직 승인/구현하지 않았다. 원문 통화와 매매/월 임대 단위 유지, 출처별 변화 구분, 최근500개 관측 버전 한계 표시 방식을 별도 제안한다. 전체 private 버전 저장과 고객 가격 투영은 별개다. 권한/요금/디자인을 임의로 변경하지 않는다.
 | 상담 | app/api/consultations/route.ts, consultations/[id]/messages | 사용자 소유권/관리자 역할 |
 | 결제 | app/api/memberships/checkout, checkout/confirm, db/payment-webhooks.ts | 공개 confirm handler가 실 PG webhook 수신기라는 뜻 아님 |
 | 관리자 | app/api/admin | 일부 기존 서비스 재사용, 샘플 기반 최종 도구 미완 |
@@ -115,4 +124,11 @@ See [MULTI-COUNTRY-SEARCH.md](MULTI-COUNTRY-SEARCH.md). No endpoint or auth chan
 ## P54 비로그인 공개 데모 상담
 
 `POST /api/search`는 DEPLOYMENT_STAGE=demo와 GLI_DEMO_GUEST_AI=enabled가 모두 충족되고 계정이 없으면 실제 상담 모델을 사용할 수 있다. deepSearchEligible에 반영하며 비로그인의 monthlyLimit=0은 회원 월 이용권 미보유를 뜻한다. 운영 한도는 별도: 전체300회/일, 비로그인 공용 풀100회/일. 회원 이용권/실제 ADMIN 검증은 유지한다. flag 미설정/disabled 또는 상용 단계에서는 기존 게이트를 적용한다.
+
+# LOCAL auth preview (2026-10-13)
+
+- POST `/api/auth/preview?provider=google|chatgpt&return_to=/my`: same-origin request, loopback host, development stage and explicit local flag required; otherwise403 with no auth cookie.
+- Google assigns a server-generated staff preview UUID; ChatGPT fallback uses a separate developer identity. Real ChatGPT Sites authentication takes precedence. Neither preview grants admin access.
+-303 redirects to a safe local path; HttpOnly/SameSite cookie expires in two hours and is removed on logout. This is not Google OAuth or a public social-login contract.
+- Browser evidence and limitations: `QA-INTEGRATED-20261013.md`.
 

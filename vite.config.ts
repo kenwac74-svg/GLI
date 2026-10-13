@@ -23,6 +23,8 @@ const localBindingConfig = {
     DEMO_AUTH_ENABLED: process.env.DEMO_AUTH_ENABLED ?? "false",
     DEMO_ADMIN_ENABLED: process.env.DEMO_ADMIN_ENABLED ?? "false",
     DEMO_AUTH_HOSTS: process.env.DEMO_AUTH_HOSTS ?? "",
+    // This binding is local-only; public hosting has no preview login flag.
+    LOCAL_AUTH_PREVIEW_ENABLED: process.env.LOCAL_AUTH_PREVIEW_ENABLED ?? "true",
     LLM_PROVIDER: process.env.LLM_PROVIDER ?? "disabled",
     OPENAI_MODEL: process.env.OPENAI_MODEL ?? "gpt-5.6-sol",
     OPENROUTER_MODEL: process.env.OPENROUTER_MODEL ?? "",

@@ -1,11 +1,285 @@
 # 개발 변경 이력
 
+## HIST-20261013-019
+
+- User approved Step9 final LOCAL frontend and Step10 commit/push/public demo deployment. Includes preserved1002 work, basic information/English support and sequential frontend steps1~8; Step11 AI quality is not started.
+- Preflight: live public version68 and DB binding/member tables confirmed. Additive SQL0020/0021 are needed for retained references/private versions/inquiries. No LOCAL test identities/data copied to public. Google OAuth remains unimplemented.
+- Existing GitHub agent/gli-ai-orchestration-demo and Sites source have no common ancestor. Preserve histories using new GitHub release/frontend-20261013; no force push or overwrite of old branch/main. Sites continues its existing main history.
+-362 tests/type/build/migrations and spec checks passed; credential-pattern source scan found no matches. This is authorization/preflight only, deployment pending. Runtime secrets/audience unchanged; real-provider/phone/source-accuracy checks remain separate.
+
+## HIST-20261013-018
+
+
+- GS-020 Step8 follow-up, user approved LOCAL save/remove/reload, login navigation and KO/EN labels. Confirmed sample favorite persists after reload and removal persists; logged-out detail inquiry retains related asset after staff preview login. No new inquiry or paid AI call.
+- Four missing MY exact-copy keys added to english-ui-copy.ts (logout, saved-assets heading, remove tooltip, missing price). Regression first failed, then passed; no design/layout, membership/access or public authentication policy changed.
+-362 tests/typecheck/build/migration validation passed; lint0 errors/12 warnings. QA-INTEGRATED-20261013.md records scope. Real OAuth/phone/public/expiry/source-accuracy cases remain separate. LOCAL final preview ready for Step9 approval; no commit/push/deployment.
+
+## HIST-20261013-017
+
+- Step8 LOCAL integrated QA and user-approved login role separation: GPT developer feature testing, Google staff sign-in experience. Real ChatGPT identity remains first; LOCAL fallback identities are separate and have no admin privilege. Google OAuth/public social login is not implemented.
+- Fixed excluded legacy MY queries, restored existing LOCAL SQL0013 schema, localized prefixed Mantawi fixture titles, corrected result-count locale ownership and empty-result feedback. Existing9 listings/56 discovered retained. SQL0013 migration ledger reconciliation remains pending.
+-362 tests/typecheck/build/migration checks passed; lint0 errors/12 warnings. Responsive/menu/detail-return and LOCAL preview identities inspected; consultation UI tested with intercepted synthetic responses, no paid AI. Actual phone/public/auth-provider and remaining browser cases are not claimed complete.
+- QA-INTEGRATED-20261013.md records evidence, test receipt and limitations. No commit/push/public deployment/new collection/remote DB change. Reverse handoff saved for later Claude redesign, not web-sent.
+
+## HIST-20261013-016
+
+- 사용자 승인으로015의5가지 LOCAL 결함 수정. Codex 소규모 직접 변경 및 Claude 차후 역인계 경계를 준수한다. 원본 Claude HTML/샘플 Trust·수익·위험 지표와 기존 업무 변경은 보존했다.
+- 영어 헤더 간격과 기존 접힌 메뉴1400px 적용, 고정 UI 사전 보완, locale cookie→router.refresh로 서버 캐시 투영 동기화. 목록 동적 개수는 사전 복원 충돌을 방지한다. 유료 재검색/번역 호출 없음.
+- 생성 마커/fixture-display로 원문 가격과 월·㎡ 단위·범위 보존, API KO원화/EN달러와 실제 환율 시각 표시. 공유5분 캐시/실패 재시도; 원문 가격 없는 경우 임의 환산 없음. 시드 게시일은 절대 날짜로 바꾸고 고정39일 경과 및8월2일 환율을 제거했다.
+- 신규 회귀 테스트 red→green, 전체356개 통과. 타입/마이그레이션 검사 및 로컬 빌드 통과. lint 오류0/기존 및 hook 경고12; 전체check는 먼저 중복 사전 키와 빌드 EPERM으로 중단되어 각각 원인을 수정한 뒤 개별 검증했다. EPERM은 원본drizzle 폴더 ReadOnly가 산출물로 복사된 것이며 디렉터리 속성만 정리했다. DB 내용/마이그레이션 변경 없음.
+- 실제1286px EN 목록에서 문서1271px/헤더 범위 초과 없음,390px EN MY/샘플 상세 가로 넘침 없음. VN KO↔EN 제목/번역 상태 즉시 갱신, 샘플 환산/API 기준 시각/날짜 및 Mantawi BASIC 신규 영어 문구 확인.
+- 사용자의 직접 소규모 수정 승인과 위 검수에 따라 생성CSS/static 보호 해시를 갱신했다. Claude 원본HTML 및 원본자료 보호 해시는 유지한다. 새로운 디자인 원본 승인으로 확대하지 않는다.
+- 최종 npm check356개/타입/마이그레이션/빌드/lint오류0 및 spec:check 통과. 역방향 전환에서 동적 개수 복원 충돌도 cleanup의 표시 소유권 제외로 보완했다.
+- CLAUDE-REVERSE-HANDOFF-20261013.md/언어 명세/QA/현재 상태/순서를 갱신한다. Claude에 실제 웹 전송한 것으로 보고하지 않는다. 실제 로그인/휴대폰 전체/외부 원문 정확도/공개 검수는 남음. 유료 AI/새 수집/DB 쓰기/커밋/푸시/배포 없음.
+
+## HIST-20261013-015
+
+- 사용자 `검수해`에 따라 순차7단계 언어/기본 정보 LOCAL 화면 및 관련 코드 검사. 제품/API/DB 계약 변경 없음.
+- EN 헤더1286px 대비 문서1429px로 로그인/언어 잘림, MY/상세 고정 문구 번역 누락, 샘플 고정 원화, 언어 전환 후 외부 상세/미확인 상태 갱신 누락, 샘플 경과일의8월14일 기준 고정을 재현했다. QA-LOCALE-BASIC-20261013.md에 증거/수정 방향/한계를 기록하고7단계는 보완 대기로 남긴다.
+- KH/VN 원문 가격·API 환산·환율 시각·제원·사진 로딩·원문 날짜/GLI 확인일 분리 및 EN 결제 선택/취소 확인. LOCAL 읽기 조회 KH14/VN42; PH는 샘플만 검사하며 공개 데이터 부재로 추정하지 않는다.
+- 관련60개 테스트 통과. 실제 로그인/실휴대폰/공개 화면/외부 원문 대조는 미완료. 기존353개 전체 검증은014의 이력이지 이번 검사 재실행이 아니다.
+- 문서만 갱신. 제품 수정/DB 쓰기/유료 AI/새 수집/빌드/커밋/푸시/배포 없음. 문서 검증 결과는 이번 전달의 확인 결과를 따른다.
+
+## HIST-20261013-014
+
+- 사용자 `다음`으로 사전 확정6단계 범위(MY 회원/멤버십/관심자산, 로그인 회원 문의 DB 저장→접수번호)를 LOCAL 구현했다. 기존 스타일 재사용; 상담 진행/알림/예약 UI는 MY에서 제외하며 기존 운영 API 자체는 유지한다.
+- MY는 실제 회원/멤버십과 SQL0020의 모든 종류 관심 참조를 읽는다. stable ID/origin/해제 관계/보관 상태/원문 가격 설명과 표시 등급을 보존한다. 누락 가격을0원으로 표시하지 않는다. 로그인·로그아웃 경로 유지.
+- 문의 전용SQL0021/private repository/API를 기존 예약형 consultations와 분리했다. 서버 회원 이름/이메일 자동 저장, 선택 연락처, 서버 자산 참조, 내용 hash/회원별 제출키로 중복·동시 재시도 방어. 원자적 저장/감사 로그, 신규201/재시도200/접수번호; 이메일/배정/예약/알림 없음.
+- 실제 LOCAL0021 추가 후 기존9 listings/56 discovered/1 favorite 유지 및 문의0 확인. 기존 ledger 문제를 회피해0021만 --local 적용했고 원격 DB는 변경하지 않았다.
+- SQLite/built worker에서 회원 신원 위조/계정 격리/비로그인401/입력·자산400/동시 중복/rollback/폼 범위 검사. 기존 MY 검사에 남은 우선상담 요구는 새 승인 범위의 열람 등급 검증으로 대체했으며 기존 상담 API 회귀는 유지했다. 전체353개·타입·빌드·lint/migration 통과.
+- 실제 브라우저 MY→로그인, Mantawi 전문가 문의→fixture ID/로그인 복귀 주소 유지 확인. 실제 로그인 이후 회원 UI·접수·해제/다른 기기/휴대폰은 미완료. MY-INQUIRY-WORKFLOW/계약/registry/순서/상태 갱신과 Claude 역인계 기록.
+- API/DB 조회 성공을 공개 환경 완료로 보고하지 않는다. 유료 AI/새 수집/실결제/권한 변경/커밋/푸시/공개 배포 없음. 다음7단계 언어/기본 정보 검수는 새 지시를 기다린다.
+
+## HIST-20261013-013
+
+- 음성 사용자 지시로5단계는 네이버페이/카카오페이/토스페이/신용카드 선택 창 목업까지만 연결하고 마무리한다. 실제 PG 연결/카드 입력/청구/멤버십 활성화/DB 권한 변경은 제외한다.
+- 기존 확인 팝업 레이아웃에 radio 선택/취소/선택 완료를 연결했다. 완료는 선택된 결제 수단을 화면 상태에 유지하고 창을 닫을 뿐이다. shell activate의 setPaid(true)를 제거하고 checkout paid=1도 완료 화면을 만들지 않게 했다. 키보드 초점은 선택 radio와 버튼을 포함한다.
+- 한국어/영어 실제 브라우저에서4수단 표시, 신용카드 선택 완료 후 결제 완료/활성화 없음, 재열기 선택 유지 확인. 한국어 선택 창을 우측 탭에 열어두고 work/payment-preview-20261013.png 저장.
+- 관련2개 포함 전체349개 테스트와 타입/빌드/lint 검증. 실제 PG/실계정/실휴대폰은 미연결·미검수이다. 새 API/DB 쓰기/유료 AI/커밋/푸시/공개 배포 없음. 다음6단계를 시작하지 않고 요청 범위에서 종료한다.
+
+## HIST-20261013-012
+
+- 사용자 `다음`에 따라 앞서 제시한4단계 범위와 소규모 변경 위임(HIST-011)으로 상세 열람 목업을 LOCAL 연결했다. 기존 확인 팝업 클래스를 재사용하며 정보 보기/취소/Escape/초점 처리. 실제 결제/잔액 차감/계정 권한 쓰기 없음.
+- 동일 원본의 선택 tier/unlocked 투영으로 준비된 상세를 표시한다. app/generated/claude-static.ts 생성 hash F79013EF1F61FEBFC7C65F23BCCE04888A984FECB80CB099523D72A711D469F9로 갱신; 원본 HTML/CSS는 변경하지 않았다. 자산별 key로 표시 상태가 다른 자산에 넘어가지 않는다.
+- 동적 외부 상세는 실제 확보된 publicResources만 표시한다. 자료 없으면 비활성, 샘플 고정 위험/시장 수치와 리포트/현장 서비스 예시를 외부에 사용하지 않는다. 기존 샘플 지표는 유지한다. 공공 자료 범위/요금/서버 권한은 변경하지 않는다.
+- 실제 Mantawi BASIC 팝업 취소/확인/제원 펼침 및 GLI Cash5000 유지 확인. 저장된 CAM Realty80㎡/2BR/$450의 BASIC 추가 자료 없음/비활성 확인. 관련3개 포함 전체347개 테스트, 타입/빌드/lint 검증. 영어 상세 신규 노출 문구 일부는 한국어 잔여로 순서7~8에 기록한다.
+- DETAIL-ACCESS-PREVIEW/registry/현재 상태/순서 갱신 및 Claude 차후 역인계 항목 기록. 유료 검색/AI/새 수집/DB 쓰기/커밋/푸시/공개 배포 없음. 자료 있는 외부 실화면/실휴대폰 및 실제 계정 권한은 별도 검수.
+
+## HIST-20261013-011
+
+- 사용자 소규모 변경 Codex 판단/차후 대대적 UI 개편 시 Claude 역인계 지시를 AGENTS/DECISIONS에 저장했다. 기존 디자인의 작은 문구·상태·동작 보완은 개별 Claude 승인 없이 수행하고 변경 이력을 남긴다.
+- 새로운 시각 방향/대규모 구조 변경/요금·결제·권한 정책과 공개 배포 승인을 확대하지 않는다. 현재4단계 검토에서 제시한 이용 확인 표현/자료 없는 상태도 이 작은 보완 기준을 적용한다.
+- 운영 문서만 변경. 기능 구현/DB/유료 AI/빌드/커밋/푸시/배포 없음. spec 검사로 검증한다.
+
+## HIST-20261013-010
+
+- 사용자 `탐색 목록조작 기능 반영해` 승인으로 순서3을 LOCAL 보완했다. 정렬·보기·필터·상세 복귀만 대상이며 AI 답변/DB/디자인 원본/공개 범위를 바꾸지 않는다.
+- 기존 필터 클릭이 다른 조건을 삭제하던 문제를 resultFilterPath로 수정했다. 국가/유형/거래 조건을 교집합 적용하고 표시 선택/후보 개수/국가·유형 개수를 현재 데이터와 맞춘다. 동일 유형 재클릭은 유형 해제, country 변경은 이전 cc alias 제거. q는 로컬 필터에서 제거해 추가 유료 자동검색을 막는다.
+- 정적 카드 분류가 오래된16주거/4프로젝트였으나 실제 카드8주거/12프로젝트이므로 표시 기준을 보완했다. 거래 미확인 프로젝트를 매매로 단정하지 않는다. 동적 후보는 acquired country/transaction/propertyType만 사용하며 유형 불명은 해당 유형 필터에 포함하지 않는다. 새 후보 수집/AI 판정 없음.
+- 리스트/그리드 선택과 aria-pressed를 동기화하고 sessionStorage에 일시적 보기 상태만 기록한다(업무 DB 대체 아님). 기존 정렬/URL/스크롤 복귀를 유지한다. 상단 새 상담과 전체 목록 초기화는 보기/정렬/반환 상태도 지운다. 새 결과 적용 시 이전 카드의 searchBound를 제거해 이전 후보 재등장을 막는다.
+- 실제 브라우저 PH→프로젝트→리스트→등급순→Mantawi 상세→복귀: PH/프로젝트 선택, 리스트/등급순 및 scrollY1742 복원을 확인했다. 리스트 본문 intrinsic overflow만 min-width/flex/wrap로 보완하며 승인 CSS/HTML 파일은 변경하지 않는다. 영어 헤더 가로 넘침은 별도7~8단계 잔여로 기록한다.
+- 추가 시험4개와 기존 전체344개 통과 및 타입/빌드 검증. work/result-controls-20261013.png 증거. 동적 실제 유료 검색/실휴대폰은 미검수이며 유료 AI/DB 변경/커밋/푸시/배포 없음. 다음4단계는 별도 방향 확인 후 시작한다.
+
+## HIST-20261013-009
+
+- 사용자 `그렇게 해`로 승인 계획을 직접 순차 구현하고 독립 검수1회를 수행했다. WORK-SEQUENCE 2단계/GS-004/GS-016의 LOCAL 구현이다.
+- SQL0020 안정 자산 참조/전체 private 버전/계정 관계, 내용 hash와 부분 병합, 원자적 최신본 저장, 정확한 호실 근거 그룹/무효화를 구현했다. Top5 밖 수집 성공 후보도 저장하며 실패/부분 성공을 구분한다.
+- 정식/외부/승인 fixture 관심 API와 기존 UI/상세를 연결했다. 원문 삭제/거래 완료 보관과 계정 격리, 해제 시 수집 정보 유지. 고객 가격 API는 최근500개 관측 버전 투영만 공개하고 새 디자인은 추가하지 않았다.
+- 독립 검수4건(비공개 신규 저장, 동시 legacy 해제 부활, 부분 제원 손실, 호실 변경 후 잘못된 그룹)을 RED 재현 후 수정했다. 최종340개 테스트/로컬 빌드 통과.
+- 기존 LOCAL migration ledger 부재로0000 재적용 실패; 새 테이블 부재 확인 후0020만 LOCAL 적용. 기존9 listings/56 discovered/1 favorite 유지. 초기화/원격 DB 변경 없음.
+- 실제 로그인 브라우저/공개 QA, 원문 정확도/이미지 객체 확보/백업, legacy firstSeen 보존 점검은 남았다. 커밋/푸시/공개 배포/유료 AI/수집 확대 없음. 관련 계약/상태/이력 갱신.
+
+## HIST-20261013-008
+
+- 사용자 `승인`으로 DISCOVERY-RETENTION-DESIGN 기술 설계를 승인하고 구현 계획 작성 단계에 진입했다. 제품 구현/DB 변경/공개 배포 승인과 구분한다.
+- 현재 API의 후보 선정 전 save 경로/원자적 배치/출처+거래 유일성, 현재 SQL0019 및 journal 관례를 확인해 docs/superpowers/plans/2026-10-13-discovery-retention.md를 작성했다. 안정 참조+보존 migration, 버전 저장, 증거 기반 그룹, 계정 관심, 공개 가격 투영의 5개 작업과 실패 시험/검증을 연결했다.
+- 직접 순차 구현+마지막 독립 검수1회를 권고하며 사용자 계획/실행 방식 승인 대기이다. snapshot/원문 날짜/FX·번역 차이/필드 누락/동시 갱신/계정 격리/자동 병합 근거 부재 경계를 자가 검토했다.
+- 명세/상태/WORK-SEQUENCE를 갱신했다. 문서만 변경. 제품/API/DB/디자인/인증/키/유료 API/빌드/수집 확대/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-007
+
+- 사용자 `추천대로`로 고객에게 최신 정보/가격 변경 이력만 제공하고 설명/사진/수집 기록 등 전체 이력은 관리용으로 보관하는 범위를 승인했다. 새로운 표시 디자인은 Claude Design 담당으로 유지한다.
+- 기존 discovery 최신 저장/URL+거래 유일성 및 favorites의 listings 외래키를 확인하고 DISCOVERY-RETENTION-DESIGN.md에 기술 설계 제안을 작성했다. 안정 ID 참조/이력/계정 관계/증거 기반 그룹/가격 투영/LOCAL-AWS 경계와 검증 항목을 제시한다. 정책 확정과 기술 설계 제안의 승인을 구분한다.
+- WORK-SEQUENCE/DB-UI-WORKFLOWS/CURRENT_STATE를 기술 설계 검토 대기로 갱신했다. 설계 승인 후 구현 계획을 작성하며 아직 마이그레이션/제품 코드에 착수하지 않는다.
+- 문서만 변경. 제품/API/DB/디자인/인증/키/유료 API/빌드/수집 확대/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-006
+
+- 사용자 `승인`으로 출처 간 동일성이 확실한 매물만 묶고 각 출처/정보를 유지하는 정책을 확정했다. 불확실한 매물은 별개 보관하며 동일 건물/유사 면적만으로 다른 호실을 합치지 않는다.
+- WORK-SEQUENCE/DB-UI-WORKFLOWS/CURRENT_STATE에 출처별 이력/충돌값 및 기존 관심 참조 보존 경계를 기록했다. 구체 동일성 증거 기준과 DB/API 구현은 후속 설계 대상이며 다음 질문은 고객 변경 이력 표시 범위이다.
+- 문답 기록만 변경. 제품/API/DB/디자인/인증/키/유료 API/빌드/수집 확대/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-005
+
+- 사용자 `그래`로 최신 정보 갱신과 이전 값/변경 시각 이력 보관을 승인했다. 변화 없는 재수집은 확인 시각만 갱신해 중복 버전 생성을 줄인다. 변경 관측 시각과 원문 수정 시각은 구분한다.
+- WORK-SEQUENCE/DB-UI-WORKFLOWS/CURRENT_STATE를 갱신했다. 부분 수집 누락으로 기존 풍부한 정보를 지우지 않는 경계 유지. 다음 질문은 출처 간 중복 매물 병합 기준이다.
+- 문답 기록만 변경. 제품/API/DB/디자인/인증/키/유료 API/빌드/수집 확대/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-004
+
+- 사용자 2번 답변: 원문 삭제/거래 완료된 관심자산은 보관하고 검색에서 수집 대상으로 확보한 매물도 DB에 계속 보관한다. 사용자 관심 저장/열람/최종 Top5 여부로 영속 저장을 제한하지 않는다.
+- WORK-SEQUENCE/DB-UI-WORKFLOWS/CURRENT_STATE에 정책과 다음 질문(최신본/변경 이력 보관)을 기록했다. 확보 실패/차단 응답을 매물 사실로 생성하거나 조회 실패를 거래 완료로 단정하는 승인이 아니다.
+- 문답 기록만 변경. 제품/API/DB/디자인/인증/키/유료 API/빌드/수집 확대/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-003
+
+- 사용자 `진행`으로 문의 접수 범위를 DB 저장 성공 후 접수번호/완료 안내까지로 확정한다. 자동 이메일/전문가 배정/예약/진행 관리 제외. 실패를 완료로 표시하지 않는다.
+- 문답 확정 내용을 UI-CONNECTION-INVENTORY.md에 상태/대상/제외 목록으로 정리하여 1번을 완료했다. 기능 구현 완료와 구분한다. 2번 관심자산 DB 방향 문답으로 이동하되 코드/DB 변경에는 착수하지 않는다.
+- AGENTS의 고정 단계 표기를 CURRENT_STATE 참조로 바꿔 이후 단계 이동 시 지침이 낡지 않도록 했다. WORK-SEQUENCE/CURRENT_STATE를 갱신했다.
+- 문서만 변경. 제품/API/DB/디자인/인증/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-002
+
+- 사용자 `진행`은 직전 문의 입력 구성 제안 승인으로 기록한다: 로그인 회원 이름·이메일 자동 표시, 문의 내용 필수, 상세 진입 관련 자산 자동 연결/일반 문의 생략 가능, 연락처 선택.
+- WORK-SEQUENCE/CURRENT_STATE를 갱신했다. 다음 질문은 접수 후 처리 범위이며 정식 전문가 배정/예약/상담 진행/이메일 발송 승인이 아니다. 1번 목록 확정 단계에서 제품 구현을 앞당기지 않는다.
+- 문서만 변경. 제품/API/DB/디자인/인증 설정/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261013-001
+
+- 사용자 문의 폼 접수 대상 답변 `로그인만`: 로그인 회원만 제출 가능으로 확정했다. 비로그인 허용 제안은 채택하지 않으며 기존 회원 인증을 유지한다.
+- WORK-SEQUENCE/CURRENT_STATE를 갱신했다. 다음 질문은 입력 항목이며 문의 저장/전달 방식은 아직 미확정이다.
+- 문서만 변경. 제품/API/DB/디자인/인증 설정/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261012-008
+
+- 사용자가 MY 구성(기본 회원 정보·로그인/로그아웃, 멤버십·열람 범위, DB 관심자산)을 목업으로 승인했다. 실결제/멤버십 부여/권한 확대 승인으로 해석하지 않는다.
+- 전문가 상담은 우선 문의하기 폼만 둔다고 지시했다. 직전 전문가 상담 제외는 문의 폼 예외로 보완하고 배정/예약/진행 관리 등 정식 상담 기능과 다른 준비 중 서비스 제외는 유지한다.
+- WORK-SEQUENCE/CURRENT_STATE를 갱신했다. 다음 질문은 비로그인 문의 접수 허용 여부이다. 접수 대상/필드/저장·전달 방식은 미확정이다.
+- 운영 문서만 변경. 제품/API/DB/디자인/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261012-007
+
+- 사용자 1번 두 번째 답변: MY만 포함하고 전문가 상담 및 나머지 준비 중 메뉴는 이번 구현에서 제외한다. 직전 전문가 상담 신청 포함 제안은 채택하지 않는다. 기존 고객 화면(뉴스 등) 검수와 임시 관리자 제외는 유지한다.
+- WORK-SEQUENCE 6단계와 현재 위치, CURRENT_STATE를 후속 결정에 맞춰 갱신했다. 다음 질문은 MY 정보 구성이다. 기존 전문가 상담 코드/데이터를 삭제하거나 서비스를 비활성화하는 승인이 아니다.
+- 문서만 변경. 제품/API/DB/디자인/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261012-006
+
+- 1번 범위 질문에 사용자 `맞아` 응답: 고객용 전체 화면을 미연결 UI 검토 대상으로 확정하고 임시 관리자 화면은 별도 안건으로 제외한다.
+- WORK-SEQUENCE/CURRENT_STATE에 범위와 다음 질문(준비 중 메뉴의 이번 목업 포함 여부)을 기록했다. 새 화면/디자인/실서비스 승인으로 확대하지 않는다.
+- 운영 문서만 변경. 제품/API/DB 계약/디자인/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261012-005
+
+- 사용자가 앞서 제시된 11단계 작업 순서를 지속 지침으로 확정하고 1번부터 문답식 진행을 지시했다. AGENTS.md 상단에 순서/질문 방식/승인 경계를 연결하고 WORK-SEQUENCE.md에 전체 단계와 현재 위치를 저장했다.
+- CURRENT_STATE.md는 1번 미연결 UI 목록 범위 질문 대기로 갱신했다. 기존 구현/미커밋 변경은 보존하며 2~11번 새 작업이나 AI 품질 변경을 시작하지 않는다.
+- 이번은 운영 문서만 변경한다. 제품/API/DB 계약/디자인/설정/키/유료 API/빌드/커밋/푸시/배포 변경 없음. spec 검사로 확인한다.
+
+## HIST-20261012-004
+
+- 사용자 미연결 UI의 목업 가능 항목 진행 및 DB 전제 지시: 브라우저 관심 목록 저장 제안은 채택하지 않는다. 실제 기존 D1/인증 API를 재사용하며 UI가 DB 결과를 읽도록 GS-016부터 연결한다. AI 답변 품질 작업은 프론트 정리 이후 순서를 유지한다.
+- GET /api/favorites를 추가해 계정별 ACTIVE listing만 no-store로 반환한다. 기존 POST/DELETE의 로그인/Origin/JSON/한도/중복 방지/감사 이력은 유지한다. DashboardFavorite 읽기 제원(면적/침실/욕실) 보강; DB 스키마 변경 없음.
+- 셸 하트는 성공 후 DB 재조회로 갱신하며 관심자산 페이지는 기존 카드 스타일로 DB 목록/저장 해제를 표시한다. 동적 상세도 DB 조회/저장/해제를 연결한다. 중복 클릭/오래된 조회 응답을 방어한다. 실패나 로그인 필요를 저장 성공/빈 데이터로 숨기지 않는다. 로컬스토리지 DB 대체 없음.
+- 클라이언트 4개 및 workflow/sort 관련 16개 검사, 격리 SQLite의 built-worker 회원 여정에서 저장 후 GET/다른 계정 격리/비로그인401 확인. 실제 화면 비로그인 하트 클릭은 기존 /my 로그인으로 이동함을 확인했다. 실제 로그인 계정 브라우저 저장/다른 기기 및 공개 환경은 미검증이다.
+- 빌드 첫 시도는 생성 폴더 dist/.openai/drizzle 정리 EPERM으로 실패했고, 권한 보완 후 통과했다. 최종 상세/조회 경합 보완 후 타입/빌드 및 관련19개 검사와 SQLite built-worker 여정1개 재검증 통과. 관련 lint/spec 검사를 수행했다. 기존 변경분의 CRLF whitespace 보고는 일괄 포맷 수정하지 않는다.
+- DB-UI-WORKFLOWS.md/API-CONTRACTS/registry/상태를 갱신한다. favorites의 listings 외래키 때문에 discovered 외부 후보와 미등록 정적 프로젝트는 저장되지 않는다. 임의 DB 복제/인증 해제는 하지 않으며 GS-016 partial 유지. AWS adapter 전환 경계 기록.
+- 실 운영 DB/계정/권한/키/유료 API/수집 확대/실결제/공개 배포/커밋/푸시 변경 없음. 이 항목 연결이 전체 목업 기능 완료를 뜻하지 않는다.
+
+## HIST-20261012-003
+
+- 사용자 `진행해` 승인으로 자산 목록 정렬을 LOCAL에 연결했다. 기존 디자인/원본 생성 HTML/CSS, AI 후보와 추천 순위, 상담 내용은 유지한다. GS-001 표시 정렬 명세를 GLI-052-INTEGRATION-20260923.md에 기록했다.
+- 기본 순서는 최초 후보 순서를 복원한다. 등급순은 S~D 표시 등급 기준으로 안정 정렬하고 미기재는 뒤로 둔다. 최근 등록순은 원문 sourcePublishedAt만 사용하며 수집/확인/갱신 시각으로 대체하지 않는다. 동일 기준/날짜 미기재는 기본 순서를 유지한다.
+- sessionStorage 정렬 선택을 상세 복귀/언어 전환/새로고침에 적용한다. 추가 검색/AI 호출 없음. 조회 후보 타입의 기존 원문 등록일 필드를 표시 정렬에 연결했다. DB 스키마/수집 범위 변경 없음.
+- 테스트 먼저 실행해 모듈 부재 실패를 확인한 후 구현했다. 화면 검수에서 정적 HTML select의 React change 전달 문제를 발견하여 native change 위임/cleanup으로 연결했다. 브라우저에서 A+ 최상단, 상세 복귀 시 등급순 유지, 기본 순서 복원, 날짜 없는 샘플의 순서 유지 확인. 이미지 work/result-sort-20261012.png.
+- 관련 정렬/네비게이션 테스트와 타입/spec 검사를 수행한다. 로컬 개발 서버 HTTP 화면 검수이며 전체 production 빌드/유료 AI/공개 배포/커밋/푸시는 하지 않는다. 외부 원문 날짜 표본 실브라우저 검수는 추가 수집 없이 테스트 데이터로 검증했다.
+
+## HIST-20261012-002
+
+- 사용자 작업 순서 결정: 프론트에서 보이는 UI/디자인 및 기능 연결 개선을 먼저 마무리한 후 AI 답변 품질 개선에 착수한다. 화면은 있으나 실제 연결이 없는 항목은 하나씩 사용자 승인을 받아 방향을 확정한다.
+- 첫 승인 제안은 자산 목록 정렬이다. 현재 정적 화면의 `pickSort` 선택 항목(기본 순서/Trust 등급 높은순/최근 등록순)과 셸의 미연결 상태를 코드로 확인했다. 승인 전 기능 구현이나 디자인 변경은 하지 않는다.
+- 정렬 제안 경계: 현재 표시 후보의 로컬 재정렬, 기본 결과 순서 복원, 등급/날짜 없는 값의 처리 정의, AI 추가 호출 없음. 수집 시각을 원문 등록일로 대체하지 않는다. 상세 복귀 순서 보존은 구현 시 검증한다.
+- CURRENT_STATE.md에 우선순위와 승인 대기를 기록했다. 제품/API/DB 계약 변경 없음. 유료 API/빌드/커밋/푸시/공개 배포 없음. 문서 diff 및 spec 검사로 검증한다.
+
+## HIST-20261012-001
+
+- 사용자 영어 지원 범위 및 `로컬부터 구현해` 승인. 기존 디자인/후보/근거/요금/공개 범위를 유지하고 고객 한국어·영어 선택을 연결한다. 관리자 한국어, 공개 배포 보류.
+- GS-001/010/015/033: allowlist 쿠키/공통 LocaleProvider, 기존 언어 버튼과 상세 헤더 지구본, 1,011개 고정 영어 문구, 숫자 조건 칩/알려진 fixture 영어 이름 복원을 연결했다. 사용자 입력값/발화/출처/ID/가격 원문은 변경하지 않는다.
+- API의 기존 locale 계약을 OpenAI/OpenRouter/Gemini 상담 및 규칙 fallback에 전달한다. 영어 의도/USD/KRW 예산 해석을 보완한다. 영어 USD/한국어 KRW 참고환산과 기준 시각을 기존 API로 표시하며 언어 전환 자체로 유료 호출하지 않는다.
+- 최초 검사 실패: 정리 권한 오류 → 권한 확장 승인 후 빌드 통과. 구형 단일 언어 소스 패턴 검사2건을 locale 계약으로 갱신. 유료 호출 시험의 환율 호출 포함/worker 초기화 순서 문제는 mock 설치 시점/유료 공급사만 집계하도록 수정. 최종 전체320개 통과, 타입·lint 오류0·빌드 통과(기존 lint 경고10).
+- 로컬 영어 전환, About 실제 메뉴 이동/새로고침 언어 유지, 390px 가로 넘침 없음, VN 상세 원문 VND/관측 USD 참고값 확인. 검수 이미지 work/english-explore-20261012.jpg. 독립 리뷰3건을 수정하고 회귀 시험에 반영했다. 실제 유료 AI 영어 상담은 수행하지 않았다.
+- ENGLISH-SUPPORT.md에 구조/증거/미완료를 기록했다. 원본 뉴스/PDF/백서 전문, 임의 외부 설명·기존 AI 발화 재번역, 언어별 SSR/SEO/공유 이미지와 실기기 전수는 후속. 클라이언트 고정 문구 투영 이전에 원본 한국어가 잠시 보일 수 있음을 구분한다.
+- 기존1002작업1 및10월3일 변경을 보존한다. 실제 DB/키/유료 API/공개 배포/커밋/푸시 변경 없음. 공개 version68을 영어 배포 완료로 주장하지 않는다.
+## HIST-20261003-002
+
+- 사용자 무료 기본 정보 개선 핸드오프 승인으로 로컬 구현. 기존 1002작업1/새 상담 수정은 보존하며 변경을 누적한다. 수집 확대·유료 AI·배포는 별도 승인 경계를 유지한다.
+- GS-004: 공개 제원/분류/가격 설명/사진/자료 링크/원문 날짜의 저장 누락을 보완한다. 얇은 목록 갱신은 생략된 추가 필드와 별도 설명을 보존한다. GS-015: null 침실/욕실을 미확인으로 유지, Studio는0에만 대응; 원문 날짜와 수집 시각 분리; KH 구형 수집일을 원문 갱신일로 표시하지 않는다. 외부 무료 고정 지표는 미확인으로 대체한다.
+- GS-033: 번역 캐시 부재를 상세에서 명시하고 환산 조회 중/실패·환율 기준 시각 표시를 보완한다. Dot 목록에 이미 있는 설명/사진을 보존하되 모든 상세 선수집을 강제하지 않는다. 새 자료를 임의 생성하거나 기존42건에 백필하지 않았다.
+- 전체 검사 최초286/287 통과, 프로젝트 전용 상세에 주거용 제원이 붙는 회귀 발견. 카테고리별 기존 제원 경계를 복구하고 빌드를 갱신한 뒤 전체287개 통과(lint 오류0/기존 경고10·타입·migration·빌드 통과). 마지막 SQL 설명 보호 보완 후 저장6개·타입 검사 통과. 유료 API 테스트는 모두 모의 호출뿐이다.
+- 로컬 D1 읽기 KH14/VN42/PH0. 로그인 없는 KH/VN 저장 상세 날짜/가격/원화/번역 부재 안내 확인. 원문2건 접속 재실패로 원문 정확도 검수 불가. PH 공개 DB를 추정하지 않으며 외부 PH 표본/실제 목록→상세 연속 검수는 미완료다. 상세 보강 collector·설명/다중 사진 확보·번역 전수·세부 자료 최신성은 후속이다.
+- FREE-BASIC-INFORMATION.md에 계약/증거/미완료를 기록하고 관련 registry/상태/저장 명세 갱신. 로컬 실제 DB 쓰기/키/요금제/색·폰트·레이아웃/공개 범위/커밋·푸시·공개 배포 변경 없음. 공개 version68 유지.
+## HIST-20261003-001
+
+- 사용자 승인으로 무료 기본 정보 검수 시작. 로컬 D1 읽기 전용 조회: 캄보디아 14건/베트남 42건/필리핀 0건. 공개 환경 상태와 구분한다.
+- FREE-BASIC-DATA-AUDIT-20261003.md에 설명/다중 사진 부족, 상세 필드 저장 손실 경로, 날짜 의미 혼동, 미확인 침실의 Studio 표시 위험을 기록했다. 한국어/원화 실제 렌더링은 미검증이다.
+- localhost:8776 연결 거부 및 원문 2건 접근 실패로 3개국 원문/화면 독립 검수 완료를 주장하지 않는다. 제품 코드/디자인/설정/DB 변경, 수집, 유료 AI, 빌드, 커밋/푸시/배포 없음.
+- 이번 정보 층위는 검수 제안이며 신규 공개/요금 정책이나 수정 승인이 아니다. 문서 검사 결과는 실행 결과를 기준으로 한다.
+
+## HIST-20261002-015
+
+- 사용자 로컬 반영 승인: 상단 탐색/다시 탐색 제출은 새 상담으로 정의하고, 하단은 기존 상담을 이어간다. 별도 확인 팝업은 두지 않는다. 입력만 하는 동안은 초기화하지 않는다.
+- 상단 제출에서 저장 조건/대화/후보/선택 자산/복귀 상태 및 검색 주소를 제거한다. API에는 이전 context/conversation/candidate IDs를 보내지 않는다. 하단 제출은 기존 전달 계약을 유지한다.
+- 첫 입력 예시와 첫 예시 버튼을 베트남 호치민 1억 5천만 원 아파트 질문으로 변경한다. 답변 결과가 있으면 상단 placeholder는 `새로운 질문을 입력하세요`, 기존 hint 자리에 초기화/하단 이어가기 안내를 표시한다. 하단 `이어서 궁금한 점을 물어보세요`는 기존 문구를 유지한다. 원본 HTML/CSS/레이아웃은 수정하지 않는다.
+- GS-001, claude-design-shell.tsx, navigation-batch.test.mjs 및 상태/명세 갱신. 관련 10개 검사·타입 검사·로컬 빌드 통과. 실제 유료 상담은 추가 호출하지 않았으며 새 질문/후속 API 경계는 회귀 코드 검사 범위이다.
+- `1002작업1`에 이어 로컬 변경을 누적한다. 커밋·푸시·공개 배포·키/DB 변경 없음. 공개 version68 유지.
+
+## HIST-20261002-014
+
+- 사용자 지시로 HIST-012/013의 로컬 수정·검증 묶음을 `1002작업1`로 명명하여 보존한다. 변경 범위와 검증 증거는 해당 기록을 기준으로 한다.
+- 추가 작업이 모일 때까지 공개 배포를 보류한다. 이후 사용자의 명시적 배포 지시에 따라 묶음 배포한다.
+- 이번 기록은 문서 체크포인트이며 제품 코드 추가 수정·빌드·커밋·푸시·배포는 하지 않는다. 공개 version68은 그대로 유지한다.
+
+## HIST-20261002-013
+
+- HIST-012 승인 묶음 로컬 검증 완료. 전체 `npm run check` 283개 통과(기존 lint 경고 10개/오류 0), 마지막 복귀 scroll:false/instant 보완 이후 관련 27개·타입 검사·최종 빌드 통과. spec33기능/49경로/4개 원본 비주얼 기준 불변, CRLF 인식 diff 검사 통과.
+- 실제 UI 클릭: 소개 메뉴를 열고 자산 탐색을 열면 소개는 닫힌다. 소개→프로젝트는 실제 탐색 본문과 프로젝트 4개로 전환되고 메뉴가 닫힌다. 모바일390px 메뉴→소개 이동/닫힘 확인. C1 `GLI-KH-102?origin=search`는 프놈펜 중심부 1베드룸 매매 $75,360/47㎡와 B등급으로 렌더링된다.
+- 상세→복귀는 프로젝트 조건 URL/동일 4개 순서 및 클릭 목록 위치(scrollY1804)를 복원했다. 마지막 로컬 화면 증거는 work/batch-return-final.jpg. 대화 복원/자동 재검색 방지는 코드 및 회귀 검사 범위이며 이번 검수에서는 실제 유료 상담을 추가 실행하지 않았다.
+- 공개 배포/커밋/푸시/환경 키 변경 없음. 공개는 기존 version68 유지. 사용자의 별도 공개 배포 승인을 기다린다. 로컬 검수 서버 http://localhost:8776 은 유지한다.
+- 남은 일: 실제 단계별 서버 진행 이벤트, 전수 지명/번역 품질, 상세 직접 진입과 시안/서버 데이터 전체 정합성, 실제 상담 복귀 E2E, 사전 이미지 확보와 비동기 수집 아키텍처. 기존 완료/미완료 기록을 이 범위에서만 대체한다.
+
+## HIST-20261002-012
+
+- 사용자 "수정하지 않은 문제들 합쳐서 수정해" 승인: 공개 메뉴 오류 및 P40/P41/P55의 기능 보완, 앞서 승인한 글로벌 공유 이미지 변경을 묶음 처리한다. STR 연구안은 적용하지 않는다.
+- 자산 필터는 탐색 화면 밖에서 실제 라우팅하고 탐색 안에서만 주소/필터를 갱신한다. 네비게이션은 하나의 드롭다운만 열고 이동·바깥 클릭·Escape에 닫힌다. 원본 디자인/CSS는 변경하지 않는다.
+- 원본 시안 상세에도 기존 `탐색 결과로 돌아가기` 컨트롤을 연결하고 외부 상세 상단에도 같은 컨트롤을 재사용한다. 저장 대화/조건 URL/후보 순서/스크롤을 복원하며 복귀 자체는 유료 검색을 실행하지 않는다.
+- 외부 상세의 공개 점수 대신 기존 8등급을 표시하고 구형 영문 라벨을 교체한다. 근거 없는 고정 64%는 `조사 예정`으로 대체한다. 대기 문구는 현재 요청의 조회/비교 작업을 설명하되 실제 서버의 단계 완료 신호를 받는 것처럼 표현하지 않는다.
+- 캐시 전용 상세에도 제목 외 요약/강점/확인 항목/제원의 독립 지역명 표시 규칙을 적용한다. 원문·명칭·가격·URL·등급은 보존한다. 미등록 지명/전체 영어 문장 번역의 성공을 보장하지 않는다.
+- imagegen 편집 결과 `og-global-20261002.png`를 육안 확인하고 공유 메타데이터를 새 경로로 변경했다. 본문 비주얼은 유지한다. 메신저 기존 미리보기 캐시는 즉시 갱신을 보장할 수 없다.
+- 검증/배포 결과는 후속 기록으로 확정한다. 첫 전체 검사는 구형 대기 문구를 요구한 테스트 1건 실패로 기대값 수정; 관련 34개 통과. 유료 AI 호출/환경 키 변경 없음.
+
+## HIST-20261002-011
+
+- 사용자 요청: Z-AI 자문의 특이점과 검증할 전제를 연구 주제로 기록하고 추후 논의.
+- GLI 구조 기획회의 문서에 신선도 기반 탐색, 3계층 수집, Listing/Property 분리, 후보 스냅샷, 필드별 증거 수준, 수집 퍼널과 기존 STR 연결을 추가했다. 플랫폼 30초/푸시 전제, 종료 판정, 법률 상수, AI 적합성 금지 및 제3 모델 불필요 결론은 미검증/반론으로 분리했다.
+- 제품/API/데이터 계약 영향 없음. 기존 P56 및 구현 정책은 유지하며 새 아키텍처 채택 승인이 아니다. 제품 코드·설정·키·DB·UI·수집 실행·유료 API·빌드·커밋·푸시·배포 변경 없음.
+- 검증: 문서 내용 대조 및 spec:check. 다음 작업은 STR-01 대안 비교부터 순차 논의.
+
+## HIST-20261002-010
+
+- 사용자 세 자문의 공통 지적을 사안별 연구 안건으로 저장하고 'GLI 구조 기획 회의' 채팅을 포크해 논의하도록 요청했다. `docs/planning/GLI-STRUCTURE-MEETING-20261002.md`에 STR-01~09 안건/질문/검증/결정 경계를 저장하고 Meta 원문도 미승인 참고자료로 보관했다.
+- 연구 문서는 구현 지시나 정책 승인으로 간주하지 않는다. P56 최신 확인 요구와 대기 분리, 수익 근거, 코드/AI 책임, 상태/증빙/중복/모델 실험을 별도 안건으로 다룬다. 제품/API/데이터 계약 영향 없음.
+- 문서·명세 검증 및 기획 채팅 분리만 수행. 제품 코드/설정/키/DB/UI/빌드/수집/유료 API/커밋/푸시/배포 변경 없음. 채팅 생성 결과는 확인 후 추가 기록한다.
+- 대화 이력 유지 same-directory 포크 생성 완료: `01a0f85d-4825-7bc2-8672-15b3e8377f24`, 제목 `GLI 구조 기획 회의`. 기획 전용·구현 금지·공유 디렉터리·STR-01 우선 논의 경계를 전달했다. 자문 채택/구현 승인은 여전히 없음. 명세33기능/49route/4원본 동일 및 diff 검사 통과.
+
+## HIST-20261002-009
+
+- 사용자 "키미 답변 역시 참고" 지시에 따라 `docs/reference/KIMI-CONSULTATION-ADVICE-20261002.md`에 첨부 원문을 참고 전용/미승인/미반영으로 저장했다. 원문 줄바꿈만 정규화하며 자문 내용은 재작성하지 않는다.
+- 제품/API/데이터 계약 영향 없음. 원문의 공식 자료 확인 주장·요금·성능·모델 추천을 검증하거나 채택하지 않았으며 기존 승인 정책/명세/registry는 변경하지 않는다.
+- 문서 저장·원문 대조·명세 검증만 수행. 코드/설정/키/DB/UI/빌드/유료 API/커밋/푸시/배포 변경 없음. 기존 로컬 변경은 보존한다.
+
+## HIST-20261002-008
+
+- 사용자 "제미니 답변 역시 참고로 저장만 해" 지시에 따라 `docs/reference/GEMINI-CONSULTATION-ADVICE-20261002.md`에 전달받은 원문을 저장했다. 외부 자문/미승인/미반영 표시로 구현 지시와 구분한다.
+- 제품/API/데이터 계약 영향 없음. 기존 승인 정책/명세/registry는 변경하지 않는다. 수치·성능·모델·접근 방식 검증이나 채택을 수행하지 않았다.
+- 문서 저장과 명세 검증만 수행하며 제품 코드/설정/키/DB/UI/빌드/유료 API/커밋/푸시/배포 변경 없음. 기존 로컬 미커밋 변경은 보존한다.
+
 ## HIST-20261002-007
 
 - P56 / GS-002~005, GS-009, GS-012: 사용자 외부 탐색을 기존 DB 후보 수로 생략하지 말라는 승인. KH/VN/PH 및 다국가 Gemini 탐색, 공동 국가/출처 등록부, 목록 재조회, collector/scout 병렬 실행을 적용한다.
 - 이전 캄보디아 단독/6개 미만 fallback과 성공 캐시 재사용을 실제 검색에서 제거한다. 장애 cooldown/동시 병합/유료 운영 상한, 출처 검증과 D1 저장/기존 후보 비교는 보존한다. VND/PHP scout 후보에도 요청의 관측 FX를 연결한다.
 - UI/디자인, P53 이미지 저장, P55 상세 복귀는 변경하지 않는다. 이 단계는 로컬 검증 대상이며 공개 배포/커밋/푸시 완료를 의미하지 않는다. 세부 범위와 한계는 COUNTRY-SOURCES P56에 기록한다.
 - 로컬 전체 검증 280/280 통과, lint 오류0/기존 경고10, typecheck/마이그레이션/빌드 통과. 후속 URL 경로/게시일 정정과 목록 재조회 회귀를 관련 시험31/31로 확인했다. 명세33기능/49routes/4원본 동일 확인. 최종 패키징 검증 후 기존 공개 데모에 적용하며 실제 새 매물 수나 모든 출처의 실시간 접근 성공을 보장하지 않는다.
+- 최종 패키징 전체 검증280/280 재확인 후 Sites 소스 a804a75311ada601f157f387a267974771c3f666 업로드, 버전68/환경revision8, 배포 appgdep_6abe888031d08191a17e9c06d5c2df9b succeeded. 기존 공개 데모에 반영했다. 이 배포 결과 기록은 로컬 후속 문서다.
+- 공개 익명 실제 질문 '동남아에서 매매가 1억 5천 정도 주고 살만한 임대료 잘 나오는 물건이 있을까' 1회 확인: countries=KH/VN/PH, cached=false, 결과117/D1 save117(CAM15/CPA20/Khmer snapshot2/VN40/PH40). 117건 모두 신규 매물이라는 뜻이 아니며 Khmer2는 현재 원문 재확인 성공이 아니다. Astra intent/advisor HTTP200. D1 원장으로 Gemini discovery 실제 dispatch 및30초 aborted 확인; webSearchCount0. 따라서 다국가 호출 연결은 됐지만 이번 실검색의 Gemini 추가 후보 수집은 성공하지 않았다. 시간/출력/thinking 예산 최적화 및 최신 게시일 기준 재고 확장은 남은 품질 작업이다. 이번 임대수익 질문에 외부 후보 displayedCount0: 수집 성공과 검증된 수익 적합 후보 존재는 별개다.
 
 ## HIST-20261002-006
 

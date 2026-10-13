@@ -1,4 +1,5 @@
 "use client";
+import { bedroomLabel } from "../../lib/asset-basic-info";
 
 import {
   ArrowRight,
@@ -663,7 +664,7 @@ export function ExploreClient({
                     </p>
                     <h3>{asset.title}</h3>
                     <p className="asset-spec">
-                      {asset.cardMeta ?? `${asset.areaSqm}㎡ · ${asset.bedrooms || "Studio"}BR · ${asset.bathrooms}Bath`}
+                      {asset.cardMeta ?? `${asset.areaSqm ? `${asset.areaSqm}㎡` : "면적 미확인"} · ${bedroomLabel(asset.bedrooms)} · ${asset.bathrooms === null ? "욕실 미확인" : `${asset.bathrooms}Bath`}`}
                     </p>
                     {"matchReasons" in asset && Array.isArray(asset.matchReasons) && (
                       <div className="reason-row">

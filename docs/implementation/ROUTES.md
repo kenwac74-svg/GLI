@@ -26,15 +26,18 @@ app/page.tsx 및 app/api route 파일에서 생성. 경로 존재는 UI 연결 �
 | `/api/admin/readiness/ai-evaluation` | POST | [app/api/admin/readiness/ai-evaluation/route.ts](../../app/api/admin/readiness/ai-evaluation/route.ts) | 관련 상위 기능/API 코드 확인 |
 | `/api/admin/readiness/backups` | POST | [app/api/admin/readiness/backups/route.ts](../../app/api/admin/readiness/backups/route.ts) | 관련 상위 기능/API 코드 확인 |
 | `/api/admin/sources` | PUT, PATCH | [app/api/admin/sources/route.ts](../../app/api/admin/sources/route.ts) | 관련 상위 기능/API 코드 확인 |
+| `/api/assets/[id]/price-history` | GET | [app/api/assets/[id]/price-history/route.ts](../../app/api/assets/[id]/price-history/route.ts) | 관련 상위 기능/API 코드 확인 |
 | `/api/assets/[id]/trust-report` | GET | [app/api/assets/[id]/trust-report/route.ts](../../app/api/assets/[id]/trust-report/route.ts) | 관련 상위 기능/API 코드 확인 |
 | `/api/assets` | GET | [app/api/assets/route.ts](../../app/api/assets/route.ts) | GS-033 |
 | `/api/auth/demo` | POST | [app/api/auth/demo/route.ts](../../app/api/auth/demo/route.ts) | GS-020 |
 | `/api/auth/logout` | GET | [app/api/auth/logout/route.ts](../../app/api/auth/logout/route.ts) | GS-020 |
+| `/api/auth/preview` | POST | [app/api/auth/preview/route.ts](../../app/api/auth/preview/route.ts) | 관련 상위 기능/API 코드 확인 |
 | `/api/consultations/[id]/messages` | POST | [app/api/consultations/[id]/messages/route.ts](../../app/api/consultations/[id]/messages/route.ts) | GS-022 |
 | `/api/consultations` | POST | [app/api/consultations/route.ts](../../app/api/consultations/route.ts) | GS-022 |
 | `/api/discovery/vietnam` | GET | [app/api/discovery/vietnam/route.ts](../../app/api/discovery/vietnam/route.ts) | GS-005 |
 | `/api/exchange-rates` | GET | [app/api/exchange-rates/route.ts](../../app/api/exchange-rates/route.ts) | GS-013 |
-| `/api/favorites` | POST, DELETE | [app/api/favorites/route.ts](../../app/api/favorites/route.ts) | GS-016 |
+| `/api/favorites` | GET, POST, DELETE | [app/api/favorites/route.ts](../../app/api/favorites/route.ts) | GS-016 |
+| `/api/inquiries` | POST | [app/api/inquiries/route.ts](../../app/api/inquiries/route.ts) | GS-020 |
 | `/api/me` | GET | [app/api/me/route.ts](../../app/api/me/route.ts) | GS-020 |
 | `/api/memberships/checkout/confirm` | POST | [app/api/memberships/checkout/confirm/route.ts](../../app/api/memberships/checkout/confirm/route.ts) | GS-018 |
 | `/api/memberships/checkout` | POST | [app/api/memberships/checkout/route.ts](../../app/api/memberships/checkout/route.ts) | GS-018 |
@@ -56,4 +59,4 @@ app/page.tsx 및 app/api route 파일에서 생성. 경로 존재는 UI 연결 �
 | `/` | page | [app/page.tsx](../../app/page.tsx) | GS-001 |
 | `/whitepaper` | page | [app/whitepaper/page.tsx](../../app/whitepaper/page.tsx) | GS-024 |
 
-총 49개 route 파일.
+총 52개 route 파일.

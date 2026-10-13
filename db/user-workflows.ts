@@ -50,6 +50,14 @@ export type WorkflowUser = {
 };
 
 export type DashboardFavorite = {
+  referenceId?: string;
+  referenceIds?: string[];
+  retained?: boolean;
+  maxPriceMinor?: number;
+  priceLabel?: string;
+  detailOrigin?: "fixture" | "search";
+  sourceState?: "present" | "removed" | "check_failed";
+  transactionState?: "unknown" | "available" | "completed";
   publicId: string;
   country: string;
   city: string;
@@ -64,6 +72,9 @@ export type DashboardFavorite = {
   trustScore: number;
   trustStatus: string;
   favoritedAt: number;
+  areaSqmX100?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
 };
 
 export type DashboardConsultation = {
@@ -234,7 +245,7 @@ export async function ensureUser(
 export async function getUserDashboard(
   database: D1DatabaseLike,
   userId: string,
-  options: Pick<WorkflowOptions, "now"> = {},
+  options: Pick<WorkflowOptions, "now"> & { memberOverviewOnly?: boolean } = {},
 ): Promise<UserDashboard> {
   assertDatabase(database);
   const id = validateOpaqueId(userId, "userId");
@@ -249,7 +260,7 @@ export async function getUserDashboard(
     notificationFeed,
   ] =
     await Promise.all([
-      database
+      options.memberOverviewOnly ? Promise.resolve({results:[] as DashboardFavorite[]}) : database
         .prepare(`
           SELECT
             l.public_id AS publicId,
@@ -261,6 +272,9 @@ export async function getUserDashboard(
             l.title,
             l.summary,
             l.price_minor AS priceMinor,
+            l.area_sqm_x100 AS areaSqmX100,
+            l.bedrooms,
+            l.bathrooms,
             l.currency,
             l.image_url AS imageUrl,
             COALESCE(ts.score, 0) AS trustScore,
@@ -281,7 +295,7 @@ export async function getUserDashboard(
         `)
         .bind(id)
         .all<DashboardFavorite>(),
-      database
+      options.memberOverviewOnly ? Promise.resolve({results:[] as DashboardConsultation[]}) : database
         .prepare(`
           SELECT
             c.id,
@@ -319,7 +333,7 @@ export async function getUserDashboard(
         .bind(id, now)
         .first<DashboardMembership>(),
       getMembershipAccess(database, id, now),
-      getMemberNotificationFeed(database, id),
+      options.memberOverviewOnly ? Promise.resolve({notifications:[],unreadCount:0}) : getMemberNotificationFeed(database, id),
     ]);
 
   return {

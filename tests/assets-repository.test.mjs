@@ -45,7 +45,7 @@ test("maps a D1/Drizzle listing row to the UI Asset without inventing nullable v
     district: "",
     transaction: "rent",
     propertyType: "condo",
-    bedrooms: 0,
+    bedrooms: null,
     bathrooms: 2,
     title: "BKK1 test residence",
     price: 500.25,
@@ -86,7 +86,7 @@ test("accepts raw D1 snake_case fields and maps 0/1 booleans explicitly", () => 
 
   assert.equal(asset.price, 123456);
   assert.equal(asset.areaSqm, 0);
-  assert.equal(asset.bathrooms, 0);
+  assert.equal(asset.bathrooms, null);
   assert.equal(asset.isGliDirect, false);
   assert.equal(asset.trustScore, 0);
   assert.equal(asset.trustStatus, "PRELIMINARY");

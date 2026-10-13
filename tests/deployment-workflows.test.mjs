@@ -5,10 +5,29 @@ import test from "node:test";
 
 import { LICENSED_JSON_REQUESTED_FIELDS } from "../ingestion/licensed-json-feed.ts";
 import { env as cloudflareEnv } from "./support/cloudflare-workers-shim.mjs";
+import { createD1DiscoveryRepository } from "../db/discovery-repository.ts";
+import { assets as approvedAssets } from "../lib/assets.ts";
 
 const APP_ORIGIN = "http://localhost";
 const MEMBER_EMAIL = "member.e2e@gli.example";
 const ADMIN_EMAIL = "admin.e2e@gli.example";
+
+test('public build rejects local mock login and synthetic identity cookies',async t=>{
+  const worker=await loadWorker();const {database,sqlite}=await createDatabase();t.after(()=>sqlite.close());
+  const local={LOCAL_AUTH_PREVIEW_ENABLED:'true'};
+  const staffCookie='gli_local_member_preview=local-staff-12345678-1234-4123-8123-123456789abc';
+  const google=await dispatch(worker,database,'/api/auth/preview?provider=google',
+    {method:'POST',headers:{origin:APP_ORIGIN},runtimeEnv:{...local,DEPLOYMENT_STAGE:'demo'}});
+  assert.equal(google.status,403);assert.equal(google.headers.get('set-cookie'),null);
+  const blocked=await dispatch(worker,database,'/api/auth/preview?provider=google',
+    {method:'POST',headers:{origin:APP_ORIGIN},runtimeEnv:{...local,DEPLOYMENT_STAGE:'production'}});
+  assert.equal(blocked.status,403);assert.equal(blocked.headers.get('set-cookie'),null);
+  const cross=await dispatch(worker,database,'/api/auth/preview?provider=google',
+    {method:'POST',headers:{origin:'https://other.test'},runtimeEnv:local});
+  assert.equal(cross.status,403);
+  const publicCookie=await dispatch(worker,database,'/api/me',{headers:{cookie:staffCookie},runtimeEnv:{...local,DEPLOYMENT_STAGE:'demo'}});
+  assert.equal(publicCookie.status,401);
+});
 
 class SQLiteD1Statement {
   constructor(sqlite, sql) {
@@ -34,6 +53,10 @@ class SQLiteD1Statement {
   }
 
   async run() {
+    if (/\bRETURNING\b/i.test(this.sql)) {
+      const results=this.sqlite.prepare(this.sql).all(...this.bindings);
+      return {success:true,results,meta:{changes:results.length}};
+    }
     const result = this.sqlite.prepare(this.sql).run(...this.bindings);
     return {
       success: true,
@@ -55,6 +78,10 @@ class SQLiteD1 {
   }
 
   async batch(statements) {
+    const prior=this.queue ?? Promise.resolve();
+    let release;
+    this.queue=new Promise(resolve=>{release=resolve;});
+    await prior;
     this.sqlite.exec("BEGIN IMMEDIATE");
     try {
       const results = [];
@@ -66,7 +93,7 @@ class SQLiteD1 {
     } catch (error) {
       this.sqlite.exec("ROLLBACK");
       throw error;
-    }
+    } finally {release();}
   }
 }
 
@@ -102,7 +129,10 @@ test("built search accepts long prior answers without spending in rules mode", a
   const worker = await loadWorker();
   const { database, sqlite } = await createDatabase();
   t.after(() => sqlite.close());
-  const upstream = t.mock.method(globalThis, "fetch", async () => { throw new Error("unexpected_network"); });
+  const upstream = t.mock.method(globalThis, "fetch", async url => {
+    assert.equal(String(url), "https://open.er-api.com/v6/latest/USD");
+    return Response.json({result:"success",rates:{USD:1,KRW:1380},time_last_update_unix:Math.floor(Date.now()/1000)});
+  });
   const response = await dispatch(worker, database, "/api/search", {
     method: "POST", body: { query: "베트남 물건 찾아줘", conversation: [{ role: "assistant", text: "이전 상담 내용 ".repeat(400) }] },
   });
@@ -110,12 +140,11 @@ test("built search accepts long prior answers without spending in rules mode", a
   const result = await response.json();
   assert.equal(result.criteria.country, "Vietnam");
   assert.deepEqual(result.operationalAccess, { limited: false, unavailable: false });
-  assert.equal(upstream.mock.callCount(), 0);
+  assert.equal(upstream.mock.calls.filter(call => String(call.arguments[0]) !== "https://open.er-api.com/v6/latest/USD").length, 0);
   assert.equal(sqlite.prepare("SELECT count(*) AS n FROM ai_operation_requests").get().n, 0);
 });
 
 test("built search meters failed Gemini discovery and blocks dispatch at global cap", async t => {
-  const worker = await loadWorker();
   const { database, sqlite } = await createDatabase();
   t.after(() => sqlite.close());
   const configuration = {
@@ -130,24 +159,31 @@ test("built search meters failed Gemini discovery and blocks dispatch at global 
     }
   });
   const upstream = t.mock.method(globalThis, "fetch", async url => {
+    if (String(url) === "https://open.er-api.com/v6/latest/USD") {
+      return Response.json({ result: "success", rates: { USD: 1, KRW: 1380 },
+        time_last_update_unix: Math.floor(Date.now() / 1000), time_next_update_unix: Math.floor(Date.now() / 1000) + 86400 });
+    }
     assert.match(String(url), /^https:\/\/generativelanguage\.googleapis\.com\//);
     return Response.json({ usageMetadata: { promptTokenCount: 12, totalTokenCount: 12 } }, { status: 503 });
   });
+  // Install interception before vinext captures fetch on worker initialization.
+  const worker = await loadWorker();
+  const paidCalls = () => upstream.mock.calls.filter(call => String(call.arguments[0]).startsWith("https://generativelanguage.googleapis.com/")).length;
   const request = query => dispatch(worker, database, "/api/search", { method: "POST", runtimeEnv: configuration, body: { query } });
   const first = await request("프놈펜에서 17달러 이하 콘도 매매");
   assert.equal(first.status, 200);
-  assert.equal(upstream.mock.callCount(), 1);
+  assert.equal(paidCalls(), 1);
   assert.equal(sqlite.prepare("SELECT count(*) AS n FROM ai_operation_requests").get().n, 1);
   assert.equal(sqlite.prepare("SELECT input_tokens FROM ai_provider_calls").get().input_tokens, 12);
   await request("프놈펜에서 17달러 이하 콘도 매매");
-  assert.equal(upstream.mock.callCount(), 1, "failure cooldown avoids a second attempt");
+  assert.equal(paidCalls(), 1, "failure cooldown avoids a second attempt");
   const day = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
   const insert = sqlite.prepare("INSERT INTO ai_operation_requests VALUES (?, ?, ?, ?)");
   for (let i = 1; i < 300; i++) insert.run(`filled-${i}`, day, `other-${i}`, Date.now());
   const limited = await request("프놈펜에서 19달러 이하 콘도 매매");
   assert.equal(limited.status, 200);
   assert.equal((await limited.json()).operationalAccess.limited, true);
-  assert.equal(upstream.mock.callCount(), 1, "no paid dispatch after cap");
+  assert.equal(paidCalls(), 1, "no paid dispatch after cap");
 });
 
 function authHeaders(email) {
@@ -210,6 +246,60 @@ async function dispatch(worker, database, pathname, options = {}) {
     },
   );
 }
+
+test("built retention APIs preserve external favorites and expose price history only",async t=>{
+  t.mock.method(globalThis,"fetch",async()=>{throw new Error("unexpected_network");});
+  const worker=await loadWorker();
+  const {database,sqlite}=await createDatabase();
+  t.after(()=>sqlite.close());
+  const asset={...approvedAssets[0],id:"GLI-VN-RETAIN-TEST",country:"Vietnam",countryCode:"VN",sourceName:"Test Portal",
+    sourceUrl:"https://example.com/unit/44",trustStatus:"PRELIMINARY",isGliDirect:false};
+  const collector=createD1DiscoveryRepository(database);
+  await collector.save([asset],"2026-10-01T00:00:00Z");
+  await collector.save([{...asset,price:asset.price+100,summary:"Changed original description"}],"2026-10-02T00:00:00Z");
+  const price=await dispatch(worker,database,`/api/assets/${asset.id}/price-history`);
+  assert.equal(price.status,200);
+  const history=await price.json();
+  assert.deepEqual(history.entries.map(x=>x.price),[asset.price,asset.price+100]);
+  assert.ok(!JSON.stringify(history).includes("Changed original description"));
+  assert.ok(!JSON.stringify(history).includes("payload_json"));
+  const saved=await dispatch(worker,database,"/api/favorites",{email:MEMBER_EMAIL,method:"POST",body:{assetId:asset.id,userId:"forged"},requestId:"retained.save"});
+  assert.equal(saved.status,201);
+  assert.equal((await dispatch(worker,database,"/api/favorites",{email:MEMBER_EMAIL})).status,200);
+  assert.deepEqual((await (await dispatch(worker,database,"/api/favorites",{email:"other@example.com"})).json()).favorites,[]);
+  const fixture="fixture:GLI-KH-004";
+  assert.equal((await dispatch(worker,database,"/api/favorites",{email:MEMBER_EMAIL,method:"POST",body:{assetId:fixture}})).status,201);
+  const list=await (await dispatch(worker,database,"/api/favorites",{email:MEMBER_EMAIL})).json();
+  assert.equal(list.favorites.length,2);
+  assert.equal(list.favorites.find(x=>x.referenceId===fixture).detailOrigin,"fixture");
+  assert.equal((await dispatch(worker,database,"/api/favorites",{email:MEMBER_EMAIL,method:"DELETE",body:{assetId:asset.id}})).status,200);
+  assert.ok(sqlite.prepare("SELECT public_id FROM discovered_assets WHERE public_id=?").get(asset.id));
+  assert.equal((await dispatch(worker,database,"/api/favorites",{email:MEMBER_EMAIL,method:"POST",body:{assetId:"GLI-KH-004"}})).status,201);
+  sqlite.exec("UPDATE listings SET status='ARCHIVED' WHERE public_id='GLI-KH-004'");
+  assert.equal((await dispatch(worker,database,"/api/favorites",{email:"unauthorized@example.com",method:"POST",body:{assetId:"GLI-KH-004"}})).status,400);
+  assert.equal((await dispatch(worker,database,"/api/assets/GLI-KH-004/price-history",{email:"unauthorized@example.com"})).status,404);
+  assert.equal((await dispatch(worker,database,"/api/assets/GLI-KH-004/price-history",{email:MEMBER_EMAIL})).status,200);
+});
+
+test("built member inquiries are authenticated, idempotent and separate from consultation operations",async t=>{
+  t.mock.method(globalThis,"fetch",async()=>{throw new Error("unexpected_network");});
+  const worker=await loadWorker();const {database,sqlite}=await createDatabase();t.after(()=>sqlite.close());
+  const body={submissionKey:"inquiry-e2e-0000000000001",requestText:"Please confirm the property records",contact:"optional contact",assetId:"fixture:GLI-KH-004",userId:"forged",email:"forged@example.com"};
+  assert.equal((await dispatch(worker,database,"/api/inquiries",{method:"POST",body})).status,401);
+  const first=await dispatch(worker,database,"/api/inquiries",{method:"POST",email:MEMBER_EMAIL,body});
+  assert.equal(first.status,201);const receipt=await first.json();assert.match(receipt.receiptNumber,/^GLI-/);
+  const again=await dispatch(worker,database,"/api/inquiries",{method:"POST",email:MEMBER_EMAIL,body});
+  assert.equal(again.status,200);assert.equal((await again.json()).receiptNumber,receipt.receiptNumber);
+  assert.equal(sqlite.prepare("SELECT member_email FROM member_inquiries").get().member_email,MEMBER_EMAIL);
+  assert.equal(sqlite.prepare("SELECT count(*) n FROM consultations").get().n,0);
+  assert.equal(sqlite.prepare("SELECT count(*) n FROM member_inquiries").get().n,1);
+  const page=await dispatch(worker,database,"/my?consult=fixture%3AGLI-KH-004",{email:MEMBER_EMAIL});
+  assert.equal(page.status,200);const html=await page.text();
+  assert.match(html,/문의 내용/);assert.match(html,/연락처/);assert.match(html,/readonly/);
+  assert.doesNotMatch(html,/희망 일시|상담 진행|새로운 상담 소식/);
+  assert.equal((await dispatch(worker,database,"/api/inquiries",{method:"POST",email:MEMBER_EMAIL,body:{...body,requestText:""}})).status,400);
+  assert.equal((await dispatch(worker,database,"/api/inquiries",{method:"POST",email:MEMBER_EMAIL,body:{...body,assetId:"UNKNOWN-ASSET"}})).status,400);
+});
 
 test("built worker completes the member discovery and cash membership journey", async () => {
   const worker = await loadWorker();
@@ -285,6 +375,14 @@ test("built worker completes the member discovery and cash membership journey", 
       created: true,
       listingPublicId: "GLI-KH-004",
     });
+
+    const favoriteList = await dispatch(worker, database, "/api/favorites", { email: MEMBER_EMAIL });
+    assert.equal(favoriteList.status, 200);
+    assert.match(favoriteList.headers.get("cache-control") ?? "", /no-store/);
+    assert.equal((await favoriteList.json()).favorites[0].publicId, "GLI-KH-004");
+    const otherFavorites = await dispatch(worker, database, "/api/favorites", { email: "other.favorite@gli.example" });
+    assert.deepEqual((await otherFavorites.json()).favorites, []);
+    assert.equal((await dispatch(worker, database, "/api/favorites")).status, 401);
 
     const duplicateFavoriteResponse = await dispatch(
       worker,
@@ -534,7 +632,9 @@ test("built worker completes the member discovery and cash membership journey", 
     const myPageHtml = await myPageResponse.text();
     assert.match(myPageHtml, /MEMBERSHIP ACCESS/);
     assert.match(myPageHtml, /무제한/);
-    assert.match(myPageHtml, /우선/);
+    assert.match(myPageHtml, /열람 범위/);
+    assert.match(myPageHtml, /STANDARD/);
+    assert.doesNotMatch(myPageHtml, /상담 진행|새로운 상담 소식/);
     assert.match(myPageHtml, /GLI-KH-004/);
     assert.match(myPageHtml, /Investor/);
 

@@ -63,8 +63,8 @@ test("VND conversion uses observed cross rates for both range endpoints, without
   const asset = { ...matches[0], price: 27000000, maxPrice: 28000000, currency: "VND" };
   const rate = { krwPerUsd: 1350, asOf: "2026-10-01", rates: { USD: 1, VND: 25000, KRW: 1350 } };
   assert.equal(candidateConverted(asset, rate), "약 1,458,000~1,512,000원/월");
-  assert.equal(candidateConverted(asset, { krwPerUsd: 1350 }), "");
-  assert.equal(candidateConverted(asset, { ...rate, rates: { ...rate.rates, VND: 0 } }), "");
+  assert.equal(candidateConverted(asset, { krwPerUsd: 1350 }), "원화 환산 미확인");
+  assert.equal(candidateConverted(asset, { ...rate, rates: { ...rate.rates, VND: 0 } }), "원화 환산 미확인");
   assert.equal(candidateConverted({ ...asset, currency: "KRW" }, rate), "");
 });
 

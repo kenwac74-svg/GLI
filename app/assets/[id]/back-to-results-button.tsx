@@ -14,11 +14,15 @@ export function BackToResultsButton({ assetId }: { assetId: string }) {
     const raw = window.sessionStorage.getItem(EXPLORE_RETURN_KEY);
     if (raw) {
       try {
-        const state = JSON.parse(raw) as { assetId?: string; createdAt?: number };
+        const state = JSON.parse(raw) as { assetId?: string; createdAt?: number; href?: string };
         const isRecent =
           typeof state.createdAt === "number" &&
           Date.now() - state.createdAt < EXPLORE_STATE_MAX_AGE_MS;
         if (state.assetId === assetId && isRecent && window.history.length > 1) {
+          if (state.href && /^\/explore(?:\?|$)/.test(state.href)) {
+            router.push(state.href, { scroll: false });
+            return;
+          }
           router.back();
           return;
         }

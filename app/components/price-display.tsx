@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useUiLocale } from "./ui-locale-provider";
+import { referenceExchangeRates } from "../../lib/reference-exchange-rates";
 import {
   convertCurrency,
   displayCurrencyForLanguage,
@@ -11,8 +13,6 @@ import {
   type ExchangeRateSnapshot,
   type PriceCurrency,
 } from "../../lib/currency";
-
-let exchangeRateRequest: Promise<ExchangeRateSnapshot | null> | null = null;
 
 type PriceDisplayProps = {
   amount: number;
@@ -33,19 +33,15 @@ export function PriceDisplay({
   className = "price-display",
   showAttribution = false,
 }: PriceDisplayProps) {
-  const [language] = useState(() => {
-    if (typeof document === "undefined") return "ko-KR";
-    return document.documentElement.lang || navigator.language || "en";
-  });
+  const { locale } = useUiLocale();
+  const language = locale === "en" ? "en-US" : "ko-KR";
   const [snapshot, setSnapshot] = useState<ExchangeRateSnapshot | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    if (!exchangeRateRequest) exchangeRateRequest = loadExchangeRates().then(result => {
-      // A temporary failure must not poison all later detail views in this tab.
-      if (!result) exchangeRateRequest = null;
-      return result;
-    });
-    void exchangeRateRequest.then(setSnapshot);
+    let active = true;
+    void referenceExchangeRates().then(result => { if (active) { setSnapshot(result); setLoaded(true); } });
+    return () => { active = false; };
   }, []);
 
   const targetCurrency = displayCurrencyForLanguage(language);
@@ -74,7 +70,7 @@ export function PriceDisplay({
       <strong>{originalPrice}</strong>
       {converted !== null && targetCurrency !== currency ? (
         <span className="price-converted">
-          약 {convertedMaximum !== null
+          {locale === "en" ? "Approx. " : "약 "}{convertedMaximum !== null
             ? formatConvertedMoneyRange(
                 converted,
                 convertedMaximum,
@@ -91,21 +87,12 @@ export function PriceDisplay({
           target="_blank"
           rel="noopener noreferrer"
         >
-          참고 환율 · {new Date(snapshot.updatedAt).toLocaleDateString(language)}
+          {locale === "en" ? "Reference FX · " : "참고 환율 · "}{new Date(snapshot.updatedAt).toLocaleString(language, { timeZone: "Asia/Seoul" })}{locale === "en" ? " KST" : ""}
         </a>
+      ) : null}
+      {amount > 0 && targetCurrency !== currency && converted === null ? (
+        <span className="price-converted">{locale === "en" ? loaded ? "Conversion unavailable · original price shown" : "Loading reference exchange rate" : loaded ? "원화 환산 미확인 · 원문 가격 표시" : "참고 환율 조회 중"}</span>
       ) : null}
     </div>
   );
-}
-
-async function loadExchangeRates(): Promise<ExchangeRateSnapshot | null> {
-  try {
-    const response = await fetch("/api/exchange-rates", {
-      headers: { accept: "application/json" },
-    });
-    if (!response.ok) return null;
-    return (await response.json()) as ExchangeRateSnapshot;
-  } catch {
-    return null;
-  }
 }

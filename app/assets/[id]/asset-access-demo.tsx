@@ -20,6 +20,9 @@ import {
 import { useMemo, useState } from "react";
 import type { MembershipPlanId } from "../../../lib/membership-plans";
 import type { AssetPublicResource } from "../../../lib/assets";
+import { trustGrade } from "../../../lib/consultation-view";
+import { canPreviewTier } from "../../../lib/access-preview";
+import { AccessPreviewDialog } from "../../components/access-preview-dialog";
 
 type AccessTierId = "free" | "basic" | "standard" | "premium" | "business";
 
@@ -39,47 +42,39 @@ const TIERS: readonly TierDefinition[] = [
   { id: "business", name: "BUSINESS", level: 5, eyebrow: "실행 지원", color: "#c450ef" },
 ] as const;
 
-const CASH_COST: Partial<Record<AccessTierId, number>> = {
-  premium: 1200,
-  business: 3500,
-};
-
 export function AssetAccessDemo({
   assetTitle,
   trustScore,
   initialUnlockedLevel,
-  membershipPlanId,
   publicResources,
+  externalSource = false,
 }: {
   assetTitle: string;
   trustScore: number;
   initialUnlockedLevel: 1 | 2 | 3 | 4;
   membershipPlanId: MembershipPlanId | null;
   publicResources: AssetPublicResource[];
+  externalSource?: boolean;
 }) {
   const [selectedId, setSelectedId] = useState<AccessTierId>("free");
-  const [unlockedLevel, setUnlockedLevel] = useState<(typeof TIERS)[number]["level"]>(initialUnlockedLevel);
-  const [cashBalance, setCashBalance] = useState(5000);
+  const [previewLevel, setPreviewLevel] = useState<number>(initialUnlockedLevel);
+  const cashBalance = 5000;
   const [pendingId, setPendingId] = useState<AccessTierId | null>(null);
 
   const selected = TIERS.find((tier) => tier.id === selectedId) ?? TIERS[0];
   const pending = TIERS.find((tier) => tier.id === pendingId) ?? null;
-  const hasAccess = selected.level <= unlockedLevel;
-  const cashCost = CASH_COST[selected.id];
-  const canUseGliCash = membershipPlanId !== null;
-  const standardPrice = unlockedLevel >= 2 ? 1 : 2.99;
+  const hasAccess = selected.level <= previewLevel;
+  const hasPreview = canPreviewTier(externalSource, publicResources.length, selected.level - 1);
 
   const accessLabel = useMemo(() => {
-    const active = TIERS.filter((tier) => tier.level <= unlockedLevel).at(-1);
+    const active = TIERS.filter((tier) => tier.level <= initialUnlockedLevel).at(-1);
     return active?.name ?? "FREE";
-  }, [unlockedLevel]);
+  }, [initialUnlockedLevel]);
 
   function confirmDemoAccess() {
     if (!pending) return;
-    const cost = CASH_COST[pending.id] ?? 0;
-    if (cost > cashBalance) return;
-    setCashBalance((balance) => balance - cost);
-    setUnlockedLevel((level) => level > pending.level ? level : pending.level);
+    if (!canPreviewTier(externalSource, publicResources.length, pending.level - 1)) return;
+    setPreviewLevel((level) => Math.max(level, pending.level));
     setPendingId(null);
   }
 
@@ -87,14 +82,13 @@ export function AssetAccessDemo({
     <aside className="asset-access-demo" aria-label="자산 등급별 정보">
       <div className="access-demo-metrics">
         <div>
-          <span>GLI TRUST SCORE</span>
-          <strong>{trustScore}</strong>
-          <small>/ 100</small>
+          <span>GLI TRUST GRADE</span>
+          <strong>{trustGrade(trustScore)}</strong>
+          <small>검증 등급</small>
         </div>
         <div>
-          <span>VERIFICATION PROGRESS</span>
-          <strong>64</strong>
-          <small>%</small>
+          <span>검증 진행 상태</span>
+          <strong>조사 예정</strong>
         </div>
       </div>
 
@@ -111,7 +105,7 @@ export function AssetAccessDemo({
           >
             <span>{tier.name}</span>
             <small>(LV.{tier.level})</small>
-            {tier.level <= unlockedLevel ? <Check size={13} aria-label="열림" /> : null}
+            {tier.level <= previewLevel ? <Check size={13} aria-label="열림" /> : null}
           </button>
         ))}
       </div>
@@ -119,26 +113,31 @@ export function AssetAccessDemo({
       <div className="access-tier-body" role="tabpanel">
         <div className="access-tier-heading">
           <div>
-            <span style={{ color: selected.color }}>{selected.eyebrow}</span>
-            <h2>{tierTitle(selected.id)}</h2>
+            <span style={{ color: selected.color }}>{externalSource ? "출처 정보" : selected.eyebrow}</span>
+            <h2>{externalSource ? "확보된 자산 자료" : tierTitle(selected.id)}</h2>
           </div>
           <span className={hasAccess ? "access-state is-open" : "access-state"}>
-            {hasAccess ? "열람 가능" : "잠김"}
+            {!hasPreview ? "추가 자료 없음" : hasAccess ? "열람 가능" : "열람 전"}
           </span>
         </div>
 
-        {selected.id === "free" ? <FreePreview publicResources={publicResources} /> : null}
-        {selected.id === "basic" ? <BasicPreview /> : null}
-        {selected.id === "standard" ? <StandardPreview /> : null}
-        {selected.id === "premium" ? <PremiumPreview /> : null}
-        {selected.id === "business" ? <BusinessPreview assetTitle={assetTitle} /> : null}
+        {selected.id === "free" ? <FreePreview publicResources={publicResources} externalSource={externalSource} /> : null}
+        {!externalSource && hasAccess && selected.id === "basic" ? <BasicPreview /> : null}
+        {!externalSource && hasAccess && selected.id === "standard" ? <StandardPreview /> : null}
+        {!externalSource && hasAccess && selected.id === "premium" ? <PremiumPreview /> : null}
+        {!externalSource && hasAccess && selected.id === "business" ? <BusinessPreview assetTitle={assetTitle} /> : null}
+        {externalSource && selected.id !== "free" ? <section className="tier-feature-panel">
+          <h3>확보된 관련 자료</h3>
+          {hasPreview ? hasAccess ? publicResources.map(resource=><p key={resource.url}><a href={resource.url} target="_blank" rel="noopener noreferrer">{resource.label}</a></p>)
+            : <p>수집된 출처 자료를 확인할 수 있습니다.</p>
+            : <p>현재 제공할 추가 자료가 없습니다. 기본 정보와 원문을 먼저 확인해 주세요.</p>}
+        </section> : null}
 
-        {!hasAccess ? (
+        {!hasAccess && hasPreview ? (
           <div className="access-lock-copy">
             <LockKeyhole size={17} />
             <p>
-              {selected.name}을 열면 LV.1부터 LV.{selected.level}까지 모두 이용할 수
-              있습니다.
+              {selected.name}의 준비된 정보를 확인합니다.
             </p>
           </div>
         ) : null}
@@ -149,10 +148,10 @@ export function AssetAccessDemo({
           <span>현재 이용 등급</span>
           <strong>{accessLabel}</strong>
         </div>
-        <div>
+        {!externalSource && <div>
           <span>GLI Cash</span>
           <strong>{cashBalance.toLocaleString("en-US")}</strong>
-        </div>
+        </div>}
         {hasAccess ? (
           <button type="button" disabled>
             <Check size={17} /> 현재 열람 가능
@@ -160,21 +159,10 @@ export function AssetAccessDemo({
         ) : (
           <button
             type="button"
-            onClick={() => {
-              if (cashCost && !canUseGliCash) {
-                window.location.assign("/membership");
-                return;
-              }
-              setPendingId(selected.id);
-            }}
+            disabled={!hasPreview}
+            onClick={() => setPendingId(selected.id)}
           >
-            {cashCost
-              ? canUseGliCash
-                ? `${cashCost.toLocaleString("en-US")} GLI Cash로 열기`
-                : "멤버십 가입 후 GLI Cash 이용"
-              : selected.id === "basic"
-                ? "Explorer 월 $1.99로 시작"
-                : `$${standardPrice.toFixed(2)}로 업그레이드`}
+            {hasPreview ? `${selected.name} 정보 확인` : "추가 자료 없음"}
             <ChevronRight size={17} />
           </button>
         )}
@@ -184,62 +172,36 @@ export function AssetAccessDemo({
         수익이나 법률 판단을 의미하지 않습니다.
       </p>
 
-      {pending ? (
-        <div className="access-demo-dialog" role="dialog" aria-modal="true">
-          <div>
-            <span>ASSET ACCESS</span>
-            <h3>{pending.name} 이용 확인</h3>
-            <p>
-              이 등급과 모든 하위 등급의 이용 내용을 확인합니다.
-            </p>
-            <dl>
-              <div>
-                <dt>대상 자산</dt>
-                <dd>{assetTitle}</dd>
-              </div>
-              <div>
-                <dt>이용 방식</dt>
-                <dd>{purchaseDescription(pending.id, unlockedLevel)}</dd>
-              </div>
-            </dl>
-            <div className="access-dialog-actions">
-              <button type="button" onClick={() => setPendingId(null)}>
-                취소
-              </button>
-              <button type="button" onClick={confirmDemoAccess}>
-                이용 확정
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {pending ? <AccessPreviewDialog tier={pending.name} title={assetTitle} onClose={()=>setPendingId(null)} onConfirm={confirmDemoAccess} /> : null}
     </aside>
   );
 }
 
 function FreePreview({
   publicResources,
+  externalSource,
 }: {
   publicResources: AssetPublicResource[];
+  externalSource: boolean;
 }) {
   return (
     <div className="tier-preview-stack">
-      <section className="tier-feature-panel">
+      {!externalSource && <section className="tier-feature-panel">
         <h3>
           <BarChart3 size={18} /> 공개 시장 정보
         </h3>
         <div className="public-stat-grid">
-          <div><span>지역 관심도</span><strong>상승</strong></div>
-          <div><span>자료 최신성</span><strong>7일 이내</strong></div>
-          <div><span>비교 후보</span><strong>12건</strong></div>
+          <div><span>지역 관심도</span><strong>{externalSource ? "미확인" : "상승"}</strong></div>
+          <div><span>자료 최신성</span><strong>{externalSource ? "미확인" : "7일 이내"}</strong></div>
+          <div><span>비교 후보</span><strong>{externalSource ? "미확인" : "12건"}</strong></div>
         </div>
-      </section>
-      <div className="tier-compact-row">
+      </section>}
+      {!externalSource && <div className="tier-compact-row">
         <Map size={18} /><div><strong>위치 및 생활권</strong><span>지도 기반 입지 개요</span></div>
-      </div>
-      <div className="tier-compact-row">
+      </div>}
+      {!externalSource && <div className="tier-compact-row">
         <Newspaper size={18} /><div><strong>공개 미디어</strong><span>관련 보도 및 공개 자료</span></div>
-      </div>
+      </div>}
       {publicResources.length ? (
         <section className="tier-public-resources" aria-label="공개 웹 자료">
           <h3><Globe2 size={18} /> 공개 웹 자료</h3>
@@ -335,14 +297,4 @@ function tierTitle(id: AccessTierId) {
   if (id === "standard") return "비교와 판단을 위한 상세 분석";
   if (id === "premium") return "자산별 현지 검증과 비공개 자료";
   return "거래 추진을 위한 GLI 실행 서비스";
-}
-
-function purchaseDescription(id: AccessTierId, unlockedLevel: number) {
-  if (id === "basic") return "Basic 월 정기구독 · $1.99";
-  if (id === "standard") {
-    return unlockedLevel >= 2
-      ? "Basic에서 Standard 차액 결제 · $1.00"
-      : "Standard 월 정기구독 · $2.99";
-  }
-  return `${(CASH_COST[id] ?? 0).toLocaleString("en-US")} GLI Cash · 자산별 이용권`;
 }

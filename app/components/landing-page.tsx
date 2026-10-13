@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Asset } from "../../lib/assets";
+import { bedroomLabel } from "../../lib/asset-basic-info";
 import { newsItems } from "../../lib/news";
 import { SiteFooter } from "./site-footer";
 
@@ -111,7 +112,7 @@ function trustGrade(score: number) {
 
 function assetSpec(asset: Asset) {
   if (asset.cardMeta) return asset.cardMeta;
-  const rooms = asset.bedrooms === 0 ? "스튜디오" : `${asset.bedrooms}BR`;
+  const rooms = bedroomLabel(asset.bedrooms);
   const transaction = asset.transaction === "rent" ? "임대" : "매매";
   return `${rooms} · ${asset.areaSqm}m² · ${transaction}`;
 }

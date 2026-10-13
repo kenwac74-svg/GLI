@@ -18,6 +18,19 @@ import {
 } from "../db/membership-entitlements.ts";
 
 const NOW = Date.parse("2026-07-30T00:00:00.000Z");
+test('MY member overview does not query excluded consultation, notification or legacy favorite services',async()=>{
+  const database=new FakeD1();
+  const user=await ensureUser(database,{email:'member-preview@gli.local',displayName:'GLI member'},{now:()=>NOW});
+  const prepare=database.prepare.bind(database);
+  database.prepare=sql=>{
+    assert.doesNotMatch(sql,/FROM consultations|FROM favorites|FROM member_notifications/i);
+    return prepare(sql);
+  };
+  const overview=await getUserDashboard(database,user.id,{now:()=>NOW,memberOverviewOnly:true});
+  assert.equal(overview.user.id,user.id);
+  assert.deepEqual(overview.consultations,[]);
+  assert.deepEqual(overview.notifications,[]);
+});
 const UUIDS = {
   consultation: "11111111-1111-4111-8111-111111111111",
   membership: "22222222-2222-4222-8222-222222222222",

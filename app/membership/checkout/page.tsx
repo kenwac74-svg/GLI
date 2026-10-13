@@ -15,7 +15,7 @@ export default async function MembershipCheckoutPage({
       view="co"
       initialPlan={plan}
       initialCycle={cycle}
-      initialPaid={params.paid === "1"}
+      initialPaid={false}
     />
   );
 }

@@ -49,7 +49,7 @@ test("source-less demo titles localize in Korean without paid calls, source attr
   assert.equal(await translate(assets, "en"), assets);
   const changed = { ...assets[0], title: "Different property" };
   const external = { ...assets[0], sourceUrl: "https://example.test/real-record" };
-  assert.deepEqual(await translate([changed, external]), [changed, external]);
+  assert.deepEqual(await translate([changed, external]), [changed, { ...external, translationStatus: "unavailable" }]);
 });
 
 test("projects Korean text only; retains every numeric, identity and source field and original input", async () => {
@@ -126,15 +126,15 @@ for (const [label, mutate] of [
   ["HTML injection", response => { response.items[0].fields[0].text += "<script>alert()</script>"; return response; }],
 ]) test(`rejects ${label} without hiding the listing; failure cooldown avoids repeated charges`, async () => {
   const provider = fakeProvider(mutate), translate = createAssetLocalizer({ ...config, store: null, fetchImpl: provider.fetchImpl });
-  assert.deepEqual(await translate([original]), [original]);
-  assert.deepEqual(await translate([original]), [original]);
+  assert.deepEqual(await translate([original]), [{ ...original, translationStatus: "unavailable" }]);
+  assert.deepEqual(await translate([original]), [{ ...original, translationStatus: "unavailable" }]);
   assert.equal(provider.requests.length, 1);
 });
 
 test("provider and storage failures leave source readable; no retry or provider substitution", async () => {
   let count = 0;
   const translate = createAssetLocalizer({ ...config, store: { async get() { throw Error("storage"); }, async put() {} }, fetchImpl: async () => { count++; return new Response("error", { status: 429 }); } });
-  assert.deepEqual(await translate([original]), [original]);
+  assert.deepEqual(await translate([original]), [{ ...original, translationStatus: "unavailable" }]);
   assert.equal(count, 1);
 });
 
@@ -149,7 +149,7 @@ test("search, detail and public list share the translation service without chang
 test("unmetered public reads do not start paid translation even with a configured key", async t => {
   const upstream = t.mock.method(globalThis, "fetch", async () => { assert.fail("unmetered paid call"); });
   const translate = createAssetLocalizer({ apiKey: "test-configured", store: null, enabled: true });
-  assert.deepEqual(await translate([original]), [original]);
+  assert.deepEqual(await translate([original]), [{ ...original, translationStatus: "unavailable" }]);
   assert.equal(upstream.mock.callCount(), 0);
 });
 
@@ -191,9 +191,21 @@ test("active approved shell restores saved FX without a paid search and shares c
   assert.match(restore, /setRuntimeTurns/);
   assert.match(restore, /applySearchResult/);
   assert.doesNotMatch(restore, /runSearch\(/);
-  assert.match(shell, /candidateLocation\(match\)/);
+  assert.match(shell, /candidateLocation\(match, locale\)/);
   assert.doesNotMatch(shell, /match\.price \* 1380/);
   const route = readFileSync(new URL("../app/api/search/route.ts", import.meta.url), "utf8");
   assert.match(route, /prepared\.preparedSearch\.rate =/);
   assert.ok(route.indexOf("prepared.preparedSearch.rate =") < route.indexOf("const result = await runAdvisorSearch"));
+});
+
+test("cache-only geography projection covers detail fields and protects quoted names", async () => {
+  const asset = { ...original, title: "R&F City, Phnom Penh", summary: "Manila, Philippines",
+    strengths: ["Makati, Philippines"], checks: ['"R&F City, Phnom Penh"'],
+    detailFacts: [{ label: "Location", value: "Ho Chi Minh City, Vietnam" }] };
+  const [localized] = await createAssetLocalizer({ enabled: false })([asset]);
+  assert.equal(localized.summary, "마닐라, 필리핀");
+  assert.equal(localized.strengths[0], "마카티, 필리핀");
+  assert.equal(localized.checks[0], '"R&F City, Phnom Penh"');
+  assert.equal(localized.detailFacts[0].value, "호치민, 베트남");
+  assert.equal(asset.summary, "Manila, Philippines");
 });

@@ -122,6 +122,15 @@ test("listing mapping preserves VND, transaction, fields and an unknown publicat
   assert.equal(parseDotPropertyListings(listing(), "rent", observedAt).length, 0);
 });
 
+test("preserves description and extra photos already present in the fetched list card", () => {
+  const enriched = listing().replace("</article>", '<p itemprop="description">Furnished apartment with balcony.</p><img src="https://pix.dotproperty.co.th/second.jpg"></article>');
+  const [asset] = parseDotPropertyListings(enriched, "sale", observedAt);
+  assert.equal(asset.summary, "Furnished apartment with balcony.");
+  assert.equal(asset.images.length, 2);
+  assert.equal(asset.sourceObservedAt, observedAt.toISOString());
+  assert.equal(asset.updatedAt, "");
+});
+
 test("rejects unsafe source URLs, incomplete fields, contacts and unsupported currency", () => {
   for (const html of [listing().replace("www.dotproperty.com.vn/en/ads", "evil.test/en/ads"), listing().replace("bathtub-test", "unknown-test"), listing("sale", "$ 100,000"), listing("sale", "₫ 2.5 billion", "unit-1", "2 Bedroom Condo for sale call 0901234567")]) {
     assert.deepEqual(parseDotPropertyListings(html, "sale", observedAt), []);

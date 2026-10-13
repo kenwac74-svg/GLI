@@ -1,5 +1,5 @@
 import type { SearchCriteria } from "./search.ts";
-import { localizeDemoAsset } from "./demo-asset-localization.ts";
+import { englishDemoAsset, localizeDemoAsset } from "./demo-asset-localization.ts";
 import { convertCurrency, isPriceCurrency, type ExchangeRateSnapshot } from "./currency.ts";
 import { geographyLabel, localizeSeparatedGeography } from "./location-display.ts";
 
@@ -7,9 +7,14 @@ import { geographyLabel, localizeSeparatedGeography } from "./location-display.t
 export type Candidate = {
   id: string; title: string; country: string; city: string; district: string;
   transaction: "sale" | "rent"; price: number; maxPrice?: number; currency: string;
-  areaSqm: number; bedrooms: number; bathrooms: number; image: string; trustScore: number;
+  areaSqm: number; bedrooms: number | null; bathrooms: number | null; image: string; trustScore: number;
   originLabel?: string; sourceName?: string; sourceUrl?: string; priceLabel?: string;
   matchReasons?: string[];
+  sourcePublishedAt?: string;
+  propertyType?: string;
+  favoriteRefId?: string;
+  detailOrigin?: "fixture" | "search";
+  retainedStatus?: string;
 };
 export type Citation = { assetId: string; label: string; sourceName?: string; url?: string };
 export type SearchPayload = {
@@ -48,7 +53,11 @@ export function displayResult(next: SearchPayload, previous: SearchPayload | nul
     criteria: next.criteria ?? previous.criteria };
 }
 
-export function localizeDemoResult(result: SearchPayload): SearchPayload {
+export function localizeDemoResult(result: SearchPayload, locale: "ko" | "en" = "ko"): SearchPayload {
+  if (locale === "en") {
+    const matches = result.matches.map(englishDemoAsset);
+    return matches.some((asset, i) => asset !== result.matches[i]) ? { ...result, matches } : result;
+  }
   const replacements = result.matches.flatMap(asset => {
     const localized = { ...localizeDemoAsset(asset), title: localizeSeparatedGeography(localizeDemoAsset(asset).title) };
     return localized.title !== asset.title ? [[asset.title, localized.title] as const] : [];
@@ -61,18 +70,28 @@ export function localizeDemoResult(result: SearchPayload): SearchPayload {
     citations: result.citations?.map(cite => ({ ...cite, label: text(cite.label) })) };
 }
 
-export function localizeDemoTurn(turn: RuntimeTurn): RuntimeTurn {
+export function localizeDemoTurn(turn: RuntimeTurn, locale: "ko" | "en" = "ko"): RuntimeTurn {
   if (turn.role !== "GLI AI" || !turn.result) return turn;
-  const result = localizeDemoResult(turn.result);
+  const result = localizeDemoResult(turn.result, locale);
   return result === turn.result ? turn : { ...turn, result, text: [result.answer, result.clarification].filter(Boolean).join("\n") };
 }
 
-export function candidateConverted(asset: Candidate, rate?: SearchPayload["rate"]) {
-  if (!isPriceCurrency(asset.currency) || asset.currency === "KRW" || !(asset.price > 0) || !rate) return "";
+export function candidateConverted(asset: Candidate, rate?: SearchPayload["rate"], locale: "ko" | "en" = "ko") {
+  if (locale === "en") {
+    if (asset.currency === "USD" || !(asset.price > 0)) return "";
+    const rates = rate?.rates ?? (rate ? { USD: 1, KRW: rate.krwPerUsd } : {});
+    const value = isPriceCurrency(asset.currency) ? convertCurrency(asset.price, asset.currency, "USD", rates) : null;
+    const maximum = asset.maxPrice && isPriceCurrency(asset.currency) ? convertCurrency(asset.maxPrice, asset.currency, "USD", rates) : null;
+    if (value === null) return "Currency conversion unavailable";
+    const format = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
+    return `Approx. ${format(value)}${maximum !== null && maximum > value ? `–${format(maximum)}` : ""}${asset.transaction === "rent" ? "/month" : ""}`;
+  }
+  if (asset.currency === "KRW" || !(asset.price > 0)) return "";
+  if (!isPriceCurrency(asset.currency) || !rate) return "원화 환산 미확인";
   const rates = rate.rates ?? { USD: 1, KRW: rate.krwPerUsd };
   const minimum = convertCurrency(asset.price, asset.currency, "KRW", rates);
   const maximum = asset.maxPrice && asset.maxPrice > asset.price ? convertCurrency(asset.maxPrice, asset.currency, "KRW", rates) : null;
-  if (minimum === null || !Number.isFinite(minimum) || minimum <= 0) return "";
+  if (minimum === null || !Number.isFinite(minimum) || minimum <= 0) return "원화 환산 미확인";
   const format = (amount: number) => Math.round(amount).toLocaleString("ko-KR");
   return `약 ${format(minimum)}${maximum !== null ? `~${format(maximum)}` : ""}원${asset.transaction === "rent" ? "/월" : ""}`;
 }
@@ -101,8 +120,22 @@ export function safeSourceUrl(url?: string) {
   catch { return undefined; }
 }
 
-export function conditionChips(criteria?: SearchCriteria) {
+export function conditionChips(criteria?: SearchCriteria, locale: "ko" | "en" = "ko") {
   if (!criteria) return [];
+  if (locale === "en") {
+    const chips = [[(criteria.countries ?? [criteria.country]).join(" · "), criteria.city ?? ""].filter(Boolean).join(" ")];
+    const conditions = criteria.consultation;
+    const money = (amount: number, currency: string) => `${currency} ${amount.toLocaleString("en-US")}`;
+    if (criteria.transaction) chips.push(criteria.transaction === "rent" ? "For rent" : "For sale");
+    if (conditions?.budget) {
+      const b = conditions.budget;
+      const label = b.scope === "monthlyRent" ? "Monthly budget" : b.scope === "totalInvestment" ? "Total budget" : "Purchase budget";
+      chips.push(`${label} ${money(b.amount, b.currency)}`);
+    } else if (criteria.budgetKrw) chips.push(`Budget ${money(criteria.budgetKrw, "KRW")}`);
+    if (conditions?.targetMonthlyIncome) chips.push(`Target monthly income ${money(conditions.targetMonthlyIncome.amount, conditions.targetMonthlyIncome.currency)}`);
+    if (criteria.bedrooms != null) chips.push(criteria.bedrooms === 0 ? "Studio" : `${criteria.bedrooms} bedrooms`);
+    return chips;
+  }
   const chips = [[(criteria.countries ?? [criteria.country]).map(geographyLabel).join(" · "), criteria.city ? geographyLabel(criteria.city) : ""].filter(Boolean).join(" ")];
   const conditions = criteria.consultation;
   const money = (amount: number, currency: string) => currency === "KRW"

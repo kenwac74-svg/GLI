@@ -31,6 +31,7 @@ import { discoverPhilippinesAssets, isPhilippinesDemoRequestEnabled } from "../.
 import { getExchangeRates } from "../../../lib/exchange-rates.ts";
 import { collectSearchCountries } from "../../../lib/multi-country-discovery.ts";
 import { getDiscoveryRepository } from "../../../lib/discovery-storage.ts";
+import { DiscoveryPersistenceError } from "../../../db/discovery-repository.ts";
 
 // GLI-SPEC: GS-003 GS-004 GS-006 GS-010 GS-012; docs/implementation/API-CONTRACTS.md.
 // P38 guards paid stages; P50 stores original discovery before translation.
@@ -152,6 +153,7 @@ async function search(request: Request) {
   const source = await listAssets({ limit: 100 });
   const discoveryRepository = await getDiscoveryRepository();
   let persistedCount = 0;
+  let persistenceFailed = false;
   let freshCount = 0;
   const discovery: {
     live: Awaited<ReturnType<typeof collectSearchCountries>> | null;
@@ -198,12 +200,20 @@ async function search(request: Request) {
   // A cached collection keeps its original observation time, never today's
   // request time. Stored candidates remain unverified if the source is offline.
   if (discoveryRepository) {
-    const liveSaved = await discoveryRepository.save(liveDiscovery.assets, liveDiscovery.checkedAt);
-    const webSaved = webDiscovery
-      ? await discoveryRepository.save(webDiscovery.assets, webDiscovery.checkedAt) : [];
-    persistedCount = liveSaved.length + webSaved.length;
-    discoveredAssets = mergeExternalAssets([...webSaved, ...liveSaved, ...discoveredAssets],
-      await discoveryRepository.list(searchCountries(requestedCriteria)));
+    const saved = [];
+    for (const collection of [liveDiscovery,webDiscovery]) {
+      if (!collection) continue;
+      try { saved.push(...await discoveryRepository.save(collection.assets,collection.checkedAt)); }
+      catch (error) {
+        persistenceFailed = true;
+        if (error instanceof DiscoveryPersistenceError) saved.push(...error.savedAssets);
+      }
+    }
+    persistedCount = new Set(saved.map(asset => asset.id)).size;
+    let retained: typeof discoveredAssets = [];
+    try { retained = await discoveryRepository.list(searchCountries(requestedCriteria)); }
+    catch { persistenceFailed = true; }
+    discoveredAssets = mergeExternalAssets([...saved, ...discoveredAssets], retained);
   }
   return [
     ...discoveredAssets,
@@ -233,6 +243,7 @@ async function search(request: Request) {
       request.headers.get("x-forwarded-for"),
   );
   const result = await runAdvisorSearch(query, prepared.assets, {
+      locale,
       fetch: operation.forStage("advisor"),
       safetyIdentifier,
       context,
@@ -316,7 +327,8 @@ async function search(request: Request) {
             webDiscovery?.checkedAt ?? liveDiscovery?.checkedAt ?? new Date().toISOString(),
           cached: Boolean((liveDiscovery?.cached ?? true) && (webDiscovery?.cached ?? true)),
           collectedCount: freshCount,
-          storage: { mode: discoveryRepository ? "d1" : "disabled", savedCount: persistedCount },
+          storage: { mode: discoveryRepository ? "d1" : "disabled", savedCount: persistedCount,
+            status: persistenceFailed ? "failed" : discoveryRepository ? "saved" : "disabled" },
           displayedCount: displayedExternalCount,
           sources: liveDiscovery?.sources ?? [],
           countries: liveDiscovery?.coverage ?? [],

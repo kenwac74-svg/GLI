@@ -249,12 +249,12 @@ export function extractCriteria(
     (explicitCountry && explicitCountry !== context?.country ? defaultCity(country) : context?.city) ??
     defaultCity(country);
   const income =
-    /투자|수익|월세(?:가|를|로)?\s*(?:잘|수익|받)|임대\s*(?:수익|료)|yield|income/i.test(text) ||
+    /투자|수익|월세(?:가|를|로)?\s*(?:잘|수익|받)|임대\s*(?:수익|료)|\b(?:invest(?:ment|ing)?|yield|income)\b/i.test(text) ||
     (context?.purpose === "income" && !/내가\s*(?:살|거주)|직접\s*거주|임차|빌려|세입자|투자.*(?:아니|말고)/.test(text));
   const seasonal =
-    /별장|세컨드\s*하우스|겨울마다|개월.*(?:쉬|놀|체류)|내가 없을 때/.test(text);
-  const explicitRent = /임대|월세|렌트|rent/.test(text);
-  const explicitSale = /매매|구매|매입|sale/.test(text);
+    /별장|세컨드\s*하우스|겨울마다|개월.*(?:쉬|놀|체류)|내가 없을 때|\b(?:vacation|holiday|second)\s+home\b|\bseasonal\b/.test(text);
+  const explicitRent = /임대|월세|렌트|\brent(?:al|ing)?\b/.test(text);
+  const explicitSale = /매매|구매|매입|\b(?:sale|buy|buying|purchase|purchasing)\b/.test(text);
   const type = /빌라|villa/.test(text)
     ? "villa"
     : /주택|하우스|house/.test(text)
@@ -262,19 +262,35 @@ export function extractCriteria(
       : /콘도|아파트|condo|apartment/.test(text)
         ? "condo"
         : null;
-  const bedroomMatch = text.match(/(\d+)\s*(?:베드|침실|br)/);
-  const usdMatch = text.match(/\$?\s*([\d,.]+)\s*(?:달러|불|usd|\$)/);
+  const bedroomMatch = text.match(/(\d+)\s*[- ]?\s*(?:베드|침실|br\b|bed(?:room)?s?\b)/);
+  const usdMatch = text.match(/(?:us\$|\$|\busd\s*)\s*([\d,]+(?:\.\d+)?)\s*(million\b|thousand\b|[km]\b)?|([\d,]+(?:\.\d+)?)\s*(million\b|thousand\b|[km]\b)?\s*(?:달러|불|usd\b|dollars?\b|\$)/);
   // Conversational budgets commonly omit "원" (for example, "1억 정도").
   const krwMatch = text.match(/([\d,.]+)\s*(억|천만|만)(?:\s*원)?/);
   let budgetKrw: number | null = null;
   let maxPriceUsd: number | null = null;
 
-  if (usdMatch) maxPriceUsd = Number(usdMatch[1].replace(/,/g, ""));
+  if (usdMatch) {
+    const amount = Number((usdMatch[1] ?? usdMatch[3]).replace(/,/g, ""));
+    const unit = usdMatch[2] ?? usdMatch[4];
+    const value = amount * (unit === "m" || unit === "million" ? 1_000_000 : unit === "k" || unit === "thousand" ? 1_000 : 1);
+    if (Number.isFinite(value) && value > 0) maxPriceUsd = value;
+  }
   if (krwMatch) {
     const unit =
       krwMatch[2] === "억" ? 100_000_000 : krwMatch[2] === "천만" ? 10_000_000 : 10_000;
     budgetKrw = Number(krwMatch[1].replace(/,/g, "")) * unit;
     maxPriceUsd = Math.round(budgetKrw / DEMO_KRW_PER_USD);
+  }
+  const englishKrw = text.match(/\bkrw\s*([\d,]+(?:\.\d+)?)\s*(million\b|billion\b|thousand\b|[kmb]\b)?|([\d,]+(?:\.\d+)?)\s*(million\b|billion\b|thousand\b|[kmb]\b)?\s*krw\b/);
+  if (englishKrw) {
+    const unit = englishKrw[2] ?? englishKrw[4];
+    const value = Number((englishKrw[1] ?? englishKrw[3]).replace(/,/g, "")) *
+      (unit === "b" || unit === "billion" ? 1_000_000_000 : unit === "m" || unit === "million" ? 1_000_000 : unit === "k" || unit === "thousand" ? 1_000 : 1);
+    if (Number.isFinite(value) && value > 0) {
+      budgetKrw = value;
+      // Same legacy search filter as Korean budgets; not observed FX evidence.
+      maxPriceUsd = Math.round(budgetKrw / DEMO_KRW_PER_USD);
+    }
   }
   const nativeMoney = text.match(/([\d,.]+)\s*(만|천)?\s*(페소|php|동|vnd)(?:\b|\s|이하|까지|으로|의|$)/i);
   const nativeBudget = nativeMoney ? {
@@ -288,13 +304,13 @@ export function extractCriteria(
     ...(countries.length > 1 ? { countries: [...countries] } : {}),
     city,
     district: countries.length > 1 ? null : district,
-    transaction: explicitRent && !income ? "rent" : explicitSale || income || seasonal ? "sale" : null,
+    transaction: explicitRent && !income && !explicitSale ? "rent" : explicitSale || income || seasonal ? "sale" : null,
     propertyType: type,
     maxPriceUsd,
     budgetKrw,
     bedrooms: bedroomMatch ? Number(bedroomMatch[1]) : null,
     purpose: seasonal ? "seasonal" : income ? "income" : explicitRent ? "residence" : "general",
-    wantsShortStay: /에어비앤비|airbnb|단기\s*임대/.test(text),
+    wantsShortStay: /에어비앤비|airbnb|단기\s*임대|short[- ]term\s+rent(?:al)?|short\s+stay/.test(text),
     wantsRiver: /강|메콩|리버|river|전망/.test(text),
     ...(nativeBudget ? { consultation: { budget: nativeBudget, targetMonthlyIncome: null,
       completedOnly: false, tenantedOnly: false, furnishedOnly: false, cashPurchase: false } } : {}),

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { DEMO_AUTH_COOKIE, safeReturnPath } from "../../../auth";
 import { chatGPTSignOutPath, getChatGPTUser } from "../../../chatgpt-auth";
+import { AUTH_PREVIEW_COOKIE } from '../../../../lib/auth-preview';
 
 export async function GET(request: Request) {
   const returnTo = safeReturnPath(
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
 }
 
 function clearDemoCookie(response: NextResponse, requestUrl: string) {
+  response.cookies.set(AUTH_PREVIEW_COOKIE,'',{httpOnly:true,sameSite:'lax',secure:new URL(requestUrl).protocol==='https:',path:'/',maxAge:0});
   response.cookies.set(DEMO_AUTH_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",

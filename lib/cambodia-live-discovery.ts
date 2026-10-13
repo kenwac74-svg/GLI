@@ -214,7 +214,9 @@ function toAsset(
     isGliDirect: false,
     sourceName,
     sourceUrl: candidate.sourceUrl,
-    updatedAt: candidate.observedAt,
+    // The collector observed this page; it did not establish a source date.
+    updatedAt: "",
+    sourceObservedAt: candidate.observedAt,
     strengths: ["공개 원문 연결", "가격·면적·유형 확인"],
     checks: ["현재 거래 가능 여부", "계약 조건", "권리 관계"],
   };

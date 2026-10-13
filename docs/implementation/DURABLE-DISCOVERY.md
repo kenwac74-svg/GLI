@@ -1,6 +1,14 @@
 # D1 영속 후보 저장 (P50 / GS-004)
 
+## LOCAL retention extension (2026-10-13)
+
+SQL0020 adds stable references, private version snapshots and account favorite relations. `db/asset-reference-repository.ts` atomically persists latest content/version/discovery mirror; identical content only advances checking time. Partial facts/photos/resources preserve acquired values. Source dates remain separate. Storage errors and partial success are explicit before Top5 selection.
+
+Exact-unit evidence alone permits source grouping; original IDs and histories remain. Evidence changes invalidate the grouping with a private audit. HTTP refusal does not imply removal/completion. The public price projection is limited to latest500 observed versions, while private versions remain stored. This is not full-page/image-object storage or backup completion. Actual LOCAL migration retained9 listings/56 discovered/1 legacy favorite. Public DB and actual signed-in browser verification remain open. See DISCOVERY-RETENTION-EXECUTION.md and HIST-20261013-009.
+
 ## 현재 구현
+
+2026-10-03: 추가 공개 제원·분류·가격 설명·사진·시각 보존과 얇은 목록 갱신의 상세 정보 손실 방지를 보완했다. 미확인값/번역·원화 표시 및 아직 수집하지 않은 자료의 경계는 [무료 기본 정보 계약](FREE-BASIC-INFORMATION.md)을 따른다.
 
 GPT Sites의 기존 `DB` 바인딩을 사용한다. `drizzle/0018_discovered_assets.sql`은 기존 검증 listings와 별개로 발견 후보를 저장한다. `DiscoveryRepository` 계약의 D1 adapter를 구현했으며 AWS에서는 이 계약을 유지하고 SQL adapter를 이식한다.
 

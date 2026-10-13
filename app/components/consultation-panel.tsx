@@ -4,19 +4,21 @@
 // No fixture responder, provider SDK, local ranking or QA controls belong here.
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUpRight, ChevronDown, MapPin, MessageCircle, X } from "lucide-react";
+import { useUiLocale } from "./ui-locale-provider";
 import { answerParagraphs, candidateConverted, candidatePrice, conditionChips, summaryOf, trustGrade,
   type Candidate, type RuntimeTurn } from "../../lib/consultation-view";
 
 export type ConsultationHandle = { arm: (followup: boolean) => void; arriving: () => void; cancel: () => void };
 type Follow = { kind: "hero" | "follow"; start: number; y: number; top: number; acc: number; frozen: boolean };
 type Props = {
-  turns: RuntimeTurn[]; busy: boolean; loading: boolean; error: boolean;
+  turns: RuntimeTurn[]; busy: boolean; loading: boolean; error: boolean; progressText?: string;
   value: string; selected: Candidate | null;
   onValue: (value: string) => void; onSend: () => void; onClearPick: () => void;
   onResults: () => void; onAsset: (id: string) => void; onConsult: () => void;
 };
 
 export const ConsultationPanel = forwardRef<ConsultationHandle, Props>(function ConsultationPanel(p, ref) {
+  const { locale } = useUiLocale();
   const [historyOpen, setHistoryOpen] = useState(false);
   const [newAnswer, setNewAnswer] = useState(false);
   const container = useRef<HTMLDivElement>(null);
@@ -120,10 +122,10 @@ export const ConsultationPanel = forwardRef<ConsultationHandle, Props>(function 
     {p.turns.map((turn, index) => {
       const ai = turn.role === "GLI AI";
       const s = turn.result ? summaryOf(turn.result) : null;
-      const chips = conditionChips(turn.result?.criteria);
+      const chips = conditionChips(turn.result?.criteria, locale);
       return <div key={turn.id} className="turn" data-runtime-turn={turn.id} data-turn={ai ? "ai" : "me"} hidden={!historyOpen && index < cut} style={{ marginTop: 0, display: !historyOpen && index < cut ? "none" : undefined }}>
         <span className="turn-who" style={{ color: ai ? "var(--green-700)" : "var(--ink-2)" }}>{ai ? "GLI AI" : "고객"}</span>
-        <div><div className="turn-body">{answerParagraphs(turn.text).map((paragraph, i) => <p key={i} style={ai ? { color: "var(--ink-2)", whiteSpace: "pre-wrap" } : { fontWeight: 600 }}>{paragraph}</p>)}</div>
+        <div><div className="turn-body" data-user-content={!ai ? "true" : undefined}>{answerParagraphs(turn.text).map((paragraph, i) => <p key={i} style={ai ? { color: "var(--ink-2)", whiteSpace: "pre-wrap" } : { fontWeight: 600 }}>{paragraph}</p>)}</div>
           {cites(turn)}
           {turn.onAsset && <p className="on-asset"><MapPin size={15} />{turn.onAsset} 기준</p>}
           {chips.length > 0 && <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 11 }}>{chips.map(chip => <span className="aitag" key={chip}>{chip}</span>)}</div>}
@@ -131,7 +133,7 @@ export const ConsultationPanel = forwardRef<ConsultationHandle, Props>(function 
             <div className="leads-h"><b>{s.mode === "review" ? "검토한 후보" : `추천 순위 TOP ${s.leads.length}`}</b><span>{s.mode === "search" ? `조건에 맞는 후보 ${s.count}건` : ""}</span></div>
             {s.leads.map(({ asset, rank }) => <div className="lead" key={asset.id} data-summary-id={asset.id}>
               <div className="lead-t"><a href={`#asset-${asset.id}`} onClick={e => { e.preventDefault(); follow.current = null; p.onAsset(asset.id); }}><span className="lead-rk">{rank}위</span>{asset.title}</a><p>{asset.matchReasons?.join(" · ")}</p></div>
-              <div className="lead-n"><small>{asset.priceLabel ?? (asset.transaction === "rent" ? "월 임대료" : "매매가")}</small><b>{candidatePrice(asset)}</b><span>{candidateConverted(asset, turn.result?.rate)}</span><span className="lead-g">Trust {trustGrade(asset.trustScore)}</span></div>
+              <div className="lead-n"><small>{asset.priceLabel ?? (asset.transaction === "rent" ? "월 임대료" : "매매가")}</small><b>{candidatePrice(asset)}</b><span>{candidateConverted(asset, turn.result?.rate, locale)}</span><span className="lead-g">Trust {trustGrade(asset.trustScore)}</span></div>
               <button type="button" className="lead-thumb" onClick={() => { follow.current = null; p.onAsset(asset.id); }} aria-label={`${asset.title} 목록에서 보기`}><i style={{ backgroundImage: `url(${JSON.stringify(asset.image)})` }} /></button>
             </div>)}
             {s.mode === "search" && <button type="button" className="lead-more" onClick={() => { follow.current = null; p.onResults(); }}>전체 결과 {s.count}건 보기<ChevronDown size={17} /></button>}
@@ -141,7 +143,7 @@ export const ConsultationPanel = forwardRef<ConsultationHandle, Props>(function 
         </div>
       </div>;
     })}
-    {p.busy && <div className="turn" style={{ marginTop: 0 }}><span className="turn-who">GLI AI</span><p className="dots" style={{ color: "var(--ink-2)" }}><span /><span /><span />{p.loading ? "GLI AI가 답변을 정리하고 있습니다" : "조건을 이해하고 후보를 찾고 있습니다"}</p></div>}
+    {p.busy && <div className="turn" style={{ marginTop: 0 }}><span className="turn-who">GLI AI</span><p className="dots" style={{ color: "var(--ink-2)" }}><span /><span /><span />{p.progressText ?? "조건을 이해하고 후보를 찾고 있습니다"}</p></div>}
     <form ref={composer} className={`fw${p.loading ? " is-loading" : ""}${p.error ? " is-error" : ""}`} data-followup-composer hidden={!completed} style={{ display: !completed ? "none" : undefined }} aria-busy={p.loading} onSubmit={e => { e.preventDefault(); if (!p.busy && p.value.trim()) p.onSend(); }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}><label className="fw-label" htmlFor="fq">후속 질문</label>
         {p.selected && <span className="pickchip">{p.selected.title} 기준<button type="button" aria-label="선택한 자산 해제" onClick={p.onClearPick}><i><X size={14} strokeWidth={2.4} /></i></button></span>}
@@ -150,7 +152,7 @@ export const ConsultationPanel = forwardRef<ConsultationHandle, Props>(function 
         if (e.nativeEvent.isComposing || e.keyCode === 229) return;
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (!p.busy && p.value.trim()) p.onSend(); }
       }} /><button type="submit" className="btn btn-p fw-send" data-action="runFollowUp" aria-label="후속 질문 보내기" disabled={p.busy || !p.value.trim()}>{p.error ? "다시 보내기" : "보내기"}</button></div>
-      <p className="fw-status" data-followup-status role="status" aria-live="polite">{p.loading ? "GLI AI가 답변을 정리하고 있습니다" : p.error ? "답변을 불러오지 못했습니다. 다시 보내 주세요." : ""}</p>
+      <p className="fw-status" data-followup-status role="status" aria-live="polite">{p.loading ? p.progressText : p.error ? "답변을 불러오지 못했습니다. 다시 보내 주세요." : ""}</p>
     </form>
     {completed && <p className="fw-alt">현지 확인이 필요한 질문은 GLI 담당자가 직접 답합니다<button type="button" onClick={p.onConsult}>전문가 상담 신청</button></p>}
     {newAnswer && <button type="button" className="newans" onClick={() => jump(latestAnswer())}><ArrowDown size={16} />새 답변 보기</button>}

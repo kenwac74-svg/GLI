@@ -7,6 +7,7 @@ import { findGeminiDiscoveredAsset } from "./gemini-discovery.ts";
 import { findLiveVietnamAsset } from "./vietnam-discovery.ts";
 import { findLivePhilippinesAsset } from "./philippines-discovery.ts";
 import { getDiscoveryRepository } from "./discovery-storage.ts";
+import { createD1AssetReferenceRepository } from "../db/asset-reference-repository.ts";
 
 // GLI-SPEC: GS-004 GS-005 GS-015; docs/implementation/CURRENT-STATE.md.
 // A D1 mode label does not prove live Map/curated results were persisted to D1.
@@ -54,6 +55,11 @@ export async function getAsset(publicId: string): Promise<{
   asset: Asset | null;
   mode: AssetDataMode;
 }> {
+  if (publicId.startsWith("fixture:")) {
+    const {getWorkflowDatabase}=await import("./member-data.ts");
+    const ref=await createD1AssetReferenceRepository(await getWorkflowDatabase()).get(publicId);
+    return {asset:ref?.kind==="fixture" ? ref.asset : null,mode:getAssetDataMode()};
+  }
   const persisted = await (await getDiscoveryRepository())?.get(publicId);
   if (persisted) return { asset: persisted, mode: getAssetDataMode() };
   const liveAsset =
@@ -83,7 +89,7 @@ function filterFixtureAssets(filters: PublicAssetsFilters): Asset[] {
         (filters.minPrice === undefined || asset.price >= filters.minPrice) &&
         (filters.maxPrice === undefined || asset.price <= filters.maxPrice) &&
         (filters.minBedrooms === undefined ||
-          asset.bedrooms >= filters.minBedrooms),
+          (asset.bedrooms !== null && asset.bedrooms >= filters.minBedrooms)),
     )
     .slice(0, filters.limit ?? 50);
 }

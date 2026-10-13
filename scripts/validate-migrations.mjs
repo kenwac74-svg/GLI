@@ -23,6 +23,8 @@ const migrationFiles = [
   "drizzle/0017_ai_operating_usage.sql",
   "drizzle/0018_discovered_assets.sql",
   "drizzle/0019_manual_asset_drafts.sql",
+  "drizzle/0020_asset_retention.sql",
+  "drizzle/0021_member_inquiries.sql",
 ];
 const database = new DatabaseSync(":memory:");
 

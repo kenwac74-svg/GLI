@@ -1,4 +1,4 @@
-import { ChevronDown, Heart, LogOut, Menu, Search, UserRound } from "lucide-react";
+import { ChevronDown, Globe2, Heart, LogOut, Menu, Search, UserRound } from "lucide-react";
 import Link from "next/link";
 import { DEMO_ADMIN_EMAIL, getCurrentUser, signOutPath } from "../auth";
 
@@ -56,6 +56,7 @@ export async function SiteHeader() {
             <Link href="/admin">운영</Link>
           ) : null}
         </nav>
+        <button type="button" className="account-button" data-locale-switch aria-label="언어 전환" title="한국어 / English"><Globe2 size={18} /></button>
         <Link className="header-favorite" href="/my" aria-label="관심자산">
           <Heart size={19} />
           <span>관심자산</span>

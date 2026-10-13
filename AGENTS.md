@@ -1,5 +1,23 @@
 # GLI Engineering Guide
 
+## User-ordered work sequence (2026-10-12)
+
+- 2026-10-13 design delegation update: Codex may decide small copy, state and
+  interaction fixes within the existing approved design without separate Claude
+  approval. Log each change. On the next substantial UI redesign, hand these
+  changes back to Claude Design for reconciliation. New visual direction, major
+  layout/navigation changes and product/payment/access policy still need approval.
+  This supersedes blanket Claude preapproval for every small UI correction.
+
+- Follow `docs/implementation/WORK-SEQUENCE.md` in order: finish frontend UI
+  and function wiring before improving AI answers. Do not skip ahead or treat
+  research advice as implementation approval.
+- Proceed through user questions one at a time. Read `CURRENT_STATE.md` for the
+  current stage; no product edits until that stage's direction is settled.
+- Preserve approved design and use API/DB authority for persisted business
+  data. New design/policy/real-service integration and public deployment need
+  explicit approval. Record stage progress in `CURRENT_STATE.md` and history.
+
 ## GLI AI development workflow (user, 2026-09-30)
 
 - Work on GLI only. Prefer this Work Local tree to GitHub for current code;

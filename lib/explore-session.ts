@@ -5,6 +5,6 @@ export const EXPLORE_STATE_MAX_AGE_MS = 2 * 60 * 60 * 1_000;
 export function rememberExploreResult(assetId: string) {
   window.sessionStorage.setItem(
     EXPLORE_RETURN_KEY,
-    JSON.stringify({ assetId, createdAt: Date.now() }),
+    JSON.stringify({ assetId, createdAt: Date.now(), href: window.location.pathname + window.location.search, scrollY: window.scrollY }),
   );
 }

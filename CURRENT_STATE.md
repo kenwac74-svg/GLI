@@ -1,56 +1,47 @@
 # Current State
 
 Goal:
-- P56: fresh KH/VN/PH external scouting on every candidate search; local validation.
-- Publish approved demo work; temporary admin policy (P52).
-- P54: enable bounded anonymous demo advisor and verify publicly.
+- Step9 approved; Step10 GitHub release branch/public demo deployment in progress.
+- Real authentication/public/phone validation remains.
 
 Completed:
-- Input/recent20 dashboard, private drafts, active-admin gate and atomic audit.
-- D1 normalized-candidate save/refresh and detail/reference recovery connected.
-- Real local Vietnam 40 records saved; independent D1 read and detail HTTP200.
-- First unspecified geography searches KH/VN/PH; follow-ups retain/replace scope.
-- Parallel collectors isolate failures; actual coverage reaches advisor/API.
-- Shared observed FX compares KRW/PHP/VND budgets and original listing prices.
-- PH real PHP70000 rent now shows five candidates with KRW/source/follow-up.
-- Unspecified real USD1500 rent shows three-country scope and five KH candidates.
+- Step1 scope; step2 collected retention/private versions/unified favorites.
+- Step3 compound filters/view/sort/detail return; step4 detail information preview.
+- Step5 limited four-method payment chooser, no actual payment or activation.
+- Step6 MY profile/login/logout, actual membership/access and retained favorites.
+- Member-only receipt inbox: identity autofill, optional contact/asset, idempotency.
+- Existing consultation/notification operations excluded from MY, not deleted.
 
 Changed:
-- Admin manual page/form/API, draft repository/schema/migration0019/tests.
-- Admin entry link; relevant specifications/registry/history/state.
+- MY four missing EN copy keys and regression tests.
+- Tests and QA-INTEGRATED-20261013.md; history/reverse handoff updated.
 
 Decisions:
-- Work Local is the current code baseline; GPT Sites is the current host.
-- D1 is the current storage direction; AWS is the final target, adapters isolated.
-- Firebase DEV/TEST migration is future work, not a configured deployment.
-- Admin is temporary for demo; formal admin development follows demo completion.
-- Production requires explicit user instruction; Claude-approved design rules
-  and the existing product specifications remain in force.
-- Demo approval permits bounded listing reuse, not training/commercial reuse.
-- Auxiliary references wait for enrichment; no source-side refusal bypass.
+- Work Local is baseline; GPT Sites current host, Firebase future, AWS final.
+- Small approved-design copy/state/wiring fixes by Codex; log for Claude redesign.
+- No actual payment, membership/entitlement change, email/assignment/booking.
+- No paid AI, collection expansion, remote DB, commit/push or deployment.
 
 Remaining:
-- SNS intake remains planning-only in separate chat; no principles applied.
-- Some PH geographic titles stay English; same-rank ordering favors source order.
-- Top input reset UX unchanged; explicit reset works, ordinary follow-up persists.
-- Hosted ADMIN provisioning and authenticated account flows remain open.
-- Raw versions/backups and manual draft publication remain future work.
-- P53: Prefetch image objects; revalidate/hash/version on recollection. See DURABLE-DISCOVERY.
-- P55: detail return button/state recovery deferred to next approved batch.
-- Homedy/Batdongsan/Lamudi/Rentpad and auxiliary sources remain held.
-- P41 work, Top5 versus final3 and income-versus-inventory absence separate.
-- FX up to23h cache; standalone legacy rules still demo1380, public path observed.
+- Real OAuth/ChatGPT authentication, session expiry and public/phone browser QA.
+- LOCAL0013 schema repaired; historical migration ledger reconciliation pending.
+- Broader KO/EN content coverage and external source-accuracy checks remain.
+- Real-phone and public-host checks; external resources-present preview case.
+- Legacy discovery firstSeen reference metadata preservation check.
+- Raw image objects/prefetch/hash refresh/backups/queues; source accuracy QA.
+- Inquiry retention/deletion and formal admin handling require later policy.
 
 Next:
-- Actual account provisioned as ADMIN in LOCAL D1; browser sign-in remains open.
-- Hosted account is MEMBER; actual admin sign-in/save QA remains pending.
-- Ranking/reset/translation refinements and intermediate test platform separate.
+- Finish approved Step10 and public screen verification; Step11 not started.
+- Price-history panel/new large UI design stays separate Claude work.
 
 Last verified:
-- 278 tests, typecheck/lint/migrations/build; spec49 routes/4 protected baselines.
-- Real PH and unspecified-country browser responses captured; costs not measured.
-- Sites version66 deployed successfully; source7d28475 pushed to Sites remote.
-- Live D1 schema includes AI usage/discovered_assets/manual_asset_drafts tables.
-- Hosted OpenRouter Astra configured; revision7/version66 redeploy succeeded.
-- VN16/PH1 public search results with FX/translation; guest AI now enabled (P54).
-- Version67/revision8 deployed; actual anonymous Astra intent/advisor reply verified.
+- Step8:362 tests/type/build/migration passed; lint0 errors/12 warnings.
+- EN1286px header,390px MY/detail and VN locale refresh checked in browser.
+- QA-LOCALE-BASIC-20261013.md records findings and verification limitations.
+- 2026-10-13:353 tests, type/build/lint/migration checks passed.
+- LOCAL0021 preserved9 listings/56 discovered/1 legacy favorite; inquiries0.
+- Browser MY and asset inquiry login-return path verified; actual signed-in UI not.
+- LOCAL staff/developer MY confirmed at8780;9 listings/56 discovered retained.
+- Sample save/remove/reload and inquiry login-return checked in browser.
+- Claude reverse handoff saved, not web-sent. HIST-20261013-009 through018.

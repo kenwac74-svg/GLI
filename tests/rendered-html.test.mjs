@@ -22,6 +22,30 @@ async function render(pathname = "/") {
   );
 }
 
+test("English search locale reaches the rules advisor without paid providers", async () => {
+  const { default: worker } = await import(new URL("../dist/server/index.js", import.meta.url).href);
+  const response = await worker.fetch(new Request("http://localhost/api/search", {
+    method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ query: "Rent a 2-bedroom condo in Phnom Penh under $500", locale: "en" }),
+  }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.locale, "en");
+  assert.equal(result.criteria.country, "Cambodia");
+  assert.equal(result.criteria.transaction, "rent");
+  assert.equal(result.criteria.bedrooms, 2);
+  assert.equal(result.advisor.mode, "rules");
+  assert.doesNotMatch(result.answer, /[가-힣]/);
+});
+
+test("saved English preference is allowlisted in the HTML document language", async () => {
+  const { default: worker } = await import(new URL("../dist/server/index.js", import.meta.url).href);
+  const response = await worker.fetch(new Request("http://localhost/explore", { headers: { accept: "text/html", cookie: "gli-locale=en" } }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
+  assert.equal(response.status, 200);
+  assert.match(await response.text(), /<html lang="en"/);
+});
+
 test("server-renders the GLI application shell", async () => {
   const response = await render();
   assert.equal(response.status, 200);

@@ -1,6 +1,7 @@
 // GS-033: fixed demo copy is localized without a paid provider or invented source.
 // Match both ID and original title so changed/real records never inherit fixture copy.
 const DEMO_TITLES: Record<string, readonly [string, string]> = {
+  "GLI-PT-PH-507": ["Mantawi Residences Tower 1", "만타위 레지던스 1차"],
   "GLI-KH-101": ["Central Phnom Penh studio residence", "프놈펜 중심부 스튜디오 레지던스"],
   "GLI-KH-102": ["Central Phnom Penh 1BR residence", "프놈펜 중심부 1베드룸 레지던스"],
   "GLI-KH-103": ["BKK3 future-completion 1BR condo", "BKK3 준공 예정 1베드룸 콘도"],
@@ -12,6 +13,11 @@ const DEMO_TITLES: Record<string, readonly [string, string]> = {
 };
 
 export function localizeDemoAsset<T extends { id: string; title: string; sourceUrl?: string }>(asset: T): T {
-  const title = DEMO_TITLES[asset.id];
+  const title = DEMO_TITLES[asset.id.replace(/^fixture:/, "")];
   return !asset.sourceUrl && title && asset.title === title[0] ? { ...asset, title: title[1] } : asset;
+}
+
+export function englishDemoAsset<T extends { id: string; title: string; sourceUrl?: string }>(asset: T): T {
+  const title = DEMO_TITLES[asset.id.replace(/^fixture:/, "")];
+  return !asset.sourceUrl && title && asset.title === title[1] ? { ...asset, title: title[0] } : asset;
 }

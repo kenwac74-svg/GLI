@@ -6,23 +6,60 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createD1DiscoveryRepository, validateDiscoveredAsset } from "../db/discovery-repository.ts";
 import { assets } from "../lib/assets.ts";
+import { basicDetailFacts, bedroomLabel } from "../lib/asset-basic-info.ts";
+import { sqliteD1 } from "./support/sqlite-d1.mjs";
 
-const sql = readFileSync(new URL("../drizzle/0018_discovered_assets.sql", import.meta.url), "utf8");
+const sql = readFileSync(new URL("../drizzle/0018_discovered_assets.sql", import.meta.url), "utf8")
+  + readFileSync(new URL("../drizzle/0020_asset_retention.sql", import.meta.url), "utf8");
 const sample = { ...assets[0], id: "external-1", sourceName: "Dot Property Vietnam",
   sourceUrl: "https://www.dotproperty.com.vn/listing/1", country: "Vietnam", countryCode: "VN",
   currency: "VND", price: 1500000000, updatedAt: "", trustStatus: "PRELIMINARY", isGliDirect: false };
 const time = "2026-10-01T00:00:00Z";
+
+test("basic public fields survive save, reread and detail projection without verification promotion", async () => {
+  const db = new DatabaseSync(":memory:"); db.exec(sql);
+  try {
+    const repo = createD1DiscoveryRepository(adapter(db));
+    const enriched = { ...sample, bedrooms: null, bathrooms: null, assetCategory: "residential",
+      offerLabel: "월 임대료", priceLabel: "VND 원문 가격", publicationBasis: sample.sourceUrl,
+      priceUsdReference: { amount: 60000, provider: "test FX", asOf: "2026-10-01T00:00:00.000Z" },
+      documentDateLabel: "미확인", summary: "Source description", images: ["https://example.com/1.jpg", "https://example.com/2.jpg"],
+      sourcePublishedAt: time, sourceUpdatedAt: "2026-10-02T00:00:00Z",
+      detailFacts: [{ label: "가구", value: "Furnished" }, { label: "관리비", value: "원문 미기재" }],
+      publicResources: [{ label: "원문", url: sample.sourceUrl, type: "website" }] };
+    await repo.save([enriched], "2026-10-03T00:00:00Z");
+    const restored = await repo.get(sample.id);
+    for (const key of ["summary", "detailFacts", "assetCategory", "offerLabel", "priceLabel", "publicationBasis", "documentDateLabel", "publicResources", "images"]) assert.deepEqual(restored[key], enriched[key]);
+    assert.deepEqual(restored.priceUsdReference, enriched.priceUsdReference);
+    assert.equal(restored.bedrooms, null);
+    assert.equal(bedroomLabel(null), "침실 미확인"); assert.equal(bedroomLabel(0), "스튜디오");
+    const facts = basicDetailFacts(restored);
+    assert.equal(facts.find(f => f.label === "가구").value, "Furnished");
+    assert.notEqual(facts.find(f => f.label === "원문 갱신일").value, facts.find(f => f.label === "GLI 수집/확인일").value);
+    assert.equal(basicDetailFacts(sample).find(f => f.label === "원문 갱신일").value, "미확인");
+    await assert.rejects(repo.save([{ ...sample, publicResources: [{ label: "private", type: "website", url: "javascript:alert(1)" }] }], time));
+    assert.equal(restored.trustStatus, "PRELIMINARY");
+    await repo.save([{ ...sample, summary: sample.title, price: sample.price + 1 }], "2026-10-04T00:00:00Z");
+    assert.equal((await repo.get(sample.id)).summary, enriched.summary);
+    assert.equal((await repo.get(sample.id)).priceUsdReference, undefined);
+    assert.deepEqual((await repo.get(sample.id)).detailFacts, enriched.detailFacts);
+    assert.deepEqual((await repo.get(sample.id)).images, enriched.images);
+  } finally { db.close(); }
+});
+
+test("legacy Cambodia observation is not displayed as an original update date", async () => {
+  const db = new DatabaseSync(":memory:"); db.exec(sql);
+  try {
+    const repo = createD1DiscoveryRepository(adapter(db));
+    const legacy = { ...sample, id: "GLI-KH-LIVE-LEGACY", updatedAt: time };
+    await repo.save([legacy], time);
+    const restored = await repo.get(legacy.id);
+    assert.equal(restored.updatedAt, "");
+    assert.equal(restored.sourceObservedAt, "2026-10-01T00:00:00.000Z");
+  } finally { db.close(); }
+});
 function adapter(db) {
-  return { prepare(sql) { let args = []; return {
-    bind(...values) { args = values; return this; },
-    async first() { return db.prepare(sql).get(...args) ?? null; },
-    async all() { return { success: true, results: db.prepare(sql).all(...args) }; },
-    async execute() { return { success: true, results: db.prepare(sql).all(...args) }; },
-  }; }, async batch(statements) {
-    db.exec("BEGIN");
-    try { const result = await Promise.all(statements.map(s => s.execute())); db.exec("COMMIT"); return result; }
-    catch (error) { db.exec("ROLLBACK"); throw error; }
-  } };
+  return sqliteD1(db);
 }
 test("discovery survives reopening and a separate repository instance", async () => {
   const directory = mkdtempSync(join(tmpdir(), "gli-discovery-"));

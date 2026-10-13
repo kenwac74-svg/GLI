@@ -177,6 +177,23 @@ function renderNode(node, scope) {
   if (node.tagName === "template") return "";
 
   const renderedAttrs = [];
+  // Explicit fixture markers let the runtime refresh reference FX/date display
+  // without editing the approved source or inferring prices from arbitrary text.
+  const textBinding = node.childNodes?.length === 1 && node.childNodes[0].nodeName === "#text"
+    ? node.childNodes[0].value.trim() : "";
+  if (["{{ a.headSub }}", "{{ a.krw }}", "{{ d.krw }}"].includes(textBinding)) {
+    const fixture = textBinding.includes("d.") ? values.d : scope.a;
+    const price = fixture?.price ?? fixture?.headValue;
+    if (typeof price === "string" && /^(USD|\$|RM|₱)\s*[\d,.]/.test(price)) {
+      renderedAttrs.push(`data-fixture-price="${escapeAttribute(price)}"`);
+      renderedAttrs.push(`data-fixture-period="${fixture.priceLabel === "월 임대료" ? "month" : ""}"`);
+    }
+  }
+  if (textBinding === "{{ d.postedOn }}") {
+    const date = values.d?.postedOn?.match(/^(\d+)월 (\d+)일 게시/);
+    if (date) renderedAttrs.push(`data-fixture-posted="2026-${date[1].padStart(2,"0")}-${date[2].padStart(2,"0")}"`);
+  }
+  if (textBinding === "참고 환율 · 2026. 8. 2.") renderedAttrs.push('data-fixture-fx="true"');
   for (const attr of node.attrs ?? []) {
     const event = attr.name.match(/^on(click|input|keydown|change|submit)$/);
     if (event) {
@@ -297,7 +314,7 @@ const detailViews = Object.fromEntries(
     Object.fromEntries(
       Array.from({ length: 5 }, (_, tier) => [
         String(tier),
-        renderWithState(viewNodes.get("detail"), { view: "detail", asset, tier }),
+        renderWithState(viewNodes.get("detail"), { view: "detail", asset, tier, unlocked: tier + 1 }),
       ]),
     ),
   ]),
@@ -356,6 +373,11 @@ const reactFidelityCss = `
 .hookrow input{line-height:normal}
 .ncard{font-size:13.3333px;line-height:normal;word-break:normal;overflow-wrap:normal}
 .nav img{max-width:none}
+/* Locale-specific fit adjustment; reuse Claude's existing compact menu. */
+html[lang="en"] .nav-in{gap:14px}
+html[lang="en"] .nav-links a,html[lang="en"] .nav-links summary{padding-left:8px;padding-right:8px}
+html[lang="en"] .nav-in>.nav-links+div>.btn{padding-left:12px;padding-right:12px}
+@media(max-width:1400px){html[lang="en"] .nav-links{display:none}html[lang="en"] .mobile-menu{display:block}}
 footer img{display:inline}
 [data-view="home"] main .panel>.min{display:none}
 .statedemo{display:none!important}

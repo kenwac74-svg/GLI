@@ -1,4 +1,6 @@
 import { cookies } from "next/headers";
+import { headers } from "next/headers";
+import { AUTH_PREVIEW_COOKIE,authPreviewIdentity,localAuthPreviewAllowed } from "../lib/auth-preview";
 import {
   chatGPTSignInPath,
   getChatGPTUser,
@@ -20,6 +22,11 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     return { ...chatGPTUser, authProvider: "chatgpt" };
   }
 
+  const requestHost=(await headers()).get('host')??'';
+  if(localAuthPreviewAllowed(requestHost)) {
+    const preview=authPreviewIdentity((await cookies()).get(AUTH_PREVIEW_COOKIE)?.value);
+    if(preview)return {...preview,authProvider:'demo'};
+  }
   if (!isDemoAuthEnabled()) return null;
 
   const cookieStore = await cookies();

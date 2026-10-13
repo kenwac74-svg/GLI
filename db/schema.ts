@@ -3,6 +3,7 @@
 import {
   index,
   integer,
+  primaryKey,
   real,
   sqliteTable,
   text,
@@ -20,6 +21,35 @@ export const manualAssetDrafts = sqliteTable("manual_asset_drafts", {
 }, table => [index("manual_asset_drafts_created_idx").on(table.createdAt)]);
 
 // GS-004 / P50: discovered candidates are not verified listings.
+// GS-004/016: additive retention; SQL0020 also installs atomic version triggers.
+export const assetReferences = sqliteTable("asset_references", {
+  publicId: text("public_id").primaryKey(),
+  kind: text("kind").notNull(),
+  payloadJson: text("payload_json").notNull(),
+  contentHash: text("content_hash").notNull(),
+  firstSeenAt: integer("first_seen_at").notNull(),
+  checkedAt: integer("checked_at").notNull(),
+  sourceState: text("source_state").notNull().default("present"),
+  transactionState: text("transaction_state").notNull().default("unknown"),
+  identityGroup: text("identity_group"),
+  identityEvidenceJson: text("identity_evidence_json"),
+}, table => [index("asset_references_group_idx").on(table.identityGroup)]);
+export const assetVersions = sqliteTable("asset_versions", {
+  id: text("id").primaryKey(),
+  assetPublicId: text("asset_public_id").notNull().references(() => assetReferences.publicId),
+  contentHash: text("content_hash").notNull(),
+  observedAt: integer("observed_at").notNull(),
+  payloadJson: text("payload_json").notNull(),
+  changedFieldsJson: text("changed_fields_json").notNull(),
+  sourceState: text("source_state").notNull(),
+  transactionState: text("transaction_state").notNull(),
+}, table => [index("asset_versions_asset_time_idx").on(table.assetPublicId, table.observedAt, table.id)]);
+export const assetFavoriteRefs = sqliteTable("asset_favorite_refs", {
+  userId: text("user_id").notNull().references(() => users.id),
+  assetPublicId: text("asset_public_id").notNull().references(() => assetReferences.publicId),
+  createdAt: integer("created_at").notNull(),
+}, table => [primaryKey({columns:[table.userId,table.assetPublicId]})]);
+
 export const discoveredAssets = sqliteTable("discovered_assets", {
   publicId: text("public_id").primaryKey(),
   sourceUrl: text("source_url").notNull(),
@@ -314,6 +344,18 @@ export const consultations = sqliteTable(
     ),
   ],
 );
+
+// Receipt-only inbox; separate from the legacy consultation operations lifecycle.
+export const memberInquiries = sqliteTable("member_inquiries", {
+  receiptNumber:text("receipt_number").primaryKey(),
+  userId:text("user_id").notNull().references(()=>users.id),
+  submissionKey:text("submission_key").notNull(),inputHash:text("input_hash").notNull(),
+  memberName:text("member_name"),memberEmail:text("member_email").notNull(),
+  assetPublicId:text("asset_public_id").references(()=>assetReferences.publicId),
+  requestText:text("request_text").notNull(),contact:text("contact"),
+  status:text("status").notNull().default("RECEIVED"),createdAt:integer("created_at").notNull(),
+},table=>[uniqueIndex("member_inquiries_submission_uidx").on(table.userId,table.submissionKey),
+  index("member_inquiries_user_created_idx").on(table.userId,table.createdAt)]);
 
 export const consultationEvents = sqliteTable(
   "consultation_events",

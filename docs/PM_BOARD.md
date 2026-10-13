@@ -182,6 +182,8 @@ GLI-052 / P34 follow-up (2026-09-18): GS-033 adds Gemini Korean translation for 
 - Approve the production alert destination and provision the scheduled worker secrets.
 ## 2026-10-02 deferred batch: detail return (P55)
 
+2026-10-02 이후 일괄 수정 승인: P55 재개 및 코드 연결. 시안/서버 상세에 기존 복귀 컨트롤, 세션 대화/후보/조건/스크롤 복원을 적용한다. 검색 C1은 서버 데이터 상세로 분리한다. 정확한 검증과 남은 일은 HIST-20261002-012/013 참조. 공개 배포는 별도 승인 전 미수행.
+
 - User reconfirmed missing return button on the public asset detail screen.
 - Record only; implement with the next user-approved batch, not immediately.
 - Reuse approved label `탐색 결과로 돌아가기`; preserve conversation, search

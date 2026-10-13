@@ -21,7 +21,7 @@ test("connects the approved GLI-048 follow-up composer contract", () => {
   assert.match(shell, /data-followup-input/);
   assert.match(source, /data-action="runFollowUp"/);
   assert.match(panel, /data-followup-status/);
-  assert.match(panel, /GLI AI가 답변을 정리하고 있습니다/);
+  assert.match(panel, /p\.progressText/);
   assert.match(shell, /mode: "initial" \| "followup"/);
   assert.match(shell, /context, conversation/);
   assert.match(source, /<form class="fw" data-followup-composer/);
@@ -51,7 +51,7 @@ test("keeps follow-up QA state controls out of the public React surface", () => 
 test("preserves backend candidates and their order while a follow-up input rerenders", () => {
   assert.match(shell, /previousAssetIds: resultCandidateIds\(previousResult\)/);
   assert.match(shell, /if \(existing\) grid\.append\(existing\)/);
-  assert.match(shell, /useLayoutEffect\(\(\) => \{\s*if \(view !== "home"\) return;[\s\S]*?applySearchResult[\s\S]*?\[view, viewHtml, searchIsActive, runtimeTurns\]/);
+  assert.match(shell, /useLayoutEffect\(\(\) => \{\s*if \(view !== "home"\) return;[\s\S]*?applySearchResult[\s\S]*?\[view, viewHtml, searchIsActive, runtimeTurns, locale\]/);
 });
 
 test("keeps the live composer DOM stable and does not send on IME confirmation", () => {

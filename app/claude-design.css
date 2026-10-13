@@ -558,6 +558,11 @@
 .hookrow input{line-height:normal}
 .ncard{font-size:13.3333px;line-height:normal;word-break:normal;overflow-wrap:normal}
 .nav img{max-width:none}
+/* Locale-specific fit adjustment; reuse Claude's existing compact menu. */
+html[lang="en"] .nav-in{gap:14px}
+html[lang="en"] .nav-links a,html[lang="en"] .nav-links summary{padding-left:8px;padding-right:8px}
+html[lang="en"] .nav-in>.nav-links+div>.btn{padding-left:12px;padding-right:12px}
+@media(max-width:1400px){html[lang="en"] .nav-links{display:none}html[lang="en"] .mobile-menu{display:block}}
 footer img{display:inline}
 [data-view="home"] main .panel>.min{display:none}
 .statedemo{display:none!important}

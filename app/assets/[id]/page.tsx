@@ -7,6 +7,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { uiLocale, UI_LOCALE_COOKIE } from "../../../lib/ui-language";
 import { SiteHeader } from "../../components/site-header";
 import { PriceDisplay } from "../../components/price-display";
 import { AssetGallery } from "./asset-gallery";
@@ -22,22 +24,37 @@ import { ClaudeDesignShell } from "../../components/claude-design-shell";
 import { CLAUDE_ASSET_IDS } from "../../generated/claude-static";
 import { localizeAssets } from "../../../lib/asset-localization";
 import { candidateLocation } from "../../../lib/location-display";
+import { basicDetailFacts } from "../../../lib/asset-basic-info";
+import { createD1AssetFavoritesRepository } from "../../../db/asset-favorites-repository";
+import { createD1AssetReferenceRepository } from "../../../db/asset-reference-repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function AssetPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams?: Promise<{ origin?: string }>;
 }) {
   const { id } = await params;
-  if ((CLAUDE_ASSET_IDS as readonly string[]).includes(id)) {
-    return <ClaudeDesignShell view="detail" assetId={id} />;
+  const origin = (await searchParams)?.origin;
+  // C1: search IDs refer to canonical backend records, not the positional
+  // Claude fixture with the same ID. Never accept property facts from the URL.
+  if (origin !== "search" && (CLAUDE_ASSET_IDS as readonly string[]).includes(id)) {
+    return <ClaudeDesignShell key={id} view="detail" assetId={id} />;
   }
-  const { asset: originalAsset } = await getAsset(id);
-  if (!originalAsset) notFound();
-  const [asset] = await localizeAssets([originalAsset]);
   const currentUser = await getCurrentUser();
+  let { asset: originalAsset } = await getAsset(id);
+  if (!originalAsset && currentUser) {
+    const context=await ensureMemberContext(currentUser);
+    if (await createD1AssetFavoritesRepository(context.database).contains(context.workflowUser.id,id)) {
+      originalAsset=(await createD1AssetReferenceRepository(context.database).get(id))?.asset ?? null;
+    }
+  }
+  if (!originalAsset) notFound();
+  const locale = uiLocale((await cookies()).get(UI_LOCALE_COOKIE)?.value);
+  const [asset] = await localizeAssets([originalAsset], locale);
   let membershipAccess = getMembershipEntitlements(null);
   if (currentUser) {
     const context = await ensureMemberContext(currentUser);
@@ -50,29 +67,13 @@ export default async function AssetPage({
     !asset.isGliDirect && asset.sourceName && asset.sourceUrl,
   );
   const categoryLabel = asset.categoryLabel ?? "주거용";
-  const detailFacts = (asset.detailFacts ?? [
-    {
-      label: "면적",
-      value: asset.areaSqm ? `${asset.areaSqm}㎡` : "조사 예정",
-    },
-    {
-      label: "침실",
-      value: asset.bedrooms ? String(asset.bedrooms) : "Studio",
-    },
-    {
-      label: "욕실",
-      value: asset.bathrooms ? String(asset.bathrooms) : "조사 예정",
-    },
-    {
-      label: "마지막 자료 갱신",
-      value: new Date(asset.updatedAt).toLocaleDateString("ko-KR"),
-    },
-  ]).filter((fact) => fact.label !== "자료 기준");
+  const detailFacts = basicDetailFacts(asset, locale);
 
   return (
     <>
       <SiteHeader />
       <main className="detail-page">
+        <BackToResultsButton assetId={asset.id} />
         <div className="detail-layout">
           <section className="detail-primary">
             <AssetGallery
@@ -82,15 +83,15 @@ export default async function AssetPage({
                 asset.originLabel ?? (asset.isGliDirect
                   ? "GLI 추천"
                   : hasExternalSource
-                    ? "MARKET DATA"
-                    : "REFERENCE DATA"),
+                    ? "외부 수집 매물"
+                    : "참고 자료"),
                 categoryLabel,
                 ...(hasExternalSource && asset.sourceName ? [asset.sourceName] : []),
               ]}
             />
             <div className="detail-title">
               <p>
-                <MapPin size={15} /> {candidateLocation(asset)}
+                <MapPin size={15} /> {candidateLocation(asset, locale)}
               </p>
               <h1>{asset.title}</h1>
               <PriceDisplay
@@ -132,15 +133,20 @@ export default async function AssetPage({
             <section className="content-section asset-summary">
               <h2>자산 요약</h2>
               <p>{asset.summary}</p>
+              {originalAsset.summary === originalAsset.title ? <p>별도 원문 설명 미확인</p> : null}
+              {asset.translationStatus === "unavailable" ? <p>한국어 번역 캐시 미확인 · 원문이 포함되어 있습니다.</p> : null}
+              {hasExternalSource ? <p>외부 출처 기재 내용이며 GLI 검증 완료를 뜻하지 않습니다.</p> : null}
             </section>
           </section>
 
           <AssetAccessDemo
+            key={asset.id}
             assetTitle={asset.title}
             trustScore={asset.trustScore}
             initialUnlockedLevel={membershipAccess.includedAssetTierLevel}
             membershipPlanId={membershipAccess.planId}
             publicResources={asset.publicResources ?? []}
+            externalSource={hasExternalSource}
           />
 
           <section className="detail-action-bar" aria-label="자산 검토와 상세 작업">
