@@ -2,6 +2,12 @@
 
 GLI is an AI-assisted Southeast Asian property discovery, verification, and consultation platform.
 
+## Start here: planning and session coordination
+
+- [GLI PM & session control](docs/GLI_PM_SESSION_CONTROL.md) — 총괄 PM, Claude 공동연구, 개발 실행의 역할과 인계·세션 정리 현황.
+- Product decisions remain in the master handoff and decision log below. A research proposal, prototype approval, code commit, merge, deployment, and measured user improvement are separate states.
+- Research artifacts may live on a PR branch rather than `main`; use the exact branch/commit recorded in the PM document. Repository state and historical phase labels below are not deployment verification.
+
 ## Delivery strategy
 
 1. **Web2 MVP**: normalized property data, conversational search, deterministic Trust Score, human review, consultations, and cash membership.
