@@ -16,6 +16,7 @@ Changed:
 - RELEASE-20261013.md and HIST-20261013-019/020 hold exact evidence.
 
 Decisions:
+- PR3/refined A is unapproved Claude research alternative; see SEARCH-UX-RESEARCH-STATUS-20261014.md.
 - Work Local baseline; GPT Sites current host, Firebase future, AWS final.
 - No overwrite of unrelated GitHub history or force push/main merge.
 - No actual payment/email/assignment/booking or paid AI call.
@@ -29,7 +30,8 @@ Remaining:
 - Formal admin/inquiry retention policy and price-history panel.
 
 Next:
-- User-directed Step11 consultation quality, not started.
+- User continues fundamental research in GLI 연구 및 사업기획; resume here for development planning.
+- Concrete navigation/locale/overflow bugs LOCAL only; no redesign/deployment.
 
 Last verified:
 -362 tests/type/build/migration/spec pass; lint0 errors/12 warnings.

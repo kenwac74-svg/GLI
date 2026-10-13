@@ -1,5 +1,17 @@
 # 개발 변경 이력
 
+## HIST-20261014-002
+
+- User requested commit/push of current discussion and separated fundamental research into GLI 연구 및 사업기획 before returning for development planning. Recorded customer-perceived utility baseline, compact shortcuts/basic conditions above question, toggle/multi-select/ALL and unapproved research boundaries.
+- SEARCH-UX-RESEARCH-STATUS-20261014.md preserves references to exact PR3 research commit, not a PR merge. Root state updated. No app/API impact in this checkpoint; registry behavior unchanged. spec:check/diff review; commit/push requested to existing release/frontend-20261013 without changing old GitHub branches.
+- Subsequent existing-bug correction authorized LOCAL only. New menu/AI design, prompt/architecture changes, paid API/new collection/public deployment remain excluded.
+
+## HIST-20261014-001
+
+- User clarified PR3/refined A is Claude's proposed fundamental solution under user direction, not an approved implementation/design. Corrected interpretation of research handoff's D1~D11/A-selected wording; it cannot authorize replacement, prompt changes, merge or deployment.
+- Read exact remote research commit1681e24 handoff/decisions; PR3 is open and includes older application-code changes even though latest handoff commit adds docs/static assets. Current version69 remains separate. Attachment ZIP inventory checked, prototype not executed or visually validated.
+- SEARCH-UX-RESEARCH-STATUS-20261014.md and root state record review sequence and historical measurement limits. Docs only; no product/API impact, registry behavior unchanged. No build/paid AI/DB/merge/commit/push/deploy. spec:check and scoped diff validation.
+
 ## HIST-20261013-020
 
 - Steps9/10 approved release: c551b71e60db0d4ee5a255b95d9e15b4557fcbfb on GitHub release/frontend-20261013 and Sites main. Existing unrelated GitHub history preserved; no force push/main merge.
