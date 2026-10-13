@@ -8,17 +8,33 @@ This principle takes precedence over all lower-level GLI search, verification, A
 
 Operational interpretation:
 
-1. GLI must meet or exceed the practical usefulness, speed, breadth, and conversational quality that users can already obtain from leading general-purpose LLMs for overseas property discovery and initial advice.
+1. GLI must preserve the practical usefulness, speed, breadth, and conversational quality users can obtain from general-purpose LLMs for overseas property discovery and initial advice. This is not a requirement to rebuild those models or reproduce every unrelated capability.
 2. Verification rules must not make GLI less useful than a general-purpose LLM at the discovery stage.
-3. Generic LLM capabilities are the baseline, not the moat.
-4. GLI's added value begins after discovery: normalization of foreign information, evidence-state control, additional research, expert/field verification, persistent Verification Records, transaction support, and later compliant fractional/RWA access.
-5. When a lower-level rule conflicts with this principle, the lower-level rule must be revised rather than degrading the user experience.
+3. Existing LLM capabilities are resources to use, not capabilities GLI must invent again.
+4. GLI's added value starts in the first-use experience: make already useful information easier to read, see, understand, compare, and act on. Human information collection adds another core strength by obtaining and updating information beyond what is already available through general LLM search. Verification and transaction support complement these strengths; differentiation does not have to wait until expert diligence.
+5. When a lower-level rule conflicts with this principle, the lower-level rule must be revised rather than degrading the user experience. Evidence status and factual limits must still be preserved.
+
+### 0.1 설계 철학: 좋은 정보의 전달 + 사람이 확보하는 정보 + 고객의 이용 동기
+
+상태: **사용자 확정, 2026-10-14.** 아래는 새로운 연구 가설이 아니라 사용자가 명시한 GLI의 설계 철학이다.
+
+> **좋은 답변은 기존 LLM을 활용하고, GLI는 그 답을 따라 고객이 물건을 찾아보고 이해하는 일을 편하게 만들어준다.**
+
+- **AI와 정보 전달:** 이미 다른 LLM이 잘 찾아주는 정보를 훼손하지 않고 활용한다. 검색·설명 능력 자체를 새로 발명하는 것이 아니라, 고객이 더 편하게 읽고 보고 이해하도록 정리·번역·시각화하고 중요도와 참고정보를 구분하는 것이 우선이다. 내용의 의미·출처·단위·가정·불확실성을 유지한다.
+- **사람의 정보 확보:** 남들이 모르거나 공개 검색만으로 얻기 어려운 정보는 GLI의 사람이 직접 정보를 모으는 프로세스로 확보·보완한다. 사람의 역할은 AI 실패 후의 마지막 검증이나 법률실사만이 아니다. 자료 확보와 갱신 자체가 별도의 핵심 강점이다. AI는 이 과정의 반복 정리를 도울 수 있으나 실제 확인하지 않은 정보를 만들거나 확인한 것처럼 표시하지 않는다.
+- **사업기획의 핵심:** 편한 정보 경험에서 **구매 욕구·재방문 욕구·참여 욕구**가 생기도록 설계한다. 보기 좋게 읽고 끝나는 화면을 넘어서, 고객이 더 알아보고 싶고 다시 찾아오고 관여하고 싶은 이유를 만드는 것이 목표다. 이 세 가지 목표가 확정된 것이며, 구체적인 유료상품·알림·커뮤니티·보상 기능을 이번 결정으로 자동 승인한 것은 아니다.
+- **자원 기준:** 최소한의 리소스로 최대한의 고객만족을 얻는다. 기존 LLM, 기존 GLI 화면·카드·상세·운영 기반을 우선 활용한다. 새 이론·평가 방법론·검색엔진·다중 모델 체계를 먼저 만드는 것이 목적이 아니다. 개발비뿐 아니라 반복 호출·자료 갱신·사람 작업비도 함께 고려한다.
+- **실제 불편에서 출발:** 사용자가 제시한 불편은 검은 배경과 흰 글자, 이탤릭체, 그림 없이 많은 텍스트, 중요한 내용과 참고사항이 구분되지 않는 서술형 설명이다. 이를 줄이는 편안한 표현과 정보 구성 자체를 첫 번째 제품 가치로 인정한다. 특정 시안 전체 채택이나 모든 사용자에 대한 화면 설정 강제는 별도 결정이다.
+
+기존 문구 중 “GLI의 가치는 검색 이후에만 시작한다”, “검증이 있어야 비로소 차별화된다”는 해석은 이 절로 바로잡는다. 검색 단계부터 편리한 전달 경험으로 가치를 줄 수 있고, 사람이 확보한 정보는 그 위에 더해지는 또 하나의 강점이다. 기존 사실성·검증상태 구분, Web2 우선, 신규 고비용 업무의 별도 비용, 사용자 승인 경계는 유지한다.
 
 Canonical product sequence:
 
 > **Find well → Explain clearly → Show confidence/evidence → Investigate what is missing → Execute the next step**
 
-Updated: 2026-10-08  
+This sequence serves customer understanding and purchase, revisit, and participation motivation; it is not a requirement to complete every verification stage before providing useful information.
+
+Updated: 2026-10-14  
 Scope: business/product planning canonical handoff for Cloud Chat ↔ GitHub ↔ Local Work/Codex.
 
 ## 1. Operating rule
@@ -95,7 +111,7 @@ Generic AI and property portals can increasingly provide:
 - public legal/regulatory summaries
 - links to live listings
 
-GLI must create value after and around those functions:
+GLI must make these functions easier to use from the first response and add human-sourced information where needed:
 - normalize foreign-language listings inside GLI
 - show useful candidates immediately
 - distinguish what is known, claimed, inferred, missing, conflicting, or verified
@@ -182,7 +198,9 @@ Collection/parsing failure must remain distinct from “source does not provide 
 - Human review is required for highest-trust bands.
 - Trust Score, Asset Quality, and Buyer Fit remain separate concepts.
 
-## 7. Human verification is a normal workflow, not an AI failure fallback
+## 7. Human information collection and verification are normal workflows, not just AI fallbacks
+
+Human information collection is another core GLI strength alongside convenient AI-assisted delivery. People obtain and update information that general LLM search does not supply; their role is not limited to checking an AI answer or conducting final legal diligence. AI can assist repetitive extraction and organization without inventing missing facts.
 
 For target markets with fragmented or partially offline information, human verification is part of the normal product.
 
@@ -308,13 +326,15 @@ Therefore:
 
 ## 15. Current business priority
 
-Before expanding scope, optimize the product around this experience:
+Apply §0.1 before expanding scope: use existing LLMs and GLI assets to maximize customer satisfaction with minimum resources. Business planning must connect comfortable information delivery to purchase, revisit, and participation motivation. Do not substitute an academic research program or an all-AI architecture for that task.
+
+Existing journey components remain useful within that philosophy:
 
 1. User asks naturally.
-2. GLI immediately returns useful candidates.
-3. External foreign-language data is normalized and shown inside GLI.
+2. GLI provides a useful answer and candidates without degrading the existing LLM's usefulness.
+3. Information is easy to read and see, with important points and reference details distinguished; external foreign-language data is normalized and shown inside GLI.
 4. Each candidate clearly shows evidence status and missing information.
-5. GLI proposes or starts the next verification step.
-6. Results return to the user as a persistent verification record.
-7. If desired, the user proceeds to consultation/transaction support.
+5. People obtain and update additional information where needed, with AI supporting repetitive work and available automated collection.
+6. Results return to the user as useful information and, where applicable, a persistent verification record.
+7. The customer can continue exploring, express interest, revisit, or proceed to consultation/transaction support. Specific mechanisms require separate product decisions.
 8. In the future, eligible verified assets may proceed to compliant Web3+/RWA structures.
