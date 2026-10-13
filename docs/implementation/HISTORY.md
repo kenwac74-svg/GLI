@@ -1,5 +1,12 @@
 # 개발 변경 이력
 
+## HIST-20261013-020
+
+- Steps9/10 approved release: c551b71e60db0d4ee5a255b95d9e15b4557fcbfb on GitHub release/frontend-20261013 and Sites main. Existing unrelated GitHub history preserved; no force push/main merge.
+- Version69 deployment appgdep_6ace2928e4d88191a14858f76de5f9a8 succeeded. env revision8/public audience unchanged. glibiz.net verified; SQL0020/0021 tables present, no LOCAL data transferred.
+- Public menus/PH3 fixture filter/EN/detail-back/390px checked. Member API401, LOCAL auth preview403. Actual provider/phone/member writes/AI quality untested. Existing EN demo-account button1 label backlog.
+- RELEASE-20261013.md records source/version/archive/tooling evidence. Release-result docs later committed to GitHub without a new Worker deployment. Step11 not started; no paid AI/collection/secrets/payment change.
+
 ## HIST-20261013-019
 
 - User approved Step9 final LOCAL frontend and Step10 commit/push/public demo deployment. Includes preserved1002 work, basic information/English support and sequential frontend steps1~8; Step11 AI quality is not started.

@@ -1,47 +1,38 @@
 # Current State
 
 Goal:
-- Step9 approved; Step10 GitHub release branch/public demo deployment in progress.
-- Real authentication/public/phone validation remains.
+- Steps9/10 complete: approved frontend public release version69.
 
 Completed:
-- Step1 scope; step2 collected retention/private versions/unified favorites.
-- Step3 compound filters/view/sort/detail return; step4 detail information preview.
-- Step5 limited four-method payment chooser, no actual payment or activation.
-- Step6 MY profile/login/logout, actual membership/access and retained favorites.
-- Member-only receipt inbox: identity autofill, optional contact/asset, idempotency.
-- Existing consultation/notification operations excluded from MY, not deleted.
+- Retention/private versions/unified favorites; list controls/detail return.
+- Detail access/payment preview; no actual payment or access change.
+- Limited MY/receipt-only inquiry; KO/EN basic information fixes.
+- LOCAL staff/developer preview separated;362 tests and scoped browser QA.
+- GitHub release/frontend-20261013 and Sites application c551b71 verified.
+- Public menus/PH filter/EN/detail-back/390px and auth rejection checks.
 
 Changed:
-- MY four missing EN copy keys and regression tests.
-- Tests and QA-INTEGRATED-20261013.md; history/reverse handoff updated.
+- Approved source bundle committed/pushed; release-result docs added.
+- RELEASE-20261013.md and HIST-20261013-019/020 hold exact evidence.
 
 Decisions:
-- Work Local is baseline; GPT Sites current host, Firebase future, AWS final.
-- Small approved-design copy/state/wiring fixes by Codex; log for Claude redesign.
-- No actual payment, membership/entitlement change, email/assignment/booking.
-- No paid AI, collection expansion, remote DB, commit/push or deployment.
+- Work Local baseline; GPT Sites current host, Firebase future, AWS final.
+- No overwrite of unrelated GitHub history or force push/main merge.
+- No actual payment/email/assignment/booking or paid AI call.
+- Public LOCAL preview blocked; actual Google OAuth unimplemented.
 
 Remaining:
-- Real OAuth/ChatGPT authentication, session expiry and public/phone browser QA.
-- LOCAL0013 schema repaired; historical migration ledger reconciliation pending.
-- Broader KO/EN content coverage and external source-accuracy checks remain.
-- Real-phone and public-host checks; external resources-present preview case.
-- Legacy discovery firstSeen reference metadata preservation check.
-- Raw image objects/prefetch/hash refresh/backups/queues; source accuracy QA.
-- Inquiry retention/deletion and formal admin handling require later policy.
+- Actual ChatGPT/OAuth session, expiry, phones and public member writes.
+- One public demo-account button EN label; broader content/source review.
+- LOCAL historical migration ledger; legacy firstSeen metadata.
+- Raw images/prefetch/hash refresh/backups/queues.
+- Formal admin/inquiry retention policy and price-history panel.
 
 Next:
-- Finish approved Step10 and public screen verification; Step11 not started.
-- Price-history panel/new large UI design stays separate Claude work.
+- User-directed Step11 consultation quality, not started.
 
 Last verified:
-- Step8:362 tests/type/build/migration passed; lint0 errors/12 warnings.
-- EN1286px header,390px MY/detail and VN locale refresh checked in browser.
-- QA-LOCALE-BASIC-20261013.md records findings and verification limitations.
-- 2026-10-13:353 tests, type/build/lint/migration checks passed.
-- LOCAL0021 preserved9 listings/56 discovered/1 legacy favorite; inquiries0.
-- Browser MY and asset inquiry login-return path verified; actual signed-in UI not.
-- LOCAL staff/developer MY confirmed at8780;9 listings/56 discovered retained.
-- Sample save/remove/reload and inquiry login-return checked in browser.
-- Claude reverse handoff saved, not web-sent. HIST-20261013-009 through018.
+-362 tests/type/build/migration/spec pass; lint0 errors/12 warnings.
+- Version69 succeeded, env revision8/public audience unchanged.
+- Member API401 and LOCAL preview403; new public DB tables present.
+- Claude reverse handoff saved, not sent. No LOCAL data copied publicly.
