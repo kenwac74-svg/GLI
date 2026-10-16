@@ -1,0 +1,41 @@
+{
+  "source_package": "GLI_클릭형시안_v1_검토패키지.zip",
+  "original_file_bytes_preserved": true,
+  "files": [
+    {
+      "path": "GLI_검색결과_클릭형시안_v1.html",
+      "bytes": 707817,
+      "sha256": "1210ebac8ee7caf374cd20a1b334d767cddddc87cedffcf5956b3cba844cf540"
+    },
+    {
+      "path": "GLI_클릭형시안_관리비질문.png",
+      "bytes": 124952,
+      "sha256": "3e2e16d8fbd58a3e31d7a7e759974f696c4316b1fd1845a6760b3232593a79f1"
+    },
+    {
+      "path": "GLI_클릭형시안_두후보비교.png",
+      "bytes": 150466,
+      "sha256": "d248a6add402c626ce46015988f0c7a2364a018a54665e6528f6a8d34ad30f0a"
+    },
+    {
+      "path": "GLI_클릭형시안_변경설명.md",
+      "bytes": 5922,
+      "sha256": "8245ba66a95e63d361a78c8eff2df2c353df9ff6e6ec5dae5ac58229129e8069"
+    },
+    {
+      "path": "GLI_클릭형시안_첫화면.png",
+      "bytes": 253379,
+      "sha256": "31ebd48e593c024a5615eee69cd6fe6e6fb9ee64526f694a1c2da700227a64db"
+    },
+    {
+      "path": "GLI_클릭형시안_후보탐색.png",
+      "bytes": 238258,
+      "sha256": "853e94e886713e23abc66de47f4804360bee84c35cfb94b02152e12c9924c08d"
+    },
+    {
+      "path": "검증/test_results.json",
+      "bytes": 1198,
+      "sha256": "915e510ae20cdc5c29751734b1ef4d4e9f32430029f96d18365b63ee33d09c75"
+    }
+  ]
+}
