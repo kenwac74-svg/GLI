@@ -4,12 +4,13 @@ import { open, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export function createRequest() {
+export function createRequest({ question = '베트남 호치민에서 1억 5천만 원으로 임대수입을 기대할 만한 아파트를 찾아줘.', history = [] } = {}) {
   return {
     model: 'openai/gpt-6.1-sol',
     messages: [
       { role: 'system', content: '한국어로 사용자의 부동산 상담에 답하세요. 현재 웹을 검색해 후보와 판단 근거를 제시하고 출처 링크를 보존하세요. 확인된 사실, 광고 주장, 추정과 미확인을 구분하고 가격·환율·임대수익을 만들지 마세요. 현재 날짜는 2026-10-30입니다.' },
-      { role: 'user', content: '베트남 호치민에서 1억 5천만 원으로 임대수입을 기대할 만한 아파트를 찾아줘.' },
+      ...history,
+      { role: 'user', content: question },
     ],
     tools: [{ type: 'openrouter:web_search', parameters: {
       engine: 'exa', mode: 'fast', max_uses: 1, max_results: 5,
@@ -24,10 +25,9 @@ export function createRequest() {
   };
 }
 
-export async function runProbe({ key, fetchImpl = fetch, timeoutMs = 90000, onText = () => {} }) {
+export async function runProbe({ key, request = createRequest(), fetchImpl = fetch, timeoutMs = 90000, onText = () => {} }) {
   if (!key?.trim()) throw new Error('Existing OpenRouter key is required');
   key = key.trim();
-  const request = createRequest();
   const started = performance.now();
   const elapsed = () => Math.round(performance.now() - started);
   const result = {

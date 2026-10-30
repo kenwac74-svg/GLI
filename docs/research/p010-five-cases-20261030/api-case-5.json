@@ -1,0 +1,267 @@
+{
+  "started_at": "2026-10-30T09:44:56.237Z",
+  "request": {
+    "model": "openai/gpt-6.1-sol",
+    "messages": [
+      {
+        "role": "system",
+        "content": "한국어로 사용자의 부동산 상담에 답하세요. 현재 웹을 검색해 후보와 판단 근거를 제시하고 출처 링크를 보존하세요. 확인된 사실, 광고 주장, 추정과 미확인을 구분하고 가격·환율·임대수익을 만들지 마세요. 현재 날짜는 2026-10-30입니다."
+      },
+      {
+        "role": "user",
+        "content": "방콕에서 혼자 1년 정도 살 아파트를 찾아줘. 월세는 100만원 이하이고, BTS역까지 걸어서 10분 이내, 가구가 있는 곳이면 좋겠어."
+      },
+      {
+        "role": "assistant",
+        "content": "조건에 가장 가까운 곳은 **BTS 온눗(On Nut)역 주변의 ‘Chambers On Nut Station’**입니다. 검색된 공고 중 **가구 완비·1년 계약·역 도보 10분 이내**가 모두 명시된 매물이 있습니다.\n\n다만 **현재 원화–바트 환율을 확인하지 못해 월 100만 원 이하인지는 확정할 수 없습니다.** 아래 금액은 환산하지 않은 **공고상 월세**이며, 공실과 계약 조건도 집주인·중개인에게 재확인이 필요합니다. 기준일은 2026년 10월 30일입니다.\n\n### 추천 후보\n\n| 우선순위 | 매물 | 공고상 월세·크기 | BTS 접근성 | 가구·계약 조건 |\n|---|---|---|---|---|\n| **1순위** | **Chambers On Nut Station, C동 3층** | **16,500바트**, 27㎡, 침실 1개 | 온눗역 **도보 3분이라고 광고** | **가구·가전 완비**, 최소 1년 계약 |\n| **2순위** | **Chambers On Nut Station, 6층** | **16,000바트**, 30㎡, 침실 1개 | 온눗역 **280m·도보 약 3분이라고 광고** | 1년 계약 명시. **가구 포함 여부 미확인** |\n| **조건부 후보** | **Modiz Sukhumvit 50, 2층** | **13,000바트**, 25㎡, 침실 1개 | ‘온눗역 인근’만 명시. **도보 10분 이내인지 미확인** | **가구 완비**, 12개월 계약 가격. 세탁기·냉장고·전자레인지 등 명시 |\n\n**공고 원문**\n- [Chambers On Nut Station — 16,500바트, 가구 완비](https://propertyhub.in.th/en/listings/condo-for-rent-chamber-onnut-rt-01---5679948)\n- [Chambers On Nut Station — 16,000바트, 30㎡](https://propertyhub.in.th/en/listings/chambers-on-nut-station-pn-00006640---4963170)\n- [Modiz Sukhumvit 50 — 13,000바트, 12개월 계약](https://propertyhub.in.th/en/listings/modiz-sukhumvit-50-from-thb-13-000-month-near-bts-on-nut-fully-furnished-available-3-aug-2026---6230836)\n\n### 제 판단\n\n**먼저 1순위 매물에 문의하는 것을 추천합니다.** 혼자 쓰는 1베드룸이고, 원하는 가구·계약 기간·역 접근성이 공고에 모두 적혀 있습니다. 공고에는 인근에 Lotus’s On Nut와 Century 쇼핑몰, 식당·카페가 있다고 안내되어 있어 생활 편의도 기대할 수 있습니다.\n\n2순위는 **공고상 더 넓고 월세도 낮지만**, 가구 목록을 먼저 받아야 합니다. Modiz는 가격 비교용 후보로 남기되, **‘역 인근’이라는 표현만으로 도보 조건을 충족한다고 보지는 않았습니다.**\n\n### 계약 전에 꼭 확인할 것\n\n- **실제 공실과 입주 가능일:** 과거 입주 가능일이 적혀 있어도 현재 비어 있다는 뜻은 아닙니다.\n- **실제 도보 경로:** 건물 출입구에서 BTS 개찰구까지 직접 걸어 보세요. 광고의 도보 시간은 검증되지 않았습니다.\n- **총비용:** 보증금·선불 월세, 관리비 포함 여부, 전기·수도·인터넷 요금을 서면으로 확인하세요.\n- **원화 예산:** 계약 시점 환율과 송금 수수료를 적용해 월세가 100만 원 이하인지 확인해야 합니다.\n\n**입주 예정일과 ‘100만 원’이 월세만인지 공과금까지 포함인지** 알려주시면, 이 후보 중 무엇부터 문의할지 더 정확하게 정할 수 있습니다.",
+        "annotations": [
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "url": "https://propertyhub.in.th/en/listings/condo-for-rent-chamber-onnut-rt-01---5679948",
+              "title": "Condo for rent : Chamber Onnut(Rt-01) - PropertyHub.in.th",
+              "start_index": 0,
+              "end_index": 0,
+              "content": "16,500/ month\n\n1 Bed 1 Bath on fl. 3 27 sq.m.\n\nChambers On Nut Station Phra Khanong Bangkok -\n\nView on map\n\n## Listing Detail\n\n...\n\nค่าเช่า 16,500 บาท/เดือน |\n\n...\n\nCondo for rent in central Sukhumvit, Chamber Onnut (Rt-01)\n\nonly 3-minute walk to BTS On Nut\n\n27 sq.m. | 1 bedroom, 1 bathroom | 3rd floor, Building C\n\nFully furnished with electrical appliances\n\nClose to Century The Movie Plaza, Lotus’s On Nut, restaurants and cafés\n\nRent: THB 16,500/month | Minimum 1-year contract"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "url": "https://propertyhub.in.th/en/listings/for-rent-the-origin-onnut-near-bts-on-nut-14-000-thb-month---6139340",
+              "title": "For Rent: The Origin Onnut | Near BTS On Nut | 14,000 THB/Month - PropertyHub.in.th",
+              "start_index": 0,
+              "end_index": 0,
+              "content": "Origin Onnut | Near BTS On Nut | Fully Furnished | THB\n...\n✨ Direct Owner Listing | Ready to Move In\n\n 📅 Available from July 2, 2026\n\n🚩 Selling Price: THB 2.79 Million\n\n ⭐️ Rental Price: THB 14,000/Month\n\n✅ Short-Term Rental Available (2–6 Months)"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "url": "https://propertyhub.in.th/en/listings/chambers-on-nut-station-pn-00006640---4963170",
+              "title": "Chambers On Nut Station 🌟PN-00006640🌟 - PropertyHub.in.th",
+              "start_index": 0,
+              "end_index": 0,
+              "content": "16,000/ month\n\n1 Bed 1 Bath on fl. 6 30 sq.m.\n\nChambers On Nut Station Phra Khanong Bangkok -\n\nView on map\n\n## Listing Detail\n\n🛌 1 Bedroom\n\n🚿 1 Bathroom\n\n🏬 6th Floor\n\n📏 Size 30 Sq.m.\n\nOne-year contract: Rental Price 16,000 THB / Month\n\n📍 Chambers On Nut Station is 280 m away, or about 3 minutes' walk, from BTS On Nut.\n\nThe nearest tollway entrance is 800 m from the condo if you drive.\n\n...\n\n- Available for rent 19/03/2026"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "url": "https://propertyhub.in.th/en/listings/modiz-sukhumvit-50-from-thb-13-000-month-near-bts-on-nut-fully-furnished-available-3-aug-2026---6230836",
+              "title": "Modiz Sukhumvit 50 | From THB 13,000/Month | Near BTS On Nut | Fully Furnished, Available 3 Aug 2026 - PropertyHub.in.th",
+              "start_index": 0,
+              "end_index": 0,
+              "content": "# Modiz Sukhumvit 50 | From THB 13,000/Month | Near BTS On Nut | Fully Furnished, Available 3 Aug 2026\n\nRent\n\nCondominium\n\nLast Update :\n\n...\n\nNumber :\n\n6230836\n\n...\n\nView 13 photos\n\n13,000/ month\n\n1 Bed\n\n1 Bath\n\non fl. 2\n\n25 sq.m.\n\nMODIZ Sukhumvit 50 Khlong Toei Bangkok -\n\nView on map\n\n## Listing Detail\n\n🏡 Modiz Sukhumvit 50\n\n💰 From THB 13,000/Month\n\n• 🛏️ 1 Bedroom | 1 Bathroom\n\n• 📐 25 sq.m.\n\n• 🏢 2nd Floor\n\n• ✨ Fully Furnished & Move-in Ready\n\n• ❄️ Air Conditioner\n\n• 📺 TV\n\n• 🧊 Refrigerator\n\n• 🍽️ Microwave\n\n• 🧺 Washing Machine\n\n• 🚿 Water Heater\n\n• 🚗 Parking Space\n\n• 🚆 Near BTS On Nut\n\n• 🛍️ Close to Shopping Malls, Restaurants & Lifestyle Amenities\n\n🏢 Facilities • 🏊 Swimming Pool\n\n• 💪 Fitness Center\n\n• 🛋️ Lobby\n\n• 🚗 Parking\n\n• 🔑 Key Card Access\n\n• 📹 CCTV & 24-Hour Security\n\n📅 Available from 3 August 2026\n\n💰 Rental Rates • 📄 12-Month Lease: THB 13,000/Month\n\n• 📄 6-Month Lease: THB 15,000/Month"
+            }
+          },
+          {
+            "type": "url_citation",
+            "url_citation": {
+              "url": "https://propertyscout.co.th/en/1-br-condo-blue-sukhumvit-89-near-bts-on-nut-3234404/",
+              "title": "1-BR Condo for rent, ฿14,000/month, Blue Sukhumvit 89, near BTS On Nut, Fully furnished",
+              "start_index": 0,
+              "end_index": 0,
+              "content": "Bang Chak, Phra Khanong, Bangkok\n\n฿14,000/month\n\nRENTED UNTIL OCT 2027\n...\n1 Bedroom\n- 1 Bathroom\n- 25 m²\n- 3rd floor\n- ฿\n...\nFully furnished 1 bedroom, 1 bathroom condo for rent with a floorsize of 25 squaremeters, located on the"
+            }
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "방금 보여준 두 번째 아파트는 관리비가 월세에 포함돼?"
+      }
+    ],
+    "tools": [
+      {
+        "type": "openrouter:web_search",
+        "parameters": {
+          "engine": "exa",
+          "mode": "fast",
+          "max_uses": 1,
+          "max_results": 5,
+          "max_total_results": 5,
+          "max_characters": 2000
+        }
+      }
+    ],
+    "max_tool_calls": 1,
+    "max_tokens": 2200,
+    "reasoning": {
+      "effort": "low"
+    },
+    "provider": {
+      "allow_fallbacks": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "timeout_ms": 90000,
+  "status": "completed",
+  "http_status": 200,
+  "generation_id": "gen-1793353504-Y3ucoSWHxhdXbyPc0vQ8",
+  "response_model": "openai/gpt-6.1-sol",
+  "provider": "OpenAI",
+  "headers_ms": 9620,
+  "first_answer_ms": 12745,
+  "total_ms": 15445,
+  "answer": "**두 번째 매물은 관리비가 월세에 포함되는지 아직 확인되지 않았습니다.** [해당 공고](https://propertyhub.in.th/en/listings/chambers-on-nut-station-pn-00006640---4963170)를 다시 확인했지만, 월세 **16,000바트·1년 계약·보증금 2개월·선불 월세 1개월**만 명시되어 있고 관리비 포함 여부는 적혀 있지 않습니다.\n\n따라서 제가 앞서 안내한 **16,000바트를 관리비 포함 금액으로 보시면 안 됩니다.** 중개인에게 아래처럼 서면 확인을 받는 것이 좋습니다.\n\n> Does the THB 16,000 monthly rent include the common area maintenance fee? Are electricity, water, and internet charged separately?  \n> 월세 16,000바트에 공용 관리비가 포함되나요? 전기·수도·인터넷은 별도인가요?",
+  "annotations": [
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://propertyhub.in.th/en/listings/chambers-on-nut-station-pn-00006640---4963170",
+        "title": "Chambers On Nut Station 🌟PN-00006640🌟 - PropertyHub.in.th",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "# Chambers On Nut Station 🌟PN-00006640🌟\n\nRent\n\nCondominium\n\nLast Update :\n\n-\n\nNumber :\n\n4963170\n\nView :\n\nView 13 photos\n\n16,000/ month\n\n1 Bed 1 Bath on fl. 6 30 sq.m.\n\nChambers On Nut Station Phra Khanong Bangkok -\n\nView on map\n\n## Listing Detail\n\n🛌 1 Bedroom\n\n🚿 1 Bathroom\n\n🏬 6th Floor\n\n📏 Size 30 Sq.m.\n\nOne-year contract: Rental Price 16,000 THB / Month\n\n📍 Chambers On Nut Station is 280 m away, or about 3 minutes' walk, from BTS On Nut.\n\n...\n\n### Listing Information\n\n- Project name Chambers On Nut Station\n- Price\n\n16,000/ month\n- Available for rent 19/03/2026\n- Deposit 2 month\n- Advanced Payment 1 month\n- Building Building A\n- Room type 1 Bedroom\n- Room Address 8\n- On Floor 6\n- Room direction South\n- Number of bedrooms 1 Bed\n- Number of bathrooms 1 Bath\n- Room size (sq.m.) 30"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://propertyhub.in.th/en/listings/available-for-immediate-move-in-go-2717-chambers-on-nut-station-add-line-to-schedule-a-viewing---6476216",
+        "title": "🔥Available for immediate move-in🔥 GO#2717 Chambers On-Nut Station ✅ Add Line to schedule a viewing 🌸 - PropertyHub.in.th",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "Rent\n\nCondominium\n\nLast Update :\n\n-\n\nNumber :\n\n6476216\n\nView :\n\nView 15\n\n...\n\n16,000/ month\n\n1 Bed 1 Bath on fl. 6 26.28 sq.m.\n\nChambers On Nut Station Phra Khanong Bangkok -\n\nView on map\n\n## Listing Detail\n\nCode GO2717 | Chambers On-Nut Station Condo\n\n...\n\n🏠 Unit Details\n\n• 1 Bedroom, 1 Bathroom\n\n• Size: 26.28 sq.m.\n\n• 6th Floor, Building C\n\n• City View\n\n• Ready to Move In\n\n💰 Maintenance Fee & Investment Potential\n\n• Common area maintenance fee: THB 60/sq.m.\n\n• Estimated rental potential: THB 16,000/month"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://propertyhub.in.th/en/projects/chambers-on-nut-station",
+        "title": "Chambers On Nut Station Information/Review",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "#### For Rent Condo CHAMBERS ON NUT STATION Building A, Floor 3,1 bed room, Room size 27.00 sqm\n\n1 bed 1 bath fl. 3 27 sq.m.\n\n฿16,000/ month\n\nLatest refreshed : 29/10/2026\n...\nSTATION Building A, Floor 5,1 bed room, Room size"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.fazwaz.co.th/en/projects/thailand/bangkok/phra-khanong/bang-chak/chambers-on-nut-station?eq=rent",
+        "title": "Chambers On-Nut Station Condo Details in Bangkok, Bang Chak | FazWaz.co.th",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "### Management\n\nCommon Area Management Fee :\n\nThe common area maintenance (CAM) fee has to be paid monthly by owners for the upkeep of the common areas of condominium and housing projects. For new build projects, it is common to pay between 1 - 3 years’ management fees in advance upon the transfer of the unit’s ownership.\n\n฿60/SqM\n\n...\n\nThe common area maintenance fee at Chambers On-Nut Station is ฿60 per square meter based on the size of the indoor area of the property."
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://propertyhub.in.th/en/condo-for-rent/project-chambers-on-nut-station",
+        "title": "Chambers On Nut Station for Rent  | PropertyHub.in.th",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "|\n| Unit Types | 1 Bedroom (26.0 - 35.0 sq.m.) ... 35.0 sq.m.) |\n| Ceiling Height | 2.5 m. |\n| Utility Fee | 60 THB/sq.m. |\n| No. of Building | 3 |\n|\n...\nChambers On Nut Station 🌟PN-00006640🌟 UPDATE !\n\nRental 16,000 THB/month\n\nFloor 6 th \n\n29/10/2026 9:00"
+      }
+    }
+  ],
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 4231,
+    "completion_tokens": 265,
+    "total_tokens": 4496,
+    "cost": 0.0167301,
+    "prompt_tokens_details": {
+      "cached_tokens": 1456,
+      "cache_write_tokens": 2769,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0097301,
+      "upstream_inference_prompt_cost": 0.0070801,
+      "upstream_inference_completions_cost": 0.00265
+    },
+    "server_tool_use_details": {
+      "web_search_requests": 1,
+      "tool_calls_requested": 1,
+      "tool_calls_executed": 1
+    }
+  },
+  "search_requests": 1,
+  "search_usage_field": "server_tool_use_details",
+  "search_budget_discrepancy": false,
+  "error": null,
+  "case": 5,
+  "conversation": "case2",
+  "confirmed_second_candidate": "Chambers On Nut Station, 6층",
+  "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+  "event_summary": {
+    "count": 216,
+    "first": {
+      "at_ms": 10998,
+      "id": "gen-1793353504-Y3ucoSWHxhdXbyPc0vQ8",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "choices": [
+        {
+          "content": "",
+          "annotations": [
+            {
+              "type": "url_citation",
+              "url_citation": {
+                "url": "https://propertyhub.in.th/en/listings/chambers-on-nut-station-pn-00006640---4963170",
+                "title": "Chambers On Nut Station 🌟PN-00006640🌟 - PropertyHub.in.th",
+                "start_index": 0,
+                "end_index": 0,
+                "content": "# Chambers On Nut Station 🌟PN-00006640🌟\n\nRent\n\nCondominium\n\nLast Update :\n\n-\n\nNumber :\n\n4963170\n\nView :\n\nView 13 photos\n\n16,000/ month\n\n1 Bed 1 Bath on fl. 6 30 sq.m.\n\nChambers On Nut Station Phra Khanong Bangkok -\n\nView on map\n\n## Listing Detail\n\n🛌 1 Bedroom\n\n🚿 1 Bathroom\n\n🏬 6th Floor\n\n📏 Size 30 Sq.m.\n\nOne-year contract: Rental Price 16,000 THB / Month\n\n📍 Chambers On Nut Station is 280 m away, or about 3 minutes' walk, from BTS On Nut.\n\n...\n\n### Listing Information\n\n- Project name Chambers On Nut Station\n- Price\n\n16,000/ month\n- Available for rent 19/03/2026\n- Deposit 2 month\n- Advanced Payment 1 month\n- Building Building A\n- Room type 1 Bedroom\n- Room Address 8\n- On Floor 6\n- Room direction South\n- Number of bedrooms 1 Bed\n- Number of bathrooms 1 Bath\n- Room size (sq.m.) 30"
+              }
+            }
+          ],
+          "finish_reason": null
+        }
+      ]
+    },
+    "last": {
+      "at_ms": 15440,
+      "id": "gen-1793353504-Y3ucoSWHxhdXbyPc0vQ8",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "usage": {
+        "prompt_tokens": 4231,
+        "completion_tokens": 265,
+        "total_tokens": 4496,
+        "cost": 0.0167301,
+        "prompt_tokens_details": {
+          "cached_tokens": 1456,
+          "cache_write_tokens": 2769,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0097301,
+          "upstream_inference_prompt_cost": 0.0070801,
+          "upstream_inference_completions_cost": 0.00265
+        },
+        "server_tool_use_details": {
+          "web_search_requests": 1,
+          "tool_calls_requested": 1,
+          "tool_calls_executed": 1
+        }
+      },
+      "choices": [
+        {
+          "content": "",
+          "annotations": [],
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "tool_events": []
+  }
+}

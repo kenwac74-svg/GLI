@@ -1,0 +1,206 @@
+{
+  "started_at": "2026-10-30T09:46:42.195Z",
+  "request": {
+    "model": "openai/gpt-6.1-sol",
+    "messages": [
+      {
+        "role": "system",
+        "content": "한국어로 사용자의 부동산 상담에 답하세요. 현재 웹을 검색해 후보와 판단 근거를 제시하고 출처 링크를 보존하세요. 확인된 사실, 광고 주장, 추정과 미확인을 구분하고 가격·환율·임대수익을 만들지 마세요. 현재 날짜는 2026-10-30입니다."
+      },
+      {
+        "role": "user",
+        "content": "아파트 광고에 연 임대수익률 6%라고 쓰여 있으면, 1억원짜리 집을 사서 매달 50만원을 받는다는 뜻이야? 실제로 내게 남는 돈과 어떻게 다른지 쉽게 설명해줘."
+      }
+    ],
+    "tools": [
+      {
+        "type": "openrouter:web_search",
+        "parameters": {
+          "engine": "exa",
+          "mode": "fast",
+          "max_uses": 1,
+          "max_results": 5,
+          "max_total_results": 5,
+          "max_characters": 2000
+        }
+      }
+    ],
+    "max_tool_calls": 1,
+    "max_tokens": 2200,
+    "reasoning": {
+      "effort": "low"
+    },
+    "provider": {
+      "allow_fallbacks": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "timeout_ms": 90000,
+  "status": "completed",
+  "http_status": 200,
+  "generation_id": "gen-1793353610-RSnsxchh2Arelsgxtlzx",
+  "response_model": "openai/gpt-6.1-sol",
+  "provider": "OpenAI",
+  "headers_ms": 9082,
+  "first_answer_ms": 11935,
+  "total_ms": 27676,
+  "answer": "**계산상으로는 맞지만, 광고의 ‘6%’가 무엇을 기준으로 했는지부터 확인해야 해요.** 또 월세 50만 원을 받는 것과 매달 50만 원이 내게 남는 것은 다릅니다.\n\n### 1. 이런 뜻의 6%라면 월세 50만 원이 맞아요\n\n광고가 **‘집값 대비, 비용을 빼기 전 월세 수익률’**을 말한다면:\n\n- 집값 1억 원 × 연 6% = 연 임대료 600만 원\n- 600만 원 ÷ 12개월 = **월세 50만 원**\n\n다만 이는 **12개월 내내 월세를 빠짐없이 받는다는 계산**입니다. 해당 아파트가 실제로 이 월세에 임대되는지는 광고만으로 확인되지 않습니다.\n\n### 2. 월세는 ‘매출’, 내게 남는 돈은 ‘비용을 뺀 돈’이에요\n\n가게 매출이 전부 사장님 이익은 아닌 것과 같아요.\n\n| 월세에서 빠지거나 별도로 드는 항목 | 어떤 돈인가요? |\n|---|---|\n| 공실·월세 미납 | 세입자가 없거나 월세를 못 받으면 수입이 줄어요 |\n| 수리비·집주인 부담 관리비 | 집주인이 부담해야 하는 비용이에요 |\n| 재산세·해당되는 임대소득 관련 세금 등 | 개인의 보유·소득 상황에 따라 달라요 |\n| 대출이자 | 빌린 돈을 사용하는 비용이에요 |\n| 취득세·매수 중개보수 등 | 살 때 들어가므로 총투자금에 포함해야 해요 |\n\n따라서 쉽게 쓰면:\n\n**실제로 남는 현금 = 실제 받은 월세 − 집주인 부담 비용 − 세금 − 대출이자 − 대출 원금 상환액**\n\n여기서 **대출 원금 상환은 이자처럼 사라지는 비용은 아니지만, 당장 쓸 수 있는 현금은 줄입니다.** 그래서 투자수익과 통장에 남는 돈은 구분해서 봐야 해요.\n\n### 3. 특히 ‘6%의 분모’를 확인하세요\n\n광고가 집값 1억 원이 아니라 **집값에서 보증금이나 대출금을 뺀 ‘실투자금’**을 기준으로 계산했을 수도 있어요. 이 경우 **6%라는 숫자만 보고 월세가 50만 원이라고 역산하면 안 됩니다.**\n\n또한 **보증금은 수익이 아니라 나중에 돌려줘야 할 돈**이고, 대출을 활용한 수익률에는 이자 부담도 함께 확인해야 합니다.\n\n광고 담당자에게 이렇게 물어보세요.\n\n> “6% 계산식을 보여주세요. 집값 기준인가요, 보증금·대출을 뺀 투자금 기준인가요? 실제 계약된 월세인가요, 예상 월세인가요? 공실·세금·수리비·이자는 반영했나요?”\n\n**정리하면: ‘연 6%’는 조건에 따라 월세 50만 원이라는 뜻일 수 있지만, ‘매달 순이익 50만 원 보장’이라는 뜻은 아닙니다.** 현재는 광고 계산식과 실제 임대차 조건이 없어 순수익은 미확인입니다.\n\n참고: 웹에서 확인한 [임대수익률 계산 항목](https://sem2em.com/calc/rental), [공실·운영비 반영 방식](https://calcstool.com/ko/rental-yield)도 이러한 구분을 설명합니다. 계산기마다 수익률 정의가 달라 **명칭보다 계산식**을 보는 것이 중요해요.",
+  "annotations": [
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://moducalcs.com/rental-yield-calculator/",
+        "title": "임대수익률 계산기 | 표면·실질·자기자본수익률(ROE) 자동 - moducalcs.com",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "③ 연간 운영비·기타수입·공실 (실질수익률) ▾\n\n월 관리비 소유자 부담분\n\n0원\n\n연 재산세 등 재산세·종부세\n\n0원\n\n연 보험료 화재·임대\n\n0원\n\n연 수리·기타 수선·잡비\n\n0원\n\n임대관리 수수료 월, 대행 시\n\n0원\n\n월 기타수입 주차·간판 등\n\n0원\n\n연 재모집비 공실 후 중개·청소\n\n0원\n\n공실률(%) 1년 중 비는 비율, 0~100 0\n\n목표 Cap Rate(%) 적정 매수가 역산 0 목표 현금수익률(%) 달성/미달 판정 0\n\n운영비를 빼면 실질수익률·Cap Rate·GRM·DSCR이 계산됩니다. 공실률(%)만큼 연 임대료가 줄고, 목표 Cap Rate를 넣으면 적정 매수가를 역산합니다.\n\n...\n\n- 실질수익률 = (연 임대료 − 운영비) ÷ (매매가 + 취득비용 − 보증금) × 100 (대출 없는 기준)\n- Cap Rate = (연 임대료 − 운영비) ÷ 매매가 × 100\n\n...\n\n- 자기자본수익률(ROE) = (연 임대료 − 운영비 − 대출이자) ÷ 실투자금 × 100"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://everytool.kr/real-estate/rental-yield-calculator/",
+        "title": "임대수익률 계산기 | EveryTool(에브리툴)",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "표면 수익률 = 연 월세 ÷ (매매가 − 보증금) × 100. 보증금은 돌려줄 돈이므로 투자금에서 뺍니다.\n\n실질 수익률 = (연 월세 − 연 유지비용 − 대출이자) ÷ (매매가 − 보증금 − 대출금 + 취득 부대비용) × 100. 분자에서 실제로 나가는 비용을 빼고, 분모는 내 돈이 실제로 묶이는 실투자금으로 계산해 광고 수익률과의 착시를 없앱니다.\n...\n1~3%, 오피스텔·상가 4.6%), 중개보수,"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://sem2em.com/calc/rental",
+        "title": "임대 투자 총정리 | 셈셈 - 부동산 계산기",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "### 투자금 — 대출 처리 방식별\n\n| 구분 | 투자금 산식 |\n| --- | --- |\n| 대출 포함 + 대출금을 비용으로 처리 | 매매가 - 대출금 - 보증금 |\n| 대출 포함 + 대출금을 비용으로 미처리 | 매매가 - 보증금 |\n| 대출 미포함 | 매매가 - 보증금 |\n\n단순 표면수익률이 아니라 보증금(투자금에서 차감), 취득 부대비용(취득세·중개보수·채권할인료 등), 운영비용(월간비용·연간비용), 대출금·대출이자를 함께 반영해 실질에 가까운 수익률을 계산합니다."
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://calcstool.com/ko/rental-yield",
+        "title": "임대수익률 계산기 - 단순 수익률·자기자본 수익률 (대출·공실 반영) | 계산툴",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "운영비 = 재산세 + 보험료 + 관리비 부담분 + 수선비\n\n...\n\n이 계산은 임대료 기준 현금흐름만 봅니다. 시세 차익, 양도소득세, 종합부동산세, 임대소득세, 감가는 반영하지 않습니다. 대출금리가 수익률보다 높으면 자기자본 수익률이 단순 수익률보다 낮아지는 역레버리지가 발생합니다.\n\n...\n\n공실은 어떻게 반영하나요?\n\n연간 공실 개월 수를 넣으면 그만큼 임대수입에서 빠집니다. 예를 들어 1개월을 넣으면 12개월이 아닌 11개월치 월세로 계산합니다. 실제 임대에서는 공실과 중개보수 재지출이 반복되므로 보수적으로 잡는 편이 낫습니다."
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://smithlab.co.kr/real-estate/rental-yield-calculator/",
+        "title": "임대수익률 계산기 · 오피스텔·상가·원룸 월세 수익률, 대출 레버리지 | smith lab",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "3. 재산세·관리비 중 집주인 부담분·수선비 같은 연간 보유비용과 비어 있을 것 같은 공실 개월을 넣으면 더 현실적인 숫자가 나와요.\n\n...\n\n## 계산 공식\n\n| 항목 | 공식 |\n| --- | --- |\n| 표면 수익률 | 월세 × 12 ÷ (매매가 − 보증금) |\n| 실투자금 | 매매가 + 부대비용 − 보증금 − 대출금 |\n| 연 순수익 | 월세 × (12 − 공실 개월) − 대출금 × 금리 − 연 보유비용 |\n| 순수익률 | 연 순수익 ÷ 실투자금 × 100 |\n| 대출 금리 손익분기점 | (연 임대수입 − 보유비용) ÷ (매매가 + 부대비용 − 보증금) |\n\n손익분기점은 대출 없이 샀을 때의 수익률과 같아요. 대출 금리가 이보다 낮으면 대출을 쓸수록 수익률이 오르고(레버리지), 높으면 오히려 깎여요.\n\n## 예시 계산 3가지\n\n모두 매매가 2억 5천만 원 오피스텔, 보증금 1천만 원, 월세 90만 원, 부대비용 1,200만 원, 연 보유비용 100만 원이에요.\n\n| 조건 | 실투자금 | 연 순수익 | 순수익률 |\n| --- | --- | --- | --- |\n| ① 대출 1억 원 · 연 4.2% · 공실 없음 | 1억 5,200만 원 | 1,080만 − 420만 − 100만 = 560만 원 | 3.68% |\n| ② 대출 없음 · 공실 1개월 | 2억 5,200만 원 | 990만 − 100만 = 890만 원 | 3.53% |\n| ③ 대출 1억 5천만 원 · 연 6% · 공실 1개월 | 1억 200만 원 | 990만 − 900만 − 100만 = −10만 원 | −0.10% (월 약 −8천 원) |\n\n①의 표면 수익률은 4.50%지만 비용을 넣으면 3.68%예요. 대출 없이 샀다면 3.89%라서, 금리 4.2%짜리 대출은 오히려 수익률을 0.21%p 깎아요. ③처럼 금리가 높고 공실까지 생기면 월세를 받아도 매달 돈이 나가요."
+      }
+    }
+  ],
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 2925,
+    "completion_tokens": 883,
+    "total_tokens": 3808,
+    "cost": 0.0228895,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 2419,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0158895,
+      "upstream_inference_prompt_cost": 0.0070595,
+      "upstream_inference_completions_cost": 0.008830000000000001
+    },
+    "server_tool_use_details": {
+      "web_search_requests": 1,
+      "tool_calls_requested": 1,
+      "tool_calls_executed": 1
+    }
+  },
+  "search_requests": 1,
+  "search_usage_field": "server_tool_use_details",
+  "search_budget_discrepancy": false,
+  "error": null,
+  "case": 4,
+  "conversation": "case4",
+  "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+  "event_summary": {
+    "count": 828,
+    "first": {
+      "at_ms": 10585,
+      "id": "gen-1793353610-RSnsxchh2Arelsgxtlzx",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "choices": [
+        {
+          "content": "",
+          "annotations": [
+            {
+              "type": "url_citation",
+              "url_citation": {
+                "url": "https://moducalcs.com/rental-yield-calculator/",
+                "title": "임대수익률 계산기 | 표면·실질·자기자본수익률(ROE) 자동 - moducalcs.com",
+                "start_index": 0,
+                "end_index": 0,
+                "content": "③ 연간 운영비·기타수입·공실 (실질수익률) ▾\n\n월 관리비 소유자 부담분\n\n0원\n\n연 재산세 등 재산세·종부세\n\n0원\n\n연 보험료 화재·임대\n\n0원\n\n연 수리·기타 수선·잡비\n\n0원\n\n임대관리 수수료 월, 대행 시\n\n0원\n\n월 기타수입 주차·간판 등\n\n0원\n\n연 재모집비 공실 후 중개·청소\n\n0원\n\n공실률(%) 1년 중 비는 비율, 0~100 0\n\n목표 Cap Rate(%) 적정 매수가 역산 0 목표 현금수익률(%) 달성/미달 판정 0\n\n운영비를 빼면 실질수익률·Cap Rate·GRM·DSCR이 계산됩니다. 공실률(%)만큼 연 임대료가 줄고, 목표 Cap Rate를 넣으면 적정 매수가를 역산합니다.\n\n...\n\n- 실질수익률 = (연 임대료 − 운영비) ÷ (매매가 + 취득비용 − 보증금) × 100 (대출 없는 기준)\n- Cap Rate = (연 임대료 − 운영비) ÷ 매매가 × 100\n\n...\n\n- 자기자본수익률(ROE) = (연 임대료 − 운영비 − 대출이자) ÷ 실투자금 × 100"
+              }
+            }
+          ],
+          "finish_reason": null
+        }
+      ]
+    },
+    "last": {
+      "at_ms": 27673,
+      "id": "gen-1793353610-RSnsxchh2Arelsgxtlzx",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "usage": {
+        "prompt_tokens": 2925,
+        "completion_tokens": 883,
+        "total_tokens": 3808,
+        "cost": 0.0228895,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 2419,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0158895,
+          "upstream_inference_prompt_cost": 0.0070595,
+          "upstream_inference_completions_cost": 0.008830000000000001
+        },
+        "server_tool_use_details": {
+          "web_search_requests": 1,
+          "tool_calls_requested": 1,
+          "tool_calls_executed": 1
+        }
+      },
+      "choices": [
+        {
+          "content": "",
+          "annotations": [],
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "tool_events": []
+  }
+}

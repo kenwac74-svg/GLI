@@ -17,6 +17,22 @@ test('P010 is a single bounded model/search request, not the application pipelin
   assert.equal(request.messages[1].content, '베트남 호치민에서 1억 5천만 원으로 임대수입을 기대할 만한 아파트를 찾아줘.');
 });
 
+test('alternate questions and follow-up history cannot change the P010 model/search settings', async () => {
+  const original = createRequest();
+  const history = [{ role: 'user', content: 'Bangkok question' }, { role: 'assistant', content: '1. First apartment\n2. Second apartment', annotations: [] }];
+  const request = createRequest({ question: 'Follow-up question', history });
+  const withoutMessages = request => { const settings = { ...request }; delete settings.messages; return settings; };
+  assert.deepEqual(withoutMessages(request), withoutMessages(original));
+  assert.deepEqual(request.messages, [original.messages[0], ...history, { role: 'user', content: 'Follow-up question' }]);
+  assert.equal(createRequest({ question: 'fresh' }).messages.length, 2);
+  let sent;
+  await runProbe({ key: 'test-key', request, fetchImpl: async (_url, options) => {
+    sent = JSON.parse(options.body);
+    return new Response('{"error":{"message":"offline"}}', { status: 403 });
+  } });
+  assert.deepEqual(sent, request);
+});
+
 test('SSE comments, split UTF-8, citations and final usage are preserved without reasoning', async () => {
   let calls = 0;
   const citation = { type: 'url_citation', url_citation: { url: 'https://example.com/a', title: 'Listing' } };

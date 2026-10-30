@@ -1,0 +1,206 @@
+{
+  "started_at": "2026-10-30T09:43:01.166Z",
+  "request": {
+    "model": "openai/gpt-6.1-sol",
+    "messages": [
+      {
+        "role": "system",
+        "content": "한국어로 사용자의 부동산 상담에 답하세요. 현재 웹을 검색해 후보와 판단 근거를 제시하고 출처 링크를 보존하세요. 확인된 사실, 광고 주장, 추정과 미확인을 구분하고 가격·환율·임대수익을 만들지 마세요. 현재 날짜는 2026-10-30입니다."
+      },
+      {
+        "role": "user",
+        "content": "베트남 호치민에서 1억 5천만 원으로 임대수입을 기대할 만한 아파트를 찾아줘."
+      }
+    ],
+    "tools": [
+      {
+        "type": "openrouter:web_search",
+        "parameters": {
+          "engine": "exa",
+          "mode": "fast",
+          "max_uses": 1,
+          "max_results": 5,
+          "max_total_results": 5,
+          "max_characters": 2000
+        }
+      }
+    ],
+    "max_tool_calls": 1,
+    "max_tokens": 2200,
+    "reasoning": {
+      "effort": "low"
+    },
+    "provider": {
+      "allow_fallbacks": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "timeout_ms": 90000,
+  "status": "completed",
+  "http_status": 200,
+  "generation_id": "gen-1793353389-zwWPfBlJO1N5K4nj3cbN",
+  "response_model": "openai/gpt-6.1-sol",
+  "provider": "OpenAI",
+  "headers_ms": 10308,
+  "first_answer_ms": 17859,
+  "total_ms": 40291,
+  "answer": "**1억 5천만 원으로 호치민 임대용 아파트를 찾는다면, 현재 확인한 매물 중에서는 ‘EHomeS 남사이공·미즈키 인근 50㎡’를 먼저 검토할 만합니다.** 다만 **현재 환율과 외국인 명의 취득 가능 여부를 확인하지 못해, 예산 내 매수 가능 또는 임대수익 확보를 확정할 단계는 아닙니다.**\n\n아래는 2026년 10월 30일 기준 웹 검색에서 확인한 **매도 광고 후보**입니다. 실거래가격이나 현재 매물 잔존 여부까지 검증한 것은 아닙니다.\n\n## 1. 우선 검토 후보\n\n| 후보 | 광고상 매매가격 | 광고에 기재된 내용 | 판단 |\n|---|---:|---|---|\n| **EHomeS 남사이공·미즈키 인근 50㎡** | **25억 3,000만 동** | 침실 1개·욕실 1개, 상업주택이라고 설명. 등기·명의이전 관련 세금과 비용 포함 주장. 2026년 8월 28일 등록 | 확인한 매물 중 가격이 가장 낮아 **예산 적합성부터 확인할 1순위**. 임대료 자료는 없어 수익률 판단 불가 |\n| **EHomeS 남사이공 50㎡** | **25억 5,000만 동** | 침실 1개·욕실 1개, 상업주택이며 명의이전 비용·세금 포함 주장. 2026년 8월 6일 등록 | 첫 매물의 가격 비교용. **동일 호실의 중복 광고인지 확인 필요** |\n| **Akari City 2단계 80㎡** | **47억 동** | 침실 2개·욕실 2개, 가구 포함, 소유권 증서 보유 및 **월 1,500만 동 임대차계약 존재 주장**. 2026년 9월 29일 등록 | 임대 정보가 있는 비교 후보지만, EHomeS보다 매입가격이 크게 높음. 예산 적합성 확인 전에는 추천하기 어려움 |\n\n출처: [EHomeS 25.3억 동 매물](https://www.housenow.com.vn/can-ho-chung-cu/ehomes-nam-sai-gon/364530) · [EHomeS 25.5억 동 매물](https://www.housenow.com.vn/can-ho-chung-cu/ehomes-nam-sai-gon/353499) · [Akari City 47억 동 매물](https://www.housenow.com.vn/can-ho-chung-cu/akari-city-nam-long/374186)\n\n## 2. 1억 5천만 원 안에 들어오는가?\n\n현재 원화·동화 환율을 검증하지 못했으므로 원화 환산가격을 임의로 제시하지 않겠습니다. 대신 **예산 충족에 필요한 환율 기준**은 계산할 수 있습니다.\n\n- **25.3억 동 매물:** 1원당 약 **16.87동 이상**\n- **25.5억 동 매물:** 1원당 **17동 이상**\n\n이는 **매매대금만** 1억 5천만 원에 맞추는 기준입니다. 환전·송금 비용, 별도 세금과 수수료, 가구·수리비, 공실 대비 자금까지 포함한다면 더 여유가 필요합니다. 광고의 “세금·명의이전 비용 포함”도 계약서에서 부담 범위를 확인해야 합니다.\n\n## 3. 임대수입 관점에서의 판단\n\n### EHomeS: 가격 후보이지, 아직 수익형 매물로 검증되지는 않았습니다\n50㎡·침실 1개라는 조건은 소형 임대상품으로 검토할 수 있지만, **이번 검색에서는 해당 단지의 실제 임대료·공실률·관리비를 확인하지 못했습니다.** 따라서 예상 월세나 수익률을 제시하는 것은 근거가 부족합니다.\n\n특히 광고에 “상업주택”이라고 쓰여 있어도, **해당 호실이 외국인 명의로 취득 가능한지는 별도 확인 사항**입니다. 단지명이나 광고 문구만으로 판단하면 안 됩니다.\n\n### Akari City: 광고 수치 기준 표면수익률은 약 3.8%\n광고의 매매가 47억 동과 월세 1,500만 동을 그대로 적용하면:\n\n**1,500만 동 × 12개월 ÷ 47억 동 ≈ 연 3.8%**\n\n이는 **광고 주장에 기반한 비용 차감 전 계산값**입니다. 실제 계약서와 월세 입금내역은 미확인이며, 세금·공실·수선비·중개비 등을 반영한 순수익률은 더 낮아집니다.\n\n## 제 추천\n\n**지금은 EHomeS 25.3억 동 매물을 ‘조건부 1순위’로 두되, 계약금부터 보내지는 않는 것이 좋겠습니다.** 아래 세 가지를 통과해야 임대용 투자로 추천할 수 있습니다.\n\n1. **취득 가능성:** 한국인 개인 명의로 해당 호실을 매수할 수 있다는 독립적인 법률 확인  \n2. **임대 근거:** 동일 면적의 최근 체결 임대차계약 사례와 실제 월세 입금내역  \n3. **총투자비:** 원화 환산 매입대금에 모든 부대비용을 더해 1억 5천만 원 이내인지 확인  \n\n**1억 5천만 원이 부대비용까지 포함한 총예산인지, 별도 대출 없이 한국인 개인 명의로 매수하실 계획인지**에 따라 후보 적합성이 크게 달라집니다. 현재 확보된 자료만으로는 “살 만한 저가 후보”는 제시할 수 있지만, “안정적인 임대수입이 확인된 예산 내 매물”이라고 단정할 수는 없습니다.",
+  "annotations": [
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.housenow.com.vn/can-ho-chung-cu/ehomes-nam-sai-gon/353499",
+        "title": "Bán căn hộ Ehomes Mizuki Park, 50m2, 1PN, giá 2.55 tỷ, bao sổ",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "51 triệu/m²\n\n- 1 PN\n- 1 WC\n- 50 m²\n\n# Bán căn hộ Ehomes Mizuki Park, 50m2, 1PN, giá 2.55 tỷ, bao sổ\n\nBình Hưng, Bình Chánh, TP. Hồ Chí Minh\n\nĐăng 06/08/2026\n\n...\n\n1 PN · EHomeS Nam Sài Gòn\n\n## Mô tả\n\n🏡 Căn hộ thương mại Ehomes - Khu Mizuki Park đang tìm chủ mới! Với diện tích 50m2, căn hộ được thiết kế 1 phòng ngủ, 1 WC và có logia thoáng đãng. Đặc biệt, bạn có thể linh hoạt ngăn thêm thành 2 phòng ngủ tùy theo nhu cầu sử dụng. 💰 Mức giá hấp dẫn chỉ 2.55 tỷ đồng, đã bao gồm chi phí sang tên và thuế phí, đảm bảo thủ tục pháp lý rõ ràng. Chúng tôi cũng hỗ trợ vay ngân hàng, giúp bạn dễ dàng sở hữu căn hộ mơ ước này. 📍 Vị trí đắc địa tại đường Nguyễn Văn Linh, xã Bình Hưng, nằm giữa Phạm Hùng và Quốc lộ 50. Từ đây, bạn chỉ mất 2km để đến bến xe Quận 8 và dễ dàng di chuyển đến các quận trung tâm trong khoảng 10-25 phút."
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.housenow.com.vn/can-ho-chung-cu/mizuki-park/363764",
+        "title": "Chính chủ bán nhanh căn hộ Flora Mizuki Park 2PN hướng Đông view Q1 Q7 sổ hồng sẵn",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "ngủ lại khi cần. Nhà tắm/toilet: 1. Logia: 1. Pháp lý: Sổ hồng sẵn. Hướng: Chính Đông. Đón nắng bình minh dịu rất tốt ... , hút mùi, 03 máy lạnh, 01 máy nước ... line 06 & 07. Toàn bộ hình ảnh là chụp thật hiện trạng. Các bạn MG tự thêm hoa hồng."
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://namlongland.com.vn/can-ho/",
+        "title": "Căn Hộ | Nam Long Land",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "- Quy mô: 4600 căn hộ\n- Diện tích:\n...\n## EHOME SOUTHGATE\n\n- Địa chỉ: Khu đô thị Waterpoint, xã Bến Lức, tỉnh Tây Ninh\n- Chủ đầu tư: Nam Long Group, NNR (Nhật Bản)\n- Loại hình: Căn hộ\n- Quy mô: 4,5 ha\n- Diện tích: 51 – 73m2\n- Giá bán: 22 triệu/m2"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.housenow.com.vn/can-ho-chung-cu/ehomes-nam-sai-gon/364530",
+        "title": "Bán căn hộ nhà ở thương mại C/c EhomeS - Khu Mizuki park sang tên ngay",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "# Bán căn hộ nhà ở thương mại C/c EhomeS - Khu Mizuki park sang tên ngay\n\nBình Hưng, Bình Chánh, TP. Hồ Chí Minh\n\nĐăng 28/08/2026\n\n...\n\nBán căn hộ thương mại mua bán sang tên ngay C/c Ehomes - Khu Mizuki park Với đa dạng tiện ích Dt: 50m2 1pn 1wc 1ban công ( có thể ngăn 2pn) Giá 2tỷ530 bao sổ bao thuế phí sang tên Hỗ trợ vay ngân hàng 1ty2 Khách có nhu cầu nhắn em nhé"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.housenow.com.vn/can-ho-chung-cu/akari-city-nam-long/374186",
+        "title": "Pháp lý rõ ràng bán nhanh căn Akari GĐ 2 - 80m2 |Có sổ| Full nội thất cao cấp, sẵn HĐ thuê 15tr/th",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "4,70 tỷ\n\n58,75 triệu/m²\n\n- 2 PN\n- 2 WC\n- 80 m²\n\n# Pháp lý rõ ràng bán nhanh căn Akari GĐ 2 - 80m2 |Có sổ| Full nội thất cao cấp, sẵn HĐ thuê 15tr/th\n\n75 Võ Văn Kiệt, An Lạc, Bình Tân, TP. Hồ Chí Minh\n\nĐăng 29/09/2026\n\n...\n\nPhát lý rõ ràng bán nhanh căn hộ Akari giai đoạn 2, Sổ sẵn, có sẵn hđ thuê full nội cao cấp 15 triệu/ tháng. Vị trí: Mặt tiền Võ Văn Kiệt, P. An Lạc, TP HCM. ... - Chỉ còn 01 căn giá rẻ Akari Phase ... - 80m² | 2PN - 2WC. - Giá chỉ: 4,7 tỷ full Sổ có sẵn. - Nội thất đầu tư gần 250 triệu, để lại toàn bộ. - Đang có HĐ thuê 15 triệu /tháng mua xong tiếp tục khai thác ngay."
+      }
+    }
+  ],
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 4556,
+    "completion_tokens": 1539,
+    "total_tokens": 6095,
+    "cost": 0.0291897,
+    "prompt_tokens_details": {
+      "cached_tokens": 1797,
+      "cache_write_tokens": 2204,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0221897,
+      "upstream_inference_prompt_cost": 0.0067997000000000005,
+      "upstream_inference_completions_cost": 0.01539
+    },
+    "server_tool_use_details": {
+      "web_search_requests": 4,
+      "tool_calls_requested": 4,
+      "tool_calls_executed": 4
+    }
+  },
+  "search_requests": 4,
+  "search_usage_field": "server_tool_use_details",
+  "search_budget_discrepancy": true,
+  "error": null,
+  "case": 1,
+  "conversation": "case1",
+  "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+  "event_summary": {
+    "count": 1358,
+    "first": {
+      "at_ms": 12183,
+      "id": "gen-1793353389-zwWPfBlJO1N5K4nj3cbN",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "choices": [
+        {
+          "content": "",
+          "annotations": [
+            {
+              "type": "url_citation",
+              "url_citation": {
+                "url": "https://www.housenow.com.vn/can-ho-chung-cu/ehomes-nam-sai-gon/353499",
+                "title": "Bán căn hộ Ehomes Mizuki Park, 50m2, 1PN, giá 2.55 tỷ, bao sổ",
+                "start_index": 0,
+                "end_index": 0,
+                "content": "51 triệu/m²\n\n- 1 PN\n- 1 WC\n- 50 m²\n\n# Bán căn hộ Ehomes Mizuki Park, 50m2, 1PN, giá 2.55 tỷ, bao sổ\n\nBình Hưng, Bình Chánh, TP. Hồ Chí Minh\n\nĐăng 06/08/2026\n\n...\n\n1 PN · EHomeS Nam Sài Gòn\n\n## Mô tả\n\n🏡 Căn hộ thương mại Ehomes - Khu Mizuki Park đang tìm chủ mới! Với diện tích 50m2, căn hộ được thiết kế 1 phòng ngủ, 1 WC và có logia thoáng đãng. Đặc biệt, bạn có thể linh hoạt ngăn thêm thành 2 phòng ngủ tùy theo nhu cầu sử dụng. 💰 Mức giá hấp dẫn chỉ 2.55 tỷ đồng, đã bao gồm chi phí sang tên và thuế phí, đảm bảo thủ tục pháp lý rõ ràng. Chúng tôi cũng hỗ trợ vay ngân hàng, giúp bạn dễ dàng sở hữu căn hộ mơ ước này. 📍 Vị trí đắc địa tại đường Nguyễn Văn Linh, xã Bình Hưng, nằm giữa Phạm Hùng và Quốc lộ 50. Từ đây, bạn chỉ mất 2km để đến bến xe Quận 8 và dễ dàng di chuyển đến các quận trung tâm trong khoảng 10-25 phút."
+              }
+            }
+          ],
+          "finish_reason": null
+        }
+      ]
+    },
+    "last": {
+      "at_ms": 40287,
+      "id": "gen-1793353389-zwWPfBlJO1N5K4nj3cbN",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "usage": {
+        "prompt_tokens": 4556,
+        "completion_tokens": 1539,
+        "total_tokens": 6095,
+        "cost": 0.0291897,
+        "prompt_tokens_details": {
+          "cached_tokens": 1797,
+          "cache_write_tokens": 2204,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0221897,
+          "upstream_inference_prompt_cost": 0.0067997000000000005,
+          "upstream_inference_completions_cost": 0.01539
+        },
+        "server_tool_use_details": {
+          "web_search_requests": 4,
+          "tool_calls_requested": 4,
+          "tool_calls_executed": 4
+        }
+      },
+      "choices": [
+        {
+          "content": "",
+          "annotations": [],
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "tool_events": []
+  }
+}

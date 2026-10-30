@@ -1,0 +1,206 @@
+{
+  "started_at": "2026-10-30T09:45:39.270Z",
+  "request": {
+    "model": "openai/gpt-6.1-sol",
+    "messages": [
+      {
+        "role": "system",
+        "content": "한국어로 사용자의 부동산 상담에 답하세요. 현재 웹을 검색해 후보와 판단 근거를 제시하고 출처 링크를 보존하세요. 확인된 사실, 광고 주장, 추정과 미확인을 구분하고 가격·환율·임대수익을 만들지 마세요. 현재 날짜는 2026-10-30입니다."
+      },
+      {
+        "role": "user",
+        "content": "은퇴 후 겨울마다 석 달씩 동남아에서 살아보고 싶어. 병원 이용이 편하고 너무 번잡하지 않은 곳이면 좋겠는데, 어디부터 알아보면 좋을까? 나라와 예산은 아직 안 정했어."
+      }
+    ],
+    "tools": [
+      {
+        "type": "openrouter:web_search",
+        "parameters": {
+          "engine": "exa",
+          "mode": "fast",
+          "max_uses": 1,
+          "max_results": 5,
+          "max_total_results": 5,
+          "max_characters": 2000
+        }
+      }
+    ],
+    "max_tool_calls": 1,
+    "max_tokens": 2200,
+    "reasoning": {
+      "effort": "low"
+    },
+    "provider": {
+      "allow_fallbacks": false
+    },
+    "stream": true,
+    "stream_options": {
+      "include_usage": true
+    }
+  },
+  "timeout_ms": 90000,
+  "status": "completed",
+  "http_status": 200,
+  "generation_id": "gen-1793353548-xpZdy2MkVIe1GokDQVqr",
+  "response_model": "openai/gpt-6.1-sol",
+  "provider": "OpenAI",
+  "headers_ms": 10162,
+  "first_answer_ms": 16983,
+  "total_ms": 44084,
+  "answer": "지금 조건이라면 **태국 후아힌과 말레이시아 페낭부터 비교**해 보시면 좋겠습니다. 은퇴 후 겨울 석 달을 보내는 목적이라면, 집값보다 **병원까지의 실제 이동 시간·겨울철 공기·걸어서 생활할 수 있는지**를 먼저 보시는 편이 좋습니다. 처음부터 집을 사기보다는 단기 임대로 생활을 시험해 보세요.\n\n아래는 **2026년 10월 30일 현재 검색에서 확인한 정보와 상담상 판단을 구분**한 제안입니다.\n\n## 어디부터 볼까?\n\n| 후보 | 추천하는 이유·상담상 판단 | 주의할 점 |\n|---|---|---|\n| **태국 후아힌** | 번잡한 대도시보다 차분한 해변 생활을 원하는 분의 **첫 답사 후보**입니다. 병원과 장보기 시설에 가까운 주거지를 골라 보는 방식이 좋겠습니다. | 평소 진료와 복잡한 전문 치료를 구분해야 합니다. 외곽의 조용한 숙소는 병원·마트 이동이 불편할 수 있습니다. |\n| **말레이시아 페낭** | 병원 이용 편의와 도시 생활을 함께 비교할 **두 번째 후보**입니다. 관광 중심지 한복판보다 병원과 생활시설에 가까운 주거지역을 살펴보세요. | **이번 검색에서는 개별 병원 서비스와 동네별 접근성을 확인하지 못했습니다.** 후아힌과 같은 수준으로 검증된 추천은 아니며, 다음 조사 대상으로 보시면 됩니다. |\n| **태국 치앙마이** | 해변보다 내륙 도시 생활을 선호한다면 검토할 수 있습니다. | **2월을 포함하는 겨울 체류라면 우선순위를 낮추겠습니다.** 미국 CDC는 치앙마이 등 태국 북부의 공기가 농업 소각·산불 때문에 2~4월 자주 나빠진다고 안내합니다. |\n\n### 후아힌을 먼저 권하는 근거와 한계\n\n검색된 후아힌 장기체류 안내에는 **Bangkok Hospital Hua Hin과 San Paulo Hua Hin Hospital**이 소개돼 있습니다. 같은 안내는 복잡한 수술이나 일부 전문 치료를 위해 방콕으로 이동하는 경우도 있다고 설명합니다.\n\n다만 이는 **여행·장기체류 안내 사이트의 설명**이지, 제가 병원 공식 자료로 진료 범위와 운영 시간을 교차 확인한 것은 아닙니다. 따라서 “병원이 있으니 모든 치료가 가능하다”라고 생각하기보다는, 필요한 진료과가 있다면 예약 가능 여부부터 확인해야 합니다.\n\n- [후아힌 장기체류 안내 — 병원 관련 설명](https://www.visit-thailand.org/cities/11-hua-hin/hua-hin-long-stay)\n- [영국 정부의 태국 의료서비스 안내](https://www.gov.uk/guidance/healthcare-and-medical-services-in-thailand)\n- [미국 CDC 태국 안내 — 계절별 대기질](https://cdc.gov/yellow-book/hcp/asia/thailand.html)\n\n## 집을 알아보기 전, 이 다섯 가지부터 정하세요\n\n1. **체류할 달**  \n   12~2월인지, 1~3월인지에 따라 공기와 날씨 판단이 달라집니다. 특히 호흡기 질환이 있다면 중요합니다.\n\n2. **병원 이용의 목적**  \n   응급실이 가까우면 되는지, 심장내과·정형외과 등 정기 진료가 필요한지에 따라 도시 선택이 달라집니다. 복잡한 치료가 예상된다면 조용한 소도시보다 대도시 병원 인근 주거지가 나을 수도 있습니다.\n\n3. **운전 없이 생활할 수 있는지**  \n   지도상 거리보다 **숙소에서 병원까지 혼잡 시간에 얼마나 걸리는지**, 보도와 횡단보도가 괜찮은지가 중요합니다.\n\n4. **월세가 아닌 석 달 총비용**  \n   숙박비 외에 전기·수도, 청소, 교통, 보험, 항공료, 보증금 반환 조건까지 묶어서 비교하세요. 현재 확인된 견적이 없어 가격을 제시하지는 않겠습니다.\n\n5. **입국·보험 조건**  \n   ‘석 달’과 ‘90일’은 같지 않을 수 있습니다. 여권 국적과 실제 날짜를 기준으로 체류 가능 기간을 확인하고, 보험은 연령 제한·기왕증·장기 여행 보장 기간을 따로 확인해야 합니다. **이번 검색으로 최신 입국 조건은 확정하지 못했습니다.**\n\n## 제안하는 시작 방식\n\n**첫해에는 후아힌에서 2~4주 살아본 뒤, 맞으면 다음 겨울에 석 달로 늘리는 방식**을 권합니다. 숙소는 해변 전망보다 병원·마트·식당 접근성을 우선하고, 계약 전에는 낮과 밤의 소음, 계단·엘리베이터, 욕실 미끄럼, 취소 조건을 확인하세요. 신중하게 고른 단기 임대만으로도 목적을 충분히 달성할 수 있어 매입을 서두를 이유는 없습니다.\n\n후보를 더 좁히려면 **① 혼자 또는 두 분인지 ② 겨울 중 어느 달인지 ③ 정기 진료가 필요한지 ④ 숙박을 포함한 월 생활비의 편안한 상한선**을 알려주세요. 예산은 아직 모르셔도 괜찮습니다. 먼저 원하는 생활 수준부터 맞춰볼 수 있습니다.",
+  "annotations": [
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://cdc.gov/yellow-book/hcp/asia/thailand.html",
+        "title": "Thailand | Yellow Book | CDC",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "### Air quality\n\nAir quality in Thailand varies by province and fluctuates throughout the year, with seasonal smog becoming an increasing health concern in some areas of the country. The air quality in several provinces (Bangkok, Chiang Mai, Chiang Rai, Khon Kaen, Lampang, Lamphun, Mae Hong Son, Nan, and Samut Sakhon) has exceeded Thai and U.S. government (National Ambient Air Quality Standards) standards for fine particulate matter (PM2.5) during parts of the year. In Chiang Mai and other northern provinces, air quality is frequently poor during February–April because of agricultural burning and forest fires. Travelers can review the current Air Quality Index (AQI) and PM2.5 concentrations through a mobile app such as IQAIR. The U.S. Environmental Protection Agency has additional information about understanding AQI and steps to reduce exposure to harmful air quality. Sensitive groups should avoid outdoor activities during periods where AQI is orange or higher and may consider purchasing N95 respirators to aid in filtering PM2.5."
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.gov.uk/guidance/living-in-thailand",
+        "title": "Living in Thailand - GOV.UK",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "live in Thailand.\n\nYou can get a visa to:\n\n- study\n- retire\n- work – including on a working holiday or as a digital nomad\n- receive medical treatment\n- live with family in Thailand\n- perform missionary work or other religious activities\n- volunteer\n- do"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.visit-thailand.org/plan-your-trip/wintering-in-thailand",
+        "title": "Wintering in Thailand: Visas, Insurance and Where to Stay",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "sharply from May |\n| Koh Samui and the Gulf islands | Fine from ... January; February is Samui's driest month | October to December brings half the year's rain; November is the wettest month |\n| Chiang Mai and the north |"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.gov.uk/guidance/healthcare-and-medical-services-in-thailand",
+        "title": "Healthcare and medical services in Thailand - GOV.UK",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "|\n| --- | --- | --- | --- | --- | --- | --- | ---\n...\n-999-777 | 1 Sukkasem Rd, Pa Tun, Mueang\n...\n@chiangmairam.com | (+66) 53-920-300 | 8 Boonreungrit Rd., Sriphume, Mueang, Chiangmai, 50200 |\n...\n936-150 | 110 Intawarorod Rd, Sriphume"
+      }
+    },
+    {
+      "type": "url_citation",
+      "url_citation": {
+        "url": "https://www.visit-thailand.org/cities/11-hua-hin/hua-hin-long-stay",
+        "title": "Hua Hin for Long Stays and Retirees: What It Is Really Like",
+        "start_index": 0,
+        "end_index": 0,
+        "content": "## Healthcare: two private\n\n...\n\nHealthcare is the first thing most retirees check, and Hua Hin is well placed for a town its size. Two private hospitals serve the foreign community:\n\n- Bangkok Hospital Hua Hin, part of the Bangkok Dusit Medical Services group, with its own page on the group's website for services, doctors and appointments.\n- San Paulo Hua Hin Hospital, which says it is accredited by Thailand's Institute of Hospital Quality Improvement and Accreditation, and lists an international department speaking English, German and Filipino, help with overseas insurance claims, an intensive care unit, emergency and ambulance services, cardiology, orthopedics and a dialysis center.\n\nThere is also a government hospital in town, which is cheaper and very busy, with less English spoken. For complex surgery, cancer care or rare specialties, many residents still go to Bangkok, three hours away. Factor that in if you have a known condition."
+      }
+    }
+  ],
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 3831,
+    "completion_tokens": 1408,
+    "total_tokens": 5239,
+    "cost": 0.0270147,
+    "prompt_tokens_details": {
+      "cached_tokens": 1397,
+      "cache_write_tokens": 1854,
+      "audio_tokens": 0,
+      "video_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "image_tokens": 0,
+      "audio_tokens": 0
+    },
+    "cost_details": {
+      "upstream_inference_cost": 0.0200147,
+      "upstream_inference_prompt_cost": 0.0059347,
+      "upstream_inference_completions_cost": 0.01408
+    },
+    "server_tool_use_details": {
+      "web_search_requests": 5,
+      "tool_calls_requested": 5,
+      "tool_calls_executed": 5
+    }
+  },
+  "search_requests": 5,
+  "search_usage_field": "server_tool_use_details",
+  "search_budget_discrepancy": true,
+  "error": null,
+  "case": 3,
+  "conversation": "case3",
+  "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+  "event_summary": {
+    "count": 1221,
+    "first": {
+      "at_ms": 11661,
+      "id": "gen-1793353548-xpZdy2MkVIe1GokDQVqr",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "choices": [
+        {
+          "content": "",
+          "annotations": [
+            {
+              "type": "url_citation",
+              "url_citation": {
+                "url": "https://cdc.gov/yellow-book/hcp/asia/thailand.html",
+                "title": "Thailand | Yellow Book | CDC",
+                "start_index": 0,
+                "end_index": 0,
+                "content": "### Air quality\n\nAir quality in Thailand varies by province and fluctuates throughout the year, with seasonal smog becoming an increasing health concern in some areas of the country. The air quality in several provinces (Bangkok, Chiang Mai, Chiang Rai, Khon Kaen, Lampang, Lamphun, Mae Hong Son, Nan, and Samut Sakhon) has exceeded Thai and U.S. government (National Ambient Air Quality Standards) standards for fine particulate matter (PM2.5) during parts of the year. In Chiang Mai and other northern provinces, air quality is frequently poor during February–April because of agricultural burning and forest fires. Travelers can review the current Air Quality Index (AQI) and PM2.5 concentrations through a mobile app such as IQAIR. The U.S. Environmental Protection Agency has additional information about understanding AQI and steps to reduce exposure to harmful air quality. Sensitive groups should avoid outdoor activities during periods where AQI is orange or higher and may consider purchasing N95 respirators to aid in filtering PM2.5."
+              }
+            }
+          ],
+          "finish_reason": null
+        }
+      ]
+    },
+    "last": {
+      "at_ms": 44078,
+      "id": "gen-1793353548-xpZdy2MkVIe1GokDQVqr",
+      "model": "openai/gpt-6.1-sol",
+      "provider": "OpenAI",
+      "usage": {
+        "prompt_tokens": 3831,
+        "completion_tokens": 1408,
+        "total_tokens": 5239,
+        "cost": 0.0270147,
+        "prompt_tokens_details": {
+          "cached_tokens": 1397,
+          "cache_write_tokens": 1854,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0200147,
+          "upstream_inference_prompt_cost": 0.0059347,
+          "upstream_inference_completions_cost": 0.01408
+        },
+        "server_tool_use_details": {
+          "web_search_requests": 5,
+          "tool_calls_requested": 5,
+          "tool_calls_executed": 5
+        }
+      },
+      "choices": [
+        {
+          "content": "",
+          "annotations": [],
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    "tool_events": []
+  }
+}

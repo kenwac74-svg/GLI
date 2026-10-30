@@ -1,7 +1,7 @@
 # Current State
 
 Goal:
-- P-010 isolated direct-search trial complete; see docs/research/P010-DIRECT-SEARCH-REPORT-20261030.md.
+- P-010 five-type Instant WEB vs fixed OpenRouter trial complete; see docs/research/P010-FIVE-CASE-COMPARISON-20261030.md.
 - Steps9/10 complete: approved frontend public release version69.
 
 Completed:
@@ -20,7 +20,7 @@ Decisions:
 - PR3/refined A is unapproved Claude research alternative; see SEARCH-UX-RESEARCH-STATUS-20261014.md.
 - Work Local baseline; GPT Sites current host, Firebase future, AWS final.
 - No overwrite of unrelated GitHub history or force push/main merge.
-- No production payment/email/assignment/booking change; P-010 authorized one standalone paid AI call.
+- No production change; P-010 initial1 plus approved five-case API trial only. GLI/Gemini excluded from benchmark.
 - Public LOCAL preview blocked; actual Google OAuth unimplemented.
 
 Remaining:
@@ -31,11 +31,12 @@ Remaining:
 - Formal admin/inquiry retention policy and price-history panel.
 
 Next:
-- P-010: resolve reported search-budget1/usage5 discrepancy before any approved repeat; production unchanged.
+- P-010: search-budget/usage discrepancy and exact web timing remain; no further paid repeat/tuning without approval.
 - User continues fundamental research in GLI 연구 및 사업기획; resume here for development planning.
 - Concrete navigation/locale/overflow bugs LOCAL only; no redesign/deployment.
 
 Last verified:
+- P-010 pairs5/5; offline9 tests/settings/context checks; API USD0.121162 reported, no exact web speed verdict.
 - P-010 dedicated6 offline tests plus dry-run; live first18.084s/total43.674s,USD0.032792 reported, metadata404.
 -362 tests/type/build/migration/spec pass; lint0 errors/12 warnings.
 - Version69 succeeded, env revision8/public audience unchanged.

@@ -1,5 +1,12 @@
 # 개발 변경 이력
 
+## HIST-20261030-002
+
+- User clarified benchmark is GPT Instant WEB vs P-010 OpenRouter, excluding GLI/Gemini; approved five exact questions, fresh1-4 and follow-up5 immediately after2 with actual second candidate. Ran both services in order1/2/5/3/4 without model/search/system changes. Web Instant observed; API settings matched original live request, one fingerprint across5.
+- API5 POSTs completed: first9.244-17.859s, total15.445-44.084s,25519 tokens, reported USD0.121162; all stop/modelSol. Search counters4/4/5/1/1 remain inconsistent with requested cap1; no retry/fallback/extra metadata call. Web5 answers/DOM/screenshots preserved; exact web timing unmeasured, discarded misleading probes/CDP-timeout observation. No speed winner claimed.
+- Comparison: useful candidates/context, API FX budget gap and overlong explanation/multiple follow-up fields, web richer UI but case1 declared FX/table differ10x. Separate perceived utility from verified accuracy. docs/research/P010-FIVE-CASE-COMPARISON-20261030.md indexes actual answers and evidence; no invented candidate for5. Original1-trial artifact untouched.
+- No product/API/DB contract impact or GS/registry/env/key/main/B/public changes. Independent harness/tests/docs only; existing dirty LOCAL fixes excluded. Dedicated9 offline tests, scoped lint, spec check, original-request/pair/history checks and staged secret/diff review; no app build/deploy. Further tuning/paid repeats need approval.
+
 ## HIST-20261030-001
 
 - P-010 explicitly authorized by user; read GitHub proposal a67f1f77 and ran one isolated OpenRouter POST from local baseline ba477090. No product/API/data contract impact; no GS/registry or production change. Existing dirty LOCAL fixes preserved and excluded from this delivery.

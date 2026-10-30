@@ -1,0 +1,89 @@
+{
+  "scope": "GPT Instant web vs P010 OpenRouter; no GLI/Gemini",
+  "execution_order": [
+    1,
+    2,
+    5,
+    3,
+    4
+  ],
+  "cases": [
+    {
+      "case": 1,
+      "question": "베트남 호치민에서 1억 5천만 원으로 임대수입을 기대할 만한 아파트를 찾아줘.",
+      "api_status": "completed",
+      "model": "openai/gpt-6.1-sol",
+      "first_answer_ms": 17859,
+      "total_ms": 40291,
+      "tokens": 6095,
+      "cost_usd": 0.0291897,
+      "search_counter": 4,
+      "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+      "web_status": "completed; Instant observed",
+      "web_exact_timing": "not measured",
+      "web_completion_observed_upper_ms": 46378
+    },
+    {
+      "case": 2,
+      "question": "방콕에서 혼자 1년 정도 살 아파트를 찾아줘. 월세는 100만원 이하이고, BTS역까지 걸어서 10분 이내, 가구가 있는 곳이면 좋겠어.",
+      "api_status": "completed",
+      "model": "openai/gpt-6.1-sol",
+      "first_answer_ms": 9244,
+      "total_ms": 24066,
+      "tokens": 5881,
+      "cost_usd": 0.025338,
+      "search_counter": 4,
+      "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+      "web_status": "completed; Instant observed",
+      "web_exact_timing": "not measured",
+      "web_completion_observed_upper_ms": 75845
+    },
+    {
+      "case": 3,
+      "question": "은퇴 후 겨울마다 석 달씩 동남아에서 살아보고 싶어. 병원 이용이 편하고 너무 번잡하지 않은 곳이면 좋겠는데, 어디부터 알아보면 좋을까? 나라와 예산은 아직 안 정했어.",
+      "api_status": "completed",
+      "model": "openai/gpt-6.1-sol",
+      "first_answer_ms": 16983,
+      "total_ms": 44084,
+      "tokens": 5239,
+      "cost_usd": 0.0270147,
+      "search_counter": 5,
+      "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+      "web_status": "completed; Instant observed",
+      "web_exact_timing": "not measured",
+      "web_completion_observed_upper_ms": 53977
+    },
+    {
+      "case": 4,
+      "question": "아파트 광고에 연 임대수익률 6%라고 쓰여 있으면, 1억원짜리 집을 사서 매달 50만원을 받는다는 뜻이야? 실제로 내게 남는 돈과 어떻게 다른지 쉽게 설명해줘.",
+      "api_status": "completed",
+      "model": "openai/gpt-6.1-sol",
+      "first_answer_ms": 11935,
+      "total_ms": 27676,
+      "tokens": 3808,
+      "cost_usd": 0.0228895,
+      "search_counter": 1,
+      "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+      "web_status": "completed; Instant observed",
+      "web_exact_timing": "not measured",
+      "web_completion_observed_upper_ms": 39346
+    },
+    {
+      "case": 5,
+      "question": "방금 보여준 두 번째 아파트는 관리비가 월세에 포함돼?",
+      "api_status": "completed",
+      "model": "openai/gpt-6.1-sol",
+      "first_answer_ms": 12745,
+      "total_ms": 15445,
+      "tokens": 4496,
+      "cost_usd": 0.0167301,
+      "search_counter": 1,
+      "settings_sha256": "a6578b06841b28228e7ad72be036d659ce5c1d2248bfb038ed50201b798eec90",
+      "web_status": "completed; Instant observed",
+      "web_exact_timing": "not measured",
+      "web_completion_observed_upper_ms": 56127
+    }
+  ],
+  "total_reported_api_cost_usd": 0.121162,
+  "total_api_tokens": 25519
+}
