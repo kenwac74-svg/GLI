@@ -1,5 +1,12 @@
 # 개발 변경 이력
 
+## HIST-20261030-001
+
+- P-010 explicitly authorized by user; read GitHub proposal a67f1f77 and ran one isolated OpenRouter POST from local baseline ba477090. No product/API/data contract impact; no GS/registry or production change. Existing dirty LOCAL fixes preserved and excluded from this delivery.
+- Catalog/auth free checks verified existing key and openai/gpt-6.1-sol. Requested official web_search/Exa fast only, max_tool_calls/max_uses1, output2200, timeout90s, no fallback/retry/new key. Live answer: first18.084s, complete43.674s,6910 tokens, reported cost USD0.032792; five citations and actual usage evidence preserved.
+- Blockers: requested search budget1 but server_tool_use_details reports5; documented field differs; metadata GET404; KRW budget/FX and rental evidence incomplete. No extra paid calls. Parser corrected offline with regression test; original evidence left unchanged. Report/answer/raw evidence in docs/research/P010-* and p010-direct-search-20261030.json; standalone script/tests only.
+- Verified dedicated offline6 tests, dry-run, scoped lint, spec:check and staged diff/secret boundaries before delivery. No app build, UI/DB/env change, public deployment or B-branch change; further paid experiments/production decisions need approval.
+
 ## HIST-20261014-002
 
 - User requested commit/push of current discussion and separated fundamental research into GLI 연구 및 사업기획 before returning for development planning. Recorded customer-perceived utility baseline, compact shortcuts/basic conditions above question, toggle/multi-select/ALL and unapproved research boundaries.
