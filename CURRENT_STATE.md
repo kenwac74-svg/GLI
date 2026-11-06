@@ -1,6 +1,7 @@
 # Current State
 
 Goal:
+- P-011 preflight BLOCKED; zero paid requests. See docs/research/P011-PROGRESSIVE-SEARCH-REPORT-20261106.md.
 - P-010 five-type Instant WEB vs fixed OpenRouter trial complete; see docs/research/P010-FIVE-CASE-COMPARISON-20261030.md.
 - Steps9/10 complete: approved frontend public release version69.
 
@@ -31,6 +32,7 @@ Remaining:
 - Formal admin/inquiry retention policy and price-history panel.
 
 Next:
+- P-011: confirm OpenRouter search-cap enforcement or separately approve a control-validation trial before paid execution.
 - P-010: search-budget/usage discrepancy and exact web timing remain; no further paid repeat/tuning without approval.
 - User continues fundamental research in GLI 연구 및 사업기획; resume here for development planning.
 - Concrete navigation/locale/overflow bugs LOCAL only; no redesign/deployment.

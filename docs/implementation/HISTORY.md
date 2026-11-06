@@ -1,5 +1,11 @@
 # 개발 변경 이력
 
+## HIST-20261106-001
+
+- User started isolated P-011 per GitHub handoff b86a7ec; baseline fe009ff. Free preflight BLOCKED on unverified search-cap enforcement. Existing key/catalog GET200; historic search/execute counts4/4/5/1/1 versus requested1, reported cost minus upstream cost USD0.007 each, not a cap guarantee.
+- Preserved dated handoff system, fixed P-010 settings, offline T1/3/4 builder and T2 literal/history checks; live mode refuses without POST. 0/4 paid requests, no substitute or retry. Report: docs/research/P011-PROGRESSIVE-SEARCH-REPORT-20261106.md.
+- No product/API/DB contract impact, env/key/GS/registry/app/production changes, build or deployment. Existing LOCAL edits excluded. Relevant offline12, prompt comparison, scoped lint, spec and staged diff/secret checks.
+
 ## HIST-20261030-002
 
 - User clarified benchmark is GPT Instant WEB vs P-010 OpenRouter, excluding GLI/Gemini; approved five exact questions, fresh1-4 and follow-up5 immediately after2 with actual second candidate. Ran both services in order1/2/5/3/4 without model/search/system changes. Web Instant observed; API settings matched original live request, one fingerprint across5.
