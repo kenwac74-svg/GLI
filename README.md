@@ -2,6 +2,14 @@
 
 GLI is an AI-assisted Southeast Asian property discovery, verification, and consultation platform.
 
+## Current development handoff — 2026-11-08
+
+[**P-012: 공통 LLM 답변 + 원래 UI / 개선 UI 전환 개발명세서**](docs/GLI_P012_SHARED_ANSWER_AB_UI_SPEC_20261108.md)
+
+GLI 데모 개발 담당은 위 명세를 기준으로 내부 검토 기능을 구현한다. 기존 OpenRouter의 빠른 단일 모델 답을 추가 LLM 검수 없이 표시하고, 관련 GLI 보유자료가 있으면 최상단에 보여준다. 같은 답변과 대화를 `원래 UI / 개선 UI B`로 전환한다. 전환 때문에 모델을 재호출하지 않는다. 후속 질문 선택과 자유 입력을 모두 지원한다.
+
+운영 UI 교체·공개 배포·제품 채택은 별도 승인 사항이다. B안 원본 위치와 미완료 업로드 상태, 기존 명세와의 관계는 P-012를 따른다. 이 링크는 개발 세션의 수신·착수·완료를 뜻하지 않는다.
+
 ## Start here: planning and session coordination
 
 - [GLI PM & session control](docs/GLI_PM_SESSION_CONTROL.md) — 총괄 PM, Claude 공동연구, 개발 실행의 역할과 인계·세션 정리 현황.
