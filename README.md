@@ -2,6 +2,12 @@
 
 GLI is an AI-assisted Southeast Asian property discovery, verification, and consultation platform.
 
+## Latest discussion checkpoint — 2026-11-11
+
+[**최근 논의·저장 상태·Web3 분기·백서 세션 복구 인계**](docs/GLI_DISCUSSION_CHECKPOINT_20261111.md)
+
+기존 검색·UI 합의와 P-012 구현 기준은 유지한다. 최근 Web3 페이지 분리, 사용자가 지정한 백서 전용 세션, 컨텍스트 압축 오류와 미실행 복구안을 보완 기록했다. 전체 대화 원문·첨부자료 또는 접근하지 못한 백서 세션 전체가 Git에 보관됐다는 뜻은 아니다. 별도 Web3 페이지는 백서 전용 세션을 읽기 전에 만든 초안이므로, 원문 복구 후 기존 합의와 대조해야 한다.
+
 ## Current development handoff — 2026-11-08
 
 [**P-012: 공통 LLM 답변 + 원래 UI / 개선 UI 전환 개발명세서**](docs/GLI_P012_SHARED_ANSWER_AB_UI_SPEC_20261108.md)
